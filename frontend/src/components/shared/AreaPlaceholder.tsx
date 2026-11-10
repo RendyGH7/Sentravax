@@ -28,24 +28,24 @@ export const AreaPlaceholder: React.FC<AreaPlaceholderProps> = ({
 
   return (
     <div
-      className={`rounded-xl border p-6 sm:p-8 space-y-6 max-w-4xl mx-auto transition-all ${
+      className={`rounded-2xl border p-6 sm:p-8 space-y-6 max-w-4xl mx-auto transition-all shadow-sm ${
         isDarkFamily
-          ? 'bg-[#191919] border-[#343434] text-[#F2F2F2]'
-          : 'bg-[#FFFFFF] border-[#E2E5E8] text-[#202428] shadow-sm'
+          ? 'bg-[#161616] border-[#2C2C2C] text-[#F5F5F5]'
+          : 'bg-[#FFFFFF] border-[#E5E7EB] text-[#111827]'
       }`}
     >
       {/* Header bar */}
       <div
         className={`flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-6 border-b ${
-          isDarkFamily ? 'border-[#343434]' : 'border-[#E2E5E8]'
+          isDarkFamily ? 'border-[#2C2C2C]' : 'border-[#E5E7EB]'
         }`}
       >
         <div className="flex items-center gap-4">
           <div
-            className={`w-12 h-12 rounded-lg flex items-center justify-center border ${
+            className={`w-12 h-12 rounded-xl flex items-center justify-center border shadow-xs ${
               isDarkFamily
-                ? 'bg-[#222222] border-[#343434] text-[#A9C2D1]'
-                : 'bg-[#EAF1F5] border-[#D0DFE7] text-[#245B78]'
+                ? 'bg-[#212121] border-[#383838] text-[#F59E0B]'
+                : 'bg-[#ECFDF5] border-[#A7F3D0] text-[#047857]'
             }`}
           >
             <Icon className="w-6 h-6" />
@@ -53,25 +53,25 @@ export const AreaPlaceholder: React.FC<AreaPlaceholderProps> = ({
           <div>
             <div className="flex items-center gap-2 mb-1">
               <span
-                className={`px-2 py-0.5 rounded text-[11px] font-mono uppercase font-semibold border ${
+                className={`px-2.5 py-0.5 rounded-full text-[11px] font-mono uppercase font-bold border ${
                   isDarkFamily
-                    ? 'bg-[#222222] text-[#A9C2D1] border-[#343434]'
-                    : 'bg-[#EAF1F5] text-[#245B78] border-[#D0DFE7]'
+                    ? 'bg-[#212121] text-[#F59E0B] border-amber-500/40'
+                    : 'bg-[#ECFDF5] text-[#047857] border-[#A7F3D0]'
                 }`}
               >
                 Area {area}
               </span>
               <span
-                className={`text-[12px] font-mono ${
-                  isDarkFamily ? 'text-[#929292]' : 'text-[#737C83]'
+                className={`text-[12px] font-mono font-medium ${
+                  isDarkFamily ? 'text-[#8A8A8A]' : 'text-[#6B7280]'
                 }`}
               >
                 {route}
               </span>
             </div>
             <h1
-              className={`text-xl sm:text-2xl font-bold tracking-tight ${
-                isDarkFamily ? 'text-[#F2F2F2]' : 'text-[#202428]'
+              className={`text-xl sm:text-2xl font-extrabold tracking-tight ${
+                isDarkFamily ? 'text-[#FFFFFF]' : 'text-[#111827]'
               }`}
             >
               {title}
@@ -83,10 +83,10 @@ export const AreaPlaceholder: React.FC<AreaPlaceholderProps> = ({
           <button
             type="button"
             onClick={() => setShowSkeletonDemo(!showSkeletonDemo)}
-            className={`text-xs px-2.5 py-1.5 rounded border transition-colors flex items-center gap-1.5 ${
+            className={`text-xs px-3 py-1.5 rounded-lg border font-medium transition-colors flex items-center gap-1.5 ${
               isDarkFamily
-                ? 'bg-[#222222] border-[#343434] text-[#B8B8B8] hover:bg-[#2A2A2A] hover:text-[#F2F2F2]'
-                : 'bg-[#F5F6F7] border-[#E2E5E8] text-[#596168] hover:bg-[#EAECEE] hover:text-[#202428]'
+                ? 'bg-[#212121] border-[#2C2C2C] text-[#D4D4D4] hover:bg-[#2B2B2B] hover:text-[#FFFFFF]'
+                : 'bg-[#F9FAFB] border-[#E5E7EB] text-[#4B5563] hover:bg-[#F3F4F6] hover:text-[#111827]'
             }`}
           >
             <RotateCcw className="w-3.5 h-3.5" />
@@ -99,28 +99,28 @@ export const AreaPlaceholder: React.FC<AreaPlaceholderProps> = ({
       {showSkeletonDemo ? (
         <div className="space-y-4 py-2" aria-label="Loading state skeleton">
           <div
-            className={`h-4 w-3/4 rounded ${
+            className={`h-4 w-3/4 rounded-md ${
               isDarkFamily ? 'skeleton-dark' : 'skeleton-light'
             }`}
           />
           <div
-            className={`h-4 w-full rounded ${
+            className={`h-4 w-full rounded-md ${
               isDarkFamily ? 'skeleton-dark' : 'skeleton-light'
             }`}
           />
           <div
-            className={`h-4 w-5/6 rounded ${
+            className={`h-4 w-5/6 rounded-md ${
               isDarkFamily ? 'skeleton-dark' : 'skeleton-light'
             }`}
           />
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 pt-3">
             <div
-              className={`h-16 rounded-lg ${
+              className={`h-20 rounded-xl ${
                 isDarkFamily ? 'skeleton-dark' : 'skeleton-light'
               }`}
             />
             <div
-              className={`h-16 rounded-lg ${
+              className={`h-20 rounded-xl ${
                 isDarkFamily ? 'skeleton-dark' : 'skeleton-light'
               }`}
             />
@@ -130,7 +130,7 @@ export const AreaPlaceholder: React.FC<AreaPlaceholderProps> = ({
         <>
           <p
             className={`text-sm sm:text-base leading-relaxed ${
-              isDarkFamily ? 'text-[#B8B8B8]' : 'text-[#596168]'
+              isDarkFamily ? 'text-[#D4D4D4]' : 'text-[#4B5563]'
             }`}
           >
             {description}
@@ -139,8 +139,8 @@ export const AreaPlaceholder: React.FC<AreaPlaceholderProps> = ({
           {features && features.length > 0 && (
             <div className="space-y-3 pt-2">
               <h4
-                className={`text-xs uppercase font-mono tracking-wider ${
-                  isDarkFamily ? 'text-[#929292]' : 'text-[#737C83]'
+                className={`text-xs uppercase font-mono tracking-wider font-bold ${
+                  isDarkFamily ? 'text-[#F59E0B]' : 'text-[#047857]'
                 }`}
               >
                 Spesifikasi Modul dan Fungsionalitas
@@ -149,15 +149,15 @@ export const AreaPlaceholder: React.FC<AreaPlaceholderProps> = ({
                 {features.map((feat, idx) => (
                   <div
                     key={idx}
-                    className={`flex items-start gap-2.5 px-3.5 py-3 rounded-lg border text-xs leading-snug ${
+                    className={`flex items-start gap-2.5 px-4 py-3 rounded-xl border text-xs leading-snug font-medium ${
                       isDarkFamily
-                        ? 'bg-[#222222] border-[#343434] text-[#D8D8D8]'
-                        : 'bg-[#F5F6F7] border-[#E2E5E8] text-[#333B42]'
+                        ? 'bg-[#212121] border-[#2C2C2C] text-[#E5E5E5]'
+                        : 'bg-[#F9FAFB] border-[#E5E7EB] text-[#111827]'
                     }`}
                   >
                     <CheckCircle2
                       className={`w-4 h-4 shrink-0 mt-0.5 ${
-                        isDarkFamily ? 'text-[#70A987]' : 'text-[#28734D]'
+                        isDarkFamily ? 'text-[#10B981]' : 'text-[#047857]'
                       }`}
                     />
                     <span>{feat}</span>
@@ -170,15 +170,15 @@ export const AreaPlaceholder: React.FC<AreaPlaceholderProps> = ({
           {ctaLink && ctaText && (
             <div
               className={`pt-4 border-t flex justify-end ${
-                isDarkFamily ? 'border-[#343434]' : 'border-[#E2E5E8]'
+                isDarkFamily ? 'border-[#2C2C2C]' : 'border-[#E5E7EB]'
               }`}
             >
               <Link
                 to={ctaLink}
-                className={`inline-flex items-center gap-2 px-4 py-2.5 rounded-lg text-xs font-semibold transition-all ${
+                className={`inline-flex items-center gap-2 px-5 py-2.5 rounded-xl text-xs font-bold transition-all shadow-xs ${
                   isDarkFamily
-                    ? 'bg-[#A9C2D1] hover:bg-[#C0D2DC] text-[#111111]'
-                    : 'bg-[#245B78] hover:bg-[#1D4B64] text-[#FFFFFF]'
+                    ? 'bg-[#F59E0B] hover:bg-[#D97706] text-[#0C0C0C]'
+                    : 'bg-[#047857] hover:bg-[#065F46] text-white'
                 }`}
               >
                 <span>{ctaText}</span>

@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
-import { Outlet, Link, useLocation } from 'react-router-dom';
+import { Outlet, Link, useLocation, useNavigate } from 'react-router-dom';
 import { PATHS } from '../../app/router/paths';
+import { useAuth } from '../../app/context/useAuth';
 import { 
   ShieldAlert, 
   LayoutDashboard, 
@@ -17,12 +18,22 @@ import {
   Search,
   Bell,
   Cpu,
-  Radio
+  Radio,
+  LogOut
 } from 'lucide-react';
+import { toast } from 'sonner';
 
 export const AdminLayout: React.FC = () => {
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const location = useLocation();
+  const navigate = useNavigate();
+  const { user, logout } = useAuth();
+
+  const handleLogout = async () => {
+    await logout();
+    toast.info('Sesi administrator telah diakhiri.');
+    navigate(PATHS.PUBLIC.LOGIN, { replace: true });
+  };
 
   const navItems = [
     { name: 'Dashboard Sistem', path: PATHS.ADMIN.DASHBOARD, icon: LayoutDashboard },
@@ -36,48 +47,52 @@ export const AdminLayout: React.FC = () => {
   ];
 
   return (
-    <div className="min-h-screen bg-[#111111] text-[#F2F2F2] flex selection:bg-[#283139] selection:text-[#A9C2D1]">
+    <div className="min-h-screen bg-[#0C0C0C] text-[#F5F5F5] flex selection:bg-[#2E2208] selection:text-[#F59E0B]">
       {/* Mobile backdrop */}
       {sidebarOpen && (
         <div 
-          className="fixed inset-0 bg-black/60 z-40 lg:hidden backdrop-blur-xs"
+          className="fixed inset-0 bg-black/80 z-40 lg:hidden backdrop-blur-xs"
           onClick={() => setSidebarOpen(false)}
         />
       )}
 
-      {/* Admin Sidebar */}
+      {/* Admin Sidebar (Neutral Charcoal Grey, ZERO MIDNIGHT, ZERO BLUE) */}
       <aside className={`
-        fixed top-0 bottom-0 left-0 z-50 w-64 bg-[#191919] border-r border-[#343434] flex flex-col transition-transform duration-200
+        fixed top-0 bottom-0 left-0 z-50 w-64 bg-[#161616] border-r border-[#2C2C2C] flex flex-col transition-transform duration-200
         ${sidebarOpen ? 'translate-x-0' : '-translate-x-full lg:translate-x-0'}
       `}>
         {/* Brand */}
-        <div className="h-16 flex items-center justify-between px-5 border-b border-[#343434] bg-[#151515]">
+        <div className="h-16 flex items-center justify-between px-5 border-b border-[#2C2C2C] bg-[#121212]">
           <Link to={PATHS.ADMIN.DASHBOARD} className="flex items-center gap-2.5">
-            <div className="w-8 h-8 rounded-lg bg-[#222222] border border-[#343434] flex items-center justify-center text-[#D2A45E]">
+            <div className="w-8 h-8 rounded-lg bg-[#212121] border border-[#383838] flex items-center justify-center text-[#F59E0B]">
               <ShieldAlert className="w-4 h-4" />
             </div>
             <div>
-              <span className="font-bold text-sm tracking-tight text-[#F2F2F2]">SENTRAVAX</span>
-              <span className="block text-[10px] font-mono uppercase text-[#B8B8B8] tracking-wider">Konsol Admin</span>
+              <span className="font-bold text-sm tracking-tight text-[#FFFFFF]">SENTRAVAX</span>
+              <span className="block text-[10px] font-mono uppercase text-[#F59E0B] font-semibold tracking-wider">Konsol Admin</span>
             </div>
           </Link>
           <button 
             type="button"
             onClick={() => setSidebarOpen(false)} 
-            className="lg:hidden text-[#929292] hover:text-[#F2F2F2] p-1.5 rounded"
+            className="lg:hidden text-[#8A8A8A] hover:text-[#FFFFFF] p-1.5 rounded"
             aria-label="Tutup menu"
           >
             <X className="w-5 h-5" />
           </button>
         </div>
 
-        {/* Super Admin Badge */}
-        <div className="p-3 mx-3 my-3 rounded-lg bg-[#222222] border border-[#343434] flex items-center justify-between">
-          <div>
-            <span className="text-[10px] uppercase font-mono text-[#D2A45E] font-semibold block">Tingkat Hak Akses</span>
-            <span className="text-xs font-semibold text-[#F2F2F2]">Super Administrator</span>
+        {/* Admin Badge */}
+        <div className="p-3.5 mx-3 my-3 rounded-xl bg-[#212121] border border-[#2C2C2C] flex items-center justify-between">
+          <div className="overflow-hidden pr-2">
+            <span className="text-[10px] uppercase font-mono text-[#F59E0B] font-bold block">
+              Peran: {user?.role || 'admin'}
+            </span>
+            <span className="text-xs font-bold text-[#FFFFFF] truncate block">
+              {user?.name || 'Administrator'}
+            </span>
           </div>
-          <span className="inline-flex items-center px-2 py-0.5 rounded text-[10px] font-mono bg-[#191919] border border-[#343434] text-[#A9C2D1]">
+          <span className="inline-flex items-center px-2 py-0.5 rounded text-[10px] font-mono bg-[#161616] border border-[#383838] text-[#F59E0B] font-bold shrink-0">
             OTORITAS
           </span>
         </div>
@@ -92,13 +107,13 @@ export const AdminLayout: React.FC = () => {
                 key={item.path}
                 to={item.path}
                 onClick={() => setSidebarOpen(false)}
-                className={`flex items-center gap-3 px-3 py-2.5 rounded-lg text-xs font-medium transition-all ${
+                className={`flex items-center gap-3 px-3 py-2.5 rounded-xl text-xs font-medium transition-all ${
                   isActive
-                    ? 'bg-[#283139] text-[#A9C2D1] border border-[#3A4550] font-semibold'
-                    : 'text-[#B8B8B8] hover:text-[#F2F2F2] hover:bg-[#222222]'
+                    ? 'bg-[#212121] text-[#F59E0B] border border-amber-500/40 font-bold shadow-xs'
+                    : 'text-[#D4D4D4] hover:text-[#FFFFFF] hover:bg-[#212121]'
                 }`}
               >
-                <Icon className={`w-4 h-4 ${isActive ? 'text-[#A9C2D1]' : 'text-[#929292]'}`} />
+                <Icon className={`w-4 h-4 ${isActive ? 'text-[#F59E0B]' : 'text-[#8A8A8A]'}`} />
                 <span>{item.name}</span>
               </Link>
             );
@@ -106,61 +121,69 @@ export const AdminLayout: React.FC = () => {
         </nav>
 
         {/* Sidebar Footer Link */}
-        <div className="p-3 border-t border-[#343434] space-y-1 bg-[#151515]">
+        <div className="p-3 border-t border-[#2C2C2C] space-y-1 bg-[#121212]">
           <Link
             to={PATHS.INTELLIGENCE.OVERVIEW}
-            className="flex items-center gap-2.5 px-3 py-2 rounded-lg text-xs font-medium text-[#A9C2D1] hover:text-white hover:bg-[#222222] transition-colors"
+            className="flex items-center gap-2.5 px-3 py-2 rounded-lg text-xs font-bold text-[#10B981] hover:text-[#34D399] hover:bg-[#212121] transition-colors"
           >
-            <Radio className="w-4 h-4" />
+            <Radio className="w-4 h-4 text-[#10B981]" />
             Ke Intelligence Center
           </Link>
           <Link
             to={PATHS.PUBLIC.HOME}
-            className="flex items-center gap-2.5 px-3 py-2 rounded-lg text-xs font-medium text-[#929292] hover:text-[#F2F2F2] hover:bg-[#222222] transition-colors"
+            className="flex items-center gap-2.5 px-3 py-2 rounded-lg text-xs font-medium text-[#8A8A8A] hover:text-[#FFFFFF] hover:bg-[#212121] transition-colors"
           >
             <ArrowLeft className="w-4 h-4" />
             Portal Publik
           </Link>
+          <button
+            type="button"
+            onClick={handleLogout}
+            className="w-full flex items-center gap-2.5 px-3 py-2 rounded-lg text-xs font-semibold text-rose-400 hover:bg-rose-500/10 transition-colors text-left"
+          >
+            <LogOut className="w-4 h-4" />
+            Keluar Sesi Admin
+          </button>
         </div>
       </aside>
 
       {/* Main Admin Content */}
       <div className="flex-1 lg:pl-64 flex flex-col min-h-screen">
         {/* Top Header */}
-        <header className="h-16 bg-[#191919] border-b border-[#343434] sticky top-0 z-30 px-4 sm:px-6 flex items-center justify-between">
+        <header className="h-16 bg-[#161616] border-b border-[#2C2C2C] sticky top-0 z-30 px-4 sm:px-6 flex items-center justify-between">
           <div className="flex items-center gap-3">
             <button
               type="button"
               onClick={() => setSidebarOpen(true)}
-              className="lg:hidden p-2 text-[#929292] hover:text-[#F2F2F2] rounded-lg hover:bg-[#222222] min-w-[44px] min-h-[44px] flex items-center justify-center"
+              className="lg:hidden p-2 text-[#8A8A8A] hover:text-[#FFFFFF] rounded-lg hover:bg-[#212121] min-w-[44px] min-h-[44px] flex items-center justify-center"
               aria-label="Buka menu navigasi"
             >
               <Menu className="w-5 h-5" />
             </button>
-            <div className="hidden sm:flex items-center gap-2 px-3 py-2 rounded-lg bg-[#222222] border border-[#343434] text-xs text-[#929292] w-72">
-              <Search className="w-3.5 h-3.5 text-[#929292]" />
+            <div className="hidden sm:flex items-center gap-2 px-3 py-2 rounded-xl bg-[#212121] border border-[#2C2C2C] text-xs text-[#D4D4D4] w-72">
+              <Search className="w-3.5 h-3.5 text-[#8A8A8A]" />
               <span>Cari user, laporan, audit log...</span>
             </div>
           </div>
 
           <div className="flex items-center gap-3">
-            <div className="hidden md:flex items-center gap-2 text-xs font-mono text-[#B8B8B8] bg-[#222222] px-3 py-1.5 rounded-md border border-[#343434]">
-              <Cpu className="w-3.5 h-3.5 text-[#70A987]" />
+            <div className="hidden md:flex items-center gap-2 text-xs font-mono text-[#D4D4D4] bg-[#212121] px-3.5 py-1.5 rounded-lg border border-[#2C2C2C]">
+              <Cpu className="w-3.5 h-3.5 text-[#10B981]" />
               <span>Sistem: PostGIS Aktif (Latensi 42ms)</span>
             </div>
             <button 
               type="button"
-              className="p-2 text-[#929292] hover:text-[#F2F2F2] rounded-lg hover:bg-[#222222] relative"
+              className="p-2 text-[#8A8A8A] hover:text-[#FFFFFF] rounded-lg hover:bg-[#212121] relative"
               aria-label="Notifikasi admin"
             >
               <Bell className="w-4 h-4" />
-              <span className="w-2 h-2 rounded-full bg-[#D2A45E] absolute top-1.5 right-1.5"></span>
+              <span className="w-2 h-2 rounded-full bg-[#F59E0B] absolute top-2 right-2"></span>
             </button>
           </div>
         </header>
 
         {/* Admin Page Content */}
-        <main className="flex-1 p-4 sm:p-6 lg:p-8 max-w-7xl w-full mx-auto bg-[#141414]">
+        <main className="flex-1 p-4 sm:p-6 lg:p-8 max-w-7xl w-full mx-auto">
           <Outlet />
         </main>
       </div>

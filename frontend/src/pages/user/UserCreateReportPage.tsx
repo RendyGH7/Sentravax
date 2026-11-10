@@ -45,34 +45,34 @@ export const UserCreateReportPage: React.FC = () => {
   return (
     <div className="max-w-3xl mx-auto space-y-6">
       {/* Top Header */}
-      <div className="flex items-center justify-between pb-4 border-b border-[#E2E5E8]">
+      <div className="flex items-center justify-between pb-4 border-b border-[#E5E7EB]">
         <div>
           <Link
             to={PATHS.USER.REPORTS}
-            className="inline-flex items-center gap-1.5 text-xs text-[#596168] hover:text-[#202428] mb-1 transition-colors"
+            className="inline-flex items-center gap-1.5 text-xs text-[#047857] hover:text-[#065F46] mb-1 font-semibold transition-colors"
           >
             <ArrowLeft className="w-3.5 h-3.5" />
             Kembali ke Daftar Laporan
           </Link>
-          <h1 className="text-xl sm:text-2xl font-bold text-[#202428] tracking-tight">
+          <h1 className="text-xl sm:text-2xl font-extrabold text-[#111827] tracking-tight">
             Formulir Pelaporan Kejadian Bencana
           </h1>
         </div>
       </div>
 
       {submitted ? (
-        <div className="p-8 rounded-2xl bg-[#FFFFFF] border border-[#E2E5E8] text-center space-y-4 shadow-xs">
-          <div className="w-14 h-14 rounded-full bg-[#EAF5EF] border border-[#C2E2D0] flex items-center justify-center text-[#28734D] mx-auto">
+        <div className="p-8 rounded-2xl bg-[#FFFFFF] border border-[#E5E7EB] text-center space-y-4 shadow-xs">
+          <div className="w-14 h-14 rounded-full bg-[#ECFDF5] border border-[#A7F3D0] flex items-center justify-center text-[#047857] mx-auto">
             <CheckCircle2 className="w-8 h-8" />
           </div>
-          <h2 className="text-xl font-bold text-[#202428]">Laporan Berhasil Diterima</h2>
-          <p className="text-sm text-[#596168] max-w-md mx-auto leading-relaxed">
+          <h2 className="text-xl font-bold text-[#111827]">Laporan Berhasil Diterima</h2>
+          <p className="text-sm text-[#4B5563] max-w-md mx-auto leading-relaxed">
             Data laporan kejadian Anda telah tersimpan dan saat ini sedang ditinjau oleh operator posko darurat.
           </p>
           <div className="flex items-center justify-center gap-3 pt-3">
             <Link
               to={PATHS.USER.REPORTS}
-              className="px-5 py-2.5 rounded-lg bg-[#245B78] text-white text-xs font-semibold hover:bg-[#1D4B64] transition-colors"
+              className="px-5 py-2.5 rounded-xl bg-[#047857] text-white text-xs font-bold hover:bg-[#065F46] transition-colors shadow-xs"
             >
               Lihat Riwayat Laporan
             </Link>
@@ -82,17 +82,17 @@ export const UserCreateReportPage: React.FC = () => {
                 setSubmitted(false);
                 setDescription('');
               }}
-              className="px-5 py-2.5 rounded-lg bg-[#F5F6F7] border border-[#E2E5E8] text-[#202428] text-xs font-medium hover:bg-[#EAECEE] transition-colors"
+              className="px-5 py-2.5 rounded-lg bg-[#F9FAFB] border border-[#E5E7EB] text-[#111827] text-xs font-medium hover:bg-[#F3F4F6] transition-colors"
             >
               Kirim Laporan Lain
             </button>
           </div>
         </div>
       ) : (
-        <form onSubmit={handleSubmit} className="p-6 sm:p-8 rounded-2xl bg-[#FFFFFF] border border-[#E2E5E8] shadow-xs space-y-6">
+        <form onSubmit={handleSubmit} className="p-6 sm:p-8 rounded-2xl bg-[#FFFFFF] border border-[#E5E7EB] shadow-xs space-y-6">
           {/* Hazard Type Selector */}
           <div className="space-y-2">
-            <label className="block text-xs font-bold text-[#202428] uppercase tracking-wider">
+            <label className="block text-xs font-bold text-[#111827] uppercase tracking-wider">
               1. Jenis Kejadian Bencana
             </label>
             <div className="grid grid-cols-2 sm:grid-cols-4 gap-2.5">
@@ -108,8 +108,8 @@ export const UserCreateReportPage: React.FC = () => {
                   onClick={() => setHazardType(item.id)}
                   className={`p-3 rounded-xl border text-xs font-medium text-left transition-all ${
                     hazardType === item.id
-                      ? 'bg-[#EAF1F5] border-[#245B78] text-[#245B78] font-bold'
-                      : 'bg-[#FFFFFF] border-[#E2E5E8] text-[#596168] hover:bg-[#F5F6F7]'
+                      ? 'bg-[#ECFDF5] border-[#047857] text-[#047857] font-bold shadow-xs'
+                      : 'bg-[#FFFFFF] border-[#E5E7EB] text-[#4B5563] hover:bg-[#F9FAFB]'
                   }`}
                 >
                   {item.label}
@@ -120,20 +120,20 @@ export const UserCreateReportPage: React.FC = () => {
 
           {/* Location Details */}
           <div className="space-y-3">
-            <label className="block text-xs font-bold text-[#202428] uppercase tracking-wider">
+            <label className="block text-xs font-bold text-[#111827] uppercase tracking-wider">
               2. Lokasi dan Titik Koordinat
             </label>
 
             <div>
-              <label className="block text-xs text-[#596168] mb-1 font-medium">Alamat atau Petunjuk Lokasi</label>
+              <label className="block text-xs text-[#4B5563] mb-1 font-semibold">Alamat atau Petunjuk Lokasi</label>
               <div className="relative">
-                <MapPin className="w-4 h-4 text-[#737C83] absolute left-3 top-3" />
+                <MapPin className="w-4 h-4 text-[#6B7280] absolute left-3 top-3" />
                 <input
                   type="text"
                   value={locationText}
                   onChange={(e) => setLocationText(e.target.value)}
                   placeholder="Contoh: Jl. Ahmad Yani RT 02 RW 05"
-                  className="w-full pl-10 pr-4 py-2.5 rounded-lg bg-[#FFFFFF] border border-[#E2E5E8] text-[#202428] text-sm focus:outline-none focus:border-[#245B78]"
+                  className="w-full pl-10 pr-4 py-2.5 rounded-xl bg-[#FFFFFF] border border-[#E5E7EB] text-[#111827] text-sm focus:outline-none focus:border-[#047857] focus:ring-1 focus:ring-[#047857]"
                 />
               </div>
             </div>
@@ -143,12 +143,12 @@ export const UserCreateReportPage: React.FC = () => {
                 type="text"
                 value={coordinates}
                 readOnly
-                className="flex-1 px-3 py-2 rounded-lg bg-[#F5F6F7] border border-[#E2E5E8] text-xs font-mono text-[#596168]"
+                className="flex-1 px-3 py-2 rounded-xl bg-[#F9FAFB] border border-[#E5E7EB] text-xs font-mono text-[#4B5563]"
               />
               <button
                 type="button"
                 onClick={handleDetectLocation}
-                className="inline-flex items-center gap-1.5 px-3 py-2 rounded-lg bg-[#F5F6F7] hover:bg-[#EAECEE] border border-[#E2E5E8] text-[#245B78] text-xs font-medium transition-colors"
+                className="inline-flex items-center gap-1.5 px-3.5 py-2 rounded-xl bg-[#ECFDF5] hover:bg-[#D1FAE5] border border-[#A7F3D0] text-[#047857] text-xs font-bold transition-colors"
               >
                 <Navigation className="w-3.5 h-3.5" />
                 <span>Deteksi GPS</span>
@@ -158,7 +158,7 @@ export const UserCreateReportPage: React.FC = () => {
 
           {/* Description */}
           <div className="space-y-2">
-            <label className="block text-xs font-bold text-[#202428] uppercase tracking-wider">
+            <label className="block text-xs font-bold text-[#111827] uppercase tracking-wider">
               3. Deskripsi Kondisi Lapangan
             </label>
             <textarea
@@ -166,36 +166,36 @@ export const UserCreateReportPage: React.FC = () => {
               value={description}
               onChange={(e) => setDescription(e.target.value)}
               placeholder="Jelaskan ketinggian air, kerusakan akses jalan, fasilitas terancam, atau kebutuhan evakuasi darurat..."
-              className="w-full p-3.5 rounded-lg bg-[#FFFFFF] border border-[#E2E5E8] text-[#202428] text-sm focus:outline-none focus:border-[#245B78]"
+              className="w-full p-3.5 rounded-xl bg-[#FFFFFF] border border-[#E5E7EB] text-[#111827] text-sm focus:outline-none focus:border-[#047857] focus:ring-1 focus:ring-[#047857]"
             />
           </div>
 
           {/* Photo Upload Placeholder */}
           <div className="space-y-2">
-            <label className="block text-xs font-bold text-[#202428] uppercase tracking-wider">
+            <label className="block text-xs font-bold text-[#111827] uppercase tracking-wider">
               4. Foto Dokumentasi Visual (Opsional)
             </label>
-            <div className="p-6 rounded-xl border border-dashed border-[#D0D4D8] bg-[#FBFBFC] text-center space-y-2">
-              <Camera className="w-6 h-6 text-[#737C83] mx-auto" />
-              <div className="text-xs text-[#596168]">
+            <div className="p-6 rounded-2xl border border-dashed border-[#D1D5DB] bg-[#F9FAFB] text-center space-y-2">
+              <Camera className="w-6 h-6 text-[#6B7280] mx-auto" />
+              <div className="text-xs text-[#4B5563]">
                 <span>Ambil foto langsung melalui kamera atau telusuri berkas gambar</span>
               </div>
-              <p className="text-[11px] text-[#737C83]">Format didukung: JPG, PNG, WebP (Maksimal 5 MB)</p>
+              <p className="text-[11px] text-[#6B7280]">Format didukung: JPG, PNG, WebP (Maksimal 5 MB)</p>
             </div>
           </div>
 
           {/* Submit Action */}
-          <div className="pt-4 border-t border-[#E2E5E8] flex justify-end gap-3">
+          <div className="pt-4 border-t border-[#E5E7EB] flex justify-end gap-3">
             <Link
               to={PATHS.USER.REPORTS}
-              className="px-5 py-2.5 rounded-lg bg-[#F5F6F7] hover:bg-[#EAECEE] border border-[#E2E5E8] text-xs font-medium text-[#596168] transition-colors"
+              className="px-5 py-2.5 rounded-xl bg-[#F9FAFB] hover:bg-[#F3F4F6] border border-[#E5E7EB] text-xs font-semibold text-[#4B5563] transition-colors"
             >
               Batal
             </Link>
             <button
               type="submit"
               disabled={isSubmitting}
-              className="inline-flex items-center gap-2 px-6 py-2.5 rounded-lg bg-[#245B78] hover:bg-[#1D4B64] text-white text-xs font-semibold transition-all disabled:opacity-50"
+              className="inline-flex items-center gap-2 px-6 py-2.5 rounded-xl bg-[#047857] hover:bg-[#065F46] text-white text-xs font-bold transition-all shadow-xs disabled:opacity-50"
             >
               <SendHorizontal className="w-3.5 h-3.5" />
               <span>{isSubmitting ? 'Mengirim Laporan...' : 'Kirim Laporan Resmi'}</span>

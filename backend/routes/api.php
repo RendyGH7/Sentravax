@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\Api\V1\AuthController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Route;
@@ -41,4 +42,54 @@ Route::get('/health', function () {
         ],
     ], $status);
 })->name('api.health');
+
+/*
+|--------------------------------------------------------------------------
+| Authentication Routes
+|--------------------------------------------------------------------------
+*/
+Route::prefix('auth')->group(function () {
+    Route::post('/login', [AuthController::class, 'login'])->name('api.auth.login');
+    Route::post('/register', [AuthController::class, 'register'])->name('api.auth.register');
+
+    Route::middleware('auth:sanctum')->group(function () {
+        Route::get('/me', [AuthController::class, 'me'])->name('api.auth.me');
+        Route::post('/logout', [AuthController::class, 'logout'])->name('api.auth.logout');
+    });
+});
+
+/*
+|--------------------------------------------------------------------------
+| Role Authorization Verification Endpoints (Backend Protected)
+|--------------------------------------------------------------------------
+*/
+Route::middleware(['auth:sanctum', 'role:admin,super_admin'])->group(function () {
+    Route::get('/admin/ping', function () {
+        return response()->json([
+            'success' => true,
+            'message' => 'Otorisasi Konsol Admin terverifikasi.',
+            'user' => request()->user()->only(['id', 'name', 'role']),
+        ]);
+    })->name('api.admin.ping');
+});
+
+Route::middleware(['auth:sanctum', 'role:analyst,operator,super_admin,admin'])->group(function () {
+    Route::get('/intel/ping', function () {
+        return response()->json([
+            'success' => true,
+            'message' => 'Otorisasi Intelligence Center terverifikasi.',
+            'user' => request()->user()->only(['id', 'name', 'role']),
+        ]);
+    })->name('api.intel.ping');
+});
+
+Route::middleware(['auth:sanctum', 'role:user,admin,super_admin,analyst,operator'])->group(function () {
+    Route::get('/user/ping', function () {
+        return response()->json([
+            'success' => true,
+            'message' => 'Otorisasi Portal Warga terverifikasi.',
+            'user' => request()->user()->only(['id', 'name', 'role']),
+        ]);
+    })->name('api.user.ping');
+});
 

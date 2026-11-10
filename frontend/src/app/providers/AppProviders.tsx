@@ -1,5 +1,6 @@
 import React from 'react';
 import { Toaster } from 'sonner';
+import { AuthProvider } from '../context/AuthProvider';
 
 interface AppProvidersProps {
   children: React.ReactNode;
@@ -7,7 +8,7 @@ interface AppProvidersProps {
 
 export const AppProviders: React.FC<AppProvidersProps> = ({ children }) => {
   return (
-    <>
+    <AuthProvider>
       {children}
       <Toaster 
         position="top-right" 
@@ -15,13 +16,13 @@ export const AppProviders: React.FC<AppProvidersProps> = ({ children }) => {
         theme="dark"
         toastOptions={{
           style: {
-            background: '#0B1320',
-            border: '1px solid rgba(255, 255, 255, 0.1)',
-            color: '#F8FAFC',
+            background: '#161616',
+            border: '1px solid #2C2C2C',
+            color: '#F5F5F5',
           },
         }}
       />
-    </>
+    </AuthProvider>
   );
 };
 

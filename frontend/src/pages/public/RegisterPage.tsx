@@ -1,82 +1,151 @@
-import React from 'react';
-import { Link } from 'react-router-dom';
+import React, { useState } from 'react';
+import { Link, useNavigate } from 'react-router-dom';
 import { PATHS } from '../../app/router/paths';
-import { Shield, User, Mail, Lock, Phone } from 'lucide-react';
+import { useAuth } from '../../app/context/useAuth';
+import { Shield, User, Mail, Lock, Phone, AlertCircle, ArrowRight } from 'lucide-react';
+import { toast } from 'sonner';
 
 export const RegisterPage: React.FC = () => {
+  const [name, setName] = useState('');
+  const [email, setEmail] = useState('');
+  const [phone, setPhone] = useState('');
+  const [password, setPassword] = useState('');
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [errorMessage, setErrorMessage] = useState<string | null>(null);
+
+  const { register } = useAuth();
+  const navigate = useNavigate();
+
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!name.trim() || !email.trim() || !password.trim()) {
+      setErrorMessage('Harap isi nama lengkap, email, dan kata sandi.');
+      return;
+    }
+
+    if (password.length < 8) {
+      setErrorMessage('Kata sandi minimal harus 8 karakter.');
+      return;
+    }
+
+    setIsSubmitting(true);
+    setErrorMessage(null);
+
+    try {
+      const user = await register({
+        name,
+        email,
+        password,
+        phone: phone.trim() || undefined,
+      });
+
+      toast.success(`Akun warga berhasil dibuat! Selamat datang, ${user.name}.`);
+      navigate(PATHS.USER.DASHBOARD, { replace: true });
+    } catch (err: unknown) {
+      const msg = (err as { response?: { data?: { message?: string } } })?.response?.data?.message ||
+                  (err as Error).message ||
+                  'Gagal melakukan pendaftaran akun.';
+      setErrorMessage(msg);
+      toast.error(msg);
+    } finally {
+      setIsSubmitting(false);
+    }
+  };
+
   return (
-    <div className="min-h-[80vh] flex items-center justify-center py-12 px-4 sm:px-6 lg:px-8 bg-[#FBFBFC]">
-      <div className="max-w-md w-full space-y-6 bg-[#FFFFFF] p-8 rounded-2xl border border-[#E2E5E8] shadow-sm">
+    <div className="min-h-[85vh] flex items-center justify-center py-12 px-4 sm:px-6 lg:px-8 bg-[#F9FAFB]">
+      <div className="max-w-md w-full space-y-6 bg-[#FFFFFF] p-8 rounded-3xl border border-[#E5E7EB] shadow-md">
         <div className="text-center">
-          <div className="w-12 h-12 rounded-xl bg-[#245B78] flex items-center justify-center mx-auto mb-4 text-white shadow-xs">
+          <div className="w-12 h-12 rounded-2xl bg-[#047857] flex items-center justify-center mx-auto mb-3 text-white shadow-sm">
             <Shield className="w-6 h-6" />
           </div>
-          <h1 className="text-2xl font-bold text-[#202428] tracking-tight">Registrasi Akun Warga</h1>
-          <p className="text-xs text-[#596168] mt-1.5 leading-relaxed">
-            Bergabung dengan jaringan pelaporan dan kesiapsiagaan bencana SENTRAVAX.
+          <h1 className="text-2xl font-extrabold text-[#111827] tracking-tight">Registrasi Akun Warga</h1>
+          <p className="text-xs text-[#4B5563] mt-1 leading-relaxed">
+            Bergabung dengan jaringan pelaporan mandiri dan kesiapsiagaan bencana SENTRAVAX.
           </p>
         </div>
 
-        <form className="space-y-3.5" onSubmit={(e) => e.preventDefault()}>
+        {errorMessage && (
+          <div className="p-3 rounded-xl bg-[#FEF2F2] border border-[#FECACA] flex items-start gap-2.5 text-xs text-[#DC2626]">
+            <AlertCircle className="w-4 h-4 shrink-0 mt-0.5" />
+            <span>{errorMessage}</span>
+          </div>
+        )}
+
+        <form className="space-y-3.5" onSubmit={handleSubmit}>
           <div>
-            <label className="block text-xs font-medium text-[#202428] mb-1">Nama Lengkap</label>
+            <label className="block text-xs font-bold text-[#111827] mb-1">Nama Lengkap</label>
             <div className="relative">
-              <User className="w-4 h-4 text-[#737C83] absolute left-3 top-3" />
+              <User className="w-4 h-4 text-[#6B7280] absolute left-3 top-3" />
               <input
                 type="text"
+                value={name}
+                onChange={(e) => setName(e.target.value)}
                 placeholder="Nama Anda"
-                className="w-full pl-10 pr-4 py-2.5 rounded-lg bg-[#FFFFFF] border border-[#E2E5E8] text-[#202428] placeholder-[#929292] text-sm focus:outline-none focus:border-[#245B78]"
+                required
+                className="w-full pl-10 pr-4 py-2.5 rounded-xl bg-[#FFFFFF] border border-[#D1D5DB] text-[#111827] placeholder-[#9CA3AF] text-sm focus:outline-none focus:border-[#047857]"
               />
             </div>
           </div>
 
           <div>
-            <label className="block text-xs font-medium text-[#202428] mb-1">Alamat Email</label>
+            <label className="block text-xs font-bold text-[#111827] mb-1">Alamat Email</label>
             <div className="relative">
-              <Mail className="w-4 h-4 text-[#737C83] absolute left-3 top-3" />
+              <Mail className="w-4 h-4 text-[#6B7280] absolute left-3 top-3" />
               <input
                 type="email"
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
                 placeholder="nama@email.com"
-                className="w-full pl-10 pr-4 py-2.5 rounded-lg bg-[#FFFFFF] border border-[#E2E5E8] text-[#202428] placeholder-[#929292] text-sm focus:outline-none focus:border-[#245B78]"
+                required
+                className="w-full pl-10 pr-4 py-2.5 rounded-xl bg-[#FFFFFF] border border-[#D1D5DB] text-[#111827] placeholder-[#9CA3AF] text-sm focus:outline-none focus:border-[#047857]"
               />
             </div>
           </div>
 
           <div>
-            <label className="block text-xs font-medium text-[#202428] mb-1">Nomor WhatsApp atau Telepon</label>
+            <label className="block text-xs font-bold text-[#111827] mb-1">Nomor WhatsApp atau Telepon (Opsional)</label>
             <div className="relative">
-              <Phone className="w-4 h-4 text-[#737C83] absolute left-3 top-3" />
+              <Phone className="w-4 h-4 text-[#6B7280] absolute left-3 top-3" />
               <input
                 type="tel"
+                value={phone}
+                onChange={(e) => setPhone(e.target.value)}
                 placeholder="08123456789"
-                className="w-full pl-10 pr-4 py-2.5 rounded-lg bg-[#FFFFFF] border border-[#E2E5E8] text-[#202428] placeholder-[#929292] text-sm focus:outline-none focus:border-[#245B78]"
+                className="w-full pl-10 pr-4 py-2.5 rounded-xl bg-[#FFFFFF] border border-[#D1D5DB] text-[#111827] placeholder-[#9CA3AF] text-sm focus:outline-none focus:border-[#047857]"
               />
             </div>
           </div>
 
           <div>
-            <label className="block text-xs font-medium text-[#202428] mb-1">Kata Sandi</label>
+            <label className="block text-xs font-bold text-[#111827] mb-1">Kata Sandi (Minimal 8 karakter)</label>
             <div className="relative">
-              <Lock className="w-4 h-4 text-[#737C83] absolute left-3 top-3" />
+              <Lock className="w-4 h-4 text-[#6B7280] absolute left-3 top-3" />
               <input
                 type="password"
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
                 placeholder="Minimal 8 karakter"
-                className="w-full pl-10 pr-4 py-2.5 rounded-lg bg-[#FFFFFF] border border-[#E2E5E8] text-[#202428] placeholder-[#929292] text-sm focus:outline-none focus:border-[#245B78]"
+                required
+                minLength={8}
+                className="w-full pl-10 pr-4 py-2.5 rounded-xl bg-[#FFFFFF] border border-[#D1D5DB] text-[#111827] placeholder-[#9CA3AF] text-sm focus:outline-none focus:border-[#047857]"
               />
             </div>
           </div>
 
-          <Link
-            to={PATHS.USER.DASHBOARD}
-            className="w-full flex items-center justify-center gap-2 py-2.5 px-4 rounded-lg bg-[#245B78] hover:bg-[#1D4B64] text-white font-semibold text-sm transition-all pt-2"
+          <button
+            type="submit"
+            disabled={isSubmitting}
+            className="w-full flex items-center justify-center gap-2 py-3 px-4 rounded-xl bg-[#047857] hover:bg-[#065F46] text-white font-bold text-sm transition-all shadow-xs pt-2 disabled:opacity-50"
           >
-            Daftar Akun Baru
-          </Link>
+            <span>{isSubmitting ? 'Mendaftarkan Akun...' : 'Daftar Akun Baru'}</span>
+            <ArrowRight className="w-4 h-4" />
+          </button>
         </form>
 
-        <div className="text-center text-xs text-[#596168] pt-2 border-t border-[#E2E5E8]">
+        <div className="text-center text-xs text-[#4B5563] pt-2 border-t border-[#E5E7EB]">
           Sudah memiliki akun terdaftar?{' '}
-          <Link to={PATHS.PUBLIC.LOGIN} className="text-[#245B78] hover:text-[#1D4B64] font-semibold">
+          <Link to={PATHS.PUBLIC.LOGIN} className="text-[#047857] hover:text-[#065F46] font-bold">
             Masuk disini
           </Link>
         </div>

@@ -1,4 +1,5 @@
 import { createBrowserRouter } from 'react-router-dom';
+import { ProtectedRoute } from '../../components/shared/ProtectedRoute';
 
 // Layouts
 import { PublicLayout } from '../../layouts/public/PublicLayout';
@@ -66,10 +67,14 @@ export const router = createBrowserRouter([
     ],
   },
 
-  // Area B: User Portal
+  // Area B: User Portal (Requires authentication)
   {
     path: '/user',
-    element: <UserLayout />,
+    element: (
+      <ProtectedRoute requiredRoles={['user', 'admin', 'analyst', 'operator', 'super_admin']}>
+        <UserLayout />
+      </ProtectedRoute>
+    ),
     children: [
       { index: true, element: <UserDashboardPage /> },
       { path: 'dashboard', element: <UserDashboardPage /> },
@@ -81,10 +86,14 @@ export const router = createBrowserRouter([
     ],
   },
 
-  // Area C: Admin Dashboard
+  // Area C: Admin Dashboard (Strictly admin & super_admin)
   {
     path: '/admin',
-    element: <AdminLayout />,
+    element: (
+      <ProtectedRoute requiredRoles={['admin', 'super_admin']}>
+        <AdminLayout />
+      </ProtectedRoute>
+    ),
     children: [
       { index: true, element: <AdminDashboardPage /> },
       { path: 'dashboard', element: <AdminDashboardPage /> },
@@ -98,10 +107,14 @@ export const router = createBrowserRouter([
     ],
   },
 
-  // Area D: Intelligence Center
+  // Area D: Intelligence Center (Analyst, Operator, Admin, Super Admin)
   {
     path: '/intelligence-center',
-    element: <IntelligenceLayout />,
+    element: (
+      <ProtectedRoute requiredRoles={['analyst', 'operator', 'admin', 'super_admin']}>
+        <IntelligenceLayout />
+      </ProtectedRoute>
+    ),
     children: [
       { index: true, element: <IntelligenceOverviewPage /> },
       { path: 'overview', element: <IntelligenceOverviewPage /> },
