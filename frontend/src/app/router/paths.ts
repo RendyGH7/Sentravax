@@ -1,0 +1,42 @@
+export const PATHS = {
+  PUBLIC: {
+    HOME: '/',
+    MAP: '/map',
+    DISASTERS: '/disasters',
+    WARNINGS: '/warnings',
+    PREPAREDNESS: '/preparedness',
+    EDUCATION: '/education',
+    ABOUT: '/about',
+    LOGIN: '/login',
+    REGISTER: '/register',
+    FORGOT_PASSWORD: '/forgot-password',
+  },
+  USER: {
+    DASHBOARD: '/user/dashboard',
+    REPORTS: '/user/reports',
+    CREATE_REPORT: '/user/reports/create',
+    REGIONS: '/user/regions',
+    NOTIFICATIONS: '/user/notifications',
+    SETTINGS: '/user/settings',
+  },
+  ADMIN: {
+    DASHBOARD: '/admin/dashboard',
+    USERS: '/admin/users',
+    REPORTS: '/admin/reports',
+    DISASTERS: '/admin/disasters',
+    ALERTS: '/admin/alerts',
+    EDUCATION: '/admin/education',
+    DATA_SOURCES: '/admin/data-sources',
+    AUDIT_LOGS: '/admin/audit-logs',
+  },
+  INTELLIGENCE: {
+    OVERVIEW: '/intelligence-center/overview',
+    MAP: '/intelligence-center/map',
+    RISK_ANALYSIS: '/intelligence-center/risk-analysis',
+    AI_INSIGHTS: '/intelligence-center/ai-insights',
+    DATA_SOURCES: '/intelligence-center/data-sources',
+    EVENTS: '/intelligence-center/events',
+    ALERT_OPERATIONS: '/intelligence-center/alert-operations',
+  },
+} as const;
+
