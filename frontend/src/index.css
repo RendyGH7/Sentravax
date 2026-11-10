@@ -2,22 +2,58 @@
 
 @layer base {
   :root {
-    --bg-deep: #070A13;
-    --bg-petrol: #0C1A22;
-    --accent-cyan: #00F2FE;
-    --accent-glacier: #86B6CE;
-    --accent-emerald: #10B981;
-    --accent-amber: #E0A23A;
-    --accent-rose: #EE7C73;
+    /* Family 1: Light Theme (Public Website & User Portal) */
+    --light-bg: #FFFFFF;
+    --light-surface: #FFFFFF;
+    --light-surface-muted: #F5F6F7;
+    --light-surface-subtle: #F0F2F3;
+    --light-text: #202428;
+    --light-text-secondary: #596168;
+    --light-text-muted: #737C83;
+    --light-border: #E2E5E8;
+    --light-primary: #245B78;
+    --light-primary-hover: #1D4B64;
+    --light-primary-soft: #EAF1F5;
+    --light-success: #28734D;
+    --light-warning: #8A5A13;
+    --light-danger: #B33A35;
+    --light-info: #315F86;
+
+    /* Family 2: Dark Neutral Theme (Admin Dashboard & Intelligence Center) */
+    --dark-bg: #111111;
+    --dark-surface: #191919;
+    --dark-surface-raised: #222222;
+    --dark-surface-hover: #2A2A2A;
+    --dark-text: #F2F2F2;
+    --dark-text-secondary: #B8B8B8;
+    --dark-text-muted: #929292;
+    --dark-border: #343434;
+    --dark-primary: #A9C2D1;
+    --dark-primary-hover: #C0D2DC;
+    --dark-primary-soft: #283139;
+    --dark-success: #70A987;
+    --dark-warning: #D2A45E;
+    --dark-danger: #D47A74;
+    --dark-info: #8BAFC8;
+
+    /* Motion Tokens */
+    --motion-fast: 140ms;
+    --motion-base: 180ms;
+    --motion-panel: 220ms;
+    --motion-ease: cubic-bezier(0.2, 0, 0, 1);
+
+    /* Skeleton Base Tokens */
+    --skeleton-light-base: #EAECEE;
+    --skeleton-light-highlight: #F5F7F8;
+    --skeleton-dark-base: #222222;
+    --skeleton-dark-highlight: #2A2A2A;
   }
 
   html, body {
     margin: 0;
     padding: 0;
     min-height: 100%;
-    background-color: #070A13;
-    color: #F8FAFC;
-    font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
   }
@@ -29,18 +65,53 @@
   }
 }
 
-/* Glassmorphism utility helpers */
-.glass-panel {
-  background: rgba(15, 23, 42, 0.7);
-  backdrop-filter: blur(16px);
-  -webkit-backdrop-filter: blur(16px);
-  border: 1px solid rgba(255, 255, 255, 0.08);
+/* Skeleton Loading Utilities */
+.skeleton-light {
+  position: relative;
+  overflow: hidden;
+  background-color: var(--skeleton-light-base);
 }
 
-.glass-panel-glow {
-  background: rgba(15, 23, 42, 0.75);
-  backdrop-filter: blur(20px);
-  -webkit-backdrop-filter: blur(20px);
-  border: 1px solid rgba(0, 242, 254, 0.2);
-  box-shadow: 0 0 25px -5px rgba(0, 242, 254, 0.15);
+.skeleton-light::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  transform: translateX(-100%);
+  background: linear-gradient(90deg, transparent, var(--skeleton-light-highlight), transparent);
+  animation: skeleton-shimmer 1.6s ease-in-out infinite;
+}
+
+.skeleton-dark {
+  position: relative;
+  overflow: hidden;
+  background-color: var(--skeleton-dark-base);
+}
+
+.skeleton-dark::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  transform: translateX(-100%);
+  background: linear-gradient(90deg, transparent, var(--skeleton-dark-highlight), transparent);
+  animation: skeleton-shimmer 1.6s ease-in-out infinite;
+}
+
+@keyframes skeleton-shimmer {
+  100% {
+    transform: translateX(100%);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  :root {
+    --motion-fast: 0ms;
+    --motion-base: 0ms;
+    --motion-panel: 0ms;
+  }
+
+  .skeleton-light::after,
+  .skeleton-dark::after {
+    animation: none;
+    display: none;
+  }
 }
