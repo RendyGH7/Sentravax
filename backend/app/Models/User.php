@@ -38,16 +38,12 @@ class User extends Authenticatable implements MustVerifyEmail, PasskeyUser
 
     public const ROLE_USER = 'user';
     public const ROLE_ADMIN = 'admin';
-    public const ROLE_ANALYST = 'analyst';
-    public const ROLE_OPERATOR = 'operator';
-    public const ROLE_SUPER_ADMIN = 'super_admin';
+    public const ROLE_INTELLIGENCE = 'intelligence';
 
     public const ROLES = [
         self::ROLE_USER,
         self::ROLE_ADMIN,
-        self::ROLE_ANALYST,
-        self::ROLE_OPERATOR,
-        self::ROLE_SUPER_ADMIN,
+        self::ROLE_INTELLIGENCE,
     ];
 
     /**
@@ -62,15 +58,13 @@ class User extends Authenticatable implements MustVerifyEmail, PasskeyUser
     }
 
     /**
-     * Check if user is staff (admin, analyst, operator, super_admin).
+     * Check if user is staff (admin or intelligence).
      */
     public function isStaff(): bool
     {
         return in_array($this->role, [
             self::ROLE_ADMIN,
-            self::ROLE_SUPER_ADMIN,
-            self::ROLE_ANALYST,
-            self::ROLE_OPERATOR,
+            self::ROLE_INTELLIGENCE,
         ], true);
     }
 

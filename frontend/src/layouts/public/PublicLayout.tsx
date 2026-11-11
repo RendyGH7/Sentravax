@@ -119,9 +119,9 @@ export const PublicLayout: React.FC = () => {
               <>
                 <Link
                   to={
-                    user.role === 'admin' || user.role === 'super_admin'
+                    user.role === 'admin'
                       ? PATHS.ADMIN.DASHBOARD
-                      : user.role === 'analyst' || user.role === 'operator'
+                      : user.role === 'intelligence'
                       ? PATHS.INTELLIGENCE.OVERVIEW
                       : PATHS.USER.DASHBOARD
                   }

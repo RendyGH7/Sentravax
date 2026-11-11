@@ -3,12 +3,17 @@
 namespace Tests\Feature;
 
 use App\Models\User;
-use Illuminate\Support\Facades\Hash;
 use Laravel\Sanctum\Sanctum;
 use Tests\TestCase;
 
 class AuthApiTest extends TestCase
 {
+    protected function setUp(): void
+    {
+        parent::setUp();
+        $this->seed(\Database\Seeders\SentravaxMasterSeeder::class);
+    }
+
     /**
      * Test health check remains operational.
      */
@@ -60,7 +65,7 @@ class AuthApiTest extends TestCase
                 'data' => [
                     'user' => [
                         'email' => 'admin@sentravax.go.id',
-                        'role' => 'admin',
+                        'role' => User::ROLE_ADMIN,
                     ],
                     'token_type' => 'Bearer',
                 ],
@@ -91,7 +96,7 @@ class AuthApiTest extends TestCase
                     'user' => [
                         'name' => 'Warga Baru',
                         'email' => $uniqueEmail,
-                        'role' => User::ROLE_USER, // Strictly forced to 'user'!
+                        'role' => User::ROLE_USER,
                     ],
                 ],
             ]);
@@ -106,7 +111,7 @@ class AuthApiTest extends TestCase
      */
     public function test_auth_me_returns_current_user(): void
     {
-        $user = User::where('email', 'analyst@sentravax.go.id')->firstOrFail();
+        $user = User::where('email', 'intelligence@sentravax.go.id')->firstOrFail();
         Sanctum::actingAs($user);
 
         $response = $this->getJson('/api/v1/auth/me');
@@ -116,15 +121,15 @@ class AuthApiTest extends TestCase
                 'success' => true,
                 'data' => [
                     'user' => [
-                        'email' => 'analyst@sentravax.go.id',
-                        'role' => 'analyst',
+                        'email' => 'intelligence@sentravax.go.id',
+                        'role' => User::ROLE_INTELLIGENCE,
                     ],
                 ],
             ]);
     }
 
     /**
-     * Test server-side role authorization blocks non-admin from admin routes.
+     * Test server-side role authorization blocks 'user' from Admin area.
      */
     public function test_role_middleware_blocks_user_from_admin_area(): void
     {
@@ -141,9 +146,27 @@ class AuthApiTest extends TestCase
     }
 
     /**
-     * Test server-side role authorization permits admin to access admin routes.
+     * Test server-side role authorization blocks 'intelligence' from Admin area.
+     * Admin and Intelligence must remain strictly separated.
      */
-    public function test_role_middleware_permits_admin(): void
+    public function test_role_middleware_blocks_intelligence_from_admin_area(): void
+    {
+        $intel = User::where('email', 'intelligence@sentravax.go.id')->firstOrFail();
+        Sanctum::actingAs($intel);
+
+        $response = $this->getJson('/api/v1/admin/ping');
+
+        $response->assertStatus(403)
+            ->assertJson([
+                'success' => false,
+                'error' => 'FORBIDDEN_ROLE',
+            ]);
+    }
+
+    /**
+     * Test server-side role authorization permits 'admin' to access Admin area.
+     */
+    public function test_role_middleware_permits_admin_to_admin_area(): void
     {
         $admin = User::where('email', 'admin@sentravax.go.id')->firstOrFail();
         Sanctum::actingAs($admin);
@@ -158,15 +181,55 @@ class AuthApiTest extends TestCase
     }
 
     /**
-     * Test role middleware permits super_admin to access all staff routes.
+     * Test server-side role authorization blocks 'admin' from Intelligence area.
+     * Admin and Intelligence must remain strictly separated.
      */
-    public function test_super_admin_has_full_staff_access(): void
+    public function test_role_middleware_blocks_admin_from_intelligence_area(): void
     {
-        $superAdmin = User::where('email', 'superadmin@sentravax.go.id')->firstOrFail();
-        Sanctum::actingAs($superAdmin);
+        $admin = User::where('email', 'admin@sentravax.go.id')->firstOrFail();
+        Sanctum::actingAs($admin);
 
-        $this->getJson('/api/v1/admin/ping')->assertStatus(200);
-        $this->getJson('/api/v1/intel/ping')->assertStatus(200);
+        $response = $this->getJson('/api/v1/intel/ping');
+
+        $response->assertStatus(403)
+            ->assertJson([
+                'success' => false,
+                'error' => 'FORBIDDEN_ROLE',
+            ]);
+    }
+
+    /**
+     * Test server-side role authorization permits 'intelligence' to Intelligence area.
+     */
+    public function test_role_middleware_permits_intelligence_to_intelligence_area(): void
+    {
+        $intel = User::where('email', 'intelligence@sentravax.go.id')->firstOrFail();
+        Sanctum::actingAs($intel);
+
+        $response = $this->getJson('/api/v1/intel/ping');
+
+        $response->assertStatus(200)
+            ->assertJson([
+                'success' => true,
+                'message' => 'Otorisasi Intelligence Center terverifikasi.',
+            ]);
+    }
+
+    /**
+     * Test User Portal is accessible to all authenticated roles ('user', 'admin', 'intelligence').
+     */
+    public function test_all_authenticated_roles_can_access_user_portal(): void
+    {
+        $user = User::where('email', 'user@sentravax.id')->firstOrFail();
+        Sanctum::actingAs($user);
+        $this->getJson('/api/v1/user/ping')->assertStatus(200);
+
+        $admin = User::where('email', 'admin@sentravax.go.id')->firstOrFail();
+        Sanctum::actingAs($admin);
+        $this->getJson('/api/v1/user/ping')->assertStatus(200);
+
+        $intel = User::where('email', 'intelligence@sentravax.go.id')->firstOrFail();
+        Sanctum::actingAs($intel);
         $this->getJson('/api/v1/user/ping')->assertStatus(200);
     }
 
@@ -186,4 +249,3 @@ class AuthApiTest extends TestCase
             ]);
     }
 }
-

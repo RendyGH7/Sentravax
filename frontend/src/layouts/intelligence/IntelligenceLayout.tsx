@@ -14,7 +14,6 @@ import {
   Menu, 
   X, 
   Wifi, 
-  ShieldAlert,
   Server,
   LogOut
 } from 'lucide-react';
@@ -120,11 +119,11 @@ export const IntelligenceLayout: React.FC = () => {
         {/* Intelligence Sidebar Footer */}
         <div className="p-3 border-t border-[#2C2C2C] space-y-1 bg-[#121212]">
           <Link
-            to={PATHS.ADMIN.DASHBOARD}
-            className="flex items-center gap-2.5 px-3 py-2 rounded-lg text-xs font-bold text-[#F59E0B] hover:text-[#D97706] hover:bg-[#212121] transition-colors"
+            to={PATHS.USER.DASHBOARD}
+            className="flex items-center gap-2.5 px-3 py-2 rounded-lg text-xs font-semibold text-[#10B981] hover:text-[#34D399] hover:bg-[#212121] transition-colors"
           >
-            <ShieldAlert className="w-4 h-4" />
-            Ke Admin Dashboard
+            <Layers className="w-4 h-4 text-[#10B981]" />
+            Portal Warga
           </Link>
           <Link
             to={PATHS.PUBLIC.HOME}
@@ -172,7 +171,7 @@ export const IntelligenceLayout: React.FC = () => {
             </div>
             <div className="flex items-center gap-2 bg-[#212121] text-[#F59E0B] px-3.5 py-1.5 rounded-lg border border-amber-500/30 font-bold">
               <Server className="w-3.5 h-3.5" />
-              <span>{user?.name ? `${user.role.toUpperCase()}: ${user.name.split(' ')[0]}` : 'ANALYST: ROOT-OPS'}</span>
+              <span>{user?.name ? `${user.role.toUpperCase()}: ${user.name.split(' ')[0]}` : 'INTELLIGENCE: OPS'}</span>
             </div>
           </div>
         </header>

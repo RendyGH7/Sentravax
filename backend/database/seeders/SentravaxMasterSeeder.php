@@ -35,27 +35,15 @@ class SentravaxMasterSeeder extends Seeder
 
         $users = [
             [
-                'name' => 'Super Administrator SENTRAVAX',
-                'email' => 'superadmin@sentravax.go.id',
-                'role' => User::ROLE_SUPER_ADMIN,
-                'email_verified_at' => now(),
-            ],
-            [
-                'name' => 'Administrator Posko',
+                'name' => 'Administrator SENTRAVAX',
                 'email' => 'admin@sentravax.go.id',
                 'role' => User::ROLE_ADMIN,
                 'email_verified_at' => now(),
             ],
             [
-                'name' => 'Analis Geospasial Multi-Hazard',
-                'email' => 'analyst@sentravax.go.id',
-                'role' => User::ROLE_ANALYST,
-                'email_verified_at' => now(),
-            ],
-            [
-                'name' => 'Operator Verifikasi Laporan',
-                'email' => 'operator@sentravax.go.id',
-                'role' => User::ROLE_OPERATOR,
+                'name' => 'Analis Intelijen Kebencanaan',
+                'email' => 'intelligence@sentravax.go.id',
+                'role' => User::ROLE_INTELLIGENCE,
                 'email_verified_at' => now(),
             ],
             [

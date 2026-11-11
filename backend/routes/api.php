@@ -61,9 +61,13 @@ Route::prefix('auth')->group(function () {
 /*
 |--------------------------------------------------------------------------
 | Role Authorization Verification Endpoints (Backend Protected)
+| Standard Matrix:
+| - Admin Area: Strictly role 'admin'
+| - Intelligence Area: Strictly role 'intelligence'
+| - User Portal: Authenticated roles ('user', 'admin', 'intelligence')
 |--------------------------------------------------------------------------
 */
-Route::middleware(['auth:sanctum', 'role:admin,super_admin'])->group(function () {
+Route::middleware(['auth:sanctum', 'role:admin'])->group(function () {
     Route::get('/admin/ping', function () {
         return response()->json([
             'success' => true,
@@ -73,7 +77,7 @@ Route::middleware(['auth:sanctum', 'role:admin,super_admin'])->group(function ()
     })->name('api.admin.ping');
 });
 
-Route::middleware(['auth:sanctum', 'role:analyst,operator,super_admin,admin'])->group(function () {
+Route::middleware(['auth:sanctum', 'role:intelligence'])->group(function () {
     Route::get('/intel/ping', function () {
         return response()->json([
             'success' => true,
@@ -83,7 +87,7 @@ Route::middleware(['auth:sanctum', 'role:analyst,operator,super_admin,admin'])->
     })->name('api.intel.ping');
 });
 
-Route::middleware(['auth:sanctum', 'role:user,admin,super_admin,analyst,operator'])->group(function () {
+Route::middleware(['auth:sanctum', 'role:user,admin,intelligence'])->group(function () {
     Route::get('/user/ping', function () {
         return response()->json([
             'success' => true,

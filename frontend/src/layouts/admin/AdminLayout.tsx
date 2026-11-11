@@ -18,7 +18,6 @@ import {
   Search,
   Bell,
   Cpu,
-  Radio,
   LogOut
 } from 'lucide-react';
 import { toast } from 'sonner';
@@ -123,11 +122,11 @@ export const AdminLayout: React.FC = () => {
         {/* Sidebar Footer Link */}
         <div className="p-3 border-t border-[#2C2C2C] space-y-1 bg-[#121212]">
           <Link
-            to={PATHS.INTELLIGENCE.OVERVIEW}
-            className="flex items-center gap-2.5 px-3 py-2 rounded-lg text-xs font-bold text-[#10B981] hover:text-[#34D399] hover:bg-[#212121] transition-colors"
+            to={PATHS.USER.DASHBOARD}
+            className="flex items-center gap-2.5 px-3 py-2 rounded-lg text-xs font-semibold text-[#10B981] hover:text-[#34D399] hover:bg-[#212121] transition-colors"
           >
-            <Radio className="w-4 h-4 text-[#10B981]" />
-            Ke Intelligence Center
+            <Users className="w-4 h-4 text-[#10B981]" />
+            Portal Warga
           </Link>
           <Link
             to={PATHS.PUBLIC.HOME}

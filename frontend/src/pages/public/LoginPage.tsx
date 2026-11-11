@@ -37,9 +37,9 @@ export const LoginPage: React.FC = () => {
         return;
       }
 
-      if (user.role === 'admin' || user.role === 'super_admin') {
+      if (user.role === 'admin') {
         navigate(PATHS.ADMIN.DASHBOARD, { replace: true });
-      } else if (user.role === 'analyst' || user.role === 'operator') {
+      } else if (user.role === 'intelligence') {
         navigate(PATHS.INTELLIGENCE.OVERVIEW, { replace: true });
       } else {
         navigate(PATHS.USER.DASHBOARD, { replace: true });
@@ -91,10 +91,10 @@ export const LoginPage: React.FC = () => {
             </button>
             <button
               type="button"
-              onClick={() => handleSelectDevAccount('analyst@sentravax.go.id')}
+              onClick={() => handleSelectDevAccount('intelligence@sentravax.go.id')}
               className="px-2 py-1.5 rounded-lg border border-[#D1D5DB] bg-white hover:bg-amber-50 hover:border-amber-200 text-[#111827] font-semibold transition-colors"
             >
-              Analis
+              Intelijen
             </button>
             <button
               type="button"

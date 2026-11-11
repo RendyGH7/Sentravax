@@ -71,7 +71,7 @@ export const router = createBrowserRouter([
   {
     path: '/user',
     element: (
-      <ProtectedRoute requiredRoles={['user', 'admin', 'analyst', 'operator', 'super_admin']}>
+      <ProtectedRoute requiredRoles={['user', 'admin', 'intelligence']}>
         <UserLayout />
       </ProtectedRoute>
     ),
@@ -86,11 +86,11 @@ export const router = createBrowserRouter([
     ],
   },
 
-  // Area C: Admin Dashboard (Strictly admin & super_admin)
+  // Area C: Admin Dashboard (Strictly admin)
   {
     path: '/admin',
     element: (
-      <ProtectedRoute requiredRoles={['admin', 'super_admin']}>
+      <ProtectedRoute requiredRoles={['admin']}>
         <AdminLayout />
       </ProtectedRoute>
     ),
@@ -107,11 +107,11 @@ export const router = createBrowserRouter([
     ],
   },
 
-  // Area D: Intelligence Center (Analyst, Operator, Admin, Super Admin)
+  // Area D: Intelligence Center (Strictly intelligence)
   {
     path: '/intelligence-center',
     element: (
-      <ProtectedRoute requiredRoles={['analyst', 'operator', 'admin', 'super_admin']}>
+      <ProtectedRoute requiredRoles={['intelligence']}>
         <IntelligenceLayout />
       </ProtectedRoute>
     ),

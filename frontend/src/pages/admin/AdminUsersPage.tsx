@@ -9,7 +9,7 @@ export const AdminUsersPage: React.FC = () => {
       <AreaPlaceholder
         area="ADMIN"
         title="Manajemen Pengguna & Otorisasi Peran"
-        description="Pengelolaan akun pengguna lintas peran: Warga (user), Operator tanggap darurat (operator), Analis risiko (analyst), Administrator wilayah (admin), hingga Super Admin."
+        description="Pengelolaan akun pengguna lintas peran: Warga Siaga (user), Analis & Operator Kebencanaan (intelligence), serta Administrator Sistem (admin)."
         route={PATHS.ADMIN.USERS}
         icon={Users}
         features={[
