@@ -27,7 +27,7 @@ class AuthController extends Controller
 
         $remember = $validated['remember'] ?? false;
 
-        if (! Auth::attempt(['email' => $validated['email'], 'password' => $validated['password']], $remember)) {
+        if (! Auth::guard('web')->attempt(['email' => $validated['email'], 'password' => $validated['password']], $remember)) {
             return response()->json([
                 'success' => false,
                 'message' => 'Email atau kata sandi tidak cocok dengan data terdaftar.',
@@ -36,7 +36,7 @@ class AuthController extends Controller
         }
 
         /** @var User $user */
-        $user = Auth::user();
+        $user = Auth::guard('web')->user();
 
         // Regenerate session for SPA cookie-based protection
         if ($request->hasSession()) {
@@ -86,7 +86,7 @@ class AuthController extends Controller
             'email_verified_at' => now(),
         ]);
 
-        Auth::login($user);
+        Auth::guard('web')->login($user);
 
         if ($request->hasSession()) {
             $request->session()->regenerate();
