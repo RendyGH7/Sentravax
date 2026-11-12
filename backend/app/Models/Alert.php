@@ -12,6 +12,8 @@ class Alert extends Model
 
     protected $fillable = [
         'hazard_event_id',
+        'region_id',
+        'hazard_type_id',
         'created_by',
         'title',
         'message',
@@ -28,6 +30,16 @@ class Alert extends Model
             'starts_at' => 'datetime',
             'expires_at' => 'datetime',
         ];
+    }
+
+    public function region(): BelongsTo
+    {
+        return $this->belongsTo(Region::class, 'region_id');
+    }
+
+    public function hazardType(): BelongsTo
+    {
+        return $this->belongsTo(HazardType::class, 'hazard_type_id');
     }
 
     public function hazardEvent(): BelongsTo

@@ -12,6 +12,9 @@ class RiskAssessment extends Model
 
     protected $fillable = [
         'hazard_event_id',
+        'region_id',
+        'hazard_type_id',
+        'title',
         'risk_score',
         'risk_level',
         'methodology_version',
@@ -30,6 +33,16 @@ class RiskAssessment extends Model
             'calculation_factors' => 'array',
             'assessed_at' => 'datetime',
         ];
+    }
+
+    public function region(): BelongsTo
+    {
+        return $this->belongsTo(Region::class, 'region_id');
+    }
+
+    public function hazardType(): BelongsTo
+    {
+        return $this->belongsTo(HazardType::class, 'hazard_type_id');
     }
 
     public function hazardEvent(): BelongsTo

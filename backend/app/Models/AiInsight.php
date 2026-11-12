@@ -11,6 +11,9 @@ class AiInsight extends Model
 
     protected $fillable = [
         'risk_assessment_id',
+        'title',
+        'region_id',
+        'hazard_type_id',
         'insight_type',
         'summary',
         'recommendations',
@@ -27,6 +30,16 @@ class AiInsight extends Model
             'confidence_score' => 'decimal:3',
             'evidence' => 'array',
         ];
+    }
+
+    public function region(): BelongsTo
+    {
+        return $this->belongsTo(Region::class, 'region_id');
+    }
+
+    public function hazardType(): BelongsTo
+    {
+        return $this->belongsTo(HazardType::class, 'hazard_type_id');
     }
 
     public function riskAssessment(): BelongsTo

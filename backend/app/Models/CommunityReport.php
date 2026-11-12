@@ -15,8 +15,10 @@ class CommunityReport extends Model
         'region_id',
         'title',
         'description',
+        'photo_path',
         'media',
         'status',
+        'cluster_id',
         'verified_by',
         'verified_at',
         'moderation_notes',
@@ -28,6 +30,11 @@ class CommunityReport extends Model
             'media' => 'array',
             'verified_at' => 'datetime',
         ];
+    }
+
+    public function verifications(): \Illuminate\Database\Eloquent\Relations\HasMany
+    {
+        return $this->hasMany(ReportVerification::class, 'community_report_id');
     }
 
     public function user(): BelongsTo

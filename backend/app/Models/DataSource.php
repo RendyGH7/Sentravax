@@ -33,4 +33,9 @@ class DataSource extends Model
     {
         return $this->hasMany(HazardEvent::class, 'data_source_id');
     }
+
+    public function syncRuns(): HasMany
+    {
+        return $this->hasMany(DataSourceSyncRun::class, 'data_source_id');
+    }
 }
