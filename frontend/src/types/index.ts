@@ -1,26 +1,31 @@
 export * from './auth';
+export * from './disaster';
+export * from './siaga';
+export * from './admin';
+export * from './intelligence';
 
-export interface ApiResponse<T = any> {
+export interface ApiResponse<T = unknown> {
   success: boolean;
-  message: string;
+  message?: string;
   data: T;
   meta?: {
-    timestamp: string;
-    version: string;
+    timestamp?: string;
+    version?: string;
     environment?: string;
-    [key: string]: any;
+    current_page?: number;
+    last_page?: number;
+    per_page?: number;
+    total?: number;
+    [key: string]: unknown;
   };
+  error?: string;
+  errors?: Record<string, string[]>;
 }
 
-export type HazardType = 
-  | 'flood'
-  | 'earthquake'
-  | 'tsunami'
-  | 'landslide'
-  | 'volcano'
-  | 'wildfire'
-  | 'extreme_weather'
-  | 'drought';
-
-export type AlertLevel = 'info' | 'advisory' | 'watch' | 'warning';
-
+export interface PaginatedData<T> {
+  current_page: number;
+  last_page: number;
+  per_page: number;
+  total: number;
+  data: T[];
+}

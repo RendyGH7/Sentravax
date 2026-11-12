@@ -4,6 +4,7 @@ import { useAuth } from '../../app/context/useAuth';
 import { type UserRole } from '../../types/auth';
 import { PATHS } from '../../app/router/paths';
 import { ShieldAlert, ArrowLeft } from 'lucide-react';
+import { LoadingSpinner } from './LoadingSpinner';
 
 interface ProtectedRouteProps {
   children: React.ReactNode;
@@ -16,12 +17,11 @@ export const ProtectedRoute: React.FC<ProtectedRouteProps> = ({ children, requir
 
   if (isLoading) {
     return (
-      <div className="min-h-screen flex items-center justify-center bg-[#F9FAFB]">
-        <div className="flex flex-col items-center gap-3">
-          <div className="w-8 h-8 rounded-full border-2 border-[#047857] border-t-transparent animate-spin"></div>
-          <span className="text-xs font-mono text-[#6B7280]">Memverifikasi otorisasi akses...</span>
-        </div>
-      </div>
+      <LoadingSpinner
+        fullPage
+        theme={location.pathname.startsWith('/admin') || location.pathname.startsWith('/intelligence-center') ? 'dark' : 'light'}
+        label="Memverifikasi otorisasi akses..."
+      />
     );
   }
 
@@ -56,3 +56,5 @@ export const ProtectedRoute: React.FC<ProtectedRouteProps> = ({ children, requir
 
   return <>{children}</>;
 };
+
+export default ProtectedRoute;

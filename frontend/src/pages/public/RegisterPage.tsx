@@ -2,8 +2,10 @@ import React, { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { PATHS } from '../../app/router/paths';
 import { useAuth } from '../../app/context/useAuth';
-import { Shield, User, Mail, Lock, Phone, AlertCircle, ArrowRight } from 'lucide-react';
+import { Shield, User, Mail, Lock, Phone, ArrowRight } from 'lucide-react';
 import { toast } from 'sonner';
+import { getApiErrorMessage } from '../../lib/api-error';
+import { ErrorMessage } from '../../components/shared/ErrorMessage';
 
 export const RegisterPage: React.FC = () => {
   const [name, setName] = useState('');
@@ -42,9 +44,7 @@ export const RegisterPage: React.FC = () => {
       toast.success(`Akun warga berhasil dibuat! Selamat datang, ${user.name}.`);
       navigate(PATHS.USER.DASHBOARD, { replace: true });
     } catch (err: unknown) {
-      const msg = (err as { response?: { data?: { message?: string } } })?.response?.data?.message ||
-                  (err as Error).message ||
-                  'Gagal melakukan pendaftaran akun.';
+      const msg = getApiErrorMessage(err, 'Gagal melakukan pendaftaran akun.');
       setErrorMessage(msg);
       toast.error(msg);
     } finally {
@@ -66,10 +66,10 @@ export const RegisterPage: React.FC = () => {
         </div>
 
         {errorMessage && (
-          <div className="p-3 rounded-xl bg-[#FEF2F2] border border-[#FECACA] flex items-start gap-2.5 text-xs text-[#DC2626]">
-            <AlertCircle className="w-4 h-4 shrink-0 mt-0.5" />
-            <span>{errorMessage}</span>
-          </div>
+          <ErrorMessage
+            message={errorMessage}
+            theme="light"
+          />
         )}
 
         <form className="space-y-3.5" onSubmit={handleSubmit}>

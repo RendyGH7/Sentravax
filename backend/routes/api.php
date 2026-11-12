@@ -65,6 +65,7 @@ Route::get('/health', function () {
 Route::prefix('auth')->group(function () {
     Route::post('/login', [AuthController::class, 'login'])->name('api.auth.login');
     Route::post('/register', [AuthController::class, 'register'])->name('api.auth.register');
+    Route::post('/token', [AuthController::class, 'issueToken'])->name('api.auth.token');
 
     Route::middleware('auth:sanctum')->group(function () {
         Route::get('/me', [AuthController::class, 'me'])->name('api.auth.me');

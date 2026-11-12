@@ -20,8 +20,8 @@ return Application::configure(basePath: dirname(__DIR__))
         $middleware->statefulApi();
 
         $middleware->validateCsrfTokens(except: [
-            'api/*',
             'sanctum/csrf-cookie',
+            'api/v1/auth/token', // Non-browser machine token exchange (stateless)
         ]);
 
         $middleware->alias([

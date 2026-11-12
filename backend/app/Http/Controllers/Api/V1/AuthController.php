@@ -143,8 +143,11 @@ class AuthController extends Controller
         $user = $request->user();
 
         if ($user) {
-            // Revoke current token if using personal access token
-            $user->currentAccessToken()?->delete();
+            $currentToken = $user->currentAccessToken();
+            // Revoke database personal access token if using Bearer token (not cookie-based TransientToken)
+            if ($currentToken instanceof \Laravel\Sanctum\PersonalAccessToken) {
+                $currentToken->delete();
+            }
         }
 
         // Invalidate web session
@@ -158,6 +161,48 @@ class AuthController extends Controller
         return response()->json([
             'success' => true,
             'message' => 'Sesi autentikasi telah diakhiri dengan aman.',
+        ]);
+    }
+
+    /**
+     * Dedicated endpoint for external / non-browser machine token issue.
+     * Used exclusively by CLI, background daemons, or machine integrations (not browser SPA).
+     */
+    public function issueToken(Request $request): JsonResponse
+    {
+        $validated = $request->validate([
+            'email' => ['required', 'string', 'email'],
+            'password' => ['required', 'string'],
+            'device_name' => ['nullable', 'string', 'max:255'],
+        ]);
+
+        $user = User::where('email', $validated['email'])->first();
+
+        if (! $user || ! Hash::check($validated['password'], $user->password)) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Email atau kata sandi tidak cocok.',
+                'error' => 'INVALID_CREDENTIALS',
+            ], Response::HTTP_UNAUTHORIZED);
+        }
+
+        $deviceName = $validated['device_name'] ?? 'external_client';
+        $token = $user->createToken($deviceName, ['*'], now()->addDays(30))->plainTextToken;
+
+        return response()->json([
+            'success' => true,
+            'message' => 'Token API eksternal berhasil diterbitkan.',
+            'data' => [
+                'user' => [
+                    'id' => $user->id,
+                    'name' => $user->name,
+                    'email' => $user->email,
+                    'role' => $user->role,
+                ],
+                'token' => $token,
+                'token_type' => 'Bearer',
+                'expires_at' => now()->addDays(30)->toIso8601String(),
+            ],
         ]);
     }
 }

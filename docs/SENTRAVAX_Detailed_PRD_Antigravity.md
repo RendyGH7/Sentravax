@@ -1,5 +1,8 @@
-444444444444444444444444# SENTRAVAX — Product Requirements Document (PRD)
+# SENTRAVAX — Product Requirements Document (PRD)
 ## AI-Powered Geospatial Intelligence & Community Resilience Platform
+
+> [!NOTE]
+> **KONSOLIDASI ROLE RESMI:** Sesuai keputusan arsitektur final, platform secara resmi hanya memiliki 3 peran (*canonical roles*): **`admin`**, **`intelligence`**, dan **`user`**. Peran *Analyst* dan *Operator* yang disebutkan pada draf PRD awal telah disatukan ke dalam kewenangan peran `intelligence`, sedangkan pengelolaan platform berada di bawah peran `admin`. Rujukan teknis hak akses terkini dapat dilihat pada [`backend-api-documentation.md`](./backend-api-documentation.md).
 
 **Dokumen:** Product Requirements Document  
 **Versi:** 1.0  
