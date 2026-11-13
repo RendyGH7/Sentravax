@@ -47,7 +47,8 @@ docs/
     ├── backend-verification-report.md    # Laporan Verifikasi Final Backend (90 Tests / 437 Assert)
     ├── frontend-integration-report.md    # Laporan Integrasi Fondasi Frontend Phase 1
     ├── authentication-security-report.md # Laporan Pengerasan Keamanan & Uji 12 Alur
-    └── browser-authentication-e2e-report.md # Laporan Verifikasi Real Browser E2E (15/15 Skenario Lulus)
+    ├── browser-authentication-e2e-report.md # Laporan Verifikasi Real Browser E2E (15/15 Skenario Lulus)
+    └── public-user-implementation-plan.md   # Rencana Implementasi Public Website & User Portal
 ```
 
 ---
@@ -107,6 +108,9 @@ File di dalam [`reports/`](./reports/) dipertahankan sebagai **bukti historis** 
 5. **[`reports/browser-authentication-e2e-report.md`](./reports/browser-authentication-e2e-report.md)**  
    *Status:* **REAL BROWSER E2E VERIFICATION REPORT (PASS)**.  
    *Peran:* Hasil verifikasi end-to-end langsung pada Google Chrome peramban nyata membuktikan 15 skenario interaksi browser, cookie HttpOnly, zero token di localStorage, dan isolasi RBAC 100% lulus.
+6. **[`reports/public-user-implementation-plan.md`](./reports/public-user-implementation-plan.md)**  
+   *Status:* **PRE-IMPLEMENTATION AUDIT & IMPLEMENTATION PLAN**.  
+   *Peran:* Rencana implementasi detail untuk Public Website dan User Portal (Siaga Personal), memetakan 11 endpoint publik dan 17 endpoint user, komponen reusable, urutan fase prioritas, dan mitigasi risiko teknis.
 
 ---
 
