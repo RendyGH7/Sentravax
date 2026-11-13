@@ -1,4 +1,4 @@
-import type { RegionItem, HazardTypeItem } from './disaster';
+import type { RegionItem, HazardTypeItem, AlertItem } from './disaster';
 
 export type RiskLevel = 'low' | 'medium' | 'high' | 'critical';
 
@@ -130,4 +130,132 @@ export interface CommunityReportItem {
   region?: RegionItem | null;
   created_at: string;
   verified_at?: string | null;
+}
+
+export interface CommunityReportDetail extends CommunityReportItem {
+  moderation_notes?: string | null;
+  verified_by?: number | null;
+  verifications?: Array<{
+    id: number;
+    verifier?: {
+      id: number;
+      name: string;
+      role: string;
+    } | null;
+    status: string;
+    notes?: string | null;
+    verified_at?: string | null;
+  }>;
+}
+
+export interface UserDashboardData {
+  user: {
+    id: number;
+    name: string;
+    email: string;
+    role: string;
+  };
+  preparedness_summary: {
+    total_items: number;
+    completed_items: number;
+    completion_percentage: number;
+    readiness_status: string;
+  };
+  saved_regions_count: number;
+  emergency_contacts_count: number;
+  active_regional_alerts: AlertItem[];
+  unread_notifications_count: number;
+}
+
+export interface UserSavedRegionItem {
+  id: number;
+  user_id: number;
+  region_id: number;
+  label: string;
+  is_primary: boolean;
+  notify_alerts: boolean;
+  created_at?: string;
+  updated_at?: string;
+  region: RegionItem;
+}
+
+export interface SaveRegionPayload {
+  region_id: number;
+  label?: string;
+  is_primary?: boolean;
+  notify_alerts?: boolean;
+}
+
+export interface UserNotificationItem {
+  id: number;
+  user_id: number;
+  alert_id?: number | null;
+  title: string;
+  body: string;
+  type?: string;
+  read_at?: string | null;
+  payload?: Record<string, unknown> | null;
+  created_at: string;
+  updated_at?: string;
+  alert?: AlertItem | null;
+}
+
+export interface ChecklistOverviewData {
+  categories: Record<string, GoBagChecklistItem[]>;
+  stats: {
+    total_items: number;
+    completed_items: number;
+    percentage: number;
+  };
+}
+
+export interface ToggleChecklistResult {
+  item_id: number;
+  is_completed: boolean;
+  total_completed: number;
+  percentage: number;
+}
+
+export interface FamilyPlanData {
+  plan: PreparednessPlanItem;
+  contacts: EmergencyContactItem[];
+}
+
+export interface UpdatePlanPayload {
+  title: string;
+  primary_meeting_point?: string | null;
+  secondary_meeting_point?: string | null;
+  evacuation_notes?: string | null;
+  custom_provisions?: Record<string, unknown> | null;
+}
+
+export interface CreateContactPayload {
+  name: string;
+  relationship: string;
+  phone_number: string;
+  is_emergency_priority?: boolean;
+}
+
+export interface CreateReportPayload {
+  hazard_type_id: number;
+  region_id: number;
+  title: string;
+  description: string;
+  latitude: number;
+  longitude: number;
+  photo?: File | null;
+}
+
+export interface CreateReportResult {
+  id: number;
+  title: string;
+  status: string;
+  photo_url?: string | null;
+  clustering?: {
+    cluster_id?: string;
+    is_duplicate?: boolean;
+    cluster_size?: number;
+    [key: string]: unknown;
+  } | null;
+  created_at: string;
 }

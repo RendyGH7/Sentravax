@@ -48,7 +48,8 @@ docs/
     ├── frontend-integration-report.md    # Laporan Integrasi Fondasi Frontend Phase 1
     ├── authentication-security-report.md # Laporan Pengerasan Keamanan & Uji 12 Alur
     ├── browser-authentication-e2e-report.md # Laporan Verifikasi Real Browser E2E (15/15 Skenario Lulus)
-    └── public-user-implementation-plan.md   # Rencana Implementasi Public Website & User Portal
+    ├── public-user-implementation-plan.md   # Rencana Implementasi Public Website & User Portal
+    └── phase-1a-api-services-report.md      # Laporan Implementasi Phase 1A: Typed API Services Foundation
 ```
 
 ---
@@ -111,6 +112,9 @@ File di dalam [`reports/`](./reports/) dipertahankan sebagai **bukti historis** 
 6. **[`reports/public-user-implementation-plan.md`](./reports/public-user-implementation-plan.md)**  
    *Status:* **PRE-IMPLEMENTATION AUDIT & IMPLEMENTATION PLAN**.  
    *Peran:* Rencana implementasi detail untuk Public Website dan User Portal (Siaga Personal), memetakan 11 endpoint publik dan 17 endpoint user, komponen reusable, urutan fase prioritas, dan mitigasi risiko teknis.
+7. **[`reports/phase-1a-api-services-report.md`](./reports/phase-1a-api-services-report.md)**  
+   *Status:* **PHASE 1A IMPLEMENTATION REPORT (PASS)**.  
+   *Peran:* Laporan implementasi lapisan Typed API Services untuk Public Website dan User Portal (28 method typed), verifikasi struktur controller backend aktual, hasil audit lint dan build.
 
 ---
 
