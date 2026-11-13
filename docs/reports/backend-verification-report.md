@@ -20,7 +20,7 @@ Audit final, rekonsiliasi pengujian, verifikasi integrasi provider data, dan pen
    - **BNPB Pusdatin**: **STATIC / CURATED** — Menggunakan data kejadian resmi terkurasi (live endpoint memerlukan jaringan/VPN intra-lembaga).
    - **NASA FIRMS**: **STATIC / CURATED** — Menggunakan data anomali termal satelit terkurasi wilayah Indonesia.
 3. **Verifikasi Proyeksi DEM 5m**: **TERVERIFIKASI & TRANSPARAN** — Berbasis skenario hidrologi terkomputasi DEMNAS BIG 0.27 arcsec (~8.1m resampled ke mesh 5m) untuk DAS Ciliwung Hilir. Disematkan penanda eksplisit `data_nature: DEMONSTRATION_SCENARIO` dan *safety disclaimer* agar tidak disalahartikan sebagai ramalan/prediksi mutlak.
-4. **Kontrak API (73 Rute)**: **TERKUNCI PENUH** — Kontrak API v1 telah dikunci dan didokumentasikan di `docs/backend-api-documentation.md`. Seluruh route, controller, validation rules, model Eloquent, dan database schema telah 100% konsisten.
+4. **Kontrak API (73 Rute)**: **TERKUNCI PENUH** — Kontrak API v1 telah dikunci dan didokumentasikan di [`core/API_CONTRACT.md`](../core/API_CONTRACT.md). Seluruh route, controller, validation rules, model Eloquent, dan database schema telah 100% konsisten.
 5. **Proteksi Frontend**: **100% Terjaga** — Direktori `frontend/` tidak tersentuh (0 file diubah).
 
 ---
@@ -102,7 +102,7 @@ Pada implementasi awal, URL yang digunakan adalah `.../TEKTONIK/autogempa.json` 
 
 ## 5. API Contract Lock (73 Endpoints)
 
-Seluruh 73 rute API telah terkunci dengan kontrak JSON yang ketat di [`docs/backend-api-documentation.md`](file:///C:/Users/RENDY/OneDrive/Documents/Sentravax/docs/backend-api-documentation.md):
+Seluruh 73 rute API telah terkunci dengan kontrak JSON yang ketat di [`core/API_CONTRACT.md`](../core/API_CONTRACT.md):
 
 ### Distribusi 73 Endpoint:
 - **System Health & Auth** (5 routes): `/health`, `/auth/login`, `/auth/register`, `/auth/me`, `/auth/logout`.

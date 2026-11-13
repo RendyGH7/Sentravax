@@ -33,8 +33,15 @@ export const LoginPage: React.FC = () => {
       const user = await login({ email, password });
       toast.success(`Selamat datang kembali, ${user.name}!`);
 
-      // Route based on destination or user role
-      if (fromLocation) {
+      // Route based on destination or user role (only if destination is permitted for role)
+      const isPathAllowedForRole = (role: string, path: string): boolean => {
+        if (role === 'admin') return path.startsWith('/admin');
+        if (role === 'intelligence') return path.startsWith('/intelligence-center');
+        if (role === 'user') return path.startsWith('/user');
+        return false;
+      };
+
+      if (fromLocation && isPathAllowedForRole(user.role, fromLocation)) {
         navigate(fromLocation, { replace: true });
         return;
       }

@@ -5,7 +5,7 @@ Status: **Design source of truth**
 Bahasa antarmuka: Bahasa Indonesia  
 Zona waktu tampilan: zona pengguna (default WIB)
 
-Dokumen ini mengatur seluruh keputusan visual, interaksi, aksesibilitas, dan performa SENTRAVAX. Gunakan bersama `SENTRAVAX_Detailed_PRD_Antigravity.md`, panduan lomba, Skill Anti Slop, serta referensi visual yang diberikan pemilik proyek.
+Dokumen ini mengatur seluruh keputusan visual, interaksi, aksesibilitas, dan performa SENTRAVAX. Gunakan bersama `PRD.md`, panduan lomba (`COMPETITION_GUIDE.md`), Skill Anti Slop, serta referensi visual yang diberikan pemilik proyek.
 
 ---
 

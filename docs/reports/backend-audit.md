@@ -5,11 +5,11 @@
 > Dokumen ini merupakan audit baseline teknis awal sebelum milestone penyelesaian backend. Seluruh kebutuhan skema, service, dan endpoint yang dicantumkan pada bagian "Gaps" dalam dokumen ini telah **100% diimplementasikan dan diverifikasi**.
 > 
 > Sumber kebenaran mutlak (SSOT) terkini dapat diakses pada:
-> - **Kontrak API Terkunci:** [`backend-api-documentation.md`](./backend-api-documentation.md)
-> - **Laporan Verifikasi Final:** [`backend-verification-report.md`](./backend-verification-report.md)
+> - **Kontrak API Terkunci:** [`core/API_CONTRACT.md`](../core/API_CONTRACT.md)
+> - **Laporan Verifikasi Final:** [`reports/backend-verification-report.md`](./backend-verification-report.md)
 
 **Tanggal Audit:** 12 November 2026  
-**Dokumen:** `docs/backend-audit.md`  
+**Dokumen:** `docs/reports/backend-audit.md`  
 **Sistem:** Laravel 13.40.0, PHP 8.4+, PostgreSQL 18.3 + PostGIS  
 **Tujuan:** Audit baseline teknis menyeluruh sebelum implementasi penuh REST API dan Database Engine SENTRAVAX.
 

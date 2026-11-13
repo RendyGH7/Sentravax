@@ -4,7 +4,7 @@
 **Status:** COMPLETE & VERIFIED (SECURITY HARDENED)  
 **Arsitektur:** React 19 + TypeScript + Vite + Tailwind CSS v4 <-> Laravel 13 REST API + PostgreSQL 18 + PostGIS 3.7  
 **Autentikasi:** Laravel Sanctum Stateful Session Cookie (HttpOnly) + Proteksi CSRF (Zero LocalStorage Tokens)  
-**Dokumen Pendukung:** [Laporan Pengerasan Keamanan Autentikasi](file:///C:/Users/RENDY/OneDrive/Documents/Sentravax/docs/authentication-security-report.md)  
+**Dokumen Pendukung:** [Laporan Pengerasan Keamanan Autentikasi](./authentication-security-report.md)  
 
 ---
 

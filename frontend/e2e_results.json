@@ -1,0 +1,2336 @@
+{
+  "passedCount": 15,
+  "total": 15,
+  "results": [
+    {
+      "scenarioNum": 1,
+      "name": "Guest membuka Public Website",
+      "passed": true,
+      "details": "URL: http://localhost:5173/ | Navigasi Beranda & Masuk ditemukan | Title: SENTRAVAX: Platform Intelijen Bencana dan Peringatan Dini"
+    },
+    {
+      "scenarioNum": 2,
+      "name": "Guest ditolak dari User Portal dan diredirect ke Login",
+      "passed": true,
+      "details": "URL tujuan: /user/dashboard -> Diarahkan ke: http://localhost:5173/login"
+    },
+    {
+      "scenarioNum": 3,
+      "name": "Login sebagai role user berhasil",
+      "passed": true,
+      "details": "Login dengan user@sentravax.id sukses"
+    },
+    {
+      "scenarioNum": 4,
+      "name": "User diarahkan ke /user/dashboard",
+      "passed": true,
+      "details": "Current URL: http://localhost:5173/user/dashboard"
+    },
+    {
+      "scenarioNum": 14,
+      "name": "Pemeriksaan Cookie HttpOnly & CSRF DevTools",
+      "passed": true,
+      "details": "Session Cookie: laravel-session (HttpOnly: true, SameSite: Lax) | CSRF Cookie: XSRF-TOKEN (HttpOnly: false)"
+    },
+    {
+      "scenarioNum": 15,
+      "name": "Verifikasi ZERO Token di localStorage / sessionStorage",
+      "passed": true,
+      "details": "sentravax_auth_token: null | localStorage length: 0 | sessionStorage length: 0"
+    },
+    {
+      "scenarioNum": 5,
+      "name": "Refresh browser mempertahankan sesi login tanpa token localStorage",
+      "passed": true,
+      "details": "URL setelah reload: http://localhost:5173/user/dashboard (Sesi re-hidrasi via session cookie HttpOnly sukses)"
+    },
+    {
+      "scenarioNum": 6,
+      "name": "User tidak dapat membuka Admin Dashboard (Akses silang diblokir)",
+      "passed": true,
+      "details": "Tampil banner: \"Akses Area Dibatasi\" | Role user tidak diizinkan masuk /admin/dashboard"
+    },
+    {
+      "scenarioNum": 7,
+      "name": "User tidak dapat membuka Intelligence Center (Akses silang diblokir)",
+      "passed": true,
+      "details": "Tampil banner: \"Akses Area Dibatasi\" | Role user tidak diizinkan masuk /intelligence-center/overview"
+    },
+    {
+      "scenarioNum": 8,
+      "name": "Logout sesi berhasil",
+      "passed": true,
+      "details": "URL setelah logout: http://localhost:5173/login"
+    },
+    {
+      "scenarioNum": 9,
+      "name": "Setelah logout, halaman terlindungi ditolak dan diredirect ke login",
+      "passed": true,
+      "details": "Mencoba membuka /user/dashboard setelah logout -> Ditolak, diarahkan ke: http://localhost:5173/login"
+    },
+    {
+      "scenarioNum": 10,
+      "name": "Login sebagai admin berhasil dan diarahkan ke /admin/dashboard",
+      "passed": true,
+      "details": "URL: http://localhost:5173/admin/dashboard | Konsol Admin terbuka dengan tema Dark"
+    },
+    {
+      "scenarioNum": 11,
+      "name": "Admin tidak dapat membuka Intelligence Center (Akses silang diblokir)",
+      "passed": true,
+      "details": "Tampil banner: \"Akses Area Dibatasi\" | Role admin tidak diizinkan masuk Intelligence Center"
+    },
+    {
+      "scenarioNum": 12,
+      "name": "Login sebagai intelligence berhasil dan diarahkan ke /intelligence-center/overview",
+      "passed": true,
+      "details": "URL: http://localhost:5173/intelligence-center/overview | Intelligence Center terbuka dengan tema Dark"
+    },
+    {
+      "scenarioNum": 13,
+      "name": "Intelligence tidak dapat membuka Admin Dashboard (Akses silang diblokir)",
+      "passed": true,
+      "details": "Tampil banner: \"Akses Area Dibatasi\" | Role intelligence tidak diizinkan masuk Admin Dashboard"
+    }
+  ],
+  "networkLogs": [
+    {
+      "type": "REQ",
+      "method": "GET",
+      "url": "http://localhost:8000/api/v1/auth/me",
+      "headers": {
+        "sec-ch-ua-platform": "\"Windows\"",
+        "referer": "http://localhost:5173/",
+        "user-agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) HeadlessChrome/157.0.0.0 Safari/537.36",
+        "accept": "application/json",
+        "sec-ch-ua": "\"Not-A.Brand\";v=\"99\", \"Google Chrome\";v=\"157\", \"Chromium\";v=\"157\"",
+        "sec-ch-ua-mobile": "?0"
+      }
+    },
+    {
+      "type": "REQ",
+      "method": "GET",
+      "url": "http://localhost:8000/api/v1/auth/me",
+      "headers": {
+        "sec-ch-ua-platform": "\"Windows\"",
+        "referer": "http://localhost:5173/",
+        "user-agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) HeadlessChrome/157.0.0.0 Safari/537.36",
+        "accept": "application/json",
+        "sec-ch-ua": "\"Not-A.Brand\";v=\"99\", \"Google Chrome\";v=\"157\", \"Chromium\";v=\"157\"",
+        "sec-ch-ua-mobile": "?0"
+      }
+    },
+    {
+      "type": "RES",
+      "status": 401,
+      "url": "http://localhost:8000/api/v1/auth/me",
+      "headers": {
+        "access-control-allow-credentials": "true",
+        "access-control-allow-origin": "http://localhost:5173",
+        "cache-control": "no-cache, private",
+        "connection": "close",
+        "content-type": "application/json",
+        "date": "Thu, 12 Nov 2026 15:06:50 GMT",
+        "host": "localhost:8000",
+        "set-cookie": "XSRF-TOKEN=eyJpdiI6InVkZkZ5a0xxSytIdVpLaVI4cUFVQ0E9PSIsInZhbHVlIjoiSGlwRmNLcVc2VjZjRjgxa0N4NzIyKzVOd1VvL0JnaUxkY240emg4ZFdJQ2g0Q1VvMG1lbkpGZDAwbU5Yazh5MWllOWdrZHlSNWVqNXR2MFo5bE4rOHgvcTJibzB6MDdjK2VJcE5IT1lKL2VjZU5HYVFNdFdSV1JhVVRjUzRCdVUiLCJtYWMiOiJjODQwY2ZjNzVkZGUzOGM0YTcwN2JiZDI0YWVhOTdiNjJmNTA4OGE5ZWE5OTc4M2MzNTgzMTU4NjEwZDA3OGQ0IiwidGFnIjoiIn0%3D; expires=Thu, 12 Nov 2026 17:06:50 GMT; Max-Age=7200; path=/; samesite=lax\n laravel-session=eyJpdiI6Im91eTZSTXhEMEQrcG9QS3c5Y2RoSWc9PSIsInZhbHVlIjoiNGk2KzBKc0lpTkhNZzBFYUtwQmthRGFtSHcwMUQzK010bkhTdThUeDJvaUVidzZaQnFoTHFQK2hzRXhna0lyWjJqVVI1b011d2VHclFLcnBMdG5pV1dyZitaSTdpQ05uQkdFTzVjQ2tKYzJaN1lVdzczOXprd3VVSGpZWlUxZjMiLCJtYWMiOiI5M2ViMTFmOWY3NGYzMjZmMjQwZTEzNTI3YzAxOTFjM2I3OWJhZmJkM2FlZDBjZTA1Zjk1YmNkMzBjZTBjNWRhIiwidGFnIjoiIn0%3D; expires=Thu, 12 Nov 2026 17:06:50 GMT; Max-Age=7200; path=/; httponly; samesite=lax",
+        "vary": "Origin",
+        "x-powered-by": "PHP/8.5.5"
+      }
+    },
+    {
+      "type": "RES",
+      "status": 401,
+      "url": "http://localhost:8000/api/v1/auth/me",
+      "headers": {
+        "access-control-allow-credentials": "true",
+        "access-control-allow-origin": "http://localhost:5173",
+        "cache-control": "no-cache, private",
+        "connection": "close",
+        "content-type": "application/json",
+        "date": "Thu, 12 Nov 2026 15:06:50 GMT",
+        "host": "localhost:8000",
+        "set-cookie": "XSRF-TOKEN=eyJpdiI6Ik1qOHRqL1hDcUJLV1dSZjVhbGFOa1E9PSIsInZhbHVlIjoicGZyR2ZiSmJucm5wMktDUHdTcXNHWjhQaERsc01vcjBOQmxKaTZyVUYwZHdPRHFDaGhsZHkrWXRTdi9waE1rNXlkelZDUXR6MXVhTzcyT21INDg2UWlEODA3R1dpaERIZytLazFINDVOdnk1M0FwbFRmK3JjZVBzSzFtdUxkOGYiLCJtYWMiOiJiMDc2NDQyZGY0ODA1ZTJmMjhhYzkxN2E1NzI4YTg2MjM1ZGMyYmFkOGM5NWM0OTJhZTI5NDYwYmU4NDdiOGU5IiwidGFnIjoiIn0%3D; expires=Thu, 12 Nov 2026 17:06:50 GMT; Max-Age=7200; path=/; samesite=lax\n laravel-session=eyJpdiI6IjhGdEZnd2RTN1JLUWM5RHdLdlNIdVE9PSIsInZhbHVlIjoiMmRsNmxGOWcwMC9PdG83TmhwK2VBdGpDZjVqUnVMR2t2MHA4cWJxOVhkZG9oTlRtdXcxbDlPRW5HSlFOZ1cyVnkraFVrcURhSEtnTXdjL2h1MzNkWmJ0NkVXR3JFR1IzZmd3clpWd1MyKzFqbjdVLzdQZFMrWUxNdWhLS0VoOWoiLCJtYWMiOiI5OTZjZTg3MDc5NzYxZDE1NTEzZDhkNjkxZDg5OTkzMzYyZmYyOTQ0YzQ3OGFjNjFhNDg5Y2RmYTA2MWViN2NjIiwidGFnIjoiIn0%3D; expires=Thu, 12 Nov 2026 17:06:50 GMT; Max-Age=7200; path=/; httponly; samesite=lax",
+        "vary": "Origin",
+        "x-powered-by": "PHP/8.5.5"
+      }
+    },
+    {
+      "type": "REQ",
+      "method": "GET",
+      "url": "http://localhost:8000/api/v1/auth/me",
+      "headers": {
+        "sec-ch-ua-platform": "\"Windows\"",
+        "x-xsrf-token": "eyJpdiI6Ik1qOHRqL1hDcUJLV1dSZjVhbGFOa1E9PSIsInZhbHVlIjoicGZyR2ZiSmJucm5wMktDUHdTcXNHWjhQaERsc01vcjBOQmxKaTZyVUYwZHdPRHFDaGhsZHkrWXRTdi9waE1rNXlkelZDUXR6MXVhTzcyT21INDg2UWlEODA3R1dpaERIZytLazFINDVOdnk1M0FwbFRmK3JjZVBzSzFtdUxkOGYiLCJtYWMiOiJiMDc2NDQyZGY0ODA1ZTJmMjhhYzkxN2E1NzI4YTg2MjM1ZGMyYmFkOGM5NWM0OTJhZTI5NDYwYmU4NDdiOGU5IiwidGFnIjoiIn0=",
+        "referer": "http://localhost:5173/",
+        "user-agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) HeadlessChrome/157.0.0.0 Safari/537.36",
+        "accept": "application/json",
+        "sec-ch-ua": "\"Not-A.Brand\";v=\"99\", \"Google Chrome\";v=\"157\", \"Chromium\";v=\"157\"",
+        "sec-ch-ua-mobile": "?0"
+      }
+    },
+    {
+      "type": "REQ",
+      "method": "GET",
+      "url": "http://localhost:8000/api/v1/auth/me",
+      "headers": {
+        "sec-ch-ua-platform": "\"Windows\"",
+        "x-xsrf-token": "eyJpdiI6Ik1qOHRqL1hDcUJLV1dSZjVhbGFOa1E9PSIsInZhbHVlIjoicGZyR2ZiSmJucm5wMktDUHdTcXNHWjhQaERsc01vcjBOQmxKaTZyVUYwZHdPRHFDaGhsZHkrWXRTdi9waE1rNXlkelZDUXR6MXVhTzcyT21INDg2UWlEODA3R1dpaERIZytLazFINDVOdnk1M0FwbFRmK3JjZVBzSzFtdUxkOGYiLCJtYWMiOiJiMDc2NDQyZGY0ODA1ZTJmMjhhYzkxN2E1NzI4YTg2MjM1ZGMyYmFkOGM5NWM0OTJhZTI5NDYwYmU4NDdiOGU5IiwidGFnIjoiIn0=",
+        "referer": "http://localhost:5173/",
+        "user-agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) HeadlessChrome/157.0.0.0 Safari/537.36",
+        "accept": "application/json",
+        "sec-ch-ua": "\"Not-A.Brand\";v=\"99\", \"Google Chrome\";v=\"157\", \"Chromium\";v=\"157\"",
+        "sec-ch-ua-mobile": "?0"
+      }
+    },
+    {
+      "type": "REQ",
+      "method": "OPTIONS",
+      "url": "http://localhost:8000/api/v1/auth/me",
+      "headers": {
+        "accept": "*/*",
+        "access-control-request-headers": "x-xsrf-token",
+        "access-control-request-method": "GET",
+        "origin": "http://localhost:5173",
+        "sec-fetch-mode": "cors",
+        "user-agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) HeadlessChrome/157.0.0.0 Safari/537.36"
+      }
+    },
+    {
+      "type": "REQ",
+      "method": "OPTIONS",
+      "url": "http://localhost:8000/api/v1/auth/me",
+      "headers": {
+        "accept": "*/*",
+        "access-control-request-headers": "x-xsrf-token",
+        "access-control-request-method": "GET",
+        "origin": "http://localhost:5173",
+        "sec-fetch-mode": "cors",
+        "user-agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) HeadlessChrome/157.0.0.0 Safari/537.36",
+        "accept-encoding": "gzip, deflate, br, zstd",
+        "accept-language": "en-US,en;q=0.9",
+        "connection": "keep-alive",
+        "host": "localhost:8000",
+        "referer": "http://localhost:5173/",
+        "sec-fetch-dest": "empty",
+        "sec-fetch-site": "same-site"
+      }
+    },
+    {
+      "type": "RES",
+      "status": 204,
+      "url": "http://localhost:8000/api/v1/auth/me",
+      "headers": {
+        "access-control-allow-credentials": "true",
+        "access-control-allow-headers": "x-xsrf-token",
+        "access-control-allow-methods": "GET",
+        "access-control-allow-origin": "http://localhost:5173",
+        "access-control-max-age": "0",
+        "cache-control": "no-cache, private",
+        "connection": "close",
+        "content-type": "text/html; charset=UTF-8",
+        "date": "Thu, 12 Nov 2026 15:06:51 GMT",
+        "host": "localhost:8000",
+        "vary": "Origin, Access-Control-Request-Method, Access-Control-Request-Headers",
+        "x-powered-by": "PHP/8.5.5"
+      }
+    },
+    {
+      "type": "RES",
+      "status": 204,
+      "url": "http://localhost:8000/api/v1/auth/me",
+      "headers": {
+        "access-control-allow-credentials": "true",
+        "access-control-allow-headers": "x-xsrf-token",
+        "access-control-allow-methods": "GET",
+        "access-control-allow-origin": "http://localhost:5173",
+        "access-control-max-age": "0",
+        "cache-control": "no-cache, private",
+        "connection": "close",
+        "content-type": "text/html; charset=UTF-8",
+        "date": "Thu, 12 Nov 2026 15:06:51 GMT",
+        "host": "localhost:8000",
+        "vary": "Origin, Access-Control-Request-Method, Access-Control-Request-Headers",
+        "x-powered-by": "PHP/8.5.5"
+      }
+    },
+    {
+      "type": "RES",
+      "status": 401,
+      "url": "http://localhost:8000/api/v1/auth/me",
+      "headers": {
+        "access-control-allow-credentials": "true",
+        "access-control-allow-origin": "http://localhost:5173",
+        "cache-control": "no-cache, private",
+        "connection": "close",
+        "content-type": "application/json",
+        "date": "Thu, 12 Nov 2026 15:06:51 GMT",
+        "host": "localhost:8000",
+        "set-cookie": "XSRF-TOKEN=eyJpdiI6IlVWeVpuL0dFOVJKZkwzRFpYSHQxa0E9PSIsInZhbHVlIjoiN1haZ1NrZkRXQTR5YXQwZVRUV3hSbnpjY2pTZmNJZE9KVXM1Q245VWMyYkVDempmRlE3dkR6Y3FDNGNaemo3UmxFbVJVWVBuRE5SaFZSNk52Snh3YmdhSE9tdFFQb2JiSnh4WkhSdUVlZEhmK2FYR3VRRnpCYlZPbytnMnFwU0IiLCJtYWMiOiI1YjM3ZmI5NTA2ZTEzNjViYTkxNDg2ZjVmY2QyMWM1MDRmODVmNzc1Y2EzZjNlZWU0MDczZTYzNzNmODUyZjI4IiwidGFnIjoiIn0%3D; expires=Thu, 12 Nov 2026 17:06:51 GMT; Max-Age=7200; path=/; samesite=lax\n laravel-session=eyJpdiI6Ill2ejQwSkNYV3F4MVFkSS9CRERnQUE9PSIsInZhbHVlIjoiZk42VXBPVjA2VzI4WEpjMnNlNTNKajBNdE0xOG1NV1NrYVBYclJ4NGJRczJGQnk1eDViai9YajltcWk1bGQxMWdjRlhsb3V1ZXBDWjhqREhoMmtjdVNRNnhZUTMwLy9pNGVzVXpQSkdiNGM5TVViR1NMaStCTlNPYlB4Y05wRVkiLCJtYWMiOiI5YWMyYWZlZWNiYjM2MTVmMGI5YTk1NmJjNWUyYmJhYmQ0MmEwYmE1MDMzMGU1ODBkMzE0OGY4ZGI1ZDQ0MTgwIiwidGFnIjoiIn0%3D; expires=Thu, 12 Nov 2026 17:06:51 GMT; Max-Age=7200; path=/; httponly; samesite=lax",
+        "vary": "Origin",
+        "x-powered-by": "PHP/8.5.5"
+      }
+    },
+    {
+      "type": "RES",
+      "status": 401,
+      "url": "http://localhost:8000/api/v1/auth/me",
+      "headers": {
+        "access-control-allow-credentials": "true",
+        "access-control-allow-origin": "http://localhost:5173",
+        "cache-control": "no-cache, private",
+        "connection": "close",
+        "content-type": "application/json",
+        "date": "Thu, 12 Nov 2026 15:06:51 GMT",
+        "host": "localhost:8000",
+        "set-cookie": "XSRF-TOKEN=eyJpdiI6IjNwTGN3UHJweEZZZEtCWFRIT3F1YkE9PSIsInZhbHVlIjoiQjFtaVVNWWhmbFlTNCsweXdvQXI0VVFRYnBhemRQelUzT0VvTmVtTzN3WmNoMnRYVjRmeWxsVU1rREE4MFljbjEwVVpjVVE0T0JKTVVUaFVBK3pSZUQ0QjhxWDhGYTk1YlNZMC9zNTNTZ000T2ZqMzB5SWFxZHh0TGF6VmVJaXkiLCJtYWMiOiIyYWUyNDVhNjQ3YzNiZTUxYTNmMmM0ZjZlZDJkNTYyNDFjMTM1M2IxOTZiMzdlY2MxY2YyZjY1YWE5YTY1OGU3IiwidGFnIjoiIn0%3D; expires=Thu, 12 Nov 2026 17:06:51 GMT; Max-Age=7200; path=/; samesite=lax\n laravel-session=eyJpdiI6ImdMNFdaRUlBdEsvWTJZUzltekZTZFE9PSIsInZhbHVlIjoia1QwVkxFUEhyT3ptQUZoSDMzb25UMFhHUlNwQUx6RDhkbWhlU3FubzJEZGhoejdUYVhlUXNMd1VKYXo1SzNDbE9DOEhLbG1QL0tRUTlXWWhoc0s1UHVVSXZoMFpMaEdhQTNlbHlRdkpQVG9vZFQ1bWJobWVJY1ZRZE1BK3RTVDkiLCJtYWMiOiJiNjk4NThhZDI4ZDA3ZmM2NmEyMjE0YzYyMjM3OThhZmYxODBjM2Q1NGVlMjViYzNjODdlNWFjMzIxZWUxNTc1IiwidGFnIjoiIn0%3D; expires=Thu, 12 Nov 2026 17:06:51 GMT; Max-Age=7200; path=/; httponly; samesite=lax",
+        "vary": "Origin",
+        "x-powered-by": "PHP/8.5.5"
+      }
+    },
+    {
+      "type": "REQ",
+      "method": "GET",
+      "url": "http://localhost:8000/sanctum/csrf-cookie",
+      "headers": {
+        "sec-ch-ua-platform": "\"Windows\"",
+        "x-xsrf-token": "eyJpdiI6IjNwTGN3UHJweEZZZEtCWFRIT3F1YkE9PSIsInZhbHVlIjoiQjFtaVVNWWhmbFlTNCsweXdvQXI0VVFRYnBhemRQelUzT0VvTmVtTzN3WmNoMnRYVjRmeWxsVU1rREE4MFljbjEwVVpjVVE0T0JKTVVUaFVBK3pSZUQ0QjhxWDhGYTk1YlNZMC9zNTNTZ000T2ZqMzB5SWFxZHh0TGF6VmVJaXkiLCJtYWMiOiIyYWUyNDVhNjQ3YzNiZTUxYTNmMmM0ZjZlZDJkNTYyNDFjMTM1M2IxOTZiMzdlY2MxY2YyZjY1YWE5YTY1OGU3IiwidGFnIjoiIn0=",
+        "referer": "http://localhost:5173/",
+        "user-agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) HeadlessChrome/157.0.0.0 Safari/537.36",
+        "accept": "application/json",
+        "sec-ch-ua": "\"Not-A.Brand\";v=\"99\", \"Google Chrome\";v=\"157\", \"Chromium\";v=\"157\"",
+        "sec-ch-ua-mobile": "?0"
+      }
+    },
+    {
+      "type": "REQ",
+      "method": "OPTIONS",
+      "url": "http://localhost:8000/sanctum/csrf-cookie",
+      "headers": {
+        "accept": "*/*",
+        "access-control-request-headers": "x-xsrf-token",
+        "access-control-request-method": "GET",
+        "origin": "http://localhost:5173",
+        "sec-fetch-mode": "cors",
+        "user-agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) HeadlessChrome/157.0.0.0 Safari/537.36"
+      }
+    },
+    {
+      "type": "RES",
+      "status": 204,
+      "url": "http://localhost:8000/sanctum/csrf-cookie",
+      "headers": {
+        "access-control-allow-credentials": "true",
+        "access-control-allow-headers": "x-xsrf-token",
+        "access-control-allow-methods": "GET",
+        "access-control-allow-origin": "http://localhost:5173",
+        "access-control-max-age": "0",
+        "cache-control": "no-cache, private",
+        "connection": "close",
+        "content-type": "text/html; charset=UTF-8",
+        "date": "Thu, 12 Nov 2026 15:06:52 GMT",
+        "host": "localhost:8000",
+        "vary": "Origin, Access-Control-Request-Method, Access-Control-Request-Headers",
+        "x-powered-by": "PHP/8.5.5"
+      }
+    },
+    {
+      "type": "RES",
+      "status": 204,
+      "url": "http://localhost:8000/sanctum/csrf-cookie",
+      "headers": {
+        "access-control-allow-credentials": "true",
+        "access-control-allow-origin": "http://localhost:5173",
+        "cache-control": "no-cache, private",
+        "connection": "close",
+        "date": "Thu, 12 Nov 2026 15:06:52 GMT",
+        "host": "localhost:8000",
+        "set-cookie": "XSRF-TOKEN=eyJpdiI6InAvZVlpa0xpTUVDVW45dHVaM0srclE9PSIsInZhbHVlIjoiaTZ3NThXM0t6aHYvWVFpaCt0UURPTEN2MW1CRkVTZzhWaHdabVRIRjJwL0k2TWZ4Zk5Ga1VmSHVwUGYvN2hBV3BYdituNmNUY2F5VnRxQUtVdFNLRms5RTFtb3IrYTFCbG1zeURQR0RsYlVDQ3dhLzFmaEVQdVByMXB2eFhBcnMiLCJtYWMiOiJkMTdmYWY0MDZlZDBlMDQ0NDI5YmUzZjdlMDM3MzhiOWRiNWNiZTRiNTJlYzZjMTdhYzc2ZDdkNTg0OWNhYzA2IiwidGFnIjoiIn0%3D; expires=Thu, 12 Nov 2026 17:06:52 GMT; Max-Age=7200; path=/; samesite=lax\n laravel-session=eyJpdiI6IjFwS2dXQVFSUFVSRUtQMFBlVE1wTnc9PSIsInZhbHVlIjoiZU9ndVB4a0JtRCtENmx5UW1OanI0UHNUSVd6UGNjUVpNMllHT1BaVHplVmxrN2ovMkdtVTBpTDRIS2lTK3ZSSHI2bHRFdTl6b1ZNSFVJcHdlb0hSa1J6cUROQnZQUnRQQlpwLytydWNoRlhiWHpTZVR5dy91UEZRUGlQS2ZGQW4iLCJtYWMiOiI4ZmRlOGRhNjJiZjVkNmY4ZGNkYTJhZjdkMWU4ODA1YmY1NWVkZGFlMGFkOWFiNzUyOGFlNTk3NGFkZTM1NGRiIiwidGFnIjoiIn0%3D; expires=Thu, 12 Nov 2026 17:06:52 GMT; Max-Age=7200; path=/; httponly; samesite=lax",
+        "vary": "X-Inertia, Origin",
+        "x-inertia-devtools-id": "01M784R7YZYB1S85F1EXQB6DCB",
+        "x-inertia-devtools-parent-out": "01M784R7YZYB1S85F1EXQB6DCB",
+        "x-powered-by": "PHP/8.5.5"
+      }
+    },
+    {
+      "type": "REQ",
+      "method": "POST",
+      "url": "http://localhost:8000/api/v1/auth/login",
+      "headers": {
+        "sec-ch-ua-platform": "\"Windows\"",
+        "x-xsrf-token": "eyJpdiI6InAvZVlpa0xpTUVDVW45dHVaM0srclE9PSIsInZhbHVlIjoiaTZ3NThXM0t6aHYvWVFpaCt0UURPTEN2MW1CRkVTZzhWaHdabVRIRjJwL0k2TWZ4Zk5Ga1VmSHVwUGYvN2hBV3BYdituNmNUY2F5VnRxQUtVdFNLRms5RTFtb3IrYTFCbG1zeURQR0RsYlVDQ3dhLzFmaEVQdVByMXB2eFhBcnMiLCJtYWMiOiJkMTdmYWY0MDZlZDBlMDQ0NDI5YmUzZjdlMDM3MzhiOWRiNWNiZTRiNTJlYzZjMTdhYzc2ZDdkNTg0OWNhYzA2IiwidGFnIjoiIn0=",
+        "referer": "http://localhost:5173/",
+        "sec-ch-ua": "\"Not-A.Brand\";v=\"99\", \"Google Chrome\";v=\"157\", \"Chromium\";v=\"157\"",
+        "sec-ch-ua-mobile": "?0",
+        "user-agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) HeadlessChrome/157.0.0.0 Safari/537.36",
+        "accept": "application/json",
+        "content-type": "application/json"
+      }
+    },
+    {
+      "type": "REQ",
+      "method": "OPTIONS",
+      "url": "http://localhost:8000/api/v1/auth/login",
+      "headers": {
+        "accept": "*/*",
+        "access-control-request-headers": "content-type,x-xsrf-token",
+        "access-control-request-method": "POST",
+        "origin": "http://localhost:5173",
+        "sec-fetch-mode": "cors",
+        "user-agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) HeadlessChrome/157.0.0.0 Safari/537.36"
+      }
+    },
+    {
+      "type": "RES",
+      "status": 204,
+      "url": "http://localhost:8000/api/v1/auth/login",
+      "headers": {
+        "access-control-allow-credentials": "true",
+        "access-control-allow-headers": "content-type,x-xsrf-token",
+        "access-control-allow-methods": "POST",
+        "access-control-allow-origin": "http://localhost:5173",
+        "access-control-max-age": "0",
+        "cache-control": "no-cache, private",
+        "connection": "close",
+        "content-type": "text/html; charset=UTF-8",
+        "date": "Thu, 12 Nov 2026 15:06:52 GMT",
+        "host": "localhost:8000",
+        "vary": "Origin, Access-Control-Request-Method, Access-Control-Request-Headers",
+        "x-powered-by": "PHP/8.5.5"
+      }
+    },
+    {
+      "type": "RES",
+      "status": 200,
+      "url": "http://localhost:8000/api/v1/auth/login",
+      "headers": {
+        "access-control-allow-credentials": "true",
+        "access-control-allow-origin": "http://localhost:5173",
+        "cache-control": "no-cache, private",
+        "connection": "close",
+        "content-type": "application/json",
+        "date": "Thu, 12 Nov 2026 15:06:52 GMT",
+        "host": "localhost:8000",
+        "set-cookie": "XSRF-TOKEN=eyJpdiI6IlA3K1JCN3ZMT09MNVYyMm5jVEhrWHc9PSIsInZhbHVlIjoiYms1aTJUNSt1VWtjNVJiS1gzUmZxdm80K1VncDNrL1hZdXgvWUxiR25xRGthdDAyWHBHMnVOZlJuMjhUeHVnbXdxUzRZWXhrMXl2dkw1blY1Wit4ZGdJclRHY0VOaFUxT1I1YXdkQnZkeUxXUlI2biszbzdpaEZkU2kvTGtFZjEiLCJtYWMiOiI1YmM3YjhjMGJmZmEzN2M4NjllZTU2MjkzMzYzZGVjYjNkN2Q0ZjlkNGY2MWIwOWY2NjgxMDIyNThlYmYxZDVmIiwidGFnIjoiIn0%3D; expires=Thu, 12 Nov 2026 17:06:52 GMT; Max-Age=7200; path=/; samesite=lax\n laravel-session=eyJpdiI6IjdibStLMzZwazBxODNjbS9JdWJMWmc9PSIsInZhbHVlIjoibmdBbDZkNzd2K0FaV2ZBazUvWkxpWkQvMm81cCtncUM2ajNvbndqNnFJeGRiSytXcml2cnNUQlV4K1p2K3pZbU0xN2pzQmlVMDZsUVkvNE1jN1o2eFA2UndJWDAvc0g3WkxnUlczbnhkbnd3M0xmb1FFWFBKa0pBbnNzQWQ1bkQiLCJtYWMiOiI0YjgwODVkNjlkYTBiYjc5NjMyMTE4OTllNWY2MDA4YmFlNjJjMjdmNDIyYWRjOGRkMmY0Yzk0NjczZDU0YWI2IiwidGFnIjoiIn0%3D; expires=Thu, 12 Nov 2026 17:06:52 GMT; Max-Age=7200; path=/; httponly; samesite=lax",
+        "vary": "Origin",
+        "x-powered-by": "PHP/8.5.5"
+      }
+    },
+    {
+      "type": "REQ",
+      "method": "GET",
+      "url": "http://localhost:8000/api/v1/auth/me",
+      "headers": {
+        "sec-ch-ua-platform": "\"Windows\"",
+        "x-xsrf-token": "eyJpdiI6IlA3K1JCN3ZMT09MNVYyMm5jVEhrWHc9PSIsInZhbHVlIjoiYms1aTJUNSt1VWtjNVJiS1gzUmZxdm80K1VncDNrL1hZdXgvWUxiR25xRGthdDAyWHBHMnVOZlJuMjhUeHVnbXdxUzRZWXhrMXl2dkw1blY1Wit4ZGdJclRHY0VOaFUxT1I1YXdkQnZkeUxXUlI2biszbzdpaEZkU2kvTGtFZjEiLCJtYWMiOiI1YmM3YjhjMGJmZmEzN2M4NjllZTU2MjkzMzYzZGVjYjNkN2Q0ZjlkNGY2MWIwOWY2NjgxMDIyNThlYmYxZDVmIiwidGFnIjoiIn0=",
+        "referer": "http://localhost:5173/",
+        "user-agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) HeadlessChrome/157.0.0.0 Safari/537.36",
+        "accept": "application/json",
+        "sec-ch-ua": "\"Not-A.Brand\";v=\"99\", \"Google Chrome\";v=\"157\", \"Chromium\";v=\"157\"",
+        "sec-ch-ua-mobile": "?0"
+      }
+    },
+    {
+      "type": "REQ",
+      "method": "GET",
+      "url": "http://localhost:8000/api/v1/auth/me",
+      "headers": {
+        "sec-ch-ua-platform": "\"Windows\"",
+        "x-xsrf-token": "eyJpdiI6IlA3K1JCN3ZMT09MNVYyMm5jVEhrWHc9PSIsInZhbHVlIjoiYms1aTJUNSt1VWtjNVJiS1gzUmZxdm80K1VncDNrL1hZdXgvWUxiR25xRGthdDAyWHBHMnVOZlJuMjhUeHVnbXdxUzRZWXhrMXl2dkw1blY1Wit4ZGdJclRHY0VOaFUxT1I1YXdkQnZkeUxXUlI2biszbzdpaEZkU2kvTGtFZjEiLCJtYWMiOiI1YmM3YjhjMGJmZmEzN2M4NjllZTU2MjkzMzYzZGVjYjNkN2Q0ZjlkNGY2MWIwOWY2NjgxMDIyNThlYmYxZDVmIiwidGFnIjoiIn0=",
+        "referer": "http://localhost:5173/",
+        "user-agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) HeadlessChrome/157.0.0.0 Safari/537.36",
+        "accept": "application/json",
+        "sec-ch-ua": "\"Not-A.Brand\";v=\"99\", \"Google Chrome\";v=\"157\", \"Chromium\";v=\"157\"",
+        "sec-ch-ua-mobile": "?0"
+      }
+    },
+    {
+      "type": "REQ",
+      "method": "OPTIONS",
+      "url": "http://localhost:8000/api/v1/auth/me",
+      "headers": {
+        "accept": "*/*",
+        "access-control-request-headers": "x-xsrf-token",
+        "access-control-request-method": "GET",
+        "origin": "http://localhost:5173",
+        "sec-fetch-mode": "cors",
+        "user-agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) HeadlessChrome/157.0.0.0 Safari/537.36"
+      }
+    },
+    {
+      "type": "REQ",
+      "method": "OPTIONS",
+      "url": "http://localhost:8000/api/v1/auth/me",
+      "headers": {
+        "accept": "*/*",
+        "access-control-request-headers": "x-xsrf-token",
+        "access-control-request-method": "GET",
+        "origin": "http://localhost:5173",
+        "sec-fetch-mode": "cors",
+        "user-agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) HeadlessChrome/157.0.0.0 Safari/537.36",
+        "accept-encoding": "gzip, deflate, br, zstd",
+        "accept-language": "en-US,en;q=0.9",
+        "connection": "keep-alive",
+        "host": "localhost:8000",
+        "referer": "http://localhost:5173/",
+        "sec-fetch-dest": "empty",
+        "sec-fetch-site": "same-site"
+      }
+    },
+    {
+      "type": "RES",
+      "status": 204,
+      "url": "http://localhost:8000/api/v1/auth/me",
+      "headers": {
+        "access-control-allow-credentials": "true",
+        "access-control-allow-headers": "x-xsrf-token",
+        "access-control-allow-methods": "GET",
+        "access-control-allow-origin": "http://localhost:5173",
+        "access-control-max-age": "0",
+        "cache-control": "no-cache, private",
+        "connection": "close",
+        "content-type": "text/html; charset=UTF-8",
+        "date": "Thu, 12 Nov 2026 15:06:54 GMT",
+        "host": "localhost:8000",
+        "vary": "Origin, Access-Control-Request-Method, Access-Control-Request-Headers",
+        "x-powered-by": "PHP/8.5.5"
+      }
+    },
+    {
+      "type": "RES",
+      "status": 204,
+      "url": "http://localhost:8000/api/v1/auth/me",
+      "headers": {
+        "access-control-allow-credentials": "true",
+        "access-control-allow-headers": "x-xsrf-token",
+        "access-control-allow-methods": "GET",
+        "access-control-allow-origin": "http://localhost:5173",
+        "access-control-max-age": "0",
+        "cache-control": "no-cache, private",
+        "connection": "close",
+        "content-type": "text/html; charset=UTF-8",
+        "date": "Thu, 12 Nov 2026 15:06:54 GMT",
+        "host": "localhost:8000",
+        "vary": "Origin, Access-Control-Request-Method, Access-Control-Request-Headers",
+        "x-powered-by": "PHP/8.5.5"
+      }
+    },
+    {
+      "type": "RES",
+      "status": 200,
+      "url": "http://localhost:8000/api/v1/auth/me",
+      "headers": {
+        "access-control-allow-credentials": "true",
+        "access-control-allow-origin": "http://localhost:5173",
+        "cache-control": "no-cache, private",
+        "connection": "close",
+        "content-type": "application/json",
+        "date": "Thu, 12 Nov 2026 15:06:54 GMT",
+        "host": "localhost:8000",
+        "set-cookie": "XSRF-TOKEN=eyJpdiI6IlhhaklZWHQwYkdmS1dtWC9aOExkZmc9PSIsInZhbHVlIjoiY01keG9TSWhlR3BPcEVjcnMxZ001UlBkaVc0Njd2UUlSQ3Z5cXF6RWV0NlJqNnk3ckVDRThMVFBmd1ZabVpobSsyYXM4dG93dy9DSFJmZXk0amt0SEJ0bU4xT2dVRkcwOUxGYjZ6L1lGbGZGM1JzaWlBeDlvUnJkc01VOUcyeVkiLCJtYWMiOiI2Njc2ZDNlMmJmMjdhNWQwMGQ0ODNkZmUyY2Y4OWU5YzdmYzhlZjYzYzY3MDc5ZGU0ZDIwNTAzZmNlYjViY2E1IiwidGFnIjoiIn0%3D; expires=Thu, 12 Nov 2026 17:06:54 GMT; Max-Age=7200; path=/; samesite=lax\n laravel-session=eyJpdiI6ImIzczRwNXU1Wm9xL0o2bUQrNjE3Ync9PSIsInZhbHVlIjoidmpXWkdKS01LOHlzSWRJeGNxOG1hNnVVcUIwYVVMa21Mbkh4bHI5K2lpc2lVNnRNQ1FqeGMvSXpBV3JqaDlEcVc3VGUyMVhnd3R0b3NxT2MwVkwyMlh1VmhvZldxTzFmbnFaMXVKL2lsMjEzdnJUZFcybmVqZkN6TlBhRnpEdGQiLCJtYWMiOiI2MWZkNDZiOWNiMWZlOGRlMjZlYzY4ZWI0YzEzNDQ2ZjUxMGRlY2FhNmZiODlmMWE2ZTdhY2M1MzFjMWMzOWY5IiwidGFnIjoiIn0%3D; expires=Thu, 12 Nov 2026 17:06:54 GMT; Max-Age=7200; path=/; httponly; samesite=lax",
+        "vary": "Origin",
+        "x-powered-by": "PHP/8.5.5"
+      }
+    },
+    {
+      "type": "RES",
+      "status": 200,
+      "url": "http://localhost:8000/api/v1/auth/me",
+      "headers": {
+        "access-control-allow-credentials": "true",
+        "access-control-allow-origin": "http://localhost:5173",
+        "cache-control": "no-cache, private",
+        "connection": "close",
+        "content-type": "application/json",
+        "date": "Thu, 12 Nov 2026 15:06:54 GMT",
+        "host": "localhost:8000",
+        "set-cookie": "XSRF-TOKEN=eyJpdiI6IkczZVFQc3VFVDhUVm5sbC83d2hZN2c9PSIsInZhbHVlIjoiaThuRmpaZ3VScWhPQlc1MzRtZXg0dGIzOWZ0MXB3OVdaSkpPMkpnekhGQjNKZmRGQTZRb241bjYvc1U1ZFV2bS9scTBZeDBZRU1ZZ04xOEQrRW4rSURzOThTTnoydVNZLy9MdnlFMXNsVzMrL2xpV2c2VDMxMmhLYmF6WkdQbGsiLCJtYWMiOiJlNDhlMjA1YjllZjY3YjJjN2ExZjQxN2JmYTY4NjRhZDBiMjRiZmQ4NDI4ODZjNWU0ZTc2NjgyMTcxMTAzYjcyIiwidGFnIjoiIn0%3D; expires=Thu, 12 Nov 2026 17:06:54 GMT; Max-Age=7200; path=/; samesite=lax\n laravel-session=eyJpdiI6IlRzOVFvcHNzbUlVeCtSMXRXby9aanc9PSIsInZhbHVlIjoicTl6azd2bzlRaXBNUTFsMXNJVm1PMUpjeWMxZGdmRjRobEEyeWZON0hhUnp2VnJhUGJzSzNacXM5R2p4QTF0MzVSajk0NWtaZmRvWW9GcmtGSnhuUW5Fb0xqaW9ubHdpNCttSkRaa3ZuREQxRkZHWi9NU1U2RStKSXJCZnVVVysiLCJtYWMiOiJmNmNhN2E0MTI2YjYwODc2MWM1NjE0NzU5NTJkOTVkOGIyNGM2MWIyY2YzYWE2YzM1M2FiYjJkZGNjZGJlNTkyIiwidGFnIjoiIn0%3D; expires=Thu, 12 Nov 2026 17:06:54 GMT; Max-Age=7200; path=/; httponly; samesite=lax",
+        "vary": "Origin",
+        "x-powered-by": "PHP/8.5.5"
+      }
+    },
+    {
+      "type": "REQ",
+      "method": "GET",
+      "url": "http://localhost:8000/api/v1/auth/me",
+      "headers": {
+        "sec-ch-ua-platform": "\"Windows\"",
+        "x-xsrf-token": "eyJpdiI6IkczZVFQc3VFVDhUVm5sbC83d2hZN2c9PSIsInZhbHVlIjoiaThuRmpaZ3VScWhPQlc1MzRtZXg0dGIzOWZ0MXB3OVdaSkpPMkpnekhGQjNKZmRGQTZRb241bjYvc1U1ZFV2bS9scTBZeDBZRU1ZZ04xOEQrRW4rSURzOThTTnoydVNZLy9MdnlFMXNsVzMrL2xpV2c2VDMxMmhLYmF6WkdQbGsiLCJtYWMiOiJlNDhlMjA1YjllZjY3YjJjN2ExZjQxN2JmYTY4NjRhZDBiMjRiZmQ4NDI4ODZjNWU0ZTc2NjgyMTcxMTAzYjcyIiwidGFnIjoiIn0=",
+        "referer": "http://localhost:5173/",
+        "user-agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) HeadlessChrome/157.0.0.0 Safari/537.36",
+        "accept": "application/json",
+        "sec-ch-ua": "\"Not-A.Brand\";v=\"99\", \"Google Chrome\";v=\"157\", \"Chromium\";v=\"157\"",
+        "sec-ch-ua-mobile": "?0"
+      }
+    },
+    {
+      "type": "REQ",
+      "method": "GET",
+      "url": "http://localhost:8000/api/v1/auth/me",
+      "headers": {
+        "sec-ch-ua-platform": "\"Windows\"",
+        "x-xsrf-token": "eyJpdiI6IkczZVFQc3VFVDhUVm5sbC83d2hZN2c9PSIsInZhbHVlIjoiaThuRmpaZ3VScWhPQlc1MzRtZXg0dGIzOWZ0MXB3OVdaSkpPMkpnekhGQjNKZmRGQTZRb241bjYvc1U1ZFV2bS9scTBZeDBZRU1ZZ04xOEQrRW4rSURzOThTTnoydVNZLy9MdnlFMXNsVzMrL2xpV2c2VDMxMmhLYmF6WkdQbGsiLCJtYWMiOiJlNDhlMjA1YjllZjY3YjJjN2ExZjQxN2JmYTY4NjRhZDBiMjRiZmQ4NDI4ODZjNWU0ZTc2NjgyMTcxMTAzYjcyIiwidGFnIjoiIn0=",
+        "referer": "http://localhost:5173/",
+        "user-agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) HeadlessChrome/157.0.0.0 Safari/537.36",
+        "accept": "application/json",
+        "sec-ch-ua": "\"Not-A.Brand\";v=\"99\", \"Google Chrome\";v=\"157\", \"Chromium\";v=\"157\"",
+        "sec-ch-ua-mobile": "?0"
+      }
+    },
+    {
+      "type": "REQ",
+      "method": "OPTIONS",
+      "url": "http://localhost:8000/api/v1/auth/me",
+      "headers": {
+        "accept": "*/*",
+        "access-control-request-headers": "x-xsrf-token",
+        "access-control-request-method": "GET",
+        "origin": "http://localhost:5173",
+        "sec-fetch-mode": "cors",
+        "user-agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) HeadlessChrome/157.0.0.0 Safari/537.36"
+      }
+    },
+    {
+      "type": "REQ",
+      "method": "OPTIONS",
+      "url": "http://localhost:8000/api/v1/auth/me",
+      "headers": {
+        "accept": "*/*",
+        "access-control-request-headers": "x-xsrf-token",
+        "access-control-request-method": "GET",
+        "origin": "http://localhost:5173",
+        "sec-fetch-mode": "cors",
+        "user-agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) HeadlessChrome/157.0.0.0 Safari/537.36",
+        "accept-encoding": "gzip, deflate, br, zstd",
+        "accept-language": "en-US,en;q=0.9",
+        "connection": "keep-alive",
+        "host": "localhost:8000",
+        "referer": "http://localhost:5173/",
+        "sec-fetch-dest": "empty",
+        "sec-fetch-site": "same-site"
+      }
+    },
+    {
+      "type": "RES",
+      "status": 204,
+      "url": "http://localhost:8000/api/v1/auth/me",
+      "headers": {
+        "access-control-allow-credentials": "true",
+        "access-control-allow-headers": "x-xsrf-token",
+        "access-control-allow-methods": "GET",
+        "access-control-allow-origin": "http://localhost:5173",
+        "access-control-max-age": "0",
+        "cache-control": "no-cache, private",
+        "connection": "close",
+        "content-type": "text/html; charset=UTF-8",
+        "date": "Thu, 12 Nov 2026 15:06:56 GMT",
+        "host": "localhost:8000",
+        "vary": "Origin, Access-Control-Request-Method, Access-Control-Request-Headers",
+        "x-powered-by": "PHP/8.5.5"
+      }
+    },
+    {
+      "type": "RES",
+      "status": 204,
+      "url": "http://localhost:8000/api/v1/auth/me",
+      "headers": {
+        "access-control-allow-credentials": "true",
+        "access-control-allow-headers": "x-xsrf-token",
+        "access-control-allow-methods": "GET",
+        "access-control-allow-origin": "http://localhost:5173",
+        "access-control-max-age": "0",
+        "cache-control": "no-cache, private",
+        "connection": "close",
+        "content-type": "text/html; charset=UTF-8",
+        "date": "Thu, 12 Nov 2026 15:06:56 GMT",
+        "host": "localhost:8000",
+        "vary": "Origin, Access-Control-Request-Method, Access-Control-Request-Headers",
+        "x-powered-by": "PHP/8.5.5"
+      }
+    },
+    {
+      "type": "RES",
+      "status": 200,
+      "url": "http://localhost:8000/api/v1/auth/me",
+      "headers": {
+        "access-control-allow-credentials": "true",
+        "access-control-allow-origin": "http://localhost:5173",
+        "cache-control": "no-cache, private",
+        "connection": "close",
+        "content-type": "application/json",
+        "date": "Thu, 12 Nov 2026 15:06:56 GMT",
+        "host": "localhost:8000",
+        "set-cookie": "XSRF-TOKEN=eyJpdiI6IkRLckhwZUdNZWZZR0k2dzI2UUQvMkE9PSIsInZhbHVlIjoiUGV4ejFWaTJ1L3IzRlNidGxWVlhoM2g3NU5lTGZJcjZBMVVlM1NYeXNjTlJteWMyOFlFaU1Za2NkcjAyTERYR0VwRmRnMjl1Rm92Z1gxam5NNkVNVmU4MTUrTDBDN29ETzhLam9vQlh6Uk1UbjA0ZUlqWXJSUmxOY3hlenpNSDciLCJtYWMiOiJhOTVjYmJjYWUyZWI1MGMwYjcxZTExYWQ2ODQ2MzQzOTRhMDU0ZjNjOWZkN2YyNDI2ZGY5OGViNzA4NTIzYjMzIiwidGFnIjoiIn0%3D; expires=Thu, 12 Nov 2026 17:06:56 GMT; Max-Age=7200; path=/; samesite=lax\n laravel-session=eyJpdiI6ImxZT3BCS0xmU2JBZ2RVcHNwcHV6aUE9PSIsInZhbHVlIjoiUmxSOTc3Uys0b2VyaTNhQWdUN0hVcUw4am1RUWRDN2F2Z09kSnlPa2x5TS9KR2tXcjFWbFFPcDA4SGxKdE1kdzcwMHowVW9DV3F3RXNYUjJPSW9QaElaWGpGcGJWVWNTYis0UHF3TGlYNDR0WE9MNi9WY3A4SXVFWDM4TW5IYSsiLCJtYWMiOiIwNWZkODk1ZWE4MTk2ZTc0MjI3YzRhNDAzNTQ3ZjQ2YmEwNTk1MzA0ZGE2YzVjZWI3YjIzMmQyNDFmMzQ3OGM0IiwidGFnIjoiIn0%3D; expires=Thu, 12 Nov 2026 17:06:56 GMT; Max-Age=7200; path=/; httponly; samesite=lax",
+        "vary": "Origin",
+        "x-powered-by": "PHP/8.5.5"
+      }
+    },
+    {
+      "type": "RES",
+      "status": 200,
+      "url": "http://localhost:8000/api/v1/auth/me",
+      "headers": {
+        "access-control-allow-credentials": "true",
+        "access-control-allow-origin": "http://localhost:5173",
+        "cache-control": "no-cache, private",
+        "connection": "close",
+        "content-type": "application/json",
+        "date": "Thu, 12 Nov 2026 15:06:56 GMT",
+        "host": "localhost:8000",
+        "set-cookie": "XSRF-TOKEN=eyJpdiI6InlWdnpBcVFxVVR4R0JGOSt0ejNXVlE9PSIsInZhbHVlIjoiTS9raHRtWVdLeUFyb2JzUXpYSmNwUWtPbUNkMjdhdUZPTzk0N2NpYi9aZ0ZjdzBJTGNJTDFwL1lBZkNxMFpRejBvTnRodUNma2tPWHp3eDdYVDI2Znp1VU5rbzlHWGFUU25vN3BIdHovUWszNU5oNUVsMW1Uczh4OUxURktqY3YiLCJtYWMiOiJiMWQ2Zjg1OWJkODk2ZGI2ZWRiOGE0M2QzOTQxODc1MmMyNDc3Mjg5NDc1NTMzNGY0NWNhZmYyYTRmMWMzMDk4IiwidGFnIjoiIn0%3D; expires=Thu, 12 Nov 2026 17:06:56 GMT; Max-Age=7200; path=/; samesite=lax\n laravel-session=eyJpdiI6ImEwbDluTkRISUxRbWxKWC82S1I4SGc9PSIsInZhbHVlIjoiWGR6a1M1WGJ1dTF3YzFBNENXRDA3ZE5sOVlRNng5dmNvZmY4ckVQakN6NG0yNGEzN1BBRWZIUnVGbFV2cHdnZW1UcnBNdC9hTnNUMkkxSmFjZS8wUHhOV0hwbzBOWDZPNENmMkFBSWM0UEpPb0hKbWhja3ZsV2g1bnJZQWVKR2MiLCJtYWMiOiJjNjU4M2YyNmI2NmRjYzdiMWUxZTM5YTllZTBiZWIzNjE0NGZmZWE1ZDM3YzBkOTE1NjJiMDQ5ODZlOWZkZjFlIiwidGFnIjoiIn0%3D; expires=Thu, 12 Nov 2026 17:06:56 GMT; Max-Age=7200; path=/; httponly; samesite=lax",
+        "vary": "Origin",
+        "x-powered-by": "PHP/8.5.5"
+      }
+    },
+    {
+      "type": "REQ",
+      "method": "GET",
+      "url": "http://localhost:8000/api/v1/auth/me",
+      "headers": {
+        "sec-ch-ua-platform": "\"Windows\"",
+        "x-xsrf-token": "eyJpdiI6InlWdnpBcVFxVVR4R0JGOSt0ejNXVlE9PSIsInZhbHVlIjoiTS9raHRtWVdLeUFyb2JzUXpYSmNwUWtPbUNkMjdhdUZPTzk0N2NpYi9aZ0ZjdzBJTGNJTDFwL1lBZkNxMFpRejBvTnRodUNma2tPWHp3eDdYVDI2Znp1VU5rbzlHWGFUU25vN3BIdHovUWszNU5oNUVsMW1Uczh4OUxURktqY3YiLCJtYWMiOiJiMWQ2Zjg1OWJkODk2ZGI2ZWRiOGE0M2QzOTQxODc1MmMyNDc3Mjg5NDc1NTMzNGY0NWNhZmYyYTRmMWMzMDk4IiwidGFnIjoiIn0=",
+        "referer": "http://localhost:5173/",
+        "user-agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) HeadlessChrome/157.0.0.0 Safari/537.36",
+        "accept": "application/json",
+        "sec-ch-ua": "\"Not-A.Brand\";v=\"99\", \"Google Chrome\";v=\"157\", \"Chromium\";v=\"157\"",
+        "sec-ch-ua-mobile": "?0"
+      }
+    },
+    {
+      "type": "REQ",
+      "method": "GET",
+      "url": "http://localhost:8000/api/v1/auth/me",
+      "headers": {
+        "sec-ch-ua-platform": "\"Windows\"",
+        "x-xsrf-token": "eyJpdiI6InlWdnpBcVFxVVR4R0JGOSt0ejNXVlE9PSIsInZhbHVlIjoiTS9raHRtWVdLeUFyb2JzUXpYSmNwUWtPbUNkMjdhdUZPTzk0N2NpYi9aZ0ZjdzBJTGNJTDFwL1lBZkNxMFpRejBvTnRodUNma2tPWHp3eDdYVDI2Znp1VU5rbzlHWGFUU25vN3BIdHovUWszNU5oNUVsMW1Uczh4OUxURktqY3YiLCJtYWMiOiJiMWQ2Zjg1OWJkODk2ZGI2ZWRiOGE0M2QzOTQxODc1MmMyNDc3Mjg5NDc1NTMzNGY0NWNhZmYyYTRmMWMzMDk4IiwidGFnIjoiIn0=",
+        "referer": "http://localhost:5173/",
+        "user-agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) HeadlessChrome/157.0.0.0 Safari/537.36",
+        "accept": "application/json",
+        "sec-ch-ua": "\"Not-A.Brand\";v=\"99\", \"Google Chrome\";v=\"157\", \"Chromium\";v=\"157\"",
+        "sec-ch-ua-mobile": "?0"
+      }
+    },
+    {
+      "type": "REQ",
+      "method": "OPTIONS",
+      "url": "http://localhost:8000/api/v1/auth/me",
+      "headers": {
+        "accept": "*/*",
+        "access-control-request-headers": "x-xsrf-token",
+        "access-control-request-method": "GET",
+        "origin": "http://localhost:5173",
+        "sec-fetch-mode": "cors",
+        "user-agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) HeadlessChrome/157.0.0.0 Safari/537.36"
+      }
+    },
+    {
+      "type": "REQ",
+      "method": "OPTIONS",
+      "url": "http://localhost:8000/api/v1/auth/me",
+      "headers": {
+        "accept": "*/*",
+        "access-control-request-headers": "x-xsrf-token",
+        "access-control-request-method": "GET",
+        "origin": "http://localhost:5173",
+        "sec-fetch-mode": "cors",
+        "user-agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) HeadlessChrome/157.0.0.0 Safari/537.36",
+        "accept-encoding": "gzip, deflate, br, zstd",
+        "accept-language": "en-US,en;q=0.9",
+        "connection": "keep-alive",
+        "host": "localhost:8000",
+        "referer": "http://localhost:5173/",
+        "sec-fetch-dest": "empty",
+        "sec-fetch-site": "same-site"
+      }
+    },
+    {
+      "type": "RES",
+      "status": 204,
+      "url": "http://localhost:8000/api/v1/auth/me",
+      "headers": {
+        "access-control-allow-credentials": "true",
+        "access-control-allow-headers": "x-xsrf-token",
+        "access-control-allow-methods": "GET",
+        "access-control-allow-origin": "http://localhost:5173",
+        "access-control-max-age": "0",
+        "cache-control": "no-cache, private",
+        "connection": "close",
+        "content-type": "text/html; charset=UTF-8",
+        "date": "Thu, 12 Nov 2026 15:06:57 GMT",
+        "host": "localhost:8000",
+        "vary": "Origin, Access-Control-Request-Method, Access-Control-Request-Headers",
+        "x-powered-by": "PHP/8.5.5"
+      }
+    },
+    {
+      "type": "RES",
+      "status": 204,
+      "url": "http://localhost:8000/api/v1/auth/me",
+      "headers": {
+        "access-control-allow-credentials": "true",
+        "access-control-allow-headers": "x-xsrf-token",
+        "access-control-allow-methods": "GET",
+        "access-control-allow-origin": "http://localhost:5173",
+        "access-control-max-age": "0",
+        "cache-control": "no-cache, private",
+        "connection": "close",
+        "content-type": "text/html; charset=UTF-8",
+        "date": "Thu, 12 Nov 2026 15:06:57 GMT",
+        "host": "localhost:8000",
+        "vary": "Origin, Access-Control-Request-Method, Access-Control-Request-Headers",
+        "x-powered-by": "PHP/8.5.5"
+      }
+    },
+    {
+      "type": "RES",
+      "status": 200,
+      "url": "http://localhost:8000/api/v1/auth/me",
+      "headers": {
+        "access-control-allow-credentials": "true",
+        "access-control-allow-origin": "http://localhost:5173",
+        "cache-control": "no-cache, private",
+        "connection": "close",
+        "content-type": "application/json",
+        "date": "Thu, 12 Nov 2026 15:06:57 GMT",
+        "host": "localhost:8000",
+        "set-cookie": "XSRF-TOKEN=eyJpdiI6ImRETjlYTUh3cXlkMEk0ZHZVamZST0E9PSIsInZhbHVlIjoiei8rSXVReDNXVFNPNjBvemVEYjVHUGV6Uk5DU0pYQ3BzY0pPNmhwQ0hBSGRmc0c1Q1lOOXlsdGdkN2tsNFpVRUJaU2I2S1dFNjFXZk5YY2x5d0N0blRJUGNFbHBXWW5OWS8xTEswRFZYd042YVpIRUtET3JlTFYwT1JSRlBIU1IiLCJtYWMiOiI2MGIzYmI4NTI2N2M0ZjIyNjgyNWY1NTUwZjYxM2FiYjAzOWNiNjFlODFhNGFlZTI4OTJkNGNlYjVlMjQ2ZGNhIiwidGFnIjoiIn0%3D; expires=Thu, 12 Nov 2026 17:06:57 GMT; Max-Age=7200; path=/; samesite=lax\n laravel-session=eyJpdiI6Im05L0RWOGY5dDVkYkF5cFdGV2NaTEE9PSIsInZhbHVlIjoiQWNtZnBPMVVxbjh4L0kwbDNlc1hmdWp4MDVQKzJqWkVJT0JNdzBaajBKcTZXS0JweEV6STIraHNZZXF0Y3lDVE5tZ2s0c1p6T29nMEh0Ymc3VjhLWC9MdTY3ODhHcWh2Z2tnVElJdXFaVE40N29JOUNteFZxQVorbllxa1R2akUiLCJtYWMiOiIzMDJkMTIwZDhkZjlmOTI1ZTQ1ZTdhOGYwMjMwMWQ1ZTkyZWRkMGJlOWJjMWIxMjRhNzRhODdmODhlNmExZTBmIiwidGFnIjoiIn0%3D; expires=Thu, 12 Nov 2026 17:06:57 GMT; Max-Age=7200; path=/; httponly; samesite=lax",
+        "vary": "Origin",
+        "x-powered-by": "PHP/8.5.5"
+      }
+    },
+    {
+      "type": "RES",
+      "status": 200,
+      "url": "http://localhost:8000/api/v1/auth/me",
+      "headers": {
+        "access-control-allow-credentials": "true",
+        "access-control-allow-origin": "http://localhost:5173",
+        "cache-control": "no-cache, private",
+        "connection": "close",
+        "content-type": "application/json",
+        "date": "Thu, 12 Nov 2026 15:06:58 GMT",
+        "host": "localhost:8000",
+        "set-cookie": "XSRF-TOKEN=eyJpdiI6IndhUm5XVVd6bERaeHY1OHJ3YTVYRmc9PSIsInZhbHVlIjoiRUc0UHRyenBJZTJFZlFBaXA5dVl0RDFvM0Y2UWVIcmdNTnFBTktKREZaN09jVHVaYVVCK2JyMmZ1NUhWUFdtaWNITDZQdjVyaHRoWjcyTUMvV0d3Wm84bzNKalBjRktEcUh0a09odW13aWQreThYZFlVaWIwQ3ZLZ3MyaXpjK1MiLCJtYWMiOiI2N2Q4NWZiZjE5N2ViZmY0OWU5M2ZhMTQ1ZTFhYmJlMDkxZWQxNmE1NWVjMjQxZDk2YjJmZTBmY2U1ZjkyZmM0IiwidGFnIjoiIn0%3D; expires=Thu, 12 Nov 2026 17:06:58 GMT; Max-Age=7200; path=/; samesite=lax\n laravel-session=eyJpdiI6IlRDcWdvL2hTWWhTamR5QXJ6dFo1OWc9PSIsInZhbHVlIjoiMWluM0syeDRYVmdYWHZMckVyajJrcGRNdExJaDVJdWZwb3ZDak9BNithdGVnWlhJUlcvV1pYTVlINUZSbWcwdTBnSDcxTVNiL25oQUFNQmNNUTgwZUd1Q2dvOVF5SWUxU1oxbEFMSjh3VHowTXBiUENUbzdOL1FnQjA4WncxU2siLCJtYWMiOiJiMTc4N2YxYmI2YmZjNjYxNzBlYzhhOWVhYmUyNzk1Yzg3MzllOWNkZThjNGU4YThiMWNjNzQzMTE0NjMzMzE4IiwidGFnIjoiIn0%3D; expires=Thu, 12 Nov 2026 17:06:58 GMT; Max-Age=7200; path=/; httponly; samesite=lax",
+        "vary": "Origin",
+        "x-powered-by": "PHP/8.5.5"
+      }
+    },
+    {
+      "type": "REQ",
+      "method": "GET",
+      "url": "http://localhost:8000/api/v1/auth/me",
+      "headers": {
+        "sec-ch-ua-platform": "\"Windows\"",
+        "x-xsrf-token": "eyJpdiI6IndhUm5XVVd6bERaeHY1OHJ3YTVYRmc9PSIsInZhbHVlIjoiRUc0UHRyenBJZTJFZlFBaXA5dVl0RDFvM0Y2UWVIcmdNTnFBTktKREZaN09jVHVaYVVCK2JyMmZ1NUhWUFdtaWNITDZQdjVyaHRoWjcyTUMvV0d3Wm84bzNKalBjRktEcUh0a09odW13aWQreThYZFlVaWIwQ3ZLZ3MyaXpjK1MiLCJtYWMiOiI2N2Q4NWZiZjE5N2ViZmY0OWU5M2ZhMTQ1ZTFhYmJlMDkxZWQxNmE1NWVjMjQxZDk2YjJmZTBmY2U1ZjkyZmM0IiwidGFnIjoiIn0=",
+        "referer": "http://localhost:5173/",
+        "user-agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) HeadlessChrome/157.0.0.0 Safari/537.36",
+        "accept": "application/json",
+        "sec-ch-ua": "\"Not-A.Brand\";v=\"99\", \"Google Chrome\";v=\"157\", \"Chromium\";v=\"157\"",
+        "sec-ch-ua-mobile": "?0"
+      }
+    },
+    {
+      "type": "REQ",
+      "method": "GET",
+      "url": "http://localhost:8000/api/v1/auth/me",
+      "headers": {
+        "sec-ch-ua-platform": "\"Windows\"",
+        "x-xsrf-token": "eyJpdiI6IndhUm5XVVd6bERaeHY1OHJ3YTVYRmc9PSIsInZhbHVlIjoiRUc0UHRyenBJZTJFZlFBaXA5dVl0RDFvM0Y2UWVIcmdNTnFBTktKREZaN09jVHVaYVVCK2JyMmZ1NUhWUFdtaWNITDZQdjVyaHRoWjcyTUMvV0d3Wm84bzNKalBjRktEcUh0a09odW13aWQreThYZFlVaWIwQ3ZLZ3MyaXpjK1MiLCJtYWMiOiI2N2Q4NWZiZjE5N2ViZmY0OWU5M2ZhMTQ1ZTFhYmJlMDkxZWQxNmE1NWVjMjQxZDk2YjJmZTBmY2U1ZjkyZmM0IiwidGFnIjoiIn0=",
+        "referer": "http://localhost:5173/",
+        "user-agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) HeadlessChrome/157.0.0.0 Safari/537.36",
+        "accept": "application/json",
+        "sec-ch-ua": "\"Not-A.Brand\";v=\"99\", \"Google Chrome\";v=\"157\", \"Chromium\";v=\"157\"",
+        "sec-ch-ua-mobile": "?0"
+      }
+    },
+    {
+      "type": "REQ",
+      "method": "OPTIONS",
+      "url": "http://localhost:8000/api/v1/auth/me",
+      "headers": {
+        "accept": "*/*",
+        "access-control-request-headers": "x-xsrf-token",
+        "access-control-request-method": "GET",
+        "origin": "http://localhost:5173",
+        "sec-fetch-mode": "cors",
+        "user-agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) HeadlessChrome/157.0.0.0 Safari/537.36"
+      }
+    },
+    {
+      "type": "REQ",
+      "method": "OPTIONS",
+      "url": "http://localhost:8000/api/v1/auth/me",
+      "headers": {
+        "accept": "*/*",
+        "access-control-request-headers": "x-xsrf-token",
+        "access-control-request-method": "GET",
+        "origin": "http://localhost:5173",
+        "sec-fetch-mode": "cors",
+        "user-agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) HeadlessChrome/157.0.0.0 Safari/537.36",
+        "accept-encoding": "gzip, deflate, br, zstd",
+        "accept-language": "en-US,en;q=0.9",
+        "connection": "keep-alive",
+        "host": "localhost:8000",
+        "referer": "http://localhost:5173/",
+        "sec-fetch-dest": "empty",
+        "sec-fetch-site": "same-site"
+      }
+    },
+    {
+      "type": "RES",
+      "status": 204,
+      "url": "http://localhost:8000/api/v1/auth/me",
+      "headers": {
+        "access-control-allow-credentials": "true",
+        "access-control-allow-headers": "x-xsrf-token",
+        "access-control-allow-methods": "GET",
+        "access-control-allow-origin": "http://localhost:5173",
+        "access-control-max-age": "0",
+        "cache-control": "no-cache, private",
+        "connection": "close",
+        "content-type": "text/html; charset=UTF-8",
+        "date": "Thu, 12 Nov 2026 15:06:59 GMT",
+        "host": "localhost:8000",
+        "vary": "Origin, Access-Control-Request-Method, Access-Control-Request-Headers",
+        "x-powered-by": "PHP/8.5.5"
+      }
+    },
+    {
+      "type": "RES",
+      "status": 204,
+      "url": "http://localhost:8000/api/v1/auth/me",
+      "headers": {
+        "access-control-allow-credentials": "true",
+        "access-control-allow-headers": "x-xsrf-token",
+        "access-control-allow-methods": "GET",
+        "access-control-allow-origin": "http://localhost:5173",
+        "access-control-max-age": "0",
+        "cache-control": "no-cache, private",
+        "connection": "close",
+        "content-type": "text/html; charset=UTF-8",
+        "date": "Thu, 12 Nov 2026 15:06:59 GMT",
+        "host": "localhost:8000",
+        "vary": "Origin, Access-Control-Request-Method, Access-Control-Request-Headers",
+        "x-powered-by": "PHP/8.5.5"
+      }
+    },
+    {
+      "type": "RES",
+      "status": 200,
+      "url": "http://localhost:8000/api/v1/auth/me",
+      "headers": {
+        "access-control-allow-credentials": "true",
+        "access-control-allow-origin": "http://localhost:5173",
+        "cache-control": "no-cache, private",
+        "connection": "close",
+        "content-type": "application/json",
+        "date": "Thu, 12 Nov 2026 15:06:59 GMT",
+        "host": "localhost:8000",
+        "set-cookie": "XSRF-TOKEN=eyJpdiI6IjNUMjZBK01mek5uS1RUd3hLeGtNTXc9PSIsInZhbHVlIjoicnpDYzhVOTZMZ3hTRVJDOWQ2bEJMNThxbGEyTGRuNUlJMkxVQVU4eDFaS1BXeE9CMXRFMjJLcW9BdFdYNHFWOUYzZkthUkRqNzBpN05nM1puSkljanBybzI1SHAzQmoyRnBMUldXd2ZxVGxTU2JyOTB2Sm5UTWVMUWFaNTI4dVgiLCJtYWMiOiI3NWRiZTU5ZjZkNjlmNzFkZGFkMTM2NzE2MmY0MGEzMThkNmI5NWNmNWZmN2JkYzViNjU2NWRlNjdmZGI5MDI5IiwidGFnIjoiIn0%3D; expires=Thu, 12 Nov 2026 17:06:59 GMT; Max-Age=7200; path=/; samesite=lax\n laravel-session=eyJpdiI6IjlCTGV5OU12VG9IcU5KVS9mem95Z0E9PSIsInZhbHVlIjoieXBHb2l1Wlc4ZW52QmFvVnRXUzdteEJyK1RrRjBtQ1BTSHFtOTlzSFlyVEJBb1o2S3lvYVhMU2loWng5WFRtZHcrUHBROWgxd3ZDdm4yNUYxSXRkVXdUUmw4bFl1RjdkVGdHeE1HNUdVMXJlOEhxcHN4L2hmbG9XNTl1UEY1N2IiLCJtYWMiOiJiNjQ2NmFkMjEzZmNhZjY3Nzc1MjA2MTgxNmM1ODQ0ZTkwNTIxZTQyY2JjZDM4N2VlZjdiYTlhNGZhNDhiMjUyIiwidGFnIjoiIn0%3D; expires=Thu, 12 Nov 2026 17:06:59 GMT; Max-Age=7200; path=/; httponly; samesite=lax",
+        "vary": "Origin",
+        "x-powered-by": "PHP/8.5.5"
+      }
+    },
+    {
+      "type": "RES",
+      "status": 200,
+      "url": "http://localhost:8000/api/v1/auth/me",
+      "headers": {
+        "access-control-allow-credentials": "true",
+        "access-control-allow-origin": "http://localhost:5173",
+        "cache-control": "no-cache, private",
+        "connection": "close",
+        "content-type": "application/json",
+        "date": "Thu, 12 Nov 2026 15:06:59 GMT",
+        "host": "localhost:8000",
+        "set-cookie": "XSRF-TOKEN=eyJpdiI6IlZLRGFvZDRPRUl4SG9tVnc3Q3hoTnc9PSIsInZhbHVlIjoiZURwaXZhem1PTVlMMzhCb1M2ZmlVWUxibmMvVCtLa0VvK2R0ZkdJNEtZWXJUYU1aQ0dOTzRlNWovUVg2bWVpWVN2UFl1M0F1eHdCaHN4MG9xN0lCNTFOUTAwcHhXbGY1QVZZa1I2NE8yTGtGanNvSE4zZ1g3cUR4TkFYUU84Um8iLCJtYWMiOiI1NDI4NTNhNmJkZDIyOTZmZmM0YmNjODc3YTY5NDc1YjI3YTBhNjQ3Zjc0NGExYzQ2MWMxYjA5NWE0N2I2NDQyIiwidGFnIjoiIn0%3D; expires=Thu, 12 Nov 2026 17:06:59 GMT; Max-Age=7200; path=/; samesite=lax\n laravel-session=eyJpdiI6Ii9oWSttK0gyK0RJWUdFYU1HS3JGNkE9PSIsInZhbHVlIjoiVG90Slpwd0t3T2JCQnRCQlh2TDk1enlZMXlHRTFRU0RjR3Bmd0VYdUNKTnNHTHFacHplYUpMMkJXMk1VZ3l5T28vNmFZYUNjQm5xL2dMSnZRaVRSOWxTV0NRLzhvTVBrQjRZcGhZVVNuTzBTZzA4WXJxNGIzKythRGpCVWRmQUsiLCJtYWMiOiJjNzdkZDY2MDVhMzE5MzkyNDA2MGYxNWYyYzlmNDRiMzlhYjRlNDE0OTI5YTEzNTk3OWRlMzMwMGU2YTc5MDZiIiwidGFnIjoiIn0%3D; expires=Thu, 12 Nov 2026 17:06:59 GMT; Max-Age=7200; path=/; httponly; samesite=lax",
+        "vary": "Origin",
+        "x-powered-by": "PHP/8.5.5"
+      }
+    },
+    {
+      "type": "REQ",
+      "method": "POST",
+      "url": "http://localhost:8000/api/v1/auth/logout",
+      "headers": {
+        "sec-ch-ua-platform": "\"Windows\"",
+        "x-xsrf-token": "eyJpdiI6IlZLRGFvZDRPRUl4SG9tVnc3Q3hoTnc9PSIsInZhbHVlIjoiZURwaXZhem1PTVlMMzhCb1M2ZmlVWUxibmMvVCtLa0VvK2R0ZkdJNEtZWXJUYU1aQ0dOTzRlNWovUVg2bWVpWVN2UFl1M0F1eHdCaHN4MG9xN0lCNTFOUTAwcHhXbGY1QVZZa1I2NE8yTGtGanNvSE4zZ1g3cUR4TkFYUU84Um8iLCJtYWMiOiI1NDI4NTNhNmJkZDIyOTZmZmM0YmNjODc3YTY5NDc1YjI3YTBhNjQ3Zjc0NGExYzQ2MWMxYjA5NWE0N2I2NDQyIiwidGFnIjoiIn0=",
+        "referer": "http://localhost:5173/",
+        "user-agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) HeadlessChrome/157.0.0.0 Safari/537.36",
+        "accept": "application/json",
+        "sec-ch-ua": "\"Not-A.Brand\";v=\"99\", \"Google Chrome\";v=\"157\", \"Chromium\";v=\"157\"",
+        "sec-ch-ua-mobile": "?0"
+      }
+    },
+    {
+      "type": "REQ",
+      "method": "OPTIONS",
+      "url": "http://localhost:8000/api/v1/auth/logout",
+      "headers": {
+        "accept": "*/*",
+        "access-control-request-headers": "x-xsrf-token",
+        "access-control-request-method": "POST",
+        "origin": "http://localhost:5173",
+        "sec-fetch-mode": "cors",
+        "user-agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) HeadlessChrome/157.0.0.0 Safari/537.36"
+      }
+    },
+    {
+      "type": "RES",
+      "status": 204,
+      "url": "http://localhost:8000/api/v1/auth/logout",
+      "headers": {
+        "access-control-allow-credentials": "true",
+        "access-control-allow-headers": "x-xsrf-token",
+        "access-control-allow-methods": "POST",
+        "access-control-allow-origin": "http://localhost:5173",
+        "access-control-max-age": "0",
+        "cache-control": "no-cache, private",
+        "connection": "close",
+        "content-type": "text/html; charset=UTF-8",
+        "date": "Thu, 12 Nov 2026 15:07:00 GMT",
+        "host": "localhost:8000",
+        "vary": "Origin, Access-Control-Request-Method, Access-Control-Request-Headers",
+        "x-powered-by": "PHP/8.5.5"
+      }
+    },
+    {
+      "type": "RES",
+      "status": 200,
+      "url": "http://localhost:8000/api/v1/auth/logout",
+      "headers": {
+        "access-control-allow-credentials": "true",
+        "access-control-allow-origin": "http://localhost:5173",
+        "cache-control": "no-cache, private",
+        "connection": "close",
+        "content-type": "application/json",
+        "date": "Thu, 12 Nov 2026 15:07:00 GMT",
+        "host": "localhost:8000",
+        "set-cookie": "XSRF-TOKEN=eyJpdiI6IjdJS3ZhM3IzRUdIZzVEMUFFc3FiWEE9PSIsInZhbHVlIjoiM1ErbCs4Q0hTRi9mc2JicldvZnUyTUpyNm9Ka0xSVGltZkRCQzJhMFMrL3hvVW55NmtWWS9scHcrbENtdS9zVnhjWnFQd0FEOE1JNXNWbkJTL0JvUkVzeUxRbFU4TWRnTnhXS2tlQzBXK1Flbkw4eDJEU2JmNTdReklGZmdGZVIiLCJtYWMiOiJlMTk5YjVkODhiNGU1YzA3NTliMmVhMzNlYzQ4OGEyNjZmMzcxMzBkY2EzZTkxYTY5MDliM2Q5MDgzMDI3YTk5IiwidGFnIjoiIn0%3D; expires=Thu, 12 Nov 2026 17:07:00 GMT; Max-Age=7200; path=/; samesite=lax\n laravel-session=eyJpdiI6IlRQNDFkS3l3MFNPbjAzRnRKUTZlTEE9PSIsInZhbHVlIjoiN21uR080NkQwTkQ5c0lyUmptVWhMUkF5SUlreTQ1Qmh4cEJzWlVROTZGcEpjNklHOG9OV3gwYW50OFhWYzJYTGpXL29GWUI0WFVFb243cE1LZjR6ZEhhcGlYb2xDbjhVR1dteVpvT2d5eGQvUFl1emNtWGgyUVJCbVEycGpxbGkiLCJtYWMiOiI4MzdiMWJiNDFiZDcyNzIyNWU1N2Y5NDJhMDMxZDllZGI5OWI1YTJjYTZiZmViYzA3YWZjYjNmNTJhNDhkZGI4IiwidGFnIjoiIn0%3D; expires=Thu, 12 Nov 2026 17:07:00 GMT; Max-Age=7200; path=/; httponly; samesite=lax",
+        "vary": "Origin",
+        "x-powered-by": "PHP/8.5.5"
+      }
+    },
+    {
+      "type": "REQ",
+      "method": "GET",
+      "url": "http://localhost:8000/api/v1/auth/me",
+      "headers": {
+        "sec-ch-ua-platform": "\"Windows\"",
+        "x-xsrf-token": "eyJpdiI6IjdJS3ZhM3IzRUdIZzVEMUFFc3FiWEE9PSIsInZhbHVlIjoiM1ErbCs4Q0hTRi9mc2JicldvZnUyTUpyNm9Ka0xSVGltZkRCQzJhMFMrL3hvVW55NmtWWS9scHcrbENtdS9zVnhjWnFQd0FEOE1JNXNWbkJTL0JvUkVzeUxRbFU4TWRnTnhXS2tlQzBXK1Flbkw4eDJEU2JmNTdReklGZmdGZVIiLCJtYWMiOiJlMTk5YjVkODhiNGU1YzA3NTliMmVhMzNlYzQ4OGEyNjZmMzcxMzBkY2EzZTkxYTY5MDliM2Q5MDgzMDI3YTk5IiwidGFnIjoiIn0=",
+        "referer": "http://localhost:5173/",
+        "user-agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) HeadlessChrome/157.0.0.0 Safari/537.36",
+        "accept": "application/json",
+        "sec-ch-ua": "\"Not-A.Brand\";v=\"99\", \"Google Chrome\";v=\"157\", \"Chromium\";v=\"157\"",
+        "sec-ch-ua-mobile": "?0"
+      }
+    },
+    {
+      "type": "REQ",
+      "method": "GET",
+      "url": "http://localhost:8000/api/v1/auth/me",
+      "headers": {
+        "sec-ch-ua-platform": "\"Windows\"",
+        "x-xsrf-token": "eyJpdiI6IjdJS3ZhM3IzRUdIZzVEMUFFc3FiWEE9PSIsInZhbHVlIjoiM1ErbCs4Q0hTRi9mc2JicldvZnUyTUpyNm9Ka0xSVGltZkRCQzJhMFMrL3hvVW55NmtWWS9scHcrbENtdS9zVnhjWnFQd0FEOE1JNXNWbkJTL0JvUkVzeUxRbFU4TWRnTnhXS2tlQzBXK1Flbkw4eDJEU2JmNTdReklGZmdGZVIiLCJtYWMiOiJlMTk5YjVkODhiNGU1YzA3NTliMmVhMzNlYzQ4OGEyNjZmMzcxMzBkY2EzZTkxYTY5MDliM2Q5MDgzMDI3YTk5IiwidGFnIjoiIn0=",
+        "referer": "http://localhost:5173/",
+        "user-agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) HeadlessChrome/157.0.0.0 Safari/537.36",
+        "accept": "application/json",
+        "sec-ch-ua": "\"Not-A.Brand\";v=\"99\", \"Google Chrome\";v=\"157\", \"Chromium\";v=\"157\"",
+        "sec-ch-ua-mobile": "?0"
+      }
+    },
+    {
+      "type": "REQ",
+      "method": "OPTIONS",
+      "url": "http://localhost:8000/api/v1/auth/me",
+      "headers": {
+        "accept": "*/*",
+        "access-control-request-headers": "x-xsrf-token",
+        "access-control-request-method": "GET",
+        "origin": "http://localhost:5173",
+        "sec-fetch-mode": "cors",
+        "user-agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) HeadlessChrome/157.0.0.0 Safari/537.36"
+      }
+    },
+    {
+      "type": "REQ",
+      "method": "OPTIONS",
+      "url": "http://localhost:8000/api/v1/auth/me",
+      "headers": {
+        "accept": "*/*",
+        "access-control-request-headers": "x-xsrf-token",
+        "access-control-request-method": "GET",
+        "origin": "http://localhost:5173",
+        "sec-fetch-mode": "cors",
+        "user-agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) HeadlessChrome/157.0.0.0 Safari/537.36"
+      }
+    },
+    {
+      "type": "RES",
+      "status": 204,
+      "url": "http://localhost:8000/api/v1/auth/me",
+      "headers": {
+        "access-control-allow-credentials": "true",
+        "access-control-allow-headers": "x-xsrf-token",
+        "access-control-allow-methods": "GET",
+        "access-control-allow-origin": "http://localhost:5173",
+        "access-control-max-age": "0",
+        "cache-control": "no-cache, private",
+        "connection": "close",
+        "content-type": "text/html; charset=UTF-8",
+        "date": "Thu, 12 Nov 2026 15:07:01 GMT",
+        "host": "localhost:8000",
+        "vary": "Origin, Access-Control-Request-Method, Access-Control-Request-Headers",
+        "x-powered-by": "PHP/8.5.5"
+      }
+    },
+    {
+      "type": "RES",
+      "status": 204,
+      "url": "http://localhost:8000/api/v1/auth/me",
+      "headers": {
+        "access-control-allow-credentials": "true",
+        "access-control-allow-headers": "x-xsrf-token",
+        "access-control-allow-methods": "GET",
+        "access-control-allow-origin": "http://localhost:5173",
+        "access-control-max-age": "0",
+        "cache-control": "no-cache, private",
+        "connection": "close",
+        "content-type": "text/html; charset=UTF-8",
+        "date": "Thu, 12 Nov 2026 15:07:01 GMT",
+        "host": "localhost:8000",
+        "vary": "Origin, Access-Control-Request-Method, Access-Control-Request-Headers",
+        "x-powered-by": "PHP/8.5.5"
+      }
+    },
+    {
+      "type": "RES",
+      "status": 401,
+      "url": "http://localhost:8000/api/v1/auth/me",
+      "headers": {
+        "access-control-allow-credentials": "true",
+        "access-control-allow-origin": "http://localhost:5173",
+        "cache-control": "no-cache, private",
+        "connection": "close",
+        "content-type": "application/json",
+        "date": "Thu, 12 Nov 2026 15:07:02 GMT",
+        "host": "localhost:8000",
+        "set-cookie": "XSRF-TOKEN=eyJpdiI6IjRrODNUQThkYUI4MHA0dHJhSjJlRlE9PSIsInZhbHVlIjoidzhMdUpwTXQwSi8zbExDZ1lwM0FCZE83UlNEV3FTM0Z3MGxlSkhCQU00NEgzN1JyU0MvYWNnOFJyYk4vYzdUcU1xd21JdDlDR3ZraWkvZU9UQjd1RE1NK2JoaElDRnV0dnNtam5YRS9DQUY3L1E3WjlCemVjY2pIUkV1R3Y1dE4iLCJtYWMiOiJiNTk5NDZiOWEyY2I3Zjg1NjhhOWYyZDQ1MjY5OWUyOTczOWIyMWU3OTk4ZjUzZjEzYzUzODI5ZGYyMTU4OWQyIiwidGFnIjoiIn0%3D; expires=Thu, 12 Nov 2026 17:07:02 GMT; Max-Age=7200; path=/; samesite=lax\n laravel-session=eyJpdiI6IlpiblhFL2tGSEQzc1BRZkpoTGpMbGc9PSIsInZhbHVlIjoiMTNOSVMvajBINlM3QkhtUVRsdTRodzR3dWx0ZUFiQ0EvRzc0Y05uTm1FdlFkZzlRdU9PcVBkUUVTL25VY05aeUIxcnN2U0YrTUdNSVRmc2dHMEx4M1c0aGhFcnNtVUZKYUNpbXU2SUdxYVRGMnFPeDFlVC82VjUxNk84aU9ETkMiLCJtYWMiOiJiNWY1MmU4NzMxMTFiYWU3OThiYjI4ZTEwMGI4ODEwZjQ5ZmE0ZTExNTZhMGU0M2IyODM3NTdmNjEyYjk1NDczIiwidGFnIjoiIn0%3D; expires=Thu, 12 Nov 2026 17:07:02 GMT; Max-Age=7200; path=/; httponly; samesite=lax",
+        "vary": "Origin",
+        "x-powered-by": "PHP/8.5.5"
+      }
+    },
+    {
+      "type": "RES",
+      "status": 401,
+      "url": "http://localhost:8000/api/v1/auth/me",
+      "headers": {
+        "access-control-allow-credentials": "true",
+        "access-control-allow-origin": "http://localhost:5173",
+        "cache-control": "no-cache, private",
+        "connection": "close",
+        "content-type": "application/json",
+        "date": "Thu, 12 Nov 2026 15:07:02 GMT",
+        "host": "localhost:8000",
+        "set-cookie": "XSRF-TOKEN=eyJpdiI6IkFyblJRMENNS1FaQ082UkMyMDVMUFE9PSIsInZhbHVlIjoiWE9OMkZSbnpvUHRSNXNod0RjVWZSeTlKQzFVajhDdzh6bC84cU5JaVRSb01GbVJ2OUFUaVNXcisyOEo5R2NyR2pFZzBMd2YrYVNYMVZlK25zV3N4LzZMS3ZXL011aWFhY2JLamNMZldUUTFESkltK0paNU0xdjg0UDVQTlAxRk8iLCJtYWMiOiJmM2Q5MDk0YTRlN2E1NDU1YTNhOTU1OTJlMjJjY2Q5MjVlYTcwNzdkZTNkZjBmZGExOGYyMWYyN2ZhNTQzODFlIiwidGFnIjoiIn0%3D; expires=Thu, 12 Nov 2026 17:07:02 GMT; Max-Age=7200; path=/; samesite=lax\n laravel-session=eyJpdiI6IjZLRVBhNlJKZ2JKWUhOWDE2YkJ0TWc9PSIsInZhbHVlIjoiU3psYnZCU2lVRU54Sk9weVU2Z2VTejZqTTBiNFpqQ3Fmc2poTXdkLy9Ga2VGUjRVaFZJNFYzazNxWTJJQkp4enBwWFFmZHY1OTJmNU5jZGtENG9XcFU0WUt4cFBTT3BVaUdoRzVMRXdUa250RmZVMlJjdEErL0JLaVVBSEVTYmwiLCJtYWMiOiJhYmJkYWE4ZWM4MjNhNDlmMTU2ZWY5NjJmYjU2NGQ0NmFkYTVhYjAwMTcwMjE2NTFkZGQzMjZiOGE4YmExNzE4IiwidGFnIjoiIn0%3D; expires=Thu, 12 Nov 2026 17:07:02 GMT; Max-Age=7200; path=/; httponly; samesite=lax",
+        "vary": "Origin",
+        "x-powered-by": "PHP/8.5.5"
+      }
+    },
+    {
+      "type": "REQ",
+      "method": "GET",
+      "url": "http://localhost:8000/api/v1/auth/me",
+      "headers": {
+        "sec-ch-ua-platform": "\"Windows\"",
+        "x-xsrf-token": "eyJpdiI6IkFyblJRMENNS1FaQ082UkMyMDVMUFE9PSIsInZhbHVlIjoiWE9OMkZSbnpvUHRSNXNod0RjVWZSeTlKQzFVajhDdzh6bC84cU5JaVRSb01GbVJ2OUFUaVNXcisyOEo5R2NyR2pFZzBMd2YrYVNYMVZlK25zV3N4LzZMS3ZXL011aWFhY2JLamNMZldUUTFESkltK0paNU0xdjg0UDVQTlAxRk8iLCJtYWMiOiJmM2Q5MDk0YTRlN2E1NDU1YTNhOTU1OTJlMjJjY2Q5MjVlYTcwNzdkZTNkZjBmZGExOGYyMWYyN2ZhNTQzODFlIiwidGFnIjoiIn0=",
+        "referer": "http://localhost:5173/",
+        "user-agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) HeadlessChrome/157.0.0.0 Safari/537.36",
+        "accept": "application/json",
+        "sec-ch-ua": "\"Not-A.Brand\";v=\"99\", \"Google Chrome\";v=\"157\", \"Chromium\";v=\"157\"",
+        "sec-ch-ua-mobile": "?0"
+      }
+    },
+    {
+      "type": "REQ",
+      "method": "GET",
+      "url": "http://localhost:8000/api/v1/auth/me",
+      "headers": {
+        "sec-ch-ua-platform": "\"Windows\"",
+        "x-xsrf-token": "eyJpdiI6IkFyblJRMENNS1FaQ082UkMyMDVMUFE9PSIsInZhbHVlIjoiWE9OMkZSbnpvUHRSNXNod0RjVWZSeTlKQzFVajhDdzh6bC84cU5JaVRSb01GbVJ2OUFUaVNXcisyOEo5R2NyR2pFZzBMd2YrYVNYMVZlK25zV3N4LzZMS3ZXL011aWFhY2JLamNMZldUUTFESkltK0paNU0xdjg0UDVQTlAxRk8iLCJtYWMiOiJmM2Q5MDk0YTRlN2E1NDU1YTNhOTU1OTJlMjJjY2Q5MjVlYTcwNzdkZTNkZjBmZGExOGYyMWYyN2ZhNTQzODFlIiwidGFnIjoiIn0=",
+        "referer": "http://localhost:5173/",
+        "user-agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) HeadlessChrome/157.0.0.0 Safari/537.36",
+        "accept": "application/json",
+        "sec-ch-ua": "\"Not-A.Brand\";v=\"99\", \"Google Chrome\";v=\"157\", \"Chromium\";v=\"157\"",
+        "sec-ch-ua-mobile": "?0"
+      }
+    },
+    {
+      "type": "REQ",
+      "method": "OPTIONS",
+      "url": "http://localhost:8000/api/v1/auth/me",
+      "headers": {
+        "accept": "*/*",
+        "access-control-request-headers": "x-xsrf-token",
+        "access-control-request-method": "GET",
+        "origin": "http://localhost:5173",
+        "sec-fetch-mode": "cors",
+        "user-agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) HeadlessChrome/157.0.0.0 Safari/537.36"
+      }
+    },
+    {
+      "type": "REQ",
+      "method": "OPTIONS",
+      "url": "http://localhost:8000/api/v1/auth/me",
+      "headers": {
+        "accept": "*/*",
+        "access-control-request-headers": "x-xsrf-token",
+        "access-control-request-method": "GET",
+        "origin": "http://localhost:5173",
+        "sec-fetch-mode": "cors",
+        "user-agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) HeadlessChrome/157.0.0.0 Safari/537.36",
+        "accept-encoding": "gzip, deflate, br, zstd",
+        "accept-language": "en-US,en;q=0.9",
+        "connection": "keep-alive",
+        "host": "localhost:8000",
+        "referer": "http://localhost:5173/",
+        "sec-fetch-dest": "empty",
+        "sec-fetch-site": "same-site"
+      }
+    },
+    {
+      "type": "RES",
+      "status": 204,
+      "url": "http://localhost:8000/api/v1/auth/me",
+      "headers": {
+        "access-control-allow-credentials": "true",
+        "access-control-allow-headers": "x-xsrf-token",
+        "access-control-allow-methods": "GET",
+        "access-control-allow-origin": "http://localhost:5173",
+        "access-control-max-age": "0",
+        "cache-control": "no-cache, private",
+        "connection": "close",
+        "content-type": "text/html; charset=UTF-8",
+        "date": "Thu, 12 Nov 2026 15:07:02 GMT",
+        "host": "localhost:8000",
+        "vary": "Origin, Access-Control-Request-Method, Access-Control-Request-Headers",
+        "x-powered-by": "PHP/8.5.5"
+      }
+    },
+    {
+      "type": "RES",
+      "status": 204,
+      "url": "http://localhost:8000/api/v1/auth/me",
+      "headers": {
+        "access-control-allow-credentials": "true",
+        "access-control-allow-headers": "x-xsrf-token",
+        "access-control-allow-methods": "GET",
+        "access-control-allow-origin": "http://localhost:5173",
+        "access-control-max-age": "0",
+        "cache-control": "no-cache, private",
+        "connection": "close",
+        "content-type": "text/html; charset=UTF-8",
+        "date": "Thu, 12 Nov 2026 15:07:02 GMT",
+        "host": "localhost:8000",
+        "vary": "Origin, Access-Control-Request-Method, Access-Control-Request-Headers",
+        "x-powered-by": "PHP/8.5.5"
+      }
+    },
+    {
+      "type": "RES",
+      "status": 401,
+      "url": "http://localhost:8000/api/v1/auth/me",
+      "headers": {
+        "access-control-allow-credentials": "true",
+        "access-control-allow-origin": "http://localhost:5173",
+        "cache-control": "no-cache, private",
+        "connection": "close",
+        "content-type": "application/json",
+        "date": "Thu, 12 Nov 2026 15:07:02 GMT",
+        "host": "localhost:8000",
+        "set-cookie": "XSRF-TOKEN=eyJpdiI6IktmT2N4VThSNXE3RERkRkdrY2xjeFE9PSIsInZhbHVlIjoiOHNUQ2Y0QWU2RmY4b1JuWlA5SEFidERxQWxVejJyQnh1Zkwwd3BiWmw5eXFZMVhmK0dmR3R5T2lwZWQ1TFlZVTVDYzBEd3RTUG5UYXZlTk5EeEwrR0F2ZHdpa2FvNGpTNlRkdkVqRDY3RGozV1VIYUhqRnI0T3Qxc21talJaSHAiLCJtYWMiOiIzMWU4NGE1OGY5YjAzYzc4YTNhZTM5YTlmOGVmMDdhYTRjOTc5YTQwY2M2ZTM5ZTlmZTY2MzVlMTUzMTNjMTE4IiwidGFnIjoiIn0%3D; expires=Thu, 12 Nov 2026 17:07:02 GMT; Max-Age=7200; path=/; samesite=lax\n laravel-session=eyJpdiI6Ijd5QTlmZTRlTnZhSFNhek1tam82K2c9PSIsInZhbHVlIjoiT3kxQ0tqa21KY1V6RTNick40eGEyU2YxVHlsd3U3K0E5d0d2dFpoSlFFd096dmw5bzlwdE51d0dtUmhubFRMSU9lc3U0aWNSUVY0SEVFNUJyUnpoeWgwS3FDb2pnbVFWUVpwUWhiQ21qWWhBTnoyeGRMVzBQelZJMEJWN1h2ejciLCJtYWMiOiI1MjllYTBhYzU0MGZiZGFkMjAzZmIyY2U4YTlmY2NjNzljZWQ4MzAxMWRlZjRiOTE0MDg3MmM3MDlhOGI0Nzk2IiwidGFnIjoiIn0%3D; expires=Thu, 12 Nov 2026 17:07:02 GMT; Max-Age=7200; path=/; httponly; samesite=lax",
+        "vary": "Origin",
+        "x-powered-by": "PHP/8.5.5"
+      }
+    },
+    {
+      "type": "RES",
+      "status": 401,
+      "url": "http://localhost:8000/api/v1/auth/me",
+      "headers": {
+        "access-control-allow-credentials": "true",
+        "access-control-allow-origin": "http://localhost:5173",
+        "cache-control": "no-cache, private",
+        "connection": "close",
+        "content-type": "application/json",
+        "date": "Thu, 12 Nov 2026 15:07:02 GMT",
+        "host": "localhost:8000",
+        "set-cookie": "XSRF-TOKEN=eyJpdiI6IlBjcFpITmxsQy9yYVdhNmZjWjZONHc9PSIsInZhbHVlIjoidEluQ3RhRTJIYTM1em9XbDYvdkpmUE5VVWlocW12QnY0WmZ1QWdRdGd0dkR5MytxSkppNFFqR1Jad1cwYitLUThIY2tpVWNQd0ZaWnJlZkd1WHF2VWFRbWptdStzZXhDaWNMRE9QYUdGNEJycDduaEwwMGl6SDd1cHFmdzgvRTgiLCJtYWMiOiJlNGExZGIwMmZlOTlhODY3MTJiMGUwYWU2OWRiZjdiYTNmM2Y1NmU1YzY3NWFkNjgyNGUwZDc3ZGM3NGIyNjQ4IiwidGFnIjoiIn0%3D; expires=Thu, 12 Nov 2026 17:07:02 GMT; Max-Age=7200; path=/; samesite=lax\n laravel-session=eyJpdiI6IlQxSFl5MlZiSFY1YzhyaVZYaUZxcUE9PSIsInZhbHVlIjoiQ2Mya0tsakppWSsweVR6Z1dUSDhaaW02emNvZnRkck11Sm5STFpZV3p5Tjd5S3R3QkFFeFpsY3ZUZWRLNlkrd2tEOXpaVktDMG5KUmlPT3VlblJ5QnNWWldOb2pIbHN3dzc2S2xoOHY1MkFjVkJ5SmxIOE1na3M3NHlYbG1ZTHoiLCJtYWMiOiJlYzJhNDEyMTg0NTNhZjBhYjE4YjA2ODFiMjQ1MDdiOWY5MmQwMzJmZTc2ZmMwZTgzYWI0NjA0YzI5NDk1ZGY5IiwidGFnIjoiIn0%3D; expires=Thu, 12 Nov 2026 17:07:02 GMT; Max-Age=7200; path=/; httponly; samesite=lax",
+        "vary": "Origin",
+        "x-powered-by": "PHP/8.5.5"
+      }
+    },
+    {
+      "type": "REQ",
+      "method": "GET",
+      "url": "http://localhost:8000/sanctum/csrf-cookie",
+      "headers": {
+        "sec-ch-ua-platform": "\"Windows\"",
+        "x-xsrf-token": "eyJpdiI6IlBjcFpITmxsQy9yYVdhNmZjWjZONHc9PSIsInZhbHVlIjoidEluQ3RhRTJIYTM1em9XbDYvdkpmUE5VVWlocW12QnY0WmZ1QWdRdGd0dkR5MytxSkppNFFqR1Jad1cwYitLUThIY2tpVWNQd0ZaWnJlZkd1WHF2VWFRbWptdStzZXhDaWNMRE9QYUdGNEJycDduaEwwMGl6SDd1cHFmdzgvRTgiLCJtYWMiOiJlNGExZGIwMmZlOTlhODY3MTJiMGUwYWU2OWRiZjdiYTNmM2Y1NmU1YzY3NWFkNjgyNGUwZDc3ZGM3NGIyNjQ4IiwidGFnIjoiIn0=",
+        "referer": "http://localhost:5173/",
+        "user-agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) HeadlessChrome/157.0.0.0 Safari/537.36",
+        "accept": "application/json",
+        "sec-ch-ua": "\"Not-A.Brand\";v=\"99\", \"Google Chrome\";v=\"157\", \"Chromium\";v=\"157\"",
+        "sec-ch-ua-mobile": "?0"
+      }
+    },
+    {
+      "type": "REQ",
+      "method": "OPTIONS",
+      "url": "http://localhost:8000/sanctum/csrf-cookie",
+      "headers": {
+        "accept": "*/*",
+        "access-control-request-headers": "x-xsrf-token",
+        "access-control-request-method": "GET",
+        "origin": "http://localhost:5173",
+        "sec-fetch-mode": "cors",
+        "user-agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) HeadlessChrome/157.0.0.0 Safari/537.36"
+      }
+    },
+    {
+      "type": "RES",
+      "status": 204,
+      "url": "http://localhost:8000/sanctum/csrf-cookie",
+      "headers": {
+        "access-control-allow-credentials": "true",
+        "access-control-allow-headers": "x-xsrf-token",
+        "access-control-allow-methods": "GET",
+        "access-control-allow-origin": "http://localhost:5173",
+        "access-control-max-age": "0",
+        "cache-control": "no-cache, private",
+        "connection": "close",
+        "content-type": "text/html; charset=UTF-8",
+        "date": "Thu, 12 Nov 2026 15:07:03 GMT",
+        "host": "localhost:8000",
+        "vary": "Origin, Access-Control-Request-Method, Access-Control-Request-Headers",
+        "x-powered-by": "PHP/8.5.5"
+      }
+    },
+    {
+      "type": "RES",
+      "status": 204,
+      "url": "http://localhost:8000/sanctum/csrf-cookie",
+      "headers": {
+        "access-control-allow-credentials": "true",
+        "access-control-allow-origin": "http://localhost:5173",
+        "cache-control": "no-cache, private",
+        "connection": "close",
+        "date": "Thu, 12 Nov 2026 15:07:04 GMT",
+        "host": "localhost:8000",
+        "set-cookie": "XSRF-TOKEN=eyJpdiI6Im5YNnFwKzlpdWRHR2Z4bzZxZzhRZ0E9PSIsInZhbHVlIjoiOHFHWWE3a3NoMW9xNkpVeFlvZnQzZGNkMmdBd1ZEdm44QWRwTUVBNk5qTVY5ZXNxYmNJTklma0Y2c3dxcmRxUUkvaElnMDl4NmRZT0tGcWp3NnA5aXdodzRRaDltOFdudWRrZmk4Q1BIUDJyZlZaUTdKNG1HRTFiMGxRWENTZDEiLCJtYWMiOiIwMjA1NTJiYmU1MzM3MGM4ODdhN2Q0YzBmNmQwMDExM2RkZGQ1YzljZWVmOTE4NDdjZmRmZTAxM2M2MDRhYjhjIiwidGFnIjoiIn0%3D; expires=Thu, 12 Nov 2026 17:07:04 GMT; Max-Age=7200; path=/; samesite=lax\n laravel-session=eyJpdiI6Ilc4ZHF3WFpzb2ZXd3hYUGdPT2NjdHc9PSIsInZhbHVlIjoiYWZ5d281V25qNC9rZG02NVh0a1ZmNDlScEdlRHZZM1lIeW5iYzc2MkJ5L2doTHZPZFZTRmtwZlBjMjNrbXdmeWE0blRuUWRIRkFWcXJMdE9SdWdjVmhqMmo2OXZRLzFUNFRxdjZHbmpxcDFxWEZVa3o2WC93TFozK0JWSmpkVTIiLCJtYWMiOiI4OTJmZmQ2YWY1NTI2ZjYxZmNjYjliZjdmNWJkZGQ1MTQ4MWUyYjcwZDJiZDc3MzExNzAzZTVmMTI4MDc5MzY3IiwidGFnIjoiIn0%3D; expires=Thu, 12 Nov 2026 17:07:04 GMT; Max-Age=7200; path=/; httponly; samesite=lax",
+        "vary": "X-Inertia, Origin",
+        "x-inertia-devtools-id": "01M784RKGGHTBSPWSGWMP3QNAC",
+        "x-inertia-devtools-parent-out": "01M784RKGGHTBSPWSGWMP3QNAC",
+        "x-powered-by": "PHP/8.5.5"
+      }
+    },
+    {
+      "type": "REQ",
+      "method": "POST",
+      "url": "http://localhost:8000/api/v1/auth/login",
+      "headers": {
+        "sec-ch-ua-platform": "\"Windows\"",
+        "x-xsrf-token": "eyJpdiI6Im5YNnFwKzlpdWRHR2Z4bzZxZzhRZ0E9PSIsInZhbHVlIjoiOHFHWWE3a3NoMW9xNkpVeFlvZnQzZGNkMmdBd1ZEdm44QWRwTUVBNk5qTVY5ZXNxYmNJTklma0Y2c3dxcmRxUUkvaElnMDl4NmRZT0tGcWp3NnA5aXdodzRRaDltOFdudWRrZmk4Q1BIUDJyZlZaUTdKNG1HRTFiMGxRWENTZDEiLCJtYWMiOiIwMjA1NTJiYmU1MzM3MGM4ODdhN2Q0YzBmNmQwMDExM2RkZGQ1YzljZWVmOTE4NDdjZmRmZTAxM2M2MDRhYjhjIiwidGFnIjoiIn0=",
+        "referer": "http://localhost:5173/",
+        "sec-ch-ua": "\"Not-A.Brand\";v=\"99\", \"Google Chrome\";v=\"157\", \"Chromium\";v=\"157\"",
+        "sec-ch-ua-mobile": "?0",
+        "user-agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) HeadlessChrome/157.0.0.0 Safari/537.36",
+        "accept": "application/json",
+        "content-type": "application/json"
+      }
+    },
+    {
+      "type": "REQ",
+      "method": "OPTIONS",
+      "url": "http://localhost:8000/api/v1/auth/login",
+      "headers": {
+        "accept": "*/*",
+        "access-control-request-headers": "content-type,x-xsrf-token",
+        "access-control-request-method": "POST",
+        "origin": "http://localhost:5173",
+        "sec-fetch-mode": "cors",
+        "user-agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) HeadlessChrome/157.0.0.0 Safari/537.36"
+      }
+    },
+    {
+      "type": "RES",
+      "status": 204,
+      "url": "http://localhost:8000/api/v1/auth/login",
+      "headers": {
+        "access-control-allow-credentials": "true",
+        "access-control-allow-headers": "content-type,x-xsrf-token",
+        "access-control-allow-methods": "POST",
+        "access-control-allow-origin": "http://localhost:5173",
+        "access-control-max-age": "0",
+        "cache-control": "no-cache, private",
+        "connection": "close",
+        "content-type": "text/html; charset=UTF-8",
+        "date": "Thu, 12 Nov 2026 15:07:04 GMT",
+        "host": "localhost:8000",
+        "vary": "Origin, Access-Control-Request-Method, Access-Control-Request-Headers",
+        "x-powered-by": "PHP/8.5.5"
+      }
+    },
+    {
+      "type": "RES",
+      "status": 200,
+      "url": "http://localhost:8000/api/v1/auth/login",
+      "headers": {
+        "access-control-allow-credentials": "true",
+        "access-control-allow-origin": "http://localhost:5173",
+        "cache-control": "no-cache, private",
+        "connection": "close",
+        "content-type": "application/json",
+        "date": "Thu, 12 Nov 2026 15:07:04 GMT",
+        "host": "localhost:8000",
+        "set-cookie": "XSRF-TOKEN=eyJpdiI6IjdmaEhBZjVCT0ZENjYvRHlNVEVidHc9PSIsInZhbHVlIjoiN0VVVXhMdElCMzZiMUQ4UUY4eGhZUzFCYm1qK1dPdWJLanlLaXFPVGpCeFg4YnpzVzRMUzVNS2YrOVRYdmNuYWZLMEZRWUtxRVB0TklRVy9uVHdYQThNK1l6NUN5M1NGMXBEdzg2NGxEZDRJYkRFMU9oanVvN1MwVkEzbklTWkkiLCJtYWMiOiJiZDI2MmEwYjA3ZmFhOTA1ODM2YTViZDc4YmMwZjc1NWMwM2Q5MjMzNjA5NTVjNWU0ZjRmNDA2ZGE4MTBiMzJjIiwidGFnIjoiIn0%3D; expires=Thu, 12 Nov 2026 17:07:04 GMT; Max-Age=7200; path=/; samesite=lax\n laravel-session=eyJpdiI6InJLaFRXcEIwSEV3Y2xBUXRUMVpSV0E9PSIsInZhbHVlIjoiTFRoUmhPWURHV3Q4Y0pXcjE3SitEb3c1NzQ3RDB2YUFHdzhSQ1pSdzFwUXJrOG1vR3B4UlEzWXo3UVVrNmJNVnBKNitKdHlXekxuWTVBN1VsUTlhRHk5OFJmelU4TG16Y1ExcnMrbG9RT01tYlIrVWFSYWNISHdscGdFMjV1dVIiLCJtYWMiOiIyODZlNWU3ODFiNzk1MzZiNTY5Yjk2YThkMzg2NWMyNWFiNzdmMjc0ZDk3MWRmZWE5ZjhkOTVmNzlkNDBjZmQ5IiwidGFnIjoiIn0%3D; expires=Thu, 12 Nov 2026 17:07:04 GMT; Max-Age=7200; path=/; httponly; samesite=lax",
+        "vary": "Origin",
+        "x-powered-by": "PHP/8.5.5"
+      }
+    },
+    {
+      "type": "REQ",
+      "method": "GET",
+      "url": "http://localhost:8000/api/v1/auth/me",
+      "headers": {
+        "sec-ch-ua-platform": "\"Windows\"",
+        "x-xsrf-token": "eyJpdiI6IjdmaEhBZjVCT0ZENjYvRHlNVEVidHc9PSIsInZhbHVlIjoiN0VVVXhMdElCMzZiMUQ4UUY4eGhZUzFCYm1qK1dPdWJLanlLaXFPVGpCeFg4YnpzVzRMUzVNS2YrOVRYdmNuYWZLMEZRWUtxRVB0TklRVy9uVHdYQThNK1l6NUN5M1NGMXBEdzg2NGxEZDRJYkRFMU9oanVvN1MwVkEzbklTWkkiLCJtYWMiOiJiZDI2MmEwYjA3ZmFhOTA1ODM2YTViZDc4YmMwZjc1NWMwM2Q5MjMzNjA5NTVjNWU0ZjRmNDA2ZGE4MTBiMzJjIiwidGFnIjoiIn0=",
+        "referer": "http://localhost:5173/",
+        "user-agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) HeadlessChrome/157.0.0.0 Safari/537.36",
+        "accept": "application/json",
+        "sec-ch-ua": "\"Not-A.Brand\";v=\"99\", \"Google Chrome\";v=\"157\", \"Chromium\";v=\"157\"",
+        "sec-ch-ua-mobile": "?0"
+      }
+    },
+    {
+      "type": "REQ",
+      "method": "GET",
+      "url": "http://localhost:8000/api/v1/auth/me",
+      "headers": {
+        "sec-ch-ua-platform": "\"Windows\"",
+        "x-xsrf-token": "eyJpdiI6IjdmaEhBZjVCT0ZENjYvRHlNVEVidHc9PSIsInZhbHVlIjoiN0VVVXhMdElCMzZiMUQ4UUY4eGhZUzFCYm1qK1dPdWJLanlLaXFPVGpCeFg4YnpzVzRMUzVNS2YrOVRYdmNuYWZLMEZRWUtxRVB0TklRVy9uVHdYQThNK1l6NUN5M1NGMXBEdzg2NGxEZDRJYkRFMU9oanVvN1MwVkEzbklTWkkiLCJtYWMiOiJiZDI2MmEwYjA3ZmFhOTA1ODM2YTViZDc4YmMwZjc1NWMwM2Q5MjMzNjA5NTVjNWU0ZjRmNDA2ZGE4MTBiMzJjIiwidGFnIjoiIn0=",
+        "referer": "http://localhost:5173/",
+        "user-agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) HeadlessChrome/157.0.0.0 Safari/537.36",
+        "accept": "application/json",
+        "sec-ch-ua": "\"Not-A.Brand\";v=\"99\", \"Google Chrome\";v=\"157\", \"Chromium\";v=\"157\"",
+        "sec-ch-ua-mobile": "?0"
+      }
+    },
+    {
+      "type": "REQ",
+      "method": "OPTIONS",
+      "url": "http://localhost:8000/api/v1/auth/me",
+      "headers": {
+        "accept": "*/*",
+        "access-control-request-headers": "x-xsrf-token",
+        "access-control-request-method": "GET",
+        "origin": "http://localhost:5173",
+        "sec-fetch-mode": "cors",
+        "user-agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) HeadlessChrome/157.0.0.0 Safari/537.36"
+      }
+    },
+    {
+      "type": "REQ",
+      "method": "OPTIONS",
+      "url": "http://localhost:8000/api/v1/auth/me",
+      "headers": {
+        "accept": "*/*",
+        "access-control-request-headers": "x-xsrf-token",
+        "access-control-request-method": "GET",
+        "origin": "http://localhost:5173",
+        "sec-fetch-mode": "cors",
+        "user-agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) HeadlessChrome/157.0.0.0 Safari/537.36",
+        "accept-encoding": "gzip, deflate, br, zstd",
+        "accept-language": "en-US,en;q=0.9",
+        "connection": "keep-alive",
+        "host": "localhost:8000",
+        "referer": "http://localhost:5173/",
+        "sec-fetch-dest": "empty",
+        "sec-fetch-site": "same-site"
+      }
+    },
+    {
+      "type": "RES",
+      "status": 204,
+      "url": "http://localhost:8000/api/v1/auth/me",
+      "headers": {
+        "access-control-allow-credentials": "true",
+        "access-control-allow-headers": "x-xsrf-token",
+        "access-control-allow-methods": "GET",
+        "access-control-allow-origin": "http://localhost:5173",
+        "access-control-max-age": "0",
+        "cache-control": "no-cache, private",
+        "connection": "close",
+        "content-type": "text/html; charset=UTF-8",
+        "date": "Thu, 12 Nov 2026 15:07:06 GMT",
+        "host": "localhost:8000",
+        "vary": "Origin, Access-Control-Request-Method, Access-Control-Request-Headers",
+        "x-powered-by": "PHP/8.5.5"
+      }
+    },
+    {
+      "type": "RES",
+      "status": 204,
+      "url": "http://localhost:8000/api/v1/auth/me",
+      "headers": {
+        "access-control-allow-credentials": "true",
+        "access-control-allow-headers": "x-xsrf-token",
+        "access-control-allow-methods": "GET",
+        "access-control-allow-origin": "http://localhost:5173",
+        "access-control-max-age": "0",
+        "cache-control": "no-cache, private",
+        "connection": "close",
+        "content-type": "text/html; charset=UTF-8",
+        "date": "Thu, 12 Nov 2026 15:07:06 GMT",
+        "host": "localhost:8000",
+        "vary": "Origin, Access-Control-Request-Method, Access-Control-Request-Headers",
+        "x-powered-by": "PHP/8.5.5"
+      }
+    },
+    {
+      "type": "RES",
+      "status": 200,
+      "url": "http://localhost:8000/api/v1/auth/me",
+      "headers": {
+        "access-control-allow-credentials": "true",
+        "access-control-allow-origin": "http://localhost:5173",
+        "cache-control": "no-cache, private",
+        "connection": "close",
+        "content-type": "application/json",
+        "date": "Thu, 12 Nov 2026 15:07:06 GMT",
+        "host": "localhost:8000",
+        "set-cookie": "XSRF-TOKEN=eyJpdiI6IkgzMnVUQjZtKzlhUzErby9CbkVndVE9PSIsInZhbHVlIjoiRXJVNUhDRkoySmN4NE1BU29JMERTNkVkMCtxQUFlSS9naEJCQllTWDh0d1VXL2pNME5QdUxJUkFpTDFIKzNmdmgxT3cvR0QyRDM2akF4SXUxRWQ2WjJMbk1mSk1PbzhaWjdhMWs2dDRpNElzQTk4MDQvZ1NpY01KOW4xTFlGWXgiLCJtYWMiOiIwOWMyY2M0NDBlYmE3ZGEzNjEyY2Q0NTRjOTJhMGFkZjEzYjIwYzZhZmU0MTQzZWUxM2Y0NjMwMThhZGNmYjYwIiwidGFnIjoiIn0%3D; expires=Thu, 12 Nov 2026 17:07:06 GMT; Max-Age=7200; path=/; samesite=lax\n laravel-session=eyJpdiI6IkVZcmRsLzl3bGVSUXg3THpaRFdVcWc9PSIsInZhbHVlIjoiMlo0Mi9qanFaQ09lNE5mdVgwNWNRaHREcDhrVXlRaWd4MGE5a1RLbXRTcG1RU1RrUWVkRWJ2eFE1YTlaTlpoRVRJQWNwWFZ1Szlxd1RyVHF3R0Rsbmx2M1crZHl5RWk3Vk1JTmlMcUtIS1VlOUxaOWVEd2g3QXdIVHJjS2pIR2kiLCJtYWMiOiI3YmVlYTFjNGJkOWNlMWQ4NmM5YTdjNzFkNTEzOWJkYzBhMjdhM2NhZThmNDRlMjMzY2IxMTYxZWU1NDI2OGJlIiwidGFnIjoiIn0%3D; expires=Thu, 12 Nov 2026 17:07:06 GMT; Max-Age=7200; path=/; httponly; samesite=lax",
+        "vary": "Origin",
+        "x-powered-by": "PHP/8.5.5"
+      }
+    },
+    {
+      "type": "RES",
+      "status": 200,
+      "url": "http://localhost:8000/api/v1/auth/me",
+      "headers": {
+        "access-control-allow-credentials": "true",
+        "access-control-allow-origin": "http://localhost:5173",
+        "cache-control": "no-cache, private",
+        "connection": "close",
+        "content-type": "application/json",
+        "date": "Thu, 12 Nov 2026 15:07:06 GMT",
+        "host": "localhost:8000",
+        "set-cookie": "XSRF-TOKEN=eyJpdiI6ImswWnRmVG1IVS9RaHIyRTdCcmNDTGc9PSIsInZhbHVlIjoia3lVQzRDOHBEaVVHZi9VRXNpbGxqc1VramJXSmtSc0hCUUh6Uk5mOGxrZ1dBS0ZQdVV1WVhvTW41ZDVwVDBTOFN2UE4rVW8zWjVGcHE2Tk9jM055VWdkMnNDRnFLNkxYMUkxeDM4VVhCY1NyamtNUnNWYldkMUZJUGhETG8vaWwiLCJtYWMiOiIyMWEyNGU3NjEzODZiZWY2N2ZmZDY0MmJjYTBhNTk2NjliNGJjNWE1NWRmZTJmMDVlOWQyMzNkMDhkYjg0ZTczIiwidGFnIjoiIn0%3D; expires=Thu, 12 Nov 2026 17:07:06 GMT; Max-Age=7200; path=/; samesite=lax\n laravel-session=eyJpdiI6ImdYWWdFN29rUk5CSVlGQTd0T3VOMkE9PSIsInZhbHVlIjoiTlBFWTlzLzFCZ2dOajVyTHJNR01aR1dLY2JldkIvSlZlQ3hSV1NBbHZnamRyOXNKbTAxbmptVGNmbXpxRG1pTXVqNWhIN09UcGxGSTRLTzNyUFViQUdEOEFBTzdXVVdmdEdUSS9ZODVUa3hjRnZHaGdJbUxkY1F0dWMxcDhBU3IiLCJtYWMiOiI1MGYwMjg3MmMzNjEzNzFiZjk2OWNkNDMwYjk3Y2UyODNhYzQ2YzJlOGRiNDExMzg0OGVmNDIzY2JhZDBiMTQxIiwidGFnIjoiIn0%3D; expires=Thu, 12 Nov 2026 17:07:06 GMT; Max-Age=7200; path=/; httponly; samesite=lax",
+        "vary": "Origin",
+        "x-powered-by": "PHP/8.5.5"
+      }
+    },
+    {
+      "type": "REQ",
+      "method": "POST",
+      "url": "http://localhost:8000/api/v1/auth/logout",
+      "headers": {
+        "sec-ch-ua-platform": "\"Windows\"",
+        "x-xsrf-token": "eyJpdiI6ImswWnRmVG1IVS9RaHIyRTdCcmNDTGc9PSIsInZhbHVlIjoia3lVQzRDOHBEaVVHZi9VRXNpbGxqc1VramJXSmtSc0hCUUh6Uk5mOGxrZ1dBS0ZQdVV1WVhvTW41ZDVwVDBTOFN2UE4rVW8zWjVGcHE2Tk9jM055VWdkMnNDRnFLNkxYMUkxeDM4VVhCY1NyamtNUnNWYldkMUZJUGhETG8vaWwiLCJtYWMiOiIyMWEyNGU3NjEzODZiZWY2N2ZmZDY0MmJjYTBhNTk2NjliNGJjNWE1NWRmZTJmMDVlOWQyMzNkMDhkYjg0ZTczIiwidGFnIjoiIn0=",
+        "referer": "http://localhost:5173/",
+        "user-agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) HeadlessChrome/157.0.0.0 Safari/537.36",
+        "accept": "application/json",
+        "sec-ch-ua": "\"Not-A.Brand\";v=\"99\", \"Google Chrome\";v=\"157\", \"Chromium\";v=\"157\"",
+        "sec-ch-ua-mobile": "?0"
+      }
+    },
+    {
+      "type": "REQ",
+      "method": "OPTIONS",
+      "url": "http://localhost:8000/api/v1/auth/logout",
+      "headers": {
+        "accept": "*/*",
+        "access-control-request-headers": "x-xsrf-token",
+        "access-control-request-method": "POST",
+        "origin": "http://localhost:5173",
+        "sec-fetch-mode": "cors",
+        "user-agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) HeadlessChrome/157.0.0.0 Safari/537.36"
+      }
+    },
+    {
+      "type": "RES",
+      "status": 204,
+      "url": "http://localhost:8000/api/v1/auth/logout",
+      "headers": {
+        "access-control-allow-credentials": "true",
+        "access-control-allow-headers": "x-xsrf-token",
+        "access-control-allow-methods": "POST",
+        "access-control-allow-origin": "http://localhost:5173",
+        "access-control-max-age": "0",
+        "cache-control": "no-cache, private",
+        "connection": "close",
+        "content-type": "text/html; charset=UTF-8",
+        "date": "Thu, 12 Nov 2026 15:07:07 GMT",
+        "host": "localhost:8000",
+        "vary": "Origin, Access-Control-Request-Method, Access-Control-Request-Headers",
+        "x-powered-by": "PHP/8.5.5"
+      }
+    },
+    {
+      "type": "RES",
+      "status": 200,
+      "url": "http://localhost:8000/api/v1/auth/logout",
+      "headers": {
+        "access-control-allow-credentials": "true",
+        "access-control-allow-origin": "http://localhost:5173",
+        "cache-control": "no-cache, private",
+        "connection": "close",
+        "content-type": "application/json",
+        "date": "Thu, 12 Nov 2026 15:07:07 GMT",
+        "host": "localhost:8000",
+        "set-cookie": "XSRF-TOKEN=eyJpdiI6InB6NXF2QjZXenJEdDhKa2JKa1hFN3c9PSIsInZhbHVlIjoiSnVBQlExSHpBZWFiSG5CWE1GVkRtS1BXV1h4SmFocTVKMDZpNG5pNFNGUzM3YmovamtWRkw0RitrN0o0WnpFUmZMekJmWk0rZTZENVNMVVhYQ0M0MEsyYmgxSE5VOXg0dVI1MVlQUEtSSk45dE82QzlUTEhEaXI1OHlVMjJVKzIiLCJtYWMiOiI3MTIxNDZlM2Q1OTM4YTJjOTY0Mzk3YTY2M2QxNjViNWE1M2Q4ZDgzY2NhOTg0YTFiZGE2NjFlZmVlYWYwYTBlIiwidGFnIjoiIn0%3D; expires=Thu, 12 Nov 2026 17:07:07 GMT; Max-Age=7200; path=/; samesite=lax\n laravel-session=eyJpdiI6InM1WDRPeCt2ZTdRalBzZmsycGtEMHc9PSIsInZhbHVlIjoiUWdvQTBDYllXYkpSeHFKRUo1NnBuWVJYcUdMZE9oNkdVcmFiSnNxRnpPSGl6NFlONFIydXR3UWYzcjJiaWNWcFRLR1p1TzRCZFl2MHdCN1lQczBQWnE5cmd1Zi9XQkc5YUlSY2tZVVFEWHhhQUkzOFcwaWJ3ME8wbk9Sd2Z5Y0UiLCJtYWMiOiIzZTZkYjk2OTRlOTA5ZDQ5ZmIyZTFhYjA5ZTExMTIxZTliZjA2ZDRhYTgwNGM4YzBlMDZhZTk0YTA4MjAxMWJkIiwidGFnIjoiIn0%3D; expires=Thu, 12 Nov 2026 17:07:07 GMT; Max-Age=7200; path=/; httponly; samesite=lax",
+        "vary": "Origin",
+        "x-powered-by": "PHP/8.5.5"
+      }
+    },
+    {
+      "type": "REQ",
+      "method": "GET",
+      "url": "http://localhost:8000/api/v1/auth/me",
+      "headers": {
+        "sec-ch-ua-platform": "\"Windows\"",
+        "x-xsrf-token": "eyJpdiI6InB6NXF2QjZXenJEdDhKa2JKa1hFN3c9PSIsInZhbHVlIjoiSnVBQlExSHpBZWFiSG5CWE1GVkRtS1BXV1h4SmFocTVKMDZpNG5pNFNGUzM3YmovamtWRkw0RitrN0o0WnpFUmZMekJmWk0rZTZENVNMVVhYQ0M0MEsyYmgxSE5VOXg0dVI1MVlQUEtSSk45dE82QzlUTEhEaXI1OHlVMjJVKzIiLCJtYWMiOiI3MTIxNDZlM2Q1OTM4YTJjOTY0Mzk3YTY2M2QxNjViNWE1M2Q4ZDgzY2NhOTg0YTFiZGE2NjFlZmVlYWYwYTBlIiwidGFnIjoiIn0=",
+        "referer": "http://localhost:5173/",
+        "user-agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) HeadlessChrome/157.0.0.0 Safari/537.36",
+        "accept": "application/json",
+        "sec-ch-ua": "\"Not-A.Brand\";v=\"99\", \"Google Chrome\";v=\"157\", \"Chromium\";v=\"157\"",
+        "sec-ch-ua-mobile": "?0"
+      }
+    },
+    {
+      "type": "REQ",
+      "method": "GET",
+      "url": "http://localhost:8000/api/v1/auth/me",
+      "headers": {
+        "sec-ch-ua-platform": "\"Windows\"",
+        "x-xsrf-token": "eyJpdiI6InB6NXF2QjZXenJEdDhKa2JKa1hFN3c9PSIsInZhbHVlIjoiSnVBQlExSHpBZWFiSG5CWE1GVkRtS1BXV1h4SmFocTVKMDZpNG5pNFNGUzM3YmovamtWRkw0RitrN0o0WnpFUmZMekJmWk0rZTZENVNMVVhYQ0M0MEsyYmgxSE5VOXg0dVI1MVlQUEtSSk45dE82QzlUTEhEaXI1OHlVMjJVKzIiLCJtYWMiOiI3MTIxNDZlM2Q1OTM4YTJjOTY0Mzk3YTY2M2QxNjViNWE1M2Q4ZDgzY2NhOTg0YTFiZGE2NjFlZmVlYWYwYTBlIiwidGFnIjoiIn0=",
+        "referer": "http://localhost:5173/",
+        "user-agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) HeadlessChrome/157.0.0.0 Safari/537.36",
+        "accept": "application/json",
+        "sec-ch-ua": "\"Not-A.Brand\";v=\"99\", \"Google Chrome\";v=\"157\", \"Chromium\";v=\"157\"",
+        "sec-ch-ua-mobile": "?0"
+      }
+    },
+    {
+      "type": "REQ",
+      "method": "OPTIONS",
+      "url": "http://localhost:8000/api/v1/auth/me",
+      "headers": {
+        "accept": "*/*",
+        "access-control-request-headers": "x-xsrf-token",
+        "access-control-request-method": "GET",
+        "origin": "http://localhost:5173",
+        "sec-fetch-mode": "cors",
+        "user-agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) HeadlessChrome/157.0.0.0 Safari/537.36",
+        "accept-encoding": "gzip, deflate, br, zstd",
+        "accept-language": "en-US,en;q=0.9",
+        "connection": "keep-alive",
+        "host": "localhost:8000",
+        "referer": "http://localhost:5173/",
+        "sec-fetch-dest": "empty",
+        "sec-fetch-site": "same-site"
+      }
+    },
+    {
+      "type": "REQ",
+      "method": "OPTIONS",
+      "url": "http://localhost:8000/api/v1/auth/me",
+      "headers": {
+        "accept": "*/*",
+        "access-control-request-headers": "x-xsrf-token",
+        "access-control-request-method": "GET",
+        "origin": "http://localhost:5173",
+        "sec-fetch-mode": "cors",
+        "user-agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) HeadlessChrome/157.0.0.0 Safari/537.36"
+      }
+    },
+    {
+      "type": "RES",
+      "status": 204,
+      "url": "http://localhost:8000/api/v1/auth/me",
+      "headers": {
+        "access-control-allow-credentials": "true",
+        "access-control-allow-headers": "x-xsrf-token",
+        "access-control-allow-methods": "GET",
+        "access-control-allow-origin": "http://localhost:5173",
+        "access-control-max-age": "0",
+        "cache-control": "no-cache, private",
+        "connection": "close",
+        "content-type": "text/html; charset=UTF-8",
+        "date": "Thu, 12 Nov 2026 15:07:07 GMT",
+        "host": "localhost:8000",
+        "vary": "Origin, Access-Control-Request-Method, Access-Control-Request-Headers",
+        "x-powered-by": "PHP/8.5.5"
+      }
+    },
+    {
+      "type": "RES",
+      "status": 204,
+      "url": "http://localhost:8000/api/v1/auth/me",
+      "headers": {
+        "access-control-allow-credentials": "true",
+        "access-control-allow-headers": "x-xsrf-token",
+        "access-control-allow-methods": "GET",
+        "access-control-allow-origin": "http://localhost:5173",
+        "access-control-max-age": "0",
+        "cache-control": "no-cache, private",
+        "connection": "close",
+        "content-type": "text/html; charset=UTF-8",
+        "date": "Thu, 12 Nov 2026 15:07:07 GMT",
+        "host": "localhost:8000",
+        "vary": "Origin, Access-Control-Request-Method, Access-Control-Request-Headers",
+        "x-powered-by": "PHP/8.5.5"
+      }
+    },
+    {
+      "type": "RES",
+      "status": 401,
+      "url": "http://localhost:8000/api/v1/auth/me",
+      "headers": {
+        "access-control-allow-credentials": "true",
+        "access-control-allow-origin": "http://localhost:5173",
+        "cache-control": "no-cache, private",
+        "connection": "close",
+        "content-type": "application/json",
+        "date": "Thu, 12 Nov 2026 15:07:07 GMT",
+        "host": "localhost:8000",
+        "set-cookie": "XSRF-TOKEN=eyJpdiI6ImRwQjhLbmlZZDUyNFJKY1BVNkRkUHc9PSIsInZhbHVlIjoiT0VBaWRDK1JvTWV2dzl0V2lEUWpZWTl2YTNUNGlNVmpJY2tIancxSHdHK0N4MTduM0FnSFpWRm10U0NGV3hMd3d4cSs4aVNhN2JsTnlsdE1xNlE5VU5jQVFtYVp0bmROWWVxZ3pneWpPRldFVXc0THl2a0M0QjhpeTR4aW91UGEiLCJtYWMiOiJjNmU3ZmMwMjNmMDEwYjlmM2VhMGFkOGQ5M2M1NDU1NGI0YzI1Nzc5YzRmNDQxOTQwNzQ1YzUzZDM4YTIyZWY2IiwidGFnIjoiIn0%3D; expires=Thu, 12 Nov 2026 17:07:07 GMT; Max-Age=7200; path=/; samesite=lax\n laravel-session=eyJpdiI6ImFJeWl3aGtmK1dhQzg5Nm0vbDFzWVE9PSIsInZhbHVlIjoiUEMwUSs4enI3ODdqMnNmWHdLODVsWE5QZUhXc3FlaTc1NzNYOWxrYW5FUm5mYm5uUXlZeEpqazE5M0tXaUh4ei9DdnJPSWFDUkw2VjRiT052alZZcGowSUFxNlp3bzNTLzQ3YkJlVk9ncWVnQjVEbDQraFFpbm1sYkNMZ3J3UTMiLCJtYWMiOiJhMDcwYTlmMDEwOWUxNzE1Y2YzYjJjNTAzNmExZjE0YWQ1OTRlODM4MjEzZTEyMDdlZjU4NDQxZWZmZjdlNWZkIiwidGFnIjoiIn0%3D; expires=Thu, 12 Nov 2026 17:07:07 GMT; Max-Age=7200; path=/; httponly; samesite=lax",
+        "vary": "Origin",
+        "x-powered-by": "PHP/8.5.5"
+      }
+    },
+    {
+      "type": "RES",
+      "status": 401,
+      "url": "http://localhost:8000/api/v1/auth/me",
+      "headers": {
+        "access-control-allow-credentials": "true",
+        "access-control-allow-origin": "http://localhost:5173",
+        "cache-control": "no-cache, private",
+        "connection": "close",
+        "content-type": "application/json",
+        "date": "Thu, 12 Nov 2026 15:07:08 GMT",
+        "host": "localhost:8000",
+        "set-cookie": "XSRF-TOKEN=eyJpdiI6IjZuT1FNSlN2SmRpekMwdW1LMFRlTkE9PSIsInZhbHVlIjoiblRXQncrY1FPdmhMTjByczM3RnNKdFZVYW13N2RHWUUrVVVYcmFWbnoyZTNEMW9zWHRybThQcXJTT3NwVncwRVhhL1AzcDBoU091ZiswWjB4WkxDOS9zc2J1NUtDdUJuMXo4L0dVZ3B4R2dHZUtLNnE3dy90bHJHVUxWT21LUWsiLCJtYWMiOiJmZWJiMzI5NjI1NzljYTUwZTMwM2ZkMjM5MWY0YjRmYmQxM2JlMzE4NTkyZjIzYjZhNjBhYzY5ODEwNzRhYWVhIiwidGFnIjoiIn0%3D; expires=Thu, 12 Nov 2026 17:07:08 GMT; Max-Age=7200; path=/; samesite=lax\n laravel-session=eyJpdiI6ImVYaC9tQ2p0d0JoMDBVdm1WUGVjMlE9PSIsInZhbHVlIjoiL3E1RElHMU5Zay9ZcVg5Vm5mZTFFYkJKN2RacjRGYmkyZFBLSjU1NVNvaG5jZG1JcmR6dnh1OE5XQmo3ZkJyRkZ0empqcHppTk9OTWFzdXMyVkJvb2szWDRMTnhsdW5tcE5pZ3JabEdNanA0Q0M0cXNpR2lOVmx3TTF2MDZUNkkiLCJtYWMiOiJkYTY5OTMzOWRkZTAzMmIzMjQ0OTAxNjg4ODNjMjJmMGViMjk0Y2UwMWJlZWE2ZGYxZWM3YzQ2NmYyNzM1OTk2IiwidGFnIjoiIn0%3D; expires=Thu, 12 Nov 2026 17:07:08 GMT; Max-Age=7200; path=/; httponly; samesite=lax",
+        "vary": "Origin",
+        "x-powered-by": "PHP/8.5.5"
+      }
+    },
+    {
+      "type": "REQ",
+      "method": "GET",
+      "url": "http://localhost:8000/api/v1/auth/me",
+      "headers": {
+        "sec-ch-ua-platform": "\"Windows\"",
+        "x-xsrf-token": "eyJpdiI6IjZuT1FNSlN2SmRpekMwdW1LMFRlTkE9PSIsInZhbHVlIjoiblRXQncrY1FPdmhMTjByczM3RnNKdFZVYW13N2RHWUUrVVVYcmFWbnoyZTNEMW9zWHRybThQcXJTT3NwVncwRVhhL1AzcDBoU091ZiswWjB4WkxDOS9zc2J1NUtDdUJuMXo4L0dVZ3B4R2dHZUtLNnE3dy90bHJHVUxWT21LUWsiLCJtYWMiOiJmZWJiMzI5NjI1NzljYTUwZTMwM2ZkMjM5MWY0YjRmYmQxM2JlMzE4NTkyZjIzYjZhNjBhYzY5ODEwNzRhYWVhIiwidGFnIjoiIn0=",
+        "referer": "http://localhost:5173/",
+        "user-agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) HeadlessChrome/157.0.0.0 Safari/537.36",
+        "accept": "application/json",
+        "sec-ch-ua": "\"Not-A.Brand\";v=\"99\", \"Google Chrome\";v=\"157\", \"Chromium\";v=\"157\"",
+        "sec-ch-ua-mobile": "?0"
+      }
+    },
+    {
+      "type": "REQ",
+      "method": "GET",
+      "url": "http://localhost:8000/api/v1/auth/me",
+      "headers": {
+        "sec-ch-ua-platform": "\"Windows\"",
+        "x-xsrf-token": "eyJpdiI6IjZuT1FNSlN2SmRpekMwdW1LMFRlTkE9PSIsInZhbHVlIjoiblRXQncrY1FPdmhMTjByczM3RnNKdFZVYW13N2RHWUUrVVVYcmFWbnoyZTNEMW9zWHRybThQcXJTT3NwVncwRVhhL1AzcDBoU091ZiswWjB4WkxDOS9zc2J1NUtDdUJuMXo4L0dVZ3B4R2dHZUtLNnE3dy90bHJHVUxWT21LUWsiLCJtYWMiOiJmZWJiMzI5NjI1NzljYTUwZTMwM2ZkMjM5MWY0YjRmYmQxM2JlMzE4NTkyZjIzYjZhNjBhYzY5ODEwNzRhYWVhIiwidGFnIjoiIn0=",
+        "referer": "http://localhost:5173/",
+        "user-agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) HeadlessChrome/157.0.0.0 Safari/537.36",
+        "accept": "application/json",
+        "sec-ch-ua": "\"Not-A.Brand\";v=\"99\", \"Google Chrome\";v=\"157\", \"Chromium\";v=\"157\"",
+        "sec-ch-ua-mobile": "?0"
+      }
+    },
+    {
+      "type": "REQ",
+      "method": "OPTIONS",
+      "url": "http://localhost:8000/api/v1/auth/me",
+      "headers": {
+        "accept": "*/*",
+        "access-control-request-headers": "x-xsrf-token",
+        "access-control-request-method": "GET",
+        "origin": "http://localhost:5173",
+        "sec-fetch-mode": "cors",
+        "user-agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) HeadlessChrome/157.0.0.0 Safari/537.36"
+      }
+    },
+    {
+      "type": "REQ",
+      "method": "OPTIONS",
+      "url": "http://localhost:8000/api/v1/auth/me",
+      "headers": {
+        "accept": "*/*",
+        "access-control-request-headers": "x-xsrf-token",
+        "access-control-request-method": "GET",
+        "origin": "http://localhost:5173",
+        "sec-fetch-mode": "cors",
+        "user-agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) HeadlessChrome/157.0.0.0 Safari/537.36",
+        "accept-encoding": "gzip, deflate, br, zstd",
+        "accept-language": "en-US,en;q=0.9",
+        "connection": "keep-alive",
+        "host": "localhost:8000",
+        "referer": "http://localhost:5173/",
+        "sec-fetch-dest": "empty",
+        "sec-fetch-site": "same-site"
+      }
+    },
+    {
+      "type": "RES",
+      "status": 204,
+      "url": "http://localhost:8000/api/v1/auth/me",
+      "headers": {
+        "access-control-allow-credentials": "true",
+        "access-control-allow-headers": "x-xsrf-token",
+        "access-control-allow-methods": "GET",
+        "access-control-allow-origin": "http://localhost:5173",
+        "access-control-max-age": "0",
+        "cache-control": "no-cache, private",
+        "connection": "close",
+        "content-type": "text/html; charset=UTF-8",
+        "date": "Thu, 12 Nov 2026 15:07:08 GMT",
+        "host": "localhost:8000",
+        "vary": "Origin, Access-Control-Request-Method, Access-Control-Request-Headers",
+        "x-powered-by": "PHP/8.5.5"
+      }
+    },
+    {
+      "type": "RES",
+      "status": 204,
+      "url": "http://localhost:8000/api/v1/auth/me",
+      "headers": {
+        "access-control-allow-credentials": "true",
+        "access-control-allow-headers": "x-xsrf-token",
+        "access-control-allow-methods": "GET",
+        "access-control-allow-origin": "http://localhost:5173",
+        "access-control-max-age": "0",
+        "cache-control": "no-cache, private",
+        "connection": "close",
+        "content-type": "text/html; charset=UTF-8",
+        "date": "Thu, 12 Nov 2026 15:07:08 GMT",
+        "host": "localhost:8000",
+        "vary": "Origin, Access-Control-Request-Method, Access-Control-Request-Headers",
+        "x-powered-by": "PHP/8.5.5"
+      }
+    },
+    {
+      "type": "RES",
+      "status": 401,
+      "url": "http://localhost:8000/api/v1/auth/me",
+      "headers": {
+        "access-control-allow-credentials": "true",
+        "access-control-allow-origin": "http://localhost:5173",
+        "cache-control": "no-cache, private",
+        "connection": "close",
+        "content-type": "application/json",
+        "date": "Thu, 12 Nov 2026 15:07:09 GMT",
+        "host": "localhost:8000",
+        "set-cookie": "XSRF-TOKEN=eyJpdiI6IlVWMWVHSnNFVEhldEhEZ29aa0dVMnc9PSIsInZhbHVlIjoiSjFkVWp4UTFVY044a1NwQzhZN0tMdHdzYkdWTmlDeWdxYU51c25XZFlUeERRVkV5WHE2dko5VTI1NVZKNCtBY0tqandzOVcwM3UyT1RQZEdSMGZubkdNVTU3bm5ZS1pjYmQ3V0xuNzE2VVlaMHdBR2ZCbEJlU3VOa0RGK25abHAiLCJtYWMiOiI4Njg1YWJlNGExOTY2MTE5YjkyZDZkZWZlYTRlNjY1NzVmM2U0MGI3MWM0MjRjNDMzMTFiYzJkZDA5MGU5OTE4IiwidGFnIjoiIn0%3D; expires=Thu, 12 Nov 2026 17:07:09 GMT; Max-Age=7200; path=/; samesite=lax\n laravel-session=eyJpdiI6IjlPbGZuQ0hYd1dtTXVEb2N5ZHdUd3c9PSIsInZhbHVlIjoiWHlpUnViUE5QYjRxajNxZDltc1lHKzIvNnRzZEJ6RElTNGpDa05aVWRnc2wzWWtkdW9YMjJsM3lrMkRhejB0WkJEOFU5VkJZbEV5aUI0T2lWVFYrOTQyakd1Y3pNS016bURNN0ZySzh0NVJUWllaMVNCYUFRRk5MVlB4Tmxsb0kiLCJtYWMiOiJlMDk0MmZjNjZjYWFkNDQ3NTVmOTJiMDFkYTIyOTAzODVjODkxYzZlNjZhODUyODc2MzU5ZDk3Y2IwZGIzYzU1IiwidGFnIjoiIn0%3D; expires=Thu, 12 Nov 2026 17:07:09 GMT; Max-Age=7200; path=/; httponly; samesite=lax",
+        "vary": "Origin",
+        "x-powered-by": "PHP/8.5.5"
+      }
+    },
+    {
+      "type": "RES",
+      "status": 401,
+      "url": "http://localhost:8000/api/v1/auth/me",
+      "headers": {
+        "access-control-allow-credentials": "true",
+        "access-control-allow-origin": "http://localhost:5173",
+        "cache-control": "no-cache, private",
+        "connection": "close",
+        "content-type": "application/json",
+        "date": "Thu, 12 Nov 2026 15:07:09 GMT",
+        "host": "localhost:8000",
+        "set-cookie": "XSRF-TOKEN=eyJpdiI6IlgwQzNqekplRjVFRVBIb3pobDYrTmc9PSIsInZhbHVlIjoiOGV4d0J3dGFaK3p3Yzk1ZW10Y1hFaGovaTV4Q2UrZ2xJSVJzZW9WeHRuKzBCelRibkQ1QW1KdjY2ZXZpYi9jNzMxZnoxN0xjNWlycXRSL0RUWTUveVNVYU9wcEZFYXRDNEhQYTdYOWhnSSsvTE85bWJoa0c0SjBZb09xVHBnSHEiLCJtYWMiOiI5OWFhNWZhMjdjNDEyMTRjODM3NjU3YzlmMzA0ZTk1ZjBhNWRiMWE5MDRkMTIwNTQwYTM1ZjI1YmM4MjBiYTNjIiwidGFnIjoiIn0%3D; expires=Thu, 12 Nov 2026 17:07:09 GMT; Max-Age=7200; path=/; samesite=lax\n laravel-session=eyJpdiI6InN3QWxWY3RjRW1lTWRaeHo1ell6bmc9PSIsInZhbHVlIjoiMnJqcTVvMUVyUmFMdGxLRzVGMVkyY2s3dnVNYzBoU3pNajU3T0pTT1hoVnZmd2daZTg5Tm5xWHFhT3N0YlFER21ia3ByWVcrSkFSZXBOVW00SGpqK1N5RFV4UmFjbU5Md1JXKzNybXNHblBrbURjN2F1QTA5WVl3dmJtcXg4K2MiLCJtYWMiOiJlMDc4NDk1ZmNlMTdmZGEzNjRjMTNjNWJhZGE3YjhjNmU3ZTE3ZTQ4ZmIzYWM2MmY1ZTMyOWE1NTE1NDVhODRjIiwidGFnIjoiIn0%3D; expires=Thu, 12 Nov 2026 17:07:09 GMT; Max-Age=7200; path=/; httponly; samesite=lax",
+        "vary": "Origin",
+        "x-powered-by": "PHP/8.5.5"
+      }
+    },
+    {
+      "type": "REQ",
+      "method": "GET",
+      "url": "http://localhost:8000/sanctum/csrf-cookie",
+      "headers": {
+        "sec-ch-ua-platform": "\"Windows\"",
+        "x-xsrf-token": "eyJpdiI6IlgwQzNqekplRjVFRVBIb3pobDYrTmc9PSIsInZhbHVlIjoiOGV4d0J3dGFaK3p3Yzk1ZW10Y1hFaGovaTV4Q2UrZ2xJSVJzZW9WeHRuKzBCelRibkQ1QW1KdjY2ZXZpYi9jNzMxZnoxN0xjNWlycXRSL0RUWTUveVNVYU9wcEZFYXRDNEhQYTdYOWhnSSsvTE85bWJoa0c0SjBZb09xVHBnSHEiLCJtYWMiOiI5OWFhNWZhMjdjNDEyMTRjODM3NjU3YzlmMzA0ZTk1ZjBhNWRiMWE5MDRkMTIwNTQwYTM1ZjI1YmM4MjBiYTNjIiwidGFnIjoiIn0=",
+        "referer": "http://localhost:5173/",
+        "user-agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) HeadlessChrome/157.0.0.0 Safari/537.36",
+        "accept": "application/json",
+        "sec-ch-ua": "\"Not-A.Brand\";v=\"99\", \"Google Chrome\";v=\"157\", \"Chromium\";v=\"157\"",
+        "sec-ch-ua-mobile": "?0"
+      }
+    },
+    {
+      "type": "REQ",
+      "method": "OPTIONS",
+      "url": "http://localhost:8000/sanctum/csrf-cookie",
+      "headers": {
+        "accept": "*/*",
+        "access-control-request-headers": "x-xsrf-token",
+        "access-control-request-method": "GET",
+        "origin": "http://localhost:5173",
+        "sec-fetch-mode": "cors",
+        "user-agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) HeadlessChrome/157.0.0.0 Safari/537.36"
+      }
+    },
+    {
+      "type": "RES",
+      "status": 204,
+      "url": "http://localhost:8000/sanctum/csrf-cookie",
+      "headers": {
+        "access-control-allow-credentials": "true",
+        "access-control-allow-headers": "x-xsrf-token",
+        "access-control-allow-methods": "GET",
+        "access-control-allow-origin": "http://localhost:5173",
+        "access-control-max-age": "0",
+        "cache-control": "no-cache, private",
+        "connection": "close",
+        "content-type": "text/html; charset=UTF-8",
+        "date": "Thu, 12 Nov 2026 15:07:10 GMT",
+        "host": "localhost:8000",
+        "vary": "Origin, Access-Control-Request-Method, Access-Control-Request-Headers",
+        "x-powered-by": "PHP/8.5.5"
+      }
+    },
+    {
+      "type": "RES",
+      "status": 204,
+      "url": "http://localhost:8000/sanctum/csrf-cookie",
+      "headers": {
+        "access-control-allow-credentials": "true",
+        "access-control-allow-origin": "http://localhost:5173",
+        "cache-control": "no-cache, private",
+        "connection": "close",
+        "date": "Thu, 12 Nov 2026 15:07:10 GMT",
+        "host": "localhost:8000",
+        "set-cookie": "XSRF-TOKEN=eyJpdiI6IjQ3N2dhcVdxS0JsQ3hjSVFoTDRZZ2c9PSIsInZhbHVlIjoiZ3ZkNjI0Q3BONzFmWktuQ1VLaVZiMWNzQTFTUXFhYnRlYWo3SEpwRmpLc1NiSnFiL3EzV3Q5YjNBcDBIWXRFN1VUWCtZZDN4Y0ltRDJ3ZSt5ZmJPTCtVMUtETURSNmZpQXRObU5DU0J0MUFKRW11S2lQWThIQWh6d1kvTWtROXoiLCJtYWMiOiI4NGYzY2UyZDg5MjYzODIwNzg0NTdjNDQwOTgzNGZiOTQ3MzhiMDdjYzRkMGQzOTAxMjMwMDAwZDdiMjY2MzIwIiwidGFnIjoiIn0%3D; expires=Thu, 12 Nov 2026 17:07:10 GMT; Max-Age=7200; path=/; samesite=lax\n laravel-session=eyJpdiI6Ikd0VVdaM0N6R0dkVlRXTi9BUVFLVnc9PSIsInZhbHVlIjoiZlJIVTZhenAvYWNjWGVkMDRjNlg0eCtUMmx2WGRJbVRmbGUwMEtOUDZNMEU5azVuL05XOXlrcXRUZkhzWkVyWkF3a29jWHdHcm5ZNllTNmhPWnZXbVhvOXlVV1BneGp3b2tDMGxUV2FJbXc3K3BjSElWRXU1SlNudEkwZnFwQWwiLCJtYWMiOiJkOTNkNzEzMWM2ODEyY2QyMmQ3ZjZlNTk3YjM5YjQzMjRhYzFjYWM2NTQ1YmMzM2FlNjgwMTM4OWM3NTdmNGUyIiwidGFnIjoiIn0%3D; expires=Thu, 12 Nov 2026 17:07:10 GMT; Max-Age=7200; path=/; httponly; samesite=lax",
+        "vary": "X-Inertia, Origin",
+        "x-inertia-devtools-id": "01M784RSK3YQC6876SEY1BT13E",
+        "x-inertia-devtools-parent-out": "01M784RSK3YQC6876SEY1BT13E",
+        "x-powered-by": "PHP/8.5.5"
+      }
+    },
+    {
+      "type": "REQ",
+      "method": "POST",
+      "url": "http://localhost:8000/api/v1/auth/login",
+      "headers": {
+        "sec-ch-ua-platform": "\"Windows\"",
+        "x-xsrf-token": "eyJpdiI6IjQ3N2dhcVdxS0JsQ3hjSVFoTDRZZ2c9PSIsInZhbHVlIjoiZ3ZkNjI0Q3BONzFmWktuQ1VLaVZiMWNzQTFTUXFhYnRlYWo3SEpwRmpLc1NiSnFiL3EzV3Q5YjNBcDBIWXRFN1VUWCtZZDN4Y0ltRDJ3ZSt5ZmJPTCtVMUtETURSNmZpQXRObU5DU0J0MUFKRW11S2lQWThIQWh6d1kvTWtROXoiLCJtYWMiOiI4NGYzY2UyZDg5MjYzODIwNzg0NTdjNDQwOTgzNGZiOTQ3MzhiMDdjYzRkMGQzOTAxMjMwMDAwZDdiMjY2MzIwIiwidGFnIjoiIn0=",
+        "referer": "http://localhost:5173/",
+        "sec-ch-ua": "\"Not-A.Brand\";v=\"99\", \"Google Chrome\";v=\"157\", \"Chromium\";v=\"157\"",
+        "sec-ch-ua-mobile": "?0",
+        "user-agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) HeadlessChrome/157.0.0.0 Safari/537.36",
+        "accept": "application/json",
+        "content-type": "application/json"
+      }
+    },
+    {
+      "type": "REQ",
+      "method": "OPTIONS",
+      "url": "http://localhost:8000/api/v1/auth/login",
+      "headers": {
+        "accept": "*/*",
+        "access-control-request-headers": "content-type,x-xsrf-token",
+        "access-control-request-method": "POST",
+        "origin": "http://localhost:5173",
+        "sec-fetch-mode": "cors",
+        "user-agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) HeadlessChrome/157.0.0.0 Safari/537.36"
+      }
+    },
+    {
+      "type": "RES",
+      "status": 204,
+      "url": "http://localhost:8000/api/v1/auth/login",
+      "headers": {
+        "access-control-allow-credentials": "true",
+        "access-control-allow-headers": "content-type,x-xsrf-token",
+        "access-control-allow-methods": "POST",
+        "access-control-allow-origin": "http://localhost:5173",
+        "access-control-max-age": "0",
+        "cache-control": "no-cache, private",
+        "connection": "close",
+        "content-type": "text/html; charset=UTF-8",
+        "date": "Thu, 12 Nov 2026 15:07:10 GMT",
+        "host": "localhost:8000",
+        "vary": "Origin, Access-Control-Request-Method, Access-Control-Request-Headers",
+        "x-powered-by": "PHP/8.5.5"
+      }
+    },
+    {
+      "type": "RES",
+      "status": 200,
+      "url": "http://localhost:8000/api/v1/auth/login",
+      "headers": {
+        "access-control-allow-credentials": "true",
+        "access-control-allow-origin": "http://localhost:5173",
+        "cache-control": "no-cache, private",
+        "connection": "close",
+        "content-type": "application/json",
+        "date": "Thu, 12 Nov 2026 15:07:10 GMT",
+        "host": "localhost:8000",
+        "set-cookie": "XSRF-TOKEN=eyJpdiI6InZHc3pIZDNYRVoxUDRXRUhiMjA2RFE9PSIsInZhbHVlIjoiVko4azBvUWZ2ei96NG8xZUVPSjlwRHFCcHZYZzA5WU1OZHNaTTg0cExNOE5pa0syckNNRmhCQ3ZXUElBWFVwOWp6Q2Y0emQrNzZMY3d4UnVEbG9mcEtWV3U2V0ljbGZKQm9nczRpYklPaVBrUlVXenFCYzdNWWw1NnM5MStmdkQiLCJtYWMiOiI2YmI4ZWVmNmNmNTEyZGIzZmU4YzgyZmVmN2ZlYjRlMDFiYzhjZmM3OGMwNTY1ZjY2ODlmODVmZjEwYmU2ODEyIiwidGFnIjoiIn0%3D; expires=Thu, 12 Nov 2026 17:07:10 GMT; Max-Age=7200; path=/; samesite=lax\n laravel-session=eyJpdiI6IjErNmFpS090K1RoeXNpQ3BEUFR3c0E9PSIsInZhbHVlIjoiWTRnNVF2ZGdCNnV2M2RsQk5kZW1ReFZZSXdLRk10dy9VV08wMFVrOW5oRG1DUEFNZkRRNFdlamhwcnhnQW5naUIvcHlsVE4xSVZ2TEQrMHZDVXRWbWRwVmsrVjlZRnNXUTQ4SmVKSnpvTWkwancwalovV0NEZEhqQmRhK1ZSK2IiLCJtYWMiOiJiMTc0MWJlYjU5OTYyZDZiMzMxMzZhNDBmM2RlZGRlMjliMDRjM2YwZTVhM2Q4MTMwZWIyNGMxMThiZTRmNGI5IiwidGFnIjoiIn0%3D; expires=Thu, 12 Nov 2026 17:07:10 GMT; Max-Age=7200; path=/; httponly; samesite=lax",
+        "vary": "Origin",
+        "x-powered-by": "PHP/8.5.5"
+      }
+    },
+    {
+      "type": "REQ",
+      "method": "GET",
+      "url": "http://localhost:8000/api/v1/auth/me",
+      "headers": {
+        "sec-ch-ua-platform": "\"Windows\"",
+        "x-xsrf-token": "eyJpdiI6InZHc3pIZDNYRVoxUDRXRUhiMjA2RFE9PSIsInZhbHVlIjoiVko4azBvUWZ2ei96NG8xZUVPSjlwRHFCcHZYZzA5WU1OZHNaTTg0cExNOE5pa0syckNNRmhCQ3ZXUElBWFVwOWp6Q2Y0emQrNzZMY3d4UnVEbG9mcEtWV3U2V0ljbGZKQm9nczRpYklPaVBrUlVXenFCYzdNWWw1NnM5MStmdkQiLCJtYWMiOiI2YmI4ZWVmNmNmNTEyZGIzZmU4YzgyZmVmN2ZlYjRlMDFiYzhjZmM3OGMwNTY1ZjY2ODlmODVmZjEwYmU2ODEyIiwidGFnIjoiIn0=",
+        "referer": "http://localhost:5173/",
+        "user-agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) HeadlessChrome/157.0.0.0 Safari/537.36",
+        "accept": "application/json",
+        "sec-ch-ua": "\"Not-A.Brand\";v=\"99\", \"Google Chrome\";v=\"157\", \"Chromium\";v=\"157\"",
+        "sec-ch-ua-mobile": "?0"
+      }
+    },
+    {
+      "type": "REQ",
+      "method": "GET",
+      "url": "http://localhost:8000/api/v1/auth/me",
+      "headers": {
+        "sec-ch-ua-platform": "\"Windows\"",
+        "x-xsrf-token": "eyJpdiI6InZHc3pIZDNYRVoxUDRXRUhiMjA2RFE9PSIsInZhbHVlIjoiVko4azBvUWZ2ei96NG8xZUVPSjlwRHFCcHZYZzA5WU1OZHNaTTg0cExNOE5pa0syckNNRmhCQ3ZXUElBWFVwOWp6Q2Y0emQrNzZMY3d4UnVEbG9mcEtWV3U2V0ljbGZKQm9nczRpYklPaVBrUlVXenFCYzdNWWw1NnM5MStmdkQiLCJtYWMiOiI2YmI4ZWVmNmNmNTEyZGIzZmU4YzgyZmVmN2ZlYjRlMDFiYzhjZmM3OGMwNTY1ZjY2ODlmODVmZjEwYmU2ODEyIiwidGFnIjoiIn0=",
+        "referer": "http://localhost:5173/",
+        "user-agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) HeadlessChrome/157.0.0.0 Safari/537.36",
+        "accept": "application/json",
+        "sec-ch-ua": "\"Not-A.Brand\";v=\"99\", \"Google Chrome\";v=\"157\", \"Chromium\";v=\"157\"",
+        "sec-ch-ua-mobile": "?0"
+      }
+    },
+    {
+      "type": "REQ",
+      "method": "OPTIONS",
+      "url": "http://localhost:8000/api/v1/auth/me",
+      "headers": {
+        "accept": "*/*",
+        "access-control-request-headers": "x-xsrf-token",
+        "access-control-request-method": "GET",
+        "origin": "http://localhost:5173",
+        "sec-fetch-mode": "cors",
+        "user-agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) HeadlessChrome/157.0.0.0 Safari/537.36"
+      }
+    },
+    {
+      "type": "REQ",
+      "method": "OPTIONS",
+      "url": "http://localhost:8000/api/v1/auth/me",
+      "headers": {
+        "accept": "*/*",
+        "access-control-request-headers": "x-xsrf-token",
+        "access-control-request-method": "GET",
+        "origin": "http://localhost:5173",
+        "sec-fetch-mode": "cors",
+        "user-agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) HeadlessChrome/157.0.0.0 Safari/537.36"
+      }
+    },
+    {
+      "type": "RES",
+      "status": 204,
+      "url": "http://localhost:8000/api/v1/auth/me",
+      "headers": {
+        "access-control-allow-credentials": "true",
+        "access-control-allow-headers": "x-xsrf-token",
+        "access-control-allow-methods": "GET",
+        "access-control-allow-origin": "http://localhost:5173",
+        "access-control-max-age": "0",
+        "cache-control": "no-cache, private",
+        "connection": "close",
+        "content-type": "text/html; charset=UTF-8",
+        "date": "Thu, 12 Nov 2026 15:07:12 GMT",
+        "host": "localhost:8000",
+        "vary": "Origin, Access-Control-Request-Method, Access-Control-Request-Headers",
+        "x-powered-by": "PHP/8.5.5"
+      }
+    },
+    {
+      "type": "RES",
+      "status": 204,
+      "url": "http://localhost:8000/api/v1/auth/me",
+      "headers": {
+        "access-control-allow-credentials": "true",
+        "access-control-allow-headers": "x-xsrf-token",
+        "access-control-allow-methods": "GET",
+        "access-control-allow-origin": "http://localhost:5173",
+        "access-control-max-age": "0",
+        "cache-control": "no-cache, private",
+        "connection": "close",
+        "content-type": "text/html; charset=UTF-8",
+        "date": "Thu, 12 Nov 2026 15:07:12 GMT",
+        "host": "localhost:8000",
+        "vary": "Origin, Access-Control-Request-Method, Access-Control-Request-Headers",
+        "x-powered-by": "PHP/8.5.5"
+      }
+    },
+    {
+      "type": "RES",
+      "status": 200,
+      "url": "http://localhost:8000/api/v1/auth/me",
+      "headers": {
+        "access-control-allow-credentials": "true",
+        "access-control-allow-origin": "http://localhost:5173",
+        "cache-control": "no-cache, private",
+        "connection": "close",
+        "content-type": "application/json",
+        "date": "Thu, 12 Nov 2026 15:07:12 GMT",
+        "host": "localhost:8000",
+        "set-cookie": "XSRF-TOKEN=eyJpdiI6InVCWDhycHVzZEdkeXNobDcrN3JkOVE9PSIsInZhbHVlIjoiVFcxT3hJVzQ2OXVkT1cwdjRsTnBvVCszOU1DTzQwNXZGbjZmK2xpaDJuUThjcWdmY2k2WDVHbXhsSWpmVXZQeDVnYnhsNFBNS3NWRHQyUUhqMndxMjRTQWt6ZHhOMXNuOGxyQ0ovVXV5dmQ4RjcrKzJWNHF2ZjJZeHdjTEdzMGsiLCJtYWMiOiI5YmU2N2M5NGMxOWU2NDM5NTIwYjRkMzZmNmQ3MzZhMjNjMmUyNzZkM2Y1NjEzNDI4ZDhiMjNkZWJkYjJjMmE1IiwidGFnIjoiIn0%3D; expires=Thu, 12 Nov 2026 17:07:12 GMT; Max-Age=7200; path=/; samesite=lax\n laravel-session=eyJpdiI6IkJNVld6M0MzSFRCamNCQktuU3ZnL1E9PSIsInZhbHVlIjoiRnNRWkU2bFFsTXBBQWgzSnd5bzU2LzhobGJSSlF6MVdnWmh0U2RjVHZMZnprZ2NLcEJ2YTVQU1NINS9TV0JFVXE4eXYxYlJQd2pJS2UxVkkyOXlKMzZQUiswMitpSEo5NkhJM2ZZeURDaStpUFQweEh5dFZFSk9kVW9oaHVONDgiLCJtYWMiOiIyYTkxZDFhZDU5ZmY0NzMxYTdmYmViZDAzOGE3N2U4YmMyNjdjYzVhZWVjZGUwYWMwNjQyYWE2YzQzMTM5ZTI5IiwidGFnIjoiIn0%3D; expires=Thu, 12 Nov 2026 17:07:12 GMT; Max-Age=7200; path=/; httponly; samesite=lax",
+        "vary": "Origin",
+        "x-powered-by": "PHP/8.5.5"
+      }
+    },
+    {
+      "type": "RES",
+      "status": 200,
+      "url": "http://localhost:8000/api/v1/auth/me",
+      "headers": {
+        "access-control-allow-credentials": "true",
+        "access-control-allow-origin": "http://localhost:5173",
+        "cache-control": "no-cache, private",
+        "connection": "close",
+        "content-type": "application/json",
+        "date": "Thu, 12 Nov 2026 15:07:12 GMT",
+        "host": "localhost:8000",
+        "set-cookie": "XSRF-TOKEN=eyJpdiI6InFnTnljNmNTOTRGcW5WRWdWeUZMRlE9PSIsInZhbHVlIjoiRHVGbFJLdTRnaE84aGpmR0VXQWxianYra0R5cm1yVFozY3RxeGxLN1c4QVlOM1ZyeGtMRDVkVTRidEtKcTI2NFNjOU5RYWxYNkFwbXhXU2M2QVRVZjRaUHVWRk5sS05rU05tVy9CVEFsekhPSjJyTmx0OUZXTE84VitHTC9MaEEiLCJtYWMiOiJiYThiMTY4YmUzOGViZGI5Y2NjMTIxNDYwYTAwYzUwZWQ2MDk5NjMxYjIxY2JkZTc0MGViZjE3YWU1MzczMzUyIiwidGFnIjoiIn0%3D; expires=Thu, 12 Nov 2026 17:07:12 GMT; Max-Age=7200; path=/; samesite=lax\n laravel-session=eyJpdiI6ImMvNi82MDFyUEd6VHZKcGNwNnNqVnc9PSIsInZhbHVlIjoiM3k3QmYybENpZVNVR0tTajZ2MkJFRmN4aXRrNXZZWnJQZ3NNV1RRcll6aEhJTGhzSUV0Yzc2aHdyTERZdC96OW5yVTM2ZDE0VHhsTUc2YUd0WS9NSDVuWjlDakFKakErdXBEMGE0N01yeEMyaUNidUl1d3ovRHNkS3NXMXg3eksiLCJtYWMiOiJmYTg5MTcyOGJiMTI4ZmRlNmM5MzAyMGZiYjA0ODI1MmRjNGYwNWY0MGUyODIwZmRhZmE4NjQ5NDZjNWQ1NDYzIiwidGFnIjoiIn0%3D; expires=Thu, 12 Nov 2026 17:07:12 GMT; Max-Age=7200; path=/; httponly; samesite=lax",
+        "vary": "Origin",
+        "x-powered-by": "PHP/8.5.5"
+      }
+    },
+    {
+      "type": "REQ",
+      "method": "POST",
+      "url": "http://localhost:8000/api/v1/auth/logout",
+      "headers": {
+        "sec-ch-ua-platform": "\"Windows\"",
+        "x-xsrf-token": "eyJpdiI6InFnTnljNmNTOTRGcW5WRWdWeUZMRlE9PSIsInZhbHVlIjoiRHVGbFJLdTRnaE84aGpmR0VXQWxianYra0R5cm1yVFozY3RxeGxLN1c4QVlOM1ZyeGtMRDVkVTRidEtKcTI2NFNjOU5RYWxYNkFwbXhXU2M2QVRVZjRaUHVWRk5sS05rU05tVy9CVEFsekhPSjJyTmx0OUZXTE84VitHTC9MaEEiLCJtYWMiOiJiYThiMTY4YmUzOGViZGI5Y2NjMTIxNDYwYTAwYzUwZWQ2MDk5NjMxYjIxY2JkZTc0MGViZjE3YWU1MzczMzUyIiwidGFnIjoiIn0=",
+        "referer": "http://localhost:5173/",
+        "user-agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) HeadlessChrome/157.0.0.0 Safari/537.36",
+        "accept": "application/json",
+        "sec-ch-ua": "\"Not-A.Brand\";v=\"99\", \"Google Chrome\";v=\"157\", \"Chromium\";v=\"157\"",
+        "sec-ch-ua-mobile": "?0"
+      }
+    },
+    {
+      "type": "REQ",
+      "method": "OPTIONS",
+      "url": "http://localhost:8000/api/v1/auth/logout",
+      "headers": {
+        "accept": "*/*",
+        "access-control-request-headers": "x-xsrf-token",
+        "access-control-request-method": "POST",
+        "origin": "http://localhost:5173",
+        "sec-fetch-mode": "cors",
+        "user-agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) HeadlessChrome/157.0.0.0 Safari/537.36"
+      }
+    },
+    {
+      "type": "RES",
+      "status": 204,
+      "url": "http://localhost:8000/api/v1/auth/logout",
+      "headers": {
+        "access-control-allow-credentials": "true",
+        "access-control-allow-headers": "x-xsrf-token",
+        "access-control-allow-methods": "POST",
+        "access-control-allow-origin": "http://localhost:5173",
+        "access-control-max-age": "0",
+        "cache-control": "no-cache, private",
+        "connection": "close",
+        "content-type": "text/html; charset=UTF-8",
+        "date": "Thu, 12 Nov 2026 15:07:13 GMT",
+        "host": "localhost:8000",
+        "vary": "Origin, Access-Control-Request-Method, Access-Control-Request-Headers",
+        "x-powered-by": "PHP/8.5.5"
+      }
+    },
+    {
+      "type": "RES",
+      "status": 200,
+      "url": "http://localhost:8000/api/v1/auth/logout",
+      "headers": {
+        "access-control-allow-credentials": "true",
+        "access-control-allow-origin": "http://localhost:5173",
+        "cache-control": "no-cache, private",
+        "connection": "close",
+        "content-type": "application/json",
+        "date": "Thu, 12 Nov 2026 15:07:13 GMT",
+        "host": "localhost:8000",
+        "set-cookie": "XSRF-TOKEN=eyJpdiI6IjdZUUtlL0FuMG44L3cyVWRKT0MyZmc9PSIsInZhbHVlIjoiZTRqbE54NzJsMWNzeEgvMHBXSDdIa0VzU1NhVTFxUlF0VWRIT2RWSkN1MGV4dlcxN2pzRmpGaDhIekFndEx3d0huS3o1b1hpVDZGU2taUktnckxYMVlMVEFmVENjQzMzZlJHSlJRbDEwYnF0KzdNR1JXbmRMQyt6VTB4SDZaWGMiLCJtYWMiOiIzNDlhZmMwMDkzZjAxY2FlYWMxODU3ZWExMjc4OTUxMmQ2MjUwZjQxOTE4Mjg1NGQzOThlNmE3MjVhMThjOWZjIiwidGFnIjoiIn0%3D; expires=Thu, 12 Nov 2026 17:07:13 GMT; Max-Age=7200; path=/; samesite=lax\n laravel-session=eyJpdiI6IjRhOEd3aHJZYi85TnAzYy9RVVAwMHc9PSIsInZhbHVlIjoiWEh5MlkvZTBwVjBIN3hQeUR6cWxwR0MxMlp5WEJ5SFc1RkthN2JmUzI4WEpxeTRId1RJc2N4Sm9ueDFyNDVJTjlwZWJzREY0THZQZU9Id1QzWkRIWVdNZm1iYUkzK2g0ZkpDZTJlUm4rdmVTTTZDZWdvYUlkajByQUcwNDBzY0giLCJtYWMiOiIwZDc5YjMyYjEyYzc5ZDYxNzY5NDc5NTE0ZjVkOTQ3NTRiOWE0OGExNDAzZGU0YmMzYTY4OTZlMzk3NDY1MzgwIiwidGFnIjoiIn0%3D; expires=Thu, 12 Nov 2026 17:07:13 GMT; Max-Age=7200; path=/; httponly; samesite=lax",
+        "vary": "Origin",
+        "x-powered-by": "PHP/8.5.5"
+      }
+    },
+    {
+      "type": "REQ",
+      "method": "GET",
+      "url": "http://localhost:8000/api/v1/auth/me",
+      "headers": {
+        "sec-ch-ua-platform": "\"Windows\"",
+        "x-xsrf-token": "eyJpdiI6IjdZUUtlL0FuMG44L3cyVWRKT0MyZmc9PSIsInZhbHVlIjoiZTRqbE54NzJsMWNzeEgvMHBXSDdIa0VzU1NhVTFxUlF0VWRIT2RWSkN1MGV4dlcxN2pzRmpGaDhIekFndEx3d0huS3o1b1hpVDZGU2taUktnckxYMVlMVEFmVENjQzMzZlJHSlJRbDEwYnF0KzdNR1JXbmRMQyt6VTB4SDZaWGMiLCJtYWMiOiIzNDlhZmMwMDkzZjAxY2FlYWMxODU3ZWExMjc4OTUxMmQ2MjUwZjQxOTE4Mjg1NGQzOThlNmE3MjVhMThjOWZjIiwidGFnIjoiIn0=",
+        "referer": "http://localhost:5173/",
+        "user-agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) HeadlessChrome/157.0.0.0 Safari/537.36",
+        "accept": "application/json",
+        "sec-ch-ua": "\"Not-A.Brand\";v=\"99\", \"Google Chrome\";v=\"157\", \"Chromium\";v=\"157\"",
+        "sec-ch-ua-mobile": "?0"
+      }
+    },
+    {
+      "type": "REQ",
+      "method": "GET",
+      "url": "http://localhost:8000/api/v1/auth/me",
+      "headers": {
+        "sec-ch-ua-platform": "\"Windows\"",
+        "x-xsrf-token": "eyJpdiI6IjdZUUtlL0FuMG44L3cyVWRKT0MyZmc9PSIsInZhbHVlIjoiZTRqbE54NzJsMWNzeEgvMHBXSDdIa0VzU1NhVTFxUlF0VWRIT2RWSkN1MGV4dlcxN2pzRmpGaDhIekFndEx3d0huS3o1b1hpVDZGU2taUktnckxYMVlMVEFmVENjQzMzZlJHSlJRbDEwYnF0KzdNR1JXbmRMQyt6VTB4SDZaWGMiLCJtYWMiOiIzNDlhZmMwMDkzZjAxY2FlYWMxODU3ZWExMjc4OTUxMmQ2MjUwZjQxOTE4Mjg1NGQzOThlNmE3MjVhMThjOWZjIiwidGFnIjoiIn0=",
+        "referer": "http://localhost:5173/",
+        "user-agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) HeadlessChrome/157.0.0.0 Safari/537.36",
+        "accept": "application/json",
+        "sec-ch-ua": "\"Not-A.Brand\";v=\"99\", \"Google Chrome\";v=\"157\", \"Chromium\";v=\"157\"",
+        "sec-ch-ua-mobile": "?0"
+      }
+    },
+    {
+      "type": "REQ",
+      "method": "OPTIONS",
+      "url": "http://localhost:8000/api/v1/auth/me",
+      "headers": {
+        "accept": "*/*",
+        "access-control-request-headers": "x-xsrf-token",
+        "access-control-request-method": "GET",
+        "origin": "http://localhost:5173",
+        "sec-fetch-mode": "cors",
+        "user-agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) HeadlessChrome/157.0.0.0 Safari/537.36",
+        "accept-encoding": "gzip, deflate, br, zstd",
+        "accept-language": "en-US,en;q=0.9",
+        "connection": "keep-alive",
+        "host": "localhost:8000",
+        "referer": "http://localhost:5173/",
+        "sec-fetch-dest": "empty",
+        "sec-fetch-site": "same-site"
+      }
+    },
+    {
+      "type": "REQ",
+      "method": "OPTIONS",
+      "url": "http://localhost:8000/api/v1/auth/me",
+      "headers": {
+        "accept": "*/*",
+        "access-control-request-headers": "x-xsrf-token",
+        "access-control-request-method": "GET",
+        "origin": "http://localhost:5173",
+        "sec-fetch-mode": "cors",
+        "user-agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) HeadlessChrome/157.0.0.0 Safari/537.36",
+        "accept-encoding": "gzip, deflate, br, zstd",
+        "accept-language": "en-US,en;q=0.9",
+        "connection": "keep-alive",
+        "host": "localhost:8000",
+        "referer": "http://localhost:5173/",
+        "sec-fetch-dest": "empty",
+        "sec-fetch-site": "same-site"
+      }
+    },
+    {
+      "type": "RES",
+      "status": 204,
+      "url": "http://localhost:8000/api/v1/auth/me",
+      "headers": {
+        "access-control-allow-credentials": "true",
+        "access-control-allow-headers": "x-xsrf-token",
+        "access-control-allow-methods": "GET",
+        "access-control-allow-origin": "http://localhost:5173",
+        "access-control-max-age": "0",
+        "cache-control": "no-cache, private",
+        "connection": "close",
+        "content-type": "text/html; charset=UTF-8",
+        "date": "Thu, 12 Nov 2026 15:07:14 GMT",
+        "host": "localhost:8000",
+        "vary": "Origin, Access-Control-Request-Method, Access-Control-Request-Headers",
+        "x-powered-by": "PHP/8.5.5"
+      }
+    },
+    {
+      "type": "RES",
+      "status": 204,
+      "url": "http://localhost:8000/api/v1/auth/me",
+      "headers": {
+        "access-control-allow-credentials": "true",
+        "access-control-allow-headers": "x-xsrf-token",
+        "access-control-allow-methods": "GET",
+        "access-control-allow-origin": "http://localhost:5173",
+        "access-control-max-age": "0",
+        "cache-control": "no-cache, private",
+        "connection": "close",
+        "content-type": "text/html; charset=UTF-8",
+        "date": "Thu, 12 Nov 2026 15:07:14 GMT",
+        "host": "localhost:8000",
+        "vary": "Origin, Access-Control-Request-Method, Access-Control-Request-Headers",
+        "x-powered-by": "PHP/8.5.5"
+      }
+    },
+    {
+      "type": "RES",
+      "status": 401,
+      "url": "http://localhost:8000/api/v1/auth/me",
+      "headers": {
+        "access-control-allow-credentials": "true",
+        "access-control-allow-origin": "http://localhost:5173",
+        "cache-control": "no-cache, private",
+        "connection": "close",
+        "content-type": "application/json",
+        "date": "Thu, 12 Nov 2026 15:07:14 GMT",
+        "host": "localhost:8000",
+        "set-cookie": "XSRF-TOKEN=eyJpdiI6Ikx5R3c5MUw4YzZicEF1ZjhUSG9tT1E9PSIsInZhbHVlIjoiZmJTNkwzdVJ2NVlLSXRhK3FoRlF5YU9CYlFsMmdpRXdUeVcyK2RtcGg1RkJubE05UEdldTZYK0dCM0JzM2k5Rll1Rkg3RWVFQW5EYVFmVUZDaGtTaDJET1NsdENBZnBROCtvSUlUaUJlZHlISE1nNTlFdkJZRk56THJNbXNObjYiLCJtYWMiOiIzY2QwMTUyMDg1YjAyYjE1OTE2YTA1ZTgwN2E5NzBmZjU2YzA4ZmI3ODVjY2I5ZDY3MzdhMGEwOTE0OTFjYmNiIiwidGFnIjoiIn0%3D; expires=Thu, 12 Nov 2026 17:07:14 GMT; Max-Age=7200; path=/; samesite=lax\n laravel-session=eyJpdiI6ImxQMmRQbmNNV0VXd1lyVjRKOWxyaHc9PSIsInZhbHVlIjoiMXRrcFBFWlcyc1ZhVFZmU3Y1SlF5QjJQSHpsS2h2SVlVcmhQRURtUU1jTXJMd3piall0WnMrd21zRng1V0tQekJYSlJrVURmNExJRXhwdTJJaFBIRnV0b2diWFdBOCtZTWh0Vm1Sa3JENlFhRlFwN0FVOHNnc0oxQmdBUW00TUciLCJtYWMiOiI3NzRiMzYzMThmZTg2ZTU1YmNjMGUxZTVjZDA0ZTRmZTU5ZjRmNWIzZDgyZGVkY2Q2NzlmYTM2OGM0NzVkMGFlIiwidGFnIjoiIn0%3D; expires=Thu, 12 Nov 2026 17:07:14 GMT; Max-Age=7200; path=/; httponly; samesite=lax",
+        "vary": "Origin",
+        "x-powered-by": "PHP/8.5.5"
+      }
+    },
+    {
+      "type": "RES",
+      "status": 401,
+      "url": "http://localhost:8000/api/v1/auth/me",
+      "headers": {
+        "access-control-allow-credentials": "true",
+        "access-control-allow-origin": "http://localhost:5173",
+        "cache-control": "no-cache, private",
+        "connection": "close",
+        "content-type": "application/json",
+        "date": "Thu, 12 Nov 2026 15:07:14 GMT",
+        "host": "localhost:8000",
+        "set-cookie": "XSRF-TOKEN=eyJpdiI6ImNyMHYrcFhsS05kMnJaci9ONldHelE9PSIsInZhbHVlIjoibE9Bem11Q3hUZ0EyVzNQWmNhMUVMVE5uRm9PU1c1T0MrZGJXbDB6a2ZvQmo1ejFwYmpnQ0NMZHFvYVpTOFhLMmN6eVQ0am1zNCtNbzhUZ3lrV1pnRDQ5K0p5ZGJKaWROWWNFaHFNM2JkdEZ2eEdiY3k0UzBsbnBpalVlZzFRbzciLCJtYWMiOiI3NzliOTgwMDQ5ZDAzM2FlZmEwZWFkMTQwNDZhNjhkNzEwODM0YjViMDIyMDMxYThmNzVmNTMxYTc2NTllYzJhIiwidGFnIjoiIn0%3D; expires=Thu, 12 Nov 2026 17:07:14 GMT; Max-Age=7200; path=/; samesite=lax\n laravel-session=eyJpdiI6IlgyR2NwVlR2ekh0R0w5NWEvOGQ5UVE9PSIsInZhbHVlIjoiRGVDakdWMDQ0eDBvSExrd2hDYXVkOXVOSkx2QzBjTi9DaFBTYjdrTTR2T2tqWmtIUGljRzZyWnZMTGxDQ1hMdkc4NERoM1E4NS9Pa0I0ZHZxa2RCcmZGUEtkaGtYYVBEa3NOYmJrelBSZXh2eWt5WW5TYkhrSStnVFBwY1lSbnAiLCJtYWMiOiJkOWQ5MWQzMGNiMjM4ZGM3MmMxOTc4MzM0ODI3NGE0M2FiYzA1MjY0MmRhZWU2YzdkMWUzMWJkNzg3MzFmZWJjIiwidGFnIjoiIn0%3D; expires=Thu, 12 Nov 2026 17:07:14 GMT; Max-Age=7200; path=/; httponly; samesite=lax",
+        "vary": "Origin",
+        "x-powered-by": "PHP/8.5.5"
+      }
+    }
+  ],
+  "consoleErrors": [
+    "Failed to load resource: the server responded with a status of 401 (Unauthorized)",
+    "Failed to load resource: the server responded with a status of 401 (Unauthorized)",
+    "Failed to load resource: the server responded with a status of 401 (Unauthorized)",
+    "Failed to load resource: the server responded with a status of 401 (Unauthorized)",
+    "Failed to load resource: the server responded with a status of 401 (Unauthorized)",
+    "Failed to load resource: the server responded with a status of 401 (Unauthorized)",
+    "Failed to load resource: the server responded with a status of 401 (Unauthorized)",
+    "Failed to load resource: the server responded with a status of 401 (Unauthorized)",
+    "Failed to load resource: the server responded with a status of 401 (Unauthorized)",
+    "Failed to load resource: the server responded with a status of 401 (Unauthorized)",
+    "Failed to load resource: the server responded with a status of 401 (Unauthorized)",
+    "Failed to load resource: the server responded with a status of 401 (Unauthorized)",
+    "Failed to load resource: the server responded with a status of 401 (Unauthorized)",
+    "Failed to load resource: the server responded with a status of 401 (Unauthorized)"
+  ]
+}

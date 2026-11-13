@@ -1,6 +1,24 @@
-# React + TypeScript + Vite
+# SENTRAVAX — Frontend Application
 
-This template provides a minimal setup to get React working in Vite with HMR and some Oxlint rules.
+Aplikasi antarmuka web dan mobile-responsive SENTRAVAX berbasis **React 19**, **TypeScript**, **Vite**, dan **Tailwind CSS v4**.
+
+- 🎨 **Panduan Desain & UI:** [`../docs/core/DESIGN.md`](../docs/core/DESIGN.md)
+- 📖 **Master Documentation Index:** [`../docs/README.md`](../docs/README.md)
+- 🔌 **API Contract Lock:** [`../docs/core/API_CONTRACT.md`](../docs/core/API_CONTRACT.md)
+
+---
+
+## Development Scripts
+
+```bash
+npm run dev     # Menjalankan Vite dev server (http://localhost:5173)
+npm run lint    # Menjalankan Oxlint linter
+npm run build   # Type-check TypeScript (tsc -b) & Vite production build
+```
+
+---
+
+## Template Documentation
 
 Currently, two official plugins are available:
 
