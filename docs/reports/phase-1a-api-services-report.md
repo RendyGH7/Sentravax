@@ -15,7 +15,7 @@
 | Operasi | Path File | Keterangan |
 |---|---|---|
 | **Created** | `frontend/src/services/public-service.ts` | Typed API Service untuk seluruh endpoint Public Website (11 method). |
-| **Created** | `frontend/src/services/user-service.ts` | Typed API Service untuk seluruh endpoint User Portal & Siaga Personal (17 method). |
+| **Created** | `frontend/src/services/user-service.ts` | Typed API Service untuk seluruh endpoint User Portal & Siaga Personal (21 method). |
 | **Created** | `frontend/src/services/index.ts` | Barrel export untuk memudahkan import `publicService` dan `userService`. |
 | **Modified** | `frontend/src/types/disaster.ts` | Penambahan interface: `RegionItem.center`, `PublicOverviewData`, `HazardEventDetail`, `EducationContentItem`, dan parameter query (`EventsQueryParams`, `AlertsQueryParams`, `RegionsQueryParams`, `EducationQueryParams`, `CheckLocationParams`). |
 | **Modified** | `frontend/src/types/siaga.ts` | Penambahan interface: `UserDashboardData`, `UserSavedRegionItem`, `SaveRegionPayload`, `UserNotificationItem`, `ChecklistOverviewData`, `ToggleChecklistResult`, `FamilyPlanData`, `UpdatePlanPayload`, `CreateContactPayload`, `CreateReportPayload`, `CreateReportResult`, dan `CommunityReportDetail`. |
@@ -182,8 +182,11 @@ Hanya memodifikasi type definition dan menambahkan berkas service di `frontend/s
 
 ---
 
-## 6. KENDALA & CATATAN ENDPOINT
+## 6. REKONSILIASI JUMLAH METHOD & ENDPOINT
 
-- **Seluruh 28 Endpoint Terverifikasi Aktif:** Seluruh method pada `publicService` dan `userService` telah dipetakan langsung ke fungsi controller yang sudah aktif dan lulus pengujian backend. Tidak ditemukan endpoint fiktif atau respon yang belum terimplementasi di backend.
+- **Public Service (`publicService`):** 11 methods yang melayani 11 endpoint publik.
+- **User Service (`userService`):** 21 methods yang melayani 17 endpoint user (beberapa endpoint mendukung multiple action methods, e.g. read/toggle/attempt).
+- **Total Method:** 32 typed methods.
+- **Total Endpoint URL Pattern:** 28 distinct URL patterns terverifikasi aktif pada `backend/routes/api.php`.
 - **Kesiapan Fase Berikutnya:** Lapisan komunikasi API telah siap 100% untuk digunakan sebagai pondasi implementasi komponen antarmuka pengguna pada Tahap 1B (Shared UI Library) dan Tahap 2 (Public Website Core).
 

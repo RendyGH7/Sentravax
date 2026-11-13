@@ -49,7 +49,9 @@ docs/
     ├── authentication-security-report.md # Laporan Pengerasan Keamanan & Uji 12 Alur
     ├── browser-authentication-e2e-report.md # Laporan Verifikasi Real Browser E2E (15/15 Skenario Lulus)
     ├── public-user-implementation-plan.md   # Rencana Implementasi Public Website & User Portal
-    └── phase-1a-api-services-report.md      # Laporan Implementasi Phase 1A: Typed API Services Foundation
+    ├── phase-1a-api-services-report.md      # Laporan Implementasi Phase 1A: Typed API Services Foundation
+    ├── phase-1b-shared-ui-report.md        # Laporan Implementasi Phase 1B: Shared UI Component Library
+    └── phase-1b-accessibility-audit.md     # Laporan Audit Akhir Aksesibilitas Phase 1B (WCAG 2.2 AA)
 ```
 
 ---
@@ -114,7 +116,13 @@ File di dalam [`reports/`](./reports/) dipertahankan sebagai **bukti historis** 
    *Peran:* Rencana implementasi detail untuk Public Website dan User Portal (Siaga Personal), memetakan 11 endpoint publik dan 17 endpoint user, komponen reusable, urutan fase prioritas, dan mitigasi risiko teknis.
 7. **[`reports/phase-1a-api-services-report.md`](./reports/phase-1a-api-services-report.md)**  
    *Status:* **PHASE 1A IMPLEMENTATION REPORT (PASS)**.  
-   *Peran:* Laporan implementasi lapisan Typed API Services untuk Public Website dan User Portal (28 method typed), verifikasi struktur controller backend aktual, hasil audit lint dan build.
+   *Peran:* Laporan implementasi lapisan Typed API Services untuk Public Website dan User Portal (32 method typed, 28 endpoint URL), verifikasi struktur controller backend aktual, hasil audit lint dan build.
+8. **[`reports/phase-1b-shared-ui-report.md`](./reports/phase-1b-shared-ui-report.md)**  
+   *Status:* **PHASE 1B IMPLEMENTATION REPORT (PASS)**.  
+   *Peran:* Laporan implementasi 8 komponen Shared UI Library (`Button`, `Badge`, `Card`, `FormControls`, `Modal`, `Tabs`, `Skeleton`, `EmptyState`) pendukung visual family Light dan Dark, verifikasi Anti-Slop, aksesibilitas WCAG, lint dan production build.
+9. **[`reports/phase-1b-accessibility-audit.md`](./reports/phase-1b-accessibility-audit.md)**  
+   *Status:* **ACCESSIBILITY & WCAG 2.2 AA AUDIT REPORT (PASS)**.  
+   *Peran:* Bukti audit menyeluruh aksesibilitas: keyboard focus trap pada Modal, reduced-motion adaptations, perbaikan rasio kontras warna matematis teruji, WAI-ARIA associations, serta verifikasi lint dan production build.
 
 ---
 
