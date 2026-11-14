@@ -1,0 +1,147 @@
+/* SENTRAVAX Custom Leaflet Map Styling */
+@import 'leaflet/dist/leaflet.css';
+
+/* Base Map Container */
+.sentravax-map-container {
+  width: 100%;
+  height: 100%;
+  position: relative;
+  z-index: 1;
+  background-color: #F3F4F6;
+  outline: none;
+}
+
+.sentravax-map-dark .sentravax-map-container {
+  background-color: #0C0C0C;
+}
+
+/* Custom Popup Overrides */
+.leaflet-popup-content-wrapper {
+  padding: 0 !important;
+  border-radius: 1rem !important;
+  box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.12), 0 8px 10px -6px rgba(0, 0, 0, 0.08) !important;
+  border: 1px solid #E5E7EB !important;
+  background-color: #FFFFFF !important;
+  overflow: hidden !important;
+}
+
+.sentravax-map-dark .leaflet-popup-content-wrapper {
+  border: 1px solid #2C2C2C !important;
+  background-color: #161616 !important;
+  box-shadow: 0 20px 30px -10px rgba(0, 0, 0, 0.7) !important;
+}
+
+.leaflet-popup-content {
+  margin: 0 !important;
+  line-height: inherit !important;
+  width: auto !important;
+}
+
+.leaflet-popup-tip {
+  background-color: #FFFFFF !important;
+  box-shadow: none !important;
+}
+
+.sentravax-map-dark .leaflet-popup-tip {
+  background-color: #161616 !important;
+}
+
+.leaflet-container a.leaflet-popup-close-button {
+  top: 10px !important;
+  right: 10px !important;
+  width: 24px !important;
+  height: 24px !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  border-radius: 0.5rem !important;
+  color: #6B7280 !important;
+  background-color: #F3F4F6 !important;
+  font-size: 14px !important;
+  line-height: 1 !important;
+  transition: all 150ms ease !important;
+}
+
+.sentravax-map-dark .leaflet-container a.leaflet-popup-close-button {
+  color: #A3A3A3 !important;
+  background-color: #212121 !important;
+}
+
+.leaflet-container a.leaflet-popup-close-button:hover {
+  color: #111827 !important;
+  background-color: #E5E7EB !important;
+}
+
+.sentravax-map-dark .leaflet-container a.leaflet-popup-close-button:hover {
+  color: #FFFFFF !important;
+  background-color: #2C2C2C !important;
+}
+
+/* Custom Marker Pins */
+.sentravax-marker-wrapper {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  position: relative;
+  transition: transform 150ms cubic-bezier(0.2, 0, 0, 1);
+}
+
+.sentravax-marker-wrapper:hover {
+  transform: scale(1.15) translateY(-2px);
+  z-index: 1000 !important;
+}
+
+.sentravax-marker-pulse {
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  border-radius: 9999px;
+  animation: marker-pulse-anim 2s infinite ease-out;
+  pointer-events: none;
+}
+
+@keyframes marker-pulse-anim {
+  0% {
+    transform: scale(1);
+    opacity: 0.75;
+  }
+  70% {
+    transform: scale(2.2);
+    opacity: 0;
+  }
+  100% {
+    transform: scale(2.2);
+    opacity: 0;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .sentravax-marker-pulse {
+    animation: none !important;
+    display: none !important;
+  }
+}
+
+/* Leaflet Attribution Bar */
+.leaflet-control-attribution {
+  background: rgba(255, 255, 255, 0.85) !important;
+  backdrop-filter: blur(4px) !important;
+  border-radius: 0.375rem !important;
+  padding: 2px 8px !important;
+  margin: 6px !important;
+  font-size: 10px !important;
+  color: #4B5563 !important;
+  border: 1px solid #E5E7EB !important;
+}
+
+.sentravax-map-dark .leaflet-control-attribution {
+  background: rgba(22, 22, 22, 0.85) !important;
+  border: 1px solid #2C2C2C !important;
+  color: #8A8A8A !important;
+}
+
+.sentravax-map-dark .leaflet-control-attribution a {
+  color: #F59E0B !important;
+}
+

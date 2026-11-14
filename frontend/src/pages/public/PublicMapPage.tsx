@@ -1,27 +1,35 @@
-import React from 'react';
-import { AreaPlaceholder } from '../../components/shared/AreaPlaceholder';
-import { Map } from 'lucide-react';
-import { PATHS } from '../../app/router/paths';
+import React, { Suspense, lazy } from 'react';
+import { RefreshCw } from 'lucide-react';
+
+// Code Splitting: Lazy-load Leaflet map module so non-map routes do not pay the bundle cost
+const DisasterMap = lazy(() =>
+  import('../../components/map').then((mod) => ({ default: mod.DisasterMap }))
+);
 
 export const PublicMapPage: React.FC = () => {
   return (
-    <div className="py-8 px-4 sm:px-6 lg:px-8">
-      <AreaPlaceholder
-        area="PUBLIC"
-        title="Peta Interaktif Kesiapsiagaan Publik"
-        description="Visualisasi risiko geospasial terbuka untuk warga seluruh Indonesia. Menampilkan zonasi ancaman bencana, lokasi posko evakuasi, dan status peringatan dini aktif tanpa batasan login."
-        route={PATHS.PUBLIC.MAP}
-        icon={Map}
-        features={[
-          'Peta tematik multi-hazard (Banjir, Gempa, Cuaca Ekstrem)',
-          'Filter status risiko wilayah per provinsi & kabupaten',
-          'Titik posko pengungsian & fasilitas darurat terdekat',
-          'Pencarian alamat dan rute evakuasi teraman (Fase 4)'
-        ]}
-        ctaLink={PATHS.PUBLIC.WARNINGS}
-        ctaText="Lihat Peringatan Dini Terkini"
-      />
+    <div className="py-6 px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto space-y-4">
+      <div>
+        <h1 className="text-xl sm:text-2xl font-bold tracking-tight text-[#111827]">
+          Peta Bencana & Kesiapsiagaan Indonesia
+        </h1>
+        <p className="text-xs sm:text-sm text-[#4B5563] mt-1">
+          Pantauan geospasial real-time kejadian bencana aktif terverifikasi dari telemetri BMKG dan jaringan posko nasional.
+        </p>
+      </div>
+
+      <Suspense
+        fallback={
+          <div className="h-[680px] w-full rounded-2xl border border-[#E5E7EB] bg-white flex flex-col items-center justify-center p-6 gap-3">
+            <RefreshCw className="w-6 h-6 animate-spin text-[#047857]" />
+            <span className="text-sm font-semibold text-[#111827]">
+              Memuat Komponen Geospasial Leaflet...
+            </span>
+          </div>
+        }
+      >
+        <DisasterMap theme="light" height="680px" />
+      </Suspense>
     </div>
   );
 };
-
