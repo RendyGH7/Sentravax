@@ -797,7 +797,7 @@ export const PublicDisastersPage: React.FC = () => {
                         {/* Provenance & Source */}
                         <div className="flex items-center justify-between gap-2 pt-1 text-[11px]">
                           <span className="text-[#6B7280] truncate max-w-[150px]">
-                            {ev.source_name || ev.provider_name || 'BMKG & Posko Nasional'}
+                            {ev.source_name || ev.provider_name || 'Sumber data tidak tercatat'}
                           </span>
 
                           <span

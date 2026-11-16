@@ -509,7 +509,7 @@ export const PublicDisasterDetailPage: React.FC = () => {
               <div>
                 <p className="text-[#6B7280] font-semibold text-[11px]">Sumber Telemetri</p>
                 <p className="font-bold text-[#111827] truncate">
-                  {eventDetail.data_source?.name || eventDetail.source_name || 'BMKG TEWS / Pusdalops'}
+                  {eventDetail.data_source?.name || eventDetail.source_name || 'Sumber data tidak tercatat'}
                 </p>
               </div>
             </div>
@@ -561,18 +561,21 @@ export const PublicDisasterDetailPage: React.FC = () => {
             )}
 
             {/* TELEMETRY & SOURCE METADATA (Safe Allowlist) */}
-            {eventDetail.source_metadata && Object.keys(eventDetail.source_metadata).length > 0 && (
-              <section className="bg-white border border-[#E5E7EB] rounded-2xl p-6 shadow-xs space-y-4">
-                <div className="flex items-center justify-between">
-                  <h2 className="text-base font-bold text-[#111827] flex items-center gap-2">
-                    <Activity className="w-4 h-4 text-[#047857]" />
-                    <span>Parameter Sensor & Data Telemetri</span>
-                  </h2>
-                  <span className="text-[11px] font-semibold text-[#6B7280]">
-                    Metadata Otoritatif Terverifikasi
-                  </span>
-                </div>
+            <section className="bg-white border border-[#E5E7EB] rounded-2xl p-6 shadow-xs space-y-4">
+              <div className="flex items-center justify-between">
+                <h2 className="text-base font-bold text-[#111827] flex items-center gap-2">
+                  <Activity className="w-4 h-4 text-[#047857]" />
+                  <span>Parameter Sensor & Data Telemetri</span>
+                </h2>
+                <span className="text-[11px] font-semibold text-[#6B7280]">
+                  Metadata Otoritatif Terverifikasi
+                </span>
+              </div>
 
+              {eventDetail.source_metadata &&
+              typeof eventDetail.source_metadata === 'object' &&
+              !Array.isArray(eventDetail.source_metadata) &&
+              Object.keys(eventDetail.source_metadata).length > 0 ? (
                 <div className="grid grid-cols-2 sm:grid-cols-3 gap-3">
                   {/* Earthquake Magnitude */}
                   {eventDetail.source_metadata.Magnitude !== undefined && (
@@ -616,6 +619,16 @@ export const PublicDisasterDetailPage: React.FC = () => {
                     </div>
                   )}
 
+                  {/* Dirasakan / Intensity */}
+                  {eventDetail.source_metadata.Dirasakan !== undefined && eventDetail.source_metadata.Dirasakan !== '-' && (
+                    <div className="bg-[#F9FAFB] p-3.5 rounded-xl border border-[#E5E7EB]">
+                      <p className="text-[11px] font-semibold text-[#6B7280]">Intensitas Dirasakan</p>
+                      <p className="text-sm font-extrabold text-[#111827]">
+                        {String(eventDetail.source_metadata.Dirasakan)}
+                      </p>
+                    </div>
+                  )}
+
                   {/* Tsunami Potential */}
                   {eventDetail.source_metadata.Potensi !== undefined && (
                     <div className="col-span-2 sm:col-span-3 bg-emerald-50/60 p-3.5 rounded-xl border border-emerald-200 flex items-center gap-3">
@@ -632,13 +645,17 @@ export const PublicDisasterDetailPage: React.FC = () => {
                   {/* Shakemap Preview if available */}
                   {typeof eventDetail.source_metadata.Shakemap === 'string' && (
                     <div className="col-span-2 sm:col-span-3 bg-[#F9FAFB] p-3.5 rounded-xl border border-[#E5E7EB] flex items-center justify-between text-xs">
-                      <span className="font-semibold text-[#4B5563]">Peta Guncangan (Shakemap BMKG):</span>
+                      <span className="font-semibold text-[#4B5563]">Peta Guncangan (Shakemap):</span>
                       <span className="font-mono text-[11px] text-[#6B7280]">{String(eventDetail.source_metadata.Shakemap)}</span>
                     </div>
                   )}
                 </div>
-              </section>
-            )}
+              ) : (
+                <div className="bg-[#F9FAFB] border border-[#E5E7EB] rounded-xl p-4 text-center text-xs text-[#6B7280]">
+                  Parameter telemetri sensor spesifik tidak tersedia pada rekaman data kejadian ini.
+                </div>
+              )}
+            </section>
 
             {/* LINKED EARLY WARNING ALERTS */}
             <section className="bg-white border border-[#E5E7EB] rounded-2xl p-6 shadow-xs space-y-4">
@@ -718,26 +735,33 @@ export const PublicDisasterDetailPage: React.FC = () => {
                 <div className="flex items-center justify-between">
                   <span className="text-[#6B7280]">Nama Penyedia / Otoritas:</span>
                   <span className="font-bold text-[#111827]">
-                    {eventDetail.data_source?.provider || 'Badan Meteorologi, Klimatologi, dan Geofisika (BMKG)'}
+                    {eventDetail.data_source?.provider || eventDetail.provider_name || 'Penyedia data tidak terverifikasi'}
                   </span>
                 </div>
                 <div className="flex items-center justify-between">
                   <span className="text-[#6B7280]">Saluran Telemetri:</span>
                   <span className="font-bold text-[#111827]">
-                    {eventDetail.data_source?.name || 'BMKG TEWS Open Data API'}
+                    {eventDetail.data_source?.name || eventDetail.source_name || 'Sumber data tidak tercatat'}
                   </span>
                 </div>
                 <div className="flex items-center justify-between">
                   <span className="text-[#6B7280]">Tipe Sumber Data:</span>
                   <span className="font-mono font-semibold text-[#111827] uppercase">
-                    {eventDetail.data_source?.source_type || 'API Telemetri'}
+                    {eventDetail.data_source?.source_type || 'Tidak tercatat'}
                   </span>
                 </div>
                 <div className="flex items-center justify-between pt-1 border-t border-gray-200">
-                  <span className="text-[#6B7280]">Status Verifikasi:</span>
-                  <span className="font-bold text-emerald-700 flex items-center gap-1">
-                    <CheckCircle2 className="w-3.5 h-3.5" />
-                    Terverifikasi Secara Deterministik
+                  <span className="text-[#6B7280]">Status Data:</span>
+                  <span className="font-bold text-[#111827] flex items-center gap-1.5">
+                    <span
+                      className={`w-1.5 h-1.5 rounded-full ${
+                        isLive ? 'bg-emerald-500 animate-pulse' : 'bg-gray-400'
+                      }`}
+                    />
+                    {eventDetail.data_source?.provenance_label || (isLive ? 'LIVE' : 'STATIC')}
+                    <span className="text-[#6B7280] font-normal">
+                      ({eventDetail.data_source?.status === 'active' ? 'Aktif' : 'Terarsip'})
+                    </span>
                   </span>
                 </div>
               </div>
@@ -869,10 +893,10 @@ export const PublicDisasterDetailPage: React.FC = () => {
             <section className="bg-gradient-to-br from-rose-50 to-orange-50 border border-rose-200 rounded-2xl p-6 shadow-xs space-y-3">
               <div className="flex items-center gap-2 text-rose-800">
                 <PhoneCall className="w-5 h-5 text-rose-600" />
-                <h3 className="font-bold text-sm">Pusat Bantuan & Panggilan Darurat</h3>
+                <h3 className="font-bold text-sm">Nomor Kontak Darurat Nasional</h3>
               </div>
               <p className="text-xs text-rose-700">
-                Hubungi nomor darurat resmi nasional jika Anda atau keluarga berada dalam zona bahaya:
+                Akses cepat ke kontak layanan darurat instansi pemerintah di Indonesia:
               </p>
 
               <div className="grid grid-cols-2 gap-2 pt-1 text-xs font-bold">
@@ -894,14 +918,14 @@ export const PublicDisasterDetailPage: React.FC = () => {
                   href="tel:119"
                   className="bg-white p-2.5 rounded-xl border border-rose-200 text-center hover:bg-rose-100 transition-colors text-rose-900 block"
                 >
-                  <p className="text-[10px] text-rose-600 font-semibold">Ambulans Kemenkes</p>
+                  <p className="text-[10px] text-rose-600 font-semibold">Kemenkes / Medis</p>
                   <p className="text-base font-extrabold">119</p>
                 </a>
                 <a
                   href="tel:117"
                   className="bg-white p-2.5 rounded-xl border border-rose-200 text-center hover:bg-rose-100 transition-colors text-rose-900 block"
                 >
-                  <p className="text-[10px] text-rose-600 font-semibold">Posko BNPB</p>
+                  <p className="text-[10px] text-rose-600 font-semibold">Pusdalops BNPB</p>
                   <p className="text-base font-extrabold">117</p>
                 </a>
               </div>

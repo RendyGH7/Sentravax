@@ -115,8 +115,12 @@ async function runStep2TestSuite() {
       return btns.find((b) => b.textContent && b.textContent.includes('Banjir dan Genangan'));
     });
     if (floodPill.asElement()) {
+      const floodResponsePromise = page.waitForResponse(
+        (res) => res.url().includes('/api/v1/public/events') && res.url().includes('hazard_type_id=1') && res.status() === 200
+      );
       await floodPill.asElement().click();
-      await new Promise((r) => setTimeout(r, 500));
+      await floodResponsePromise;
+      await page.waitForFunction(() => document.querySelectorAll('article').length === 1);
       filteredCards = await page.$$('article');
       assert('Category "Banjir" returns 1 item', filteredCards.length === 1, `Count: ${filteredCards.length}`);
     } else {
@@ -129,8 +133,12 @@ async function runStep2TestSuite() {
       return btns.find((b) => b.textContent && b.textContent.includes('Reset Filter'));
     });
     if (resetBtn.asElement()) {
+      const resetResponsePromise = page.waitForResponse(
+        (res) => res.url().includes('/api/v1/public/events') && !res.url().includes('hazard_type_id=1') && res.status() === 200
+      );
       await resetBtn.asElement().click();
-      await new Promise((r) => setTimeout(r, 500));
+      await resetResponsePromise;
+      await page.waitForFunction(() => document.querySelectorAll('article').length === 5);
       filteredCards = await page.$$('article');
       assert('Reset Filter restores 5 items', filteredCards.length === 5, `Count: ${filteredCards.length}`);
     } else {
@@ -138,8 +146,12 @@ async function runStep2TestSuite() {
     }
 
     // Severity Dropdown Filter: Select "Sedang"
+    const sevResponsePromise = page.waitForResponse(
+      (res) => res.url().includes('/api/v1/public/events') && res.url().includes('severity=medium') && res.status() === 200
+    );
     await page.select('#select-severity', 'medium');
-    await new Promise((r) => setTimeout(r, 500));
+    await sevResponsePromise;
+    await page.waitForFunction(() => document.querySelectorAll('article').length === 2);
     filteredCards = await page.$$('article');
     assert('Severity "Sedang" returns 2 items', filteredCards.length === 2, `Count: ${filteredCards.length}`);
 
@@ -149,8 +161,12 @@ async function runStep2TestSuite() {
       return btns.find((b) => b.textContent && b.textContent.includes('Reset Filter'));
     });
     if (resetBtn2.asElement()) {
+      const reset2Promise = page.waitForResponse(
+        (res) => res.url().includes('/api/v1/public/events') && !res.url().includes('severity=medium') && res.status() === 200
+      );
       await resetBtn2.asElement().click();
-      await new Promise((r) => setTimeout(r, 500));
+      await reset2Promise;
+      await page.waitForFunction(() => document.querySelectorAll('article').length === 5);
     }
 
     // -------------------------------------------------------------
@@ -241,6 +257,17 @@ async function runStep2TestSuite() {
     // Safety Guidelines
     assert('Safety Guidelines Section', detail1Body.includes('Panduan Keselamatan & Mitigasi'));
     assert('Safety Guideline Title', detail1Body.includes('Panduan Tanggap Darurat & Mitigasi Banjir Luapan'));
+
+    // -------------------------------------------------------------
+    // TEST 5B: EVENT DETAIL #2 (EMPTY METADATA HONEST HANDLING)
+    // -------------------------------------------------------------
+    console.log('\n--- TEST 5B: EVENT DETAIL #2 (EMPTY METADATA HONEST STATE) ---');
+    await page.goto(`${BASE_URL}/disasters/2`, { waitUntil: 'networkidle2' });
+    await page.waitForSelector('h1', { timeout: 10000 });
+    const detail2Body = await page.$eval('body', (el) => el.innerText);
+    assert('Event 2 Title', detail2Body.includes('Peringatan Angin Kencang'));
+    assert('Honest Empty Telemetry Notice', detail2Body.includes('Parameter telemetri sensor spesifik tidak tersedia'));
+    assert('Truthful Static Provenance Label', detail2Body.includes('STATIC (TERKURASI)'));
 
     // -------------------------------------------------------------
     // TEST 6: ERROR & BOUNDARY STATES (/disasters/99999 & /disasters/invalid)
