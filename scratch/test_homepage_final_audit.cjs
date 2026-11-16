@@ -137,6 +137,11 @@ async function runAudit() {
     // 6. AUDIT EARLY WARNING CONTRACT
     // -------------------------------------------------------------
     console.log('--- 6. AUDIT EARLY WARNING HIGHLIGHTS ---');
+    await page.waitForFunction(() => {
+      const el = document.querySelector('section[aria-labelledby="early-warnings-heading"]');
+      return el && (el.innerText.includes('REGIONAL') || el.innerText.includes('WARNING') || el.innerText.includes('Tidak Ada'));
+    }, { timeout: 5000 }).catch(() => {});
+
     const warningAudit = await page.evaluate(() => {
       const warningsSection = document.querySelector('section[aria-labelledby="early-warnings-heading"]');
       if (!warningsSection) return { found: false };

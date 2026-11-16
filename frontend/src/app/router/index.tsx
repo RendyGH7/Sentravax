@@ -11,7 +11,9 @@ import { IntelligenceLayout } from '../../layouts/intelligence/IntelligenceLayou
 import { HomePage } from '../../pages/public/HomePage';
 import { PublicMapPage } from '../../pages/public/PublicMapPage';
 import { PublicDisastersPage } from '../../pages/public/PublicDisastersPage';
+import { PublicDisasterDetailPage } from '../../pages/public/PublicDisasterDetailPage';
 import { PublicWarningsPage } from '../../pages/public/PublicWarningsPage';
+import { PublicWarningDetailPage } from '../../pages/public/PublicWarningDetailPage';
 import { PublicPreparednessPage } from '../../pages/public/PublicPreparednessPage';
 import { PublicEducationPage } from '../../pages/public/PublicEducationPage';
 import { PublicAboutPage } from '../../pages/public/PublicAboutPage';
@@ -56,7 +58,9 @@ export const router = createBrowserRouter([
       { index: true, element: <HomePage /> },
       { path: 'map', element: <PublicMapPage /> },
       { path: 'disasters', element: <PublicDisastersPage /> },
+      { path: 'disasters/:id', element: <PublicDisasterDetailPage /> },
       { path: 'warnings', element: <PublicWarningsPage /> },
+      { path: 'warnings/:id', element: <PublicWarningDetailPage /> },
       { path: 'preparedness', element: <PublicPreparednessPage /> },
       { path: 'education', element: <PublicEducationPage /> },
       { path: 'about', element: <PublicAboutPage /> },

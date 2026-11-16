@@ -10,6 +10,8 @@ import type {
   GeoJsonFeatureCollection,
   AlertsQueryParams,
   AlertItem,
+  AlertDetail,
+  BroadcastLevel,
   HazardTypeItem,
   RegionsQueryParams,
   RegionItem,
@@ -18,6 +20,13 @@ import type {
   DataSourceItem,
   PaginatedData,
 } from '../types';
+
+function normalizeBroadcastLevel(level: unknown): BroadcastLevel {
+  if (level === 'local' || level === 'regional' || level === 'national') {
+    return level;
+  }
+  return 'regional';
+}
 
 /**
  * Service for communicating with SENTRAVAX Public Website endpoints.
@@ -50,22 +59,25 @@ export const publicService = {
   },
 
   /**
-   * Get paginated catalog of disaster hazard events with optional filtering.
+   * Get paginated catalog of disaster hazard events with optional filtering and request cancellation.
    * Endpoint: GET /api/v1/public/events
    */
-  async getEvents(params?: EventsQueryParams): Promise<PaginatedData<HazardEventItem>> {
+  async getEvents(params?: EventsQueryParams, signal?: AbortSignal): Promise<PaginatedData<HazardEventItem>> {
     const res = await apiClient.get<ApiResponse<PaginatedData<HazardEventItem>>>('/public/events', {
       params,
+      signal,
     });
     return res.data.data;
   },
 
   /**
-   * Get complete details of a single hazard event by its ID.
+   * Get complete details of a single hazard event by its ID with optional request cancellation.
    * Endpoint: GET /api/v1/public/events/{id}
    */
-  async getEventDetail(id: number): Promise<HazardEventDetail> {
-    const res = await apiClient.get<ApiResponse<HazardEventDetail>>(`/public/events/${id}`);
+  async getEventDetail(id: number, signal?: AbortSignal): Promise<HazardEventDetail> {
+    const res = await apiClient.get<ApiResponse<HazardEventDetail>>(`/public/events/${id}`, {
+      signal,
+    });
     return res.data.data;
   },
 
@@ -73,20 +85,45 @@ export const publicService = {
    * Get active hazard events as standard RFC 7946 GeoJSON FeatureCollection for interactive Leaflet maps.
    * Endpoint: GET /api/v1/public/map/features
    */
-  async getMapFeatures(): Promise<GeoJsonFeatureCollection> {
-    const res = await apiClient.get<GeoJsonFeatureCollection>('/public/map/features');
+  async getMapFeatures(signal?: AbortSignal): Promise<GeoJsonFeatureCollection> {
+    const res = await apiClient.get<GeoJsonFeatureCollection>('/public/map/features', {
+      signal,
+    });
     return res.data;
   },
 
   /**
-   * Get active early warning alerts (CAP standard) with optional level and regional filtering.
+   * Get active early warning alerts (CAP standard) with optional level and regional filtering and request cancellation.
    * Endpoint: GET /api/v1/public/alerts
    */
-  async getAlerts(params?: AlertsQueryParams): Promise<PaginatedData<AlertItem>> {
+  async getAlerts(params?: AlertsQueryParams, signal?: AbortSignal): Promise<PaginatedData<AlertItem>> {
     const res = await apiClient.get<ApiResponse<PaginatedData<AlertItem>>>('/public/alerts', {
       params,
+      signal,
     });
-    return res.data.data;
+    const pageData = res.data.data;
+    if (pageData && Array.isArray(pageData.data)) {
+      pageData.data = pageData.data.map((item) => ({
+        ...item,
+        broadcast_level: normalizeBroadcastLevel(item.broadcast_level),
+      }));
+    }
+    return pageData;
+  },
+
+  /**
+   * Get full details of a single early warning alert by its ID with optional request cancellation.
+   * Endpoint: GET /api/v1/public/alerts/{id}
+   */
+  async getAlertDetail(id: number, signal?: AbortSignal): Promise<AlertDetail> {
+    const res = await apiClient.get<ApiResponse<AlertDetail>>(`/public/alerts/${id}`, {
+      signal,
+    });
+    const detail = res.data.data;
+    if (detail) {
+      detail.broadcast_level = normalizeBroadcastLevel(detail.broadcast_level);
+    }
+    return detail;
   },
 
   /**

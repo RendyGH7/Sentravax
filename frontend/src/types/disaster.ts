@@ -1,11 +1,11 @@
 export type HazardCategory = 'geological' | 'hydrometeorological' | 'climatological' | 'biological' | 'space';
 
-export type HazardSeverity = 'minor' | 'moderate' | 'severe' | 'extreme';
+export type HazardSeverity = 'minor' | 'moderate' | 'severe' | 'extreme' | 'low' | 'medium' | 'high';
 export type EventStatus = 'active' | 'contained' | 'resolved';
 
-export type AlertClass = 'advisory' | 'watch' | 'warning';
+export type AlertClass = 'official_warning' | 'platform_advisory' | 'advisory' | 'watch' | 'warning';
 export type BroadcastLevel = 'local' | 'regional' | 'national';
-export type AlertStatus = 'active' | 'expired' | 'cancelled';
+export type AlertStatus = 'active' | 'expired' | 'cancelled' | 'draft';
 
 export interface HazardTypeItem {
   id: number;
@@ -45,9 +45,56 @@ export interface PublicOverviewData {
   };
 }
 
+export interface AlertIssuer {
+  is_verified: boolean;
+  name: string;
+  provider: string | null;
+  source_type: string | null;
+  verification_basis?: string;
+}
+
+export interface EventDataSourceSummary {
+  id: number;
+  name: string;
+  provider: string;
+  source_type?: string;
+}
+
+export interface TimelineMilestone {
+  entity: 'hazard_event' | 'alert';
+  alert_id?: number;
+  field: 'occurred_at' | 'reported_at' | 'starts_at' | 'expires_at';
+  label: string;
+  timestamp: string;
+  description: string;
+}
+
+export interface NearbyHazardEvent {
+  id: number;
+  title: string;
+  severity: HazardSeverity;
+  status: EventStatus;
+  distance_km: number;
+  distance_meters: number;
+  coordinates: {
+    latitude: number | null;
+    longitude: number | null;
+  };
+  hazard_type?: {
+    id: number;
+    name: string;
+    slug: string;
+    icon?: string;
+  } | null;
+  occurred_at?: string | null;
+}
+
 export interface HazardEventDetail extends HazardEventItem {
   source_metadata?: Record<string, unknown> | null;
   alerts?: AlertItem[];
+  nearby_events?: NearbyHazardEvent[];
+  safety_guidelines?: EducationContentItem[];
+  timeline?: TimelineMilestone[];
   data_source?: {
     id?: number;
     name: string;
@@ -77,17 +124,26 @@ export interface EducationContentItem {
 }
 
 export interface EventsQueryParams {
+  q?: string;
   hazard_type_id?: number;
   region_id?: number;
   severity?: HazardSeverity;
-  status?: EventStatus;
+  status?: EventStatus | 'all';
+  date_from?: string;
+  date_to?: string;
+  sort_by?: 'occurred_at' | 'severity' | 'title' | 'created_at';
+  sort_order?: 'asc' | 'desc';
   page?: number;
   per_page?: number;
 }
 
 export interface AlertsQueryParams {
+  q?: string;
+  alert_class?: AlertClass;
   broadcast_level?: BroadcastLevel;
+  hazard_type_id?: number;
   region_id?: number;
+  status?: AlertStatus | 'all';
   page?: number;
   per_page?: number;
 }
@@ -138,13 +194,42 @@ export interface AlertItem {
   title: string;
   message: string;
   alert_class: AlertClass;
-  broadcast_level: BroadcastLevel;
+  broadcast_level: BroadcastLevel | null;
   status: AlertStatus;
+  is_active?: boolean;
   starts_at: string;
-  expires_at?: string;
+  expires_at?: string | null;
+  created_at?: string;
+  issuer?: AlertIssuer;
+  event_data_source?: EventDataSourceSummary | null;
   hazard_type?: HazardTypeItem | null;
   region?: RegionItem | null;
   hazard_event_id?: number | null;
+}
+
+export interface AlertDetail {
+  id: number;
+  title: string;
+  message: string;
+  alert_class: AlertClass;
+  broadcast_level: BroadcastLevel;
+  status: AlertStatus;
+  is_active: boolean;
+  starts_at: string;
+  expires_at?: string | null;
+  created_at: string;
+  issuer: AlertIssuer;
+  event_data_source?: EventDataSourceSummary | null;
+  hazard_type?: HazardTypeItem | null;
+  region?: (RegionItem & { center?: { latitude: number | null; longitude: number | null } }) | null;
+  hazard_event?: {
+    id: number;
+    title: string;
+    severity: HazardSeverity;
+    status: EventStatus;
+    occurred_at?: string;
+    data_source?: EventDataSourceSummary | null;
+  } | null;
 }
 
 export interface GeoJsonPointFeature {

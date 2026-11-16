@@ -57,6 +57,30 @@ SENTRAVAX **bukan**:
 - Platform yang menganggap semua hotspot sebagai kebakaran terkonfirmasi.
 - Aplikasi yang mengklaim data real-time apabila sumbernya hanya diperbarui secara berkala atau sedang tidak tersedia.
 
+## 1.6 Standar Desain Visual-Rich, User-Friendly & Universal
+
+Sebagai platform kecerdasan kebencanaan publik yang dirancang untuk seluruh lapisan masyarakat Indonesia, SENTRAVAX menetapkan 6 pilar standar desain visual dan pengalaman pengguna (UX) yang wajib dipatuhi di seluruh antarmuka:
+
+### 1.6.1 Enam Pilar Standar Desain
+1. **Visual-Rich (Kaya Visual & Informatif):**
+   - Area publik dan portal warga dilengkapi dengan banyak ilustrasi berkualitas tinggi, ikon tematik kebencanaan (banjir, gempa, cuaca ekstrem, kebakaran hutan/lahan, tanah longsor), visualisasi infografik terstruktur, dan dekorasi grafis kontekstual yang memperjelas informasi tanpa mengaburkan data.
+   - Mengadopsi visualisasi lanskap terrain 3D / isometrik (seperti lembah sungai, perbukitan rawan longsor, zonasi pemukiman warga) dengan penanda pin risiko interaktif (*High-risk*, *Medium-risk*, *Low-risk*) untuk memberikan pemahaman spasial yang langsung intuitif bagi masyarakat awam.
+2. **User-Friendly (Mudah Dipahami Semua Kalangan):**
+   - Penyampaian informasi bebas dari jargon teknis meteorologi/geologi yang membingungkan. Skala risiko dan tingkat keparahan dijelaskan dalam bahasa sehari-hari yang lugas, dilengkapi arti risiko konkret dan rekomendasi tindakan nyata yang harus diambil warga.
+   - Indikator telemetri lingkungan disajikan dengan label yang jelas, status peringatan tegas, dan panduan tindak lanjut langsung.
+3. **Universal & Inklusif (Nyaman Lintas Generasi & Usia):**
+   - Antarmuka dirancang untuk kenyamanan berbagai kelompok usia, mulai dari generasi muda pengguna ponsel pintar hingga kalangan orang tua dan lansia (*elderly-friendly*).
+   - Memenuhi standar aksesibilitas **WCAG 2.1 Level AA**: rasio kontras teks minimal 4.5:1 terhadap latar belakang, skala tipografi modular yang mudah dibaca (body text minimum 16px, caption minimum 14px), target sentuhan jari (*touch targets*) minimum 44×44 px, serta navigasi yang ramah pembaca layar (*screen reader*) dan keyboard navigation.
+4. **Variatif & Tidak Monoton (Dinamika Tata Letak):**
+   - Tata letak antarmuka bervariasi dengan ritme visual yang seimbang: mengombinasikan kartu telemetri modern (seperti kartu cuaca & lingkungan bernuansa dark teal yang elegan dengan ramalan per jam), tab metrik mingguan untuk multi-indikator (*Water Level*, *Temperature*, *Precipitation*), modular card grid, banner informasi darurat, dan infografik edukatif.
+   - Menghindari tata letak kartu yang seragam/monoton atau tampilan tabel data mentah yang menjemukan.
+5. **Profesional & Berwibawa (Civic-Tech Credibility):**
+   - Antarmuka mempertahankan estetika produk teknologi sipil yang matang, berwibawa, dan tenang.
+   - Tidak menggunakan ilustrasi kartun kekanak-kanakan atau gaya visual main-main yang dapat mereduksi keseriusan dan urgensi mitigasi keselamatan jiwa.
+6. **Optimal & Berkinerja Tinggi (High-Performance Assets):**
+   - Seluruh aset grafis dan ilustrasi dioptimasi secara ketat: menggunakan format SVG modern untuk vektor dan WebP terkompresi untuk raster/ilustrasi lanskap.
+   - Waktu muat awal (*Largest Contentful Paint* / LCP) ditargetkan < 1.5 detik pada koneksi internet seluler, tanpa membebani performa browser atau menimbulkan lag saat interaksi peta.
+
 ---
 
 # 2. Pengguna dan Hak Akses
@@ -80,20 +104,67 @@ Memantau integrasi data, kualitas data, hasil sinkronisasi, layer peta, serta ha
 
 ## 2.2 Matriks akses minimum
 
-| Fitur | Pengunjung | Pengguna | Relawan | Moderator | Admin |
+| Fitur / Layanan Kebencanaan | Pengunjung (Guest) | Warga Terdaftar (User) | Relawan Komunitas | Moderator / Intelligence | Administrator |
 |---|---:|---:|---:|---:|---:|
-| Melihat landing page | Ya | Ya | Ya | Ya | Ya |
-| Melihat peta publik | Ya | Ya | Ya | Ya | Ya |
-| Melihat insight publik | Terbatas | Ya | Ya | Ya | Ya |
-| Mengirim laporan | Tidak | Ya | Ya | Ya | Ya |
-| Melihat laporan pribadi | Tidak | Ya | Ya | Ya | Ya |
+| Melihat landing page & visual katalog | Ya | Ya | Ya | Ya | Ya |
+| Melihat peta publik interaktif multi-hazard | Ya | Ya | Ya | Ya | Ya |
+| Melihat insight & feed peringatan dini publik (CAP) | Ya | Ya | Ya | Ya | Ya |
+| Akses panduan kesiapsiagaan & checklist tas siaga | Ya | Ya | Ya | Ya | Ya |
+| Cek risiko mandiri lokasi (SIAGA PERSONAL) | Ya | Ya | Ya | Ya | Ya |
+| Akses peta rute evakuasi & shelter darurat | Ya | Ya | Ya | Ya | Ya |
+| Akses direktori kontak darurat 24/7 (112, BPBD, SAR) | Ya | Ya | Ya | Ya | Ya |
+| Mengirim laporan darurat (*Fast-Track Guest*) | Ya (Anti-Spam OTP/Captcha) | Ya | Ya | Ya | Ya |
+| Melihat & melacak riwayat laporan pribadi | Tidak | Ya | Ya | Ya | Ya |
+| Personalisasi preferensi lokasi & push notifikasi | Tidak | Ya | Ya | Ya | Ya |
 | Mengelola kontribusi relawan | Tidak | Tidak | Ya | Ya | Ya |
-| Memverifikasi laporan | Tidak | Tidak | Tidak | Ya | Ya |
-| Mengelola sumber data | Tidak | Tidak | Tidak | Tidak | Ya |
-| Mengelola role dan konfigurasi | Tidak | Tidak | Tidak | Tidak | Ya |
-| Melihat audit log | Tidak | Tidak | Tidak | Terbatas | Ya |
+| Triage cepat & verifikasi laporan lapangan | Tidak | Tidak | Tidak | Ya | Ya |
+| Eskalasi laporan menjadi Hazard Event aktif | Tidak | Tidak | Tidak | Ya | Ya |
+| Diseminasi darurat (Broadcast CAP Warning) | Tidak | Tidak | Tidak | Ya | Ya |
+| Mengelola sumber data & konfigurasi sistem | Tidak | Tidak | Tidak | Tidak | Ya |
+| Melihat audit log penuh | Tidak | Tidak | Tidak | Terbatas | Ya |
 
 Semua izin wajib ditegakkan di backend. Menyembunyikan tombol di frontend bukan mekanisme otorisasi.
+
+## 2.3 Prinsip Akses Kesiapsiagaan & Tanggap Darurat Tanpa Hambatan (Emergency Zero-Barrier for Citizens)
+
+Dalam situasi krisis dan bencana alam, setiap detik sangat berharga untuk menyelamatkan nyawa (*life-saving seconds*). SENTRAVAX menganut prinsip **Zero-Barrier Access**: seluruh fitur keselamatan, mitigasi, informasi evakuasi, dan pelaporan darurat dapat digunakan langsung oleh masyarakat—baik warga yang belum memiliki akun (guest) maupun yang sudah login—tanpa terhalang oleh *login wall* atau birokrasi registrasi yang memperlambat penyelamatan.
+
+### A. Fitur Akses Bebas untuk Seluruh Warga (Guest & Authenticated)
+1. **Persiapan (Preparedness):**
+   - Evaluasi risiko instan lokasi via **SIAGA PERSONAL** (cukup memilih lokasi dari dropdown atau mengizinkan GPS perangkat, langsung menghasilkan profil risiko tanpa perlu login).
+   - Akses interaktif checklist tas siaga bencana (*Go-Bag interactive checklist*) dengan penyimpanan status otomatis pada local storage browser warga.
+   - Direktori hotline darurat nasional dan regional yang dapat langsung dihubungi dengan 1-klik (112, 115, 117, BPBD provinsi/kabupaten, SAR, Pemadam Kebakaran, dan RS Rujukan terdekat).
+2. **Antisipasi (Anticipation & Early Warning):**
+   - Live stream peringatan dini resmi CAP (*Common Alerting Protocol*) terverifikasi dengan banner status bahaya yang mencolok dan jelas.
+   - Indikator telemetri lingkungan dan cuaca lokal real-time (suhu, curah hujan, tinggi muka air, status seismik).
+3. **Mitigasi (Mitigation):**
+   - Edukasi keselamatan multi-hazard kontekstual yang mudah dipahami seluruh kelompok usia.
+   - Peta zonasi kerentanan wilayah dan rekomendasi langkah mitigasi mandiri sebelum ancaman memburuk.
+4. **Evakuasi (Evacuation):**
+   - Visualisasi peta rute evakuasi resmi, lokasi titik kumpul aman (*assembly points*), posko logistik pengungsian, dan fasilitas kesehatan rujukan terdekat.
+5. **Pelaporan Darurat Tanpa Hambatan (*Fast-Track Guest Reporting*):**
+   - Warga yang belum login dapat langsung melaporkan insiden darurat melalui alur ringkas (kategori bahaya, foto bukti, deskripsi singkat, koordinat otomatis/pin peta).
+   - Dilindungi mekanisme anti-spam ringan (*invisible captcha* / rate-limiting ketat / verifikasi OTP instan via SMS/WhatsApp) tanpa memaksa pendaftaran akun baru.
+   - Setelah pelaporan berhasil, sistem memberikan *tracking token* atau opsi 1-klik membuat akun/klaim laporan agar warga dapat memantau penanganan oleh petugas.
+
+### B. Nilai Tambah Warga Terdaftar (Authenticated Citizens)
+Warga yang melakukan login/registrasi memperoleh kapabilitas personalisasi lanjutan:
+- Pemantauan multi-lokasi tersimpan secara simultan (misal: rumah tempat tinggal, rumah orang tua di daerah, tempat kerja).
+- Notifikasi darurat proaktif via browser push notification dan integrasi pesan instan.
+- Riwayat pelaporan terpadu dengan pelacakan status penanganan oleh tim verifikator dan petugas lapangan secara real-time.
+- Kontribusi terverifikasi dalam jaringan relawan ketahanan komunitas (*Community Resilience Contributor*).
+
+## 2.4 Arsitektur Respons Terhubung & Ekosistem Lintas-Role (Connected Response Ecosystem)
+
+SENTRAVAX bukan sekadar katalog informasi statis atau dashboard terpisah, melainkan sebuah platform dengan **alur komunikasi dan respons tertutup (*closed-loop emergency response*)** yang saling terhubung antara empat area utama:
+
+1. **Public & Guest:** Ruang publik bebas hambatan untuk mencari informasi, memahami risiko, menerima peringatan dini, dan melapor darurat secara cepat.
+2. **User Portal:** Ruang personal bagi warga untuk mengelola kesiapsiagaan keluarga, melacak histori laporan, dan berlangganan notifikasi wilayah prioritas.
+3. **Intelligence Center:** Meja komando operasional bagi petugas/analis untuk menganalisis risiko geospasial, memverifikasi laporan masyarakat, mengoordinasikan penanganan lapangan, dan menerbitkan peringatan resmi.
+4. **Admin Workspace:** Pengelolaan menyeluruh terhadap tata kelola pengguna, integritas sumber data, kurasi edukasi, dan audit trail sistem.
+5. **AI Proactive Intelligence:** Lapisan analitik dan otomasi yang menjembatani data: melakukan auto-clustering spasial PostGIS ($\le 2$ km, $\le 2$ jam), mendeteksi lonjakan insiden (*incident surge*), dan menyusun rekomendasi prioritas tanggap darurat bagi tim intelijen.
+
+Rincian alur kerja operasional, transisi status, dan matriks integrasi lintas-role diatur dalam dokumen arsitektur [`CROSS_ROLE_WORKFLOW.md`](./CROSS_ROLE_WORKFLOW.md).
 
 ---
 
@@ -119,6 +190,18 @@ Semua izin wajib ditegakkan di backend. Menyembunyikan tombol di frontend bukan 
 - **Simulated/Demo Data:** data demonstrasi yang harus diberi label permanen dan tidak boleh bercampur seolah-olah data aktual.
 
 Jangan menggunakan satu warna atau satu label untuk semua jenis informasi.
+
+## 3.2 Delapan Prinsip UX Lintas Platform (Unified UX Standards)
+
+Setiap modul dan interaksi dalam ekosistem SENTRAVAX wajib mematuhi 8 prinsip UX universal:
+1. **Minimum Steps:** Tindakan penting (melihat rute evakuasi, membaca peringatan, melapor darurat) diselesaikan dalam maksimal 2–3 interaksi tanpa langkah berulang.
+2. **One Clear Action:** Setiap layar memiliki tindakan utama (*Primary CTA*) yang jelas dan dominan; pengguna selalu tahu langkah berikutnya.
+3. **Fast Access:** Fitur darurat mudah ditemukan seketika; tombol hotline 24/7 dan pelaporan darurat tidak boleh tersembunyi di dalam menu bertingkat.
+4. **Real-Time Feedback:** Status laporan, pembaruan risiko, dan eksekusi tindakan ditampilkan dengan jelas melalui toast notifikasi, skeleton shimmer, dan pembaruan badge instan.
+5. **No Dead Ends:** Kondisi error, data kosong, atau koneksi terputus selalu menyertakan penjelasan yang mudah dipahami serta aksi pemulihan konkret (misal: "Coba lagi", "Unduh panduan offline", atau "Hubungi 112").
+6. **Role-Based Simplicity:** Setiap role hanya melihat kontrol yang memang dibutuhkan sesuai tugasnya tanpa gangguan visual yang tidak relevan.
+7. **Human Verification:** AI bertindak sebagai asisten pengelompok dan pemberi konteks; keputusan krusial seperti penerbitan peringatan darurat publik dan eskalasi evakuasi wajib disetujui manusia.
+8. **Accessible Everywhere:** Sangat nyaman digunakan melalui ponsel maupun desktop, ramah bagi pengguna awam dan warga lansia, serta mematuhi standar aksesibilitas WCAG 2.1 AA.
 
 ---
 
@@ -147,23 +230,24 @@ Kategori awal:
 
 # 5. Modul dan Persyaratan Fungsional
 
-## 5.1 Public Landing Page
+## 5.1 Public Landing Page & Visual Catalog
 
-**Tujuan:** menjelaskan nilai produk dan mengarahkan pengguna ke workspace.
+**Tujuan:** Menjelaskan nilai produk, menyajikan intelijen kebencanaan visual yang atraktif dan mudah dipahami, serta memberikan jalur masuk darurat instan tanpa hambatan bagi masyarakat.
 
-Konten:
-- Hero dengan proposisi nilai yang jelas.
-- Preview peta intelijen (data demo harus diberi label).
-- Penjelasan alur Data → Analysis → Insight → Action.
-- Cakupan multi-hazard.
-- Fitur inti dan manfaat untuk masyarakat.
-- Transparansi sumber data dan batasan sistem.
-- CTA untuk membuka peta, membuat akun, atau mempelajari kesiapsiagaan.
+Konten & Komposisi Visual:
+- **Hero Section Visual-Rich:** Menampilkan ilustrasi lanskap 3D isometrik multi-hazard (terrain lembah, lereng berbukit, perairan, dan permukiman warga) yang dipadukan dengan pin status risiko interaktif (*High-risk*, *Medium-risk*, *Low-risk*) untuk mendemonstrasikan kapabilitas spasial platform secara langsung.
+- **Kartu Telemetri Cuaca & Lingkungan:** Komponen kartu dark teal elegan dengan data cuaca lokal real-time, ringkasan sumber resmi (BMKG/Penyedia Cuaca), ramalan cuaca per jam (ikon matahari, hujan, awan), badge status risiko hasil survei lokasi, serta tab mingguan untuk pemantauan indikator *Water level*, *Temperature*, dan *Precipitation*.
+- **Emergency Action Bar (Jalur Cepat Darurat):** Tombol aksi cepat untuk Cek Risiko Mandiri (SIAGA PERSONAL), Peta Evakuasi & Titik Kumpul, serta Pelaporan Bencana Cepat tanpa wajib login.
+- **Preview Peta Intelijen Kebencanaan:** Peta interaktif ringkas dengan filter layer bahaya dan label data simulasi/aktual yang transparan.
+- **Alur Kerja Transparan:** Infografik alur Data → Analysis → Insight → Action yang mudah dimengerti warga awam.
+- **Katalog Edukasi & Aksi Multi-Hazard:** Kartu edukasi visual-rich berisi ikon grafis menarik untuk banjir, cuaca ekstrem, kebakaran, gempa bumi, dan tanah longsor.
+- **Transparansi Sumber Data & Batasan Sistem:** Penjelasan tegas atribusi sumber data resmi dan batasan teknologi.
 
 Kriteria:
-- Responsif di desktop, tablet, dan ponsel.
-- Tidak menampilkan statistik dampak yang tidak memiliki sumber.
-- Semua tombol navigasi memiliki tujuan yang berfungsi.
+- Responsif optimal di desktop, tablet, dan ponsel dengan layout variatif dan tidak monoton.
+- Memenuhi standar universal WCAG 2.1 AA (kontras teks tinggi, navigasi ramah segala umur).
+- Tidak menampilkan statistik dampak yang tidak memiliki sumber terverifikasi.
+- Semua tombol navigasi dan CTA memiliki fungsi nyata yang dapat diakses langsung.
 
 ## 5.2 Authentication dan User Profile
 
@@ -310,17 +394,33 @@ Untuk MVP, mulai dari rules-based assessment yang sederhana, terdokumentasi, dan
 
 ## 5.7 Community Network — Laporan Masyarakat
 
-Alur laporan:
-1. Pengguna memilih kategori.
-2. Pengguna menulis deskripsi.
-3. Pengguna memilih lokasi di peta atau memasukkan lokasi manual.
-4. Pengguna dapat melampirkan foto jika diizinkan.
-5. Sistem memvalidasi input dan file.
-6. Sistem memberi status `Submitted`.
-7. AI membantu klasifikasi dan deteksi duplikasi.
-8. Moderator memeriksa laporan.
-9. Moderator mengubah status dan menambahkan catatan internal.
-10. Pengguna menerima pembaruan status.
+### A. Alur Pelaporan Ganda (Authenticated User & Fast-Track Guest)
+SENTRAVAX menyediakan dua jalur pelaporan insiden bencana:
+
+1. **Jalur Warga Terdaftar (Authenticated User Reporting):**
+   - Pengguna memilih kategori bahaya.
+   - Menulis deskripsi kejadian dan detail dampak yang diamati.
+   - Memilih lokasi via GPS otomatis atau pin peta interaktif.
+   - Melampirkan foto bukti lapangan (divalidasi format, ukuran, dan sanitasi metadata EXIF privat).
+   - Sistem menetapkan status `Submitted` dan mengaitkannya ke profil akun pengguna.
+   - Pengguna dapat memantau linimasa perkembangan verifikasi laporan di dashboard pribadinya.
+
+2. **Jalur Darurat Cepat Warga Belum Login (*Fast-Track Guest Emergency Reporting*):**
+   - Dirancang untuk situasi kritis saat warga membutuhkan pelaporan instan tanpa terhambat proses pembuatan akun.
+   - Formulir darurat ringkas satu layar: Kategori Bahaya → Foto Lapangan → Lokasi GPS / Alamat → Nomor Kontak / WhatsApp (untuk validasi).
+   - Pengamanan anti-spam berlapis: IP rate-limiting cerdas, sanitasi input, dan verifikasi ringan (misal OTP SMS/WhatsApp instan atau invisible captcha).
+   - Sistem memberikan *Public Tracking Token* yang memungkinkan pelapor mengecek status tindak lanjut tanpa perlu login.
+   - Opsi 1-klik untuk mendaftarkan akun baru dan mengklaim laporan tersebut ke dalam riwayat permanen.
+
+### B. Siklus Pemrosesan Laporan
+1. Pengguna (guest atau login) mengirimkan laporan.
+2. Sistem memvalidasi payload, tipe file, dan keamanan lampiran.
+3. Sistem memberi status awal `Submitted`.
+4. Sistem / AI melakukan ekstraksi entitas, klasifikasi bahaya awal, serta pengecekan klaster spasial terhadap laporan lain yang berdekatan.
+5. Petugas moderator / analis intelijen memeriksa laporan di Live Triage Board.
+6. Moderator memperbarui status: `Under Review`, `Need More Information`, `Verified`, `Rejected`, atau `Resolved`.
+7. Jika laporan diverifikasi memiliki dampak kritis, analis intelijen dapat melakukan 1-klik eskalasi menjadi *Active Hazard Event* pada peta publik.
+8. Pelapor menerima pembaruan status (via in-app notification bagi pengguna login, atau via halaman tracking token bagi guest).
 
 Status:
 - Submitted
@@ -339,18 +439,27 @@ Persyaratan:
 - Semua perubahan status masuk audit log.
 - Laporan tidak boleh ditampilkan sebagai kejadian terkonfirmasi sebelum diverifikasi.
 
-## 5.8 Early Warning & Preparedness
+## 5.8 Early Warning & Preparedness (Peringatan Dini, Mitigasi & Evakuasi)
 
-Fitur:
-- Daftar peringatan resmi.
-- Daftar SENTRAVAX Insight yang terpisah secara visual.
-- Filter area, kategori, status, dan periode.
-- Panduan sebelum, saat, dan setelah kejadian.
-- Checklist kesiapsiagaan.
-- Riwayat notifikasi.
-- Preferensi notifikasi.
+Modul ini merupakan garda terdepan perlindungan warga masyarakat dengan menyediakan empat pilar aksi keselamatan terintegrasi:
 
-Semua konten keselamatan harus berasal dari sumber tepercaya dan ditinjau. Jangan menghasilkan instruksi evakuasi spesifik tanpa konteks dan otoritas resmi.
+### A. Empat Pilar Aksi Keselamatan
+1. **Persiapan (Preparedness):**
+   - **SIAGA PERSONAL:** Kalkulasi risiko mandiri berbasis lokasi yang mudah digunakan oleh seluruh kelompok usia tanpa harus login.
+   - **Checklist Tas Siaga Bencana (Go-Bag):** Daftar perlengkapan darurat interaktif (dokumen penting, P3K, makanan tahan lama, senter, air minum) dengan penyimpanan progres lokal di peramban warga.
+   - **Direktori Hotline Darurat 24/7:** Kontak instan layanan tanggap darurat nasional dan regional (112 panggilan darurat terpadu, 115 Basarnas, 117 BNPB/BPBD, Damkar, PMI, Polisi, dan RS Rujukan).
+2. **Antisipasi (Anticipation / Early Warning Center):**
+   - **Feed Peringatan Dini Publik (CAP-Compliant):** Menampilkan peringatan resmi dari otoritas (BMKG/BPBD) dan advisory platform dengan pemisahan visual tegas dan transparansi verifikasi penerbit (*issuer verification*).
+   - Banner status darurat dengan kode warna standar kebencanaan internasional (Minor, Moderate, Severe, Extreme).
+   - Pembaruan kondisi telemetri real-time (curah hujan harian/mingguan, tinggi muka air sungai, aktivitas gempa terkini).
+3. **Mitigasi (Mitigation):**
+   - Panduan aksi mitigasi terstruktur dalam tiga fase: *Sebelum Kejadian (Pra-Bencana)*, *Saat Kejadian (Tanggap Darurat)*, dan *Setelah Kejadian (Pasca-Bencana)*.
+   - Infografik visual-rich langkah mitigasi per tipe bahaya yang mudah dipahami warga lansia maupun anak-anak tanpa istilah teknis berbelit.
+4. **Evakuasi (Evacuation):**
+   - Peta visual rute evakuasi resmi menuju titik kumpul aman (*assembly points* / shelter).
+   - Informasi fasilitas shelter darurat: kapasitas daya tampung, ketersediaan fasilitas sanitasi, aksesibilitas kursi roda/lansia, dan kontak posko logistik.
+
+Semua konten keselamatan harus bersumber dari panduan otoritas resmi tepercaya (BNPB/BPBD/Kemenkes) dan ditinjau secara berkala. Sistem dilarang mengeluarkan instruksi evakuasi buatan sendiri tanpa dasar otoritas resmi.
 
 ## 5.9 Impact & Recovery
 
@@ -379,6 +488,61 @@ Moderator:
 - Melihat lampiran dengan aman.
 - Memverifikasi, menolak, meminta informasi tambahan, atau menandai selesai.
 - Menambahkan catatan internal.
+
+## 5.11 Rapid Incident Triage & Emergency Response System for Admin & Intelligence
+
+Untuk merespon bencana dan anomali lapangan secara cepat, tanggap, dan akurat, modul Admin & Intelligence dilengkapi dengan subsistem tanggap darurat berkecepatan tinggi:
+
+### A. Situational Command Stream & Live Triage Board
+- Antrean laporan insiden masuk dan sinyal telemetri darurat ditampilkan dalam feed real-time dengan pengurutan otomatis berdasarkan tingkat keparahan (*Critical/High priority first*).
+- Indikator visual mencolok untuk anomali sensor ekstrem atau lonjakan laporan masyarakat pada area spesifik (*incident surge indicator*).
+- Mode layar penuh (*Situational Room View*) untuk kebutuhan posko komando operasi darurat bencana.
+
+### B. Hotkeys & Quick Actions untuk Triage Cepat
+Moderator dan analis intelijen dapat melakukan verifikasi dan penanganan laporan hanya dalam hitungan detik menggunakan tombol pintas keyboard (*keyboard shortcuts*):
+- `V`: **Verify** — Menyetujui keabsahan laporan warga dan menandainya sebagai terverifikasi.
+- `R`: **Request Info** — Mengirimkan permintaan klarifikasi atau bukti tambahan kepada pelapor.
+- `J`: **Reject / Duplicate** — Menandai laporan sebagai tidak valid, spam, atau duplikat dengan alasan terstandarisasi.
+- `E`: **Escalate** — Meneruskan insiden mendesak ke meja koordinator darurat / administrator.
+
+### C. Auto-Spatial Clustering & Deduplication
+- Memanfaatkan fungsi geospasial PostGIS (`ST_DWithin` dan `ST_ClusterDBSCAN`) untuk mengelompokkan laporan warga yang masuk dalam radius $\le 2$ km dan jendela waktu $\le 2$ jam.
+- Mendeteksi lonjakan insiden (*incident surge*) secara otomatis ketika $\ge 3$ laporan serupa terdeteksi di klaster yang sama, memberikan alert prioritas kepada intelijen untuk verifikasi cepat.
+- Mencegah kelelahan operator (*operator fatigue*) akibat banjir laporan kembar pada satu titik kejadian bencana.
+
+### D. One-Click Incident Escalation to Active Hazard Event
+- Petugas intelijen dan admin dapat mengubah laporan warga terverifikasi (atau klaster laporan) menjadi **Active Hazard Event** di peta publik hanya dengan satu kali klik.
+- Sistem secara otomatis mengisi parameter bahaya, koordinat episentrum/dampak, tingkat keparahan awal, dan mengaitkan riwayat laporan warga sebagai bukti pendukung (*evidence trail*).
+
+### E. Rapid CAP Warning Broadcast (<30 Detik Dissemination)
+- Menyediakan formulir broadcast peringatan darurat berstandar CAP (*Common Alerting Protocol*) dengan templat siap pakai untuk tipe bahaya utama (misal: "Siaga 1 Banjir Lahar", "Peringatan Dini Cuaca Ekstrem", "Evakuasi Bahaya Longsor").
+- Diseminasi peringatan darurat ke seluruh kanal publik (banner darurat web, sirene digital, broadcast notifikasi) dapat dieksekusi dalam waktu **< 30 detik** oleh operator berwenang.
+
+### F. Audit Trail & Provenance Integrity
+- Setiap aksi triage, perubahan status laporan, eskalasi insiden, dan penerbitan peringatan darurat dicatat secara permanen dalam `audit_logs` dengan stempel waktu UTC presisi tinggi, ID personil pelaksana, koordinat, dan alasan justifikasi operasional.
+
+### G. Alur Penanganan Insiden 6 Tahap (The 6-Stage Incident Lifecycle)
+Platform mengikat siklus hidup insiden dari hulu ke hilir dalam alur tertutup:
+1. **Laporan Masuk (Ingestion):** Multi-source stream dari laporan warga (Guest fast-track & User), telemetri sensor lingkungan, dan feed resmi otoritas (BMKG/BPBD).
+2. **AI Proactive Intelligence & Spatial Processing:** PostGIS auto-clustering (radius $\le 2$ km, waktu $\le 2$ jam), deteksi surge ($\ge 3$ laporan serupa), ekstraksi entitas, dan scoring keparahan awal.
+3. **Triage & Verifikasi (Intelligence Center):** Peninjauan bukti foto, lokasi spasial, dan validasi via Priority Inbox dengan hotkeys `V` (Verify), `R` (Request Info), `J` (Reject), `E` (Escalate).
+4. **Penugasan & Koordinasi (Assignment & Notes):** Penugasan penanganan ke petugas lapangan (`assigned_to`) dan ruang koordinasi tertutup via *Internal Notes*.
+5. **Tindakan & Publikasi (Escalation & Broadcast):** 1-klik eskalasi laporan ke *Active Hazard Event* publik dan diseminasi peringatan darurat CAP dalam waktu < 30 detik.
+6. **Monitoring, Evaluasi & Resolusi (Response Monitoring & Timeline):** Pemantauan SLA waktu tanggap, pencatatan linimasa kronologis (*Incident Timeline*), dan penutupan status laporan menjadi `resolved`.
+
+### H. Delapan Fitur Operasional Kunci Admin & Intelligence Center
+1. **Priority Inbox:** Antrean laporan mendesak yang langsung terlihat di puncak daftar.
+2. **Live Incident Map:** Peta situasional multi-hazard real-time dengan cluster marker dan layer telemetri.
+3. **Quick Actions / Hotkeys:** Eksekusi keputusan triage cepat tanpa dialog bertingkat.
+4. **Incident Timeline:** Seluruh riwayat penanganan tercatat secara kronologis.
+5. **Internal Notes:** Kolaborasi internal antarpetugas tanpa terlihat oleh publik.
+6. **Notification Center:** Alert proaktif untuk insiden kritis baru dan anomali sensor.
+7. **Response Monitoring:** Pemantauan laporan yang belum ditangani dan metrik SLA respons.
+8. **Tamper-Evident Audit Trail:** Rekaman forensik akuntabilitas siapa melakukan apa dan kapan.
+
+### I. Pembagian Peran Operasional Tegas
+- **Administrator:** Tata kelola pengguna & role, registry sumber data & pemantauan sinkronisasi, kurasi konten edukasi mitigasi, konfigurasi sistem global, dan tinjauan kepatuhan audit log.
+- **Intelligence:** Pemantauan peta geospasial real-time, evaluasi risk engine, eksekusi triage laporan masyarakat, koordinasi respons kedaruratan, dan penerbitan peringatan darurat publik (CAP).
 
 ---
 
@@ -642,19 +806,21 @@ Standar response:
 
 # 10. UI/UX Requirements
 
-## 10.1 Arah visual
+## 10.1 Arah visual & Visual-Rich Design Standards
 
-- Premium, modern, intelligent, data-driven.
-- Dasar warna deep navy/charcoal.
-- Cyan/electric blue sebagai aksen utama.
-- Teal sebagai aksen sekunder.
-- Amber untuk peringatan.
-- Red untuk kondisi kritis.
-- Gray untuk unknown/unavailable.
-- Tipografi Inter atau Geist.
-- Animasi halus dan fungsional.
-- Peta dan AI insight menjadi fokus visual utama.
-- Hindari terlalu banyak gradient, kartu seragam, glassmorphism berlebihan, dan dekorasi yang mengganggu keterbacaan.
+- **Karakter Visual Utama:** Premium, modern, intelligent, data-driven, dan berwibawa (*civic-tech credibility*).
+- **Public Area Experience:** Light theme yang bersih, ramah, terbuka, dan kaya elemen visual (ilustrasi 3D isometrik lanskap multi-hazard, kartu telemetri cuaca dark teal elegan, infografik mitigasi, dan badge risiko yang mudah dipahami seluruh kalangan).
+- **Admin & Intelligence Workspace:** Dark / charcoal theme yang tegas, fokus, dan dioptimasi untuk monitoring data intensif dan respon cepat.
+- **Palet Warna Status Terstandarisasi:**
+  - *Deep Navy / Charcoal*: Latar belakang workspace intelijen dan elemen struktural utama.
+  - *Electric Blue / Cyan*: Aksen interaktif utama dan tautan navigasi.
+  - *Emerald Green*: Status aman / normal (*Low Risk*).
+  - *Amber / Amber-Gold*: Peringatan waspada (*Moderate / Advisory*).
+  - *Crimson Red / Vermilion*: Kondisi darurat / bahaya kritis (*Severe / Extreme Hazard*).
+  - *Slate Gray*: Status tidak diketahui / data belum tersedia.
+- **Tipografi Universal:** Inter atau Geist dengan hierarki kontras tinggi, font size minimal 16px untuk keterbacaan nyaman lintas usia (khususnya warga lanjut usia).
+- **Dinamika Tata Letak (Anti-Monoton):** Mengombinasikan kartu telemetri cuaca dengan ramalan per jam, tab metrik mingguan (*Water level, Temperature, Precipitation*), modular card grids, dan grafis interaktif.
+- **Ilustrasi & Dekorasi Grafis Bermakna:** Setiap elemen grafis dan ilustrasi harus memiliki nilai fungsional dalam menjelaskan risiko, bukan sekadar hiasan kosong.
 
 ## 10.2 Navigasi workspace
 
@@ -673,13 +839,19 @@ Halaman pendukung:
 - Admin Dashboard
 - Moderator Dashboard
 
-## 10.3 Responsive dan aksesibilitas
+## 10.3 Responsive, Ergonomi Mobile & Aksesibilitas Universal
 
-- Desktop: peta dan panel informasi dapat tampil berdampingan.
-- Tablet: panel dapat menjadi drawer.
-- Mobile: navigasi ringkas, kontrol peta mudah disentuh, konten tidak overflow.
-- Gunakan semantic HTML, label input, keyboard navigation, kontras cukup, alt text, dan status yang tidak hanya dibedakan dengan warna.
-- Hormati `prefers-reduced-motion`.
+- **Desktop Experience:** Peta dan panel informasi intelijen dapat tampil berdampingan (*split-screen layout*), dilengkapi pintasan keyboard untuk kebutuhan operasional cepat.
+- **Tablet Experience:** Panel informasi fleksibel sebagai drawer geser atau modal terfokus tanpa menutupi seluruh visual peta.
+- **Mobile Experience & Thumb-Zone Ergonomics:**
+  - Navigasi ringkas dengan bilah bawah (*bottom navigation bar*) yang mudah dijangkau ibu jari satu tangan (Home, Incident Report, Map, Warning Center).
+  - Target sentuh (*touch target*) minimal 44×44 px untuk seluruh tombol dan kontrol interaktif.
+  - Kartu telemetri dan ramalan cuaca mendukung gesture geser horizontal (*swipeable horizontal carousel*) yang halus.
+- **Universal Accessibility (WCAG 2.1 Level AA):**
+  - Rasio kontras teks minimal 4.5:1 untuk teks normal dan 3:1 untuk teks besar/elemen UI penting.
+  - Status risiko tidak boleh hanya dibedakan oleh warna; wajib disertai ikon dan label teks eksplisit.
+  - Semantic HTML penuh, dukungan navigasi keyboard komprehensif, ARIA attributes, dan alt-text deskriptif untuk seluruh gambar dan grafik.
+  - Menghormati pengaturan sistem pengguna untuk `prefers-reduced-motion`.
 
 ## 10.4 Semua kontrol harus berfungsi
 
@@ -742,7 +914,11 @@ Sistem tidak boleh bergantung pada LLM agar seluruh aplikasi dapat dibuka. Jika 
 | Maintainability | Service layer, reusable components, migration terkontrol, dokumentasi |
 | Accessibility | Keyboard, label, kontras, reduced motion, status non-color-only |
 | Data integrity | Provenance, timestamp, freshness, deduplication, validasi |
-| Usability | Bahasa yang mudah dipahami, istilah teknis dijelaskan, rekomendasi kontekstual |
+| Usability | Bahasa yang mudah dipahami seluruh kalangan, istilah teknis dijelaskan, rekomendasi kontekstual |
+| Visual Performance | Aset SVG & WebP terkompresi efisien, LCP < 1.5s, 60fps scrolling tanpa frame drops |
+| Universal Accessibility | Kepatuhan penuh WCAG 2.1 Level AA, kontras minimal 4.5:1, touch targets ≥ 44×44 px, modular font ≥ 16px body |
+| Rapid Emergency SLA | Diseminasi broadcast CAP Warning < 30 detik; triage time target < 60 detik per laporan prioritas tinggi |
+| Emergency Zero-Barrier | Fitur kesiapsiagaan, mitigasi, evakuasi & lapor darurat dapat diakses 100% tanpa hambatan login wall |
 
 ---
 

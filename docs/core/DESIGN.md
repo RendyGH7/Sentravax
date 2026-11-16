@@ -466,17 +466,18 @@ Jangan membuat state yang tidak relevan hanya demi checklist.
 
 ## 9. Aturan khusus per area
 
-### 9.1 Public Website
+### 9.1 Public Website & Visual Catalog
 
-Tema: putih, bersih, ramah, minimalis, dan informatif.
+Tema: Terang, bersih, ramah, visual-rich, dan mudah dipahami untuk semua kalangan (*Universal & Elderly-Friendly*).
 
-- Fokus pada pemahaman masyarakat dan akses cepat ke informasi penting.
-- Navigasi sederhana dan konsisten.
-- Gunakan bahasa sehari-hari yang sopan.
-- Prioritaskan peta, informasi peringatan, kesiapsiagaan, dan edukasi.
-- Hindari hero yang terlalu ramai, teks panjang, dan banyak CTA yang bersaing.
-- Gunakan ilustrasi atau foto hanya jika membantu pemahaman.
-- Pastikan informasi penting mudah ditemukan tanpa harus menggulir terlalu jauh.
+- **Visual-Rich Standards:** Area publik diperkaya dengan grafis yang menarik, banyak ilustrasi berkualitas tinggi, ikon tematik kebencanaan (banjir, cuaca ekstrem, kebakaran, gempa bumi, longsor), dan infografik terstruktur.
+- **Visualisasi Lanskap 3D Isometrik:** Menampilkan representasi spasial intuitif seperti ilustrasi lanskap terrain 3D lembah sungai dan lereng berbukit dengan pin risiko interaktif (*High-risk*, *Medium-risk*, *Low-risk*) untuk mendemonstrasikan kondisi bahaya secara langsung tanpa jargon teknis.
+- **Komponen Telemetri Dark Teal Elegan:** Kartu pemantauan cuaca dan kondisi lingkungan lokal yang menampilkan suhu real-time, kondisi langit, sumber resmi, ramalan per jam, badge status risiko hasil survei lokasi, serta tab mingguan untuk indikator *Water level*, *Temperature*, dan *Precipitation*.
+- **Akses Kesiapsiagaan Cepat (Emergency Zero-Barrier):** Memastikan warga yang belum login maupun yang sudah login dapat langsung menggunakan fitur kesiapsiagaan, antisipasi (feed peringatan dini CAP), mitigasi, rute evakuasi & shelter, serta pelaporan darurat instan tanpa hambatan login wall.
+- **Variatif & Tidak Monoton:** Tata letak dinamis dengan ritme visual seimbang antara hero visual-rich, kartu telemetri modern, feed peringatan dini darurat, peta interaktif, dan kartu katalog edukasi.
+- **Aksesibilitas Universal (WCAG 2.1 AA):** Tipografi terbaca jelas lintas generasi (font minimal 16px untuk body text), kontras teks minimal 4.5:1, target sentuh minimal 44x44 px, dan bottom navigation yang ergonomis untuk satu tangan.
+- **Kredibilitas Profesional:** Mempertahankan estetika teknologi sipil modern yang berwibawa dan serius; bukan grafis kartun kekanak-kanakan.
+- **Optimal & Performa Tinggi:** Seluruh aset vektor (SVG) dan raster lanskap (WebP terkompresi) dioptimasi ketat agar waktu muat awal (*LCP*) tetap di bawah 1.5 detik.
 
 ### 9.2 User Portal
 

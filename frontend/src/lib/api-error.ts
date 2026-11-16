@@ -8,9 +8,21 @@ export interface ApiErrorResponse {
 }
 
 /**
+ * Check if the error is caused by an aborted / canceled request (AbortSignal / CancelToken).
+ */
+export function isRequestCanceled(error: unknown): boolean {
+  return axios.isCancel(error) || (axios.isAxiosError(error) && error.code === 'ERR_CANCELED');
+}
+
+/**
  * Extract user-friendly error message from any API error or fallback to a standard message.
  */
 export function getApiErrorMessage(error: unknown, fallback = 'Terjadi kesalahan sistem. Silakan coba kembali.'): string {
+  // Do not treat a cancelled / aborted request as a user-facing server error
+  if (isRequestCanceled(error)) {
+    return '';
+  }
+
   if (axios.isAxiosError<ApiErrorResponse>(error)) {
     const status = error.response?.status;
 
