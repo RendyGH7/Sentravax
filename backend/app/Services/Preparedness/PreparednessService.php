@@ -54,18 +54,18 @@ class PreparednessService
                 'Pantau perkembangan prakiraan cuaca lokal melalui aplikasi SENTRAVAX.',
             ],
             'insufficient_data' => $eval['active_threats_count'] > 0 ? [
-                'Perhatian: Koordinat berada di luar radius asosiasi wilayah pilot resolusi tinggi (DKI, Jabar, Banten).',
+                'Perhatian: Koordinat berada di luar radius asosiasi wilayah pilot (DKI Jakarta, Jawa Barat, Banten).',
                 'Terdeteksi kejadian bencana aktif terverifikasi (misal: Gempa BMKG TEWS) dalam radius 25 km. Periksa rincian di bawah.',
-                'Ketiadaan data stasiun sensor lokal membatasi kalkulasi multi-hazard lengkap; status risiko tidak dapat ditetapkan aman.',
+                'Koordinat di luar wilayah pilot membatasi kalkulasi multi-hazard lengkap; status risiko tidak dapat ditetapkan aman.',
                 'Tetap pantau peringatan resmi dari posko BMKG dan BPBD setempat serta siapkan Tas Siaga Bencana.',
             ] : [
-                'Perhatian: Koordinat berada di luar radius asosiasi wilayah pilot resolusi tinggi (DKI Jakarta, Jawa Barat, Banten).',
+                'Perhatian: Koordinat berada di luar radius asosiasi wilayah pilot (DKI Jakarta, Jawa Barat, Banten).',
                 'Data tidak mencukupi untuk menentukan tingkat risiko lokasi secara akurat (ketiadaan data bukan jaminan aman).',
                 'Tidak terdeteksi ancaman aktif dalam radius 25 km pada catatan telemetri SENTRAVAX.',
                 'Tetap pantau informasi kebencanaan dan prakiraan cuaca dari posko BMKG dan BPBD setempat.',
             ],
             default => [
-                'Wilayah terpantau kondusif berdasarkan telemetri sensor aktif SENTRAVAX.',
+                'Wilayah terpantau kondusif berdasarkan telemetri PostGIS terintegrasi SENTRAVAX.',
                 'Tetap jaga kesiapsiagaan mandiri dan periksa masa kedaluwarsa obat di kotak P3K rumah.',
             ],
         };

@@ -96,5 +96,33 @@ class RiskEngineTest extends TestCase
         $this->assertEquals('LIVE', $threat['provenance_status']);
         $this->assertEquals('LIVE (BMKG TEWS)', $threat['provenance_label']);
     }
+
+    public function test_data_quality_gatekeeper_enforces_fresh_stale_unavailable_states(): void
+    {
+        $bmkg = \App\Models\DataSource::where('endpoint_url', 'https://data.bmkg.go.id/DataMKG/TEWS/autogempa.json')->first();
+
+        // 1. Fresh Feed (synced within 60m)
+        $bmkg->update(['status' => 'active', 'last_successful_at' => now()->subMinutes(5)]);
+        $evalFresh = $this->riskEngine->evaluateLocationRisk(-6.1754, 106.8272);
+        $this->assertEquals('FRESH', $evalFresh['data_freshness']);
+        $this->assertEquals('ASSESSED', $evalFresh['assessment_status']);
+
+        // 2. Stale Feed (synced 90m ago)
+        $bmkg->update(['last_successful_at' => now()->subMinutes(90)]);
+        $evalStale = $this->riskEngine->evaluateLocationRisk(-6.1754, 106.8272);
+        $this->assertEquals('STALE', $evalStale['data_freshness']);
+        $this->assertEquals('ASSESSED', $evalStale['assessment_status']);
+        $this->assertStringContainsString('tertunda', $evalStale['factors']['data_quality']['description']);
+
+        // 3. Unavailable Feed (offline / error / synced > 24 hours ago)
+        $bmkg->update(['last_successful_at' => now()->subHours(25)]);
+        $evalUnavailable = $this->riskEngine->evaluateLocationRisk(-6.1754, 106.8272);
+        $this->assertEquals('UNAVAILABLE', $evalUnavailable['data_freshness']);
+        $this->assertEquals('INSUFFICIENT_DATA', $evalUnavailable['assessment_status']);
+        $this->assertEquals('insufficient_data', $evalUnavailable['risk_level']);
+
+        // 4. Restore fresh state
+        $bmkg->update(['status' => 'active', 'last_successful_at' => now()->subMinutes(5)]);
+    }
 }
 

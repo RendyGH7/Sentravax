@@ -275,14 +275,41 @@ class SentravaxMasterSeeder extends Seeder
         $landslideType = HazardType::where('slug', 'landslide')->first();
         $earthquakeType = HazardType::where('slug', 'earthquake')->first();
 
-        // Dynamically resolve BMKG TEWS Data Source via endpoint URL
+        // Dynamically resolve BMKG TEWS Data Source strictly by unique endpoint or unique name
         $bmkgTewsSource = DataSource::where('endpoint_url', 'https://data.bmkg.go.id/DataMKG/TEWS/autogempa.json')->first()
-            ?? DataSource::where('name', 'BMKG TEWS Open Data API')->first()
-            ?? DataSource::where('source_type', 'api')->first();
+            ?? DataSource::where('name', 'BMKG TEWS Open Data API')->first();
 
+        if (! $bmkgTewsSource) {
+            $bmkgTewsSource = DataSource::create([
+                'name' => 'BMKG TEWS Open Data API',
+                'provider' => 'Badan Meteorologi, Klimatologi, dan Geofisika',
+                'source_type' => 'api',
+                'category' => 'seismology',
+                'endpoint_url' => 'https://data.bmkg.go.id/DataMKG/TEWS/autogempa.json',
+                'status' => 'active',
+                'last_fetched_at' => now()->subMinutes(5),
+                'last_successful_at' => now()->subMinutes(5),
+                'notes' => 'Layanan real-time Indonesia Tsunami Early Warning System (InaTEWS) BMKG untuk pengamatan gempa bumi terkini.',
+            ]);
+        }
+
+        // Dynamically resolve Curated Data Source strictly by unique name or unique curated endpoint
         $curatedSource = DataSource::where('name', 'Data Observasi Terkurasi SENTRAVAX')->first()
-            ?? DataSource::where('source_type', 'curated')->first()
-            ?? $bmkgTewsSource;
+            ?? DataSource::where('endpoint_url', 'https://sentravax.id/data/curated-baseline')->first();
+
+        if (! $curatedSource) {
+            $curatedSource = DataSource::create([
+                'name' => 'Data Observasi Terkurasi SENTRAVAX',
+                'provider' => 'SENTRAVAX Local Baseline Observation',
+                'source_type' => 'curated',
+                'category' => 'curated',
+                'endpoint_url' => 'https://sentravax.id/data/curated-baseline',
+                'status' => 'active',
+                'last_fetched_at' => now()->subMinutes(15),
+                'last_successful_at' => now()->subMinutes(15),
+                'notes' => 'Katalog observasi kejadian bencana lokal terkurasi untuk pengujian kesiapsiagaan dan analisis wilayah.',
+            ]);
+        }
 
         $regionNorth = Region::where('code', 'ID-JK-JU')->first();
         $regionEast = Region::where('code', 'ID-JK-JT')->first();
@@ -559,7 +586,8 @@ class SentravaxMasterSeeder extends Seeder
     private function seedAlertsAndRiskAssessments(): void
     {
         $floodType = HazardType::where('slug', 'flood')->first();
-        $bmkgSource = DataSource::first();
+        $bmkgTewsSource = DataSource::where('endpoint_url', 'https://data.bmkg.go.id/DataMKG/TEWS/autogempa.json')->first()
+            ?? DataSource::where('name', 'BMKG TEWS Open Data API')->first();
         $regionEast = Region::where('code', 'ID-JK-JT')->first();
         $floodEvent = HazardEvent::where('hazard_type_id', $floodType?->id)->first();
         $admin = User::where('role', User::ROLE_ADMIN)->first();
@@ -667,18 +695,24 @@ class SentravaxMasterSeeder extends Seeder
             );
         }
 
-        // Seed Ingestion sync run
-        if ($bmkgSource) {
-            DataSourceSyncRun::create([
-                'data_source_id' => $bmkgSource->id,
-                'status' => 'SUCCESS',
-                'freshness_state' => 'LIVE',
-                'items_fetched' => 4,
-                'items_persisted' => 4,
-                'duration_ms' => 340,
-                'provenance_metadata' => ['api_version' => 'v1.2', 'source' => 'BMKG Open Data'],
-                'synced_at' => now()->subMinutes(10),
-            ]);
+        // Seed Ingestion sync run strictly for verified BMKG TEWS source
+        if ($bmkgTewsSource) {
+            $recentRun = DataSourceSyncRun::where('data_source_id', $bmkgTewsSource->id)
+                ->where('synced_at', '>=', now()->subHours(1))
+                ->first();
+
+            if (! $recentRun) {
+                DataSourceSyncRun::create([
+                    'data_source_id' => $bmkgTewsSource->id,
+                    'status' => 'SUCCESS',
+                    'freshness_state' => 'LIVE',
+                    'items_fetched' => 1,
+                    'items_persisted' => 1,
+                    'duration_ms' => 340,
+                    'provenance_metadata' => ['api_version' => 'v1.0', 'source' => 'BMKG TEWS InaTEWS'],
+                    'synced_at' => now()->subMinutes(10),
+                ]);
+            }
         }
     }
 

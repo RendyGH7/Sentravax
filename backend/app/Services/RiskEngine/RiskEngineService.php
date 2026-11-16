@@ -3,6 +3,7 @@
 namespace App\Services\RiskEngine;
 
 use App\Models\Alert;
+use App\Models\DataSource;
 use App\Models\HazardEvent;
 use App\Models\HazardType;
 use App\Models\Region;
@@ -175,24 +176,78 @@ class RiskEngineService
         $totalScore = round($baseContribution + $eventContribution + $alertContribution, 1);
         $finalScore = min(98.0, max(5.0, $totalScore));
 
-        // Coverage and Assessment Status Distinction
+        // Coverage and Actual Data Freshness Gatekeeper
         $isOutOfCoverage = ($region === null);
-        $assessmentStatus = $isOutOfCoverage ? 'INSUFFICIENT_DATA' : 'ASSESSED';
-        $dataFreshness = $isOutOfCoverage ? 'UNAVAILABLE' : 'FRESH';
+
+        if ($isOutOfCoverage) {
+            $dataFreshness = 'UNAVAILABLE';
+            $assessmentStatus = 'INSUFFICIENT_DATA';
+            $dataQualityDesc = 'Di luar radius asosiasi wilayah pilot. Tidak tersedia data titik acuan regional.';
+        } else {
+            // Check freshness of live feeds based on actual timestamps
+            $bmkgTews = DataSource::where('endpoint_url', 'https://data.bmkg.go.id/DataMKG/TEWS/autogempa.json')->first()
+                ?? DataSource::where('name', 'BMKG TEWS Open Data API')->first();
+
+            $hasUnavailableFeed = false;
+            $hasStaleFeed = false;
+
+            if ($bmkgTews) {
+                if ($bmkgTews->status !== 'active' || ! $bmkgTews->last_successful_at) {
+                    $hasUnavailableFeed = true;
+                } else {
+                    $diffMins = Carbon::parse($bmkgTews->last_successful_at)->diffInMinutes(now());
+                    if ($diffMins > 1440) { // > 24 hours
+                        $hasUnavailableFeed = true;
+                    } elseif ($diffMins > 60) { // > 1 hour
+                        $hasStaleFeed = true;
+                    }
+                }
+            }
+
+            // Also inspect live feeds associated with nearby events
+            foreach ($nearbyEvents as $ev) {
+                if ($ev->dataSource && in_array($ev->dataSource->source_type, ['api', 'stream'])) {
+                    if ($ev->dataSource->status !== 'active' || ! $ev->dataSource->last_successful_at) {
+                        $hasUnavailableFeed = true;
+                    } else {
+                        $diffMins = Carbon::parse($ev->dataSource->last_successful_at)->diffInMinutes(now());
+                        if ($diffMins > 1440) {
+                            $hasUnavailableFeed = true;
+                        } elseif ($diffMins > 60) {
+                            $hasStaleFeed = true;
+                        }
+                    }
+                }
+            }
+
+            if ($hasUnavailableFeed) {
+                $dataFreshness = 'UNAVAILABLE';
+                $assessmentStatus = 'INSUFFICIENT_DATA';
+                $dataQualityDesc = 'Sumber data telemetri kritis tidak tersedia atau koneksi terputus. Data tidak mencukupi untuk penilaian multi-hazard.';
+            } elseif ($hasStaleFeed) {
+                $dataFreshness = 'STALE';
+                $assessmentStatus = 'ASSESSED';
+                $dataQualityDesc = 'Data telemetri tersedia di PostGIS tetapi sinkronisasi live feed tertunda (> 60 menit lalu).';
+            } else {
+                $dataFreshness = 'FRESH';
+                $assessmentStatus = 'ASSESSED';
+                $dataQualityDesc = 'Terhubung dalam radius asosiasi wilayah pilot terintegrasi PostGIS dengan stempel waktu mutakhir.';
+            }
+        }
 
         $factors['data_quality'] = [
             'status' => $dataFreshness,
-            'description' => $isOutOfCoverage
-                ? 'Di luar radius asosiasi wilayah pilot. Tidak tersedia data titik acuan regional.'
-                : 'Terhubung dalam radius asosiasi wilayah pilot terintegrasi PostGIS.',
+            'description' => $dataQualityDesc,
         ];
 
         // Determine Risk Level & Honest Label
-        if ($isOutOfCoverage) {
+        if ($assessmentStatus === 'INSUFFICIENT_DATA') {
             $riskLevel = 'insufficient_data';
             $riskLabel = count($nearbyEvents) > 0
                 ? 'Data Tidak Mencukupi (Terdeteksi Kejadian BMKG)'
-                : 'Data Tidak Mencukupi (Di Luar Wilayah Pilot)';
+                : ($isOutOfCoverage
+                    ? 'Data Tidak Mencukupi (Di Luar Wilayah Pilot)'
+                    : 'Data Tidak Mencukupi (Telemetri Tidak Tersedia)');
         } else {
             $riskLevel = match (true) {
                 $finalScore >= 75.0 => 'critical',

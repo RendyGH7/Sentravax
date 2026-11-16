@@ -62,21 +62,22 @@ class BmkgAdapter
             Log::warning('BMKG Public Feed unavailable or timed out: ' . $e->getMessage());
         }
 
-        // Graceful Fallback: Return SIMULATED / STATIC status with honest provenance
+        // Honest Fallback: Return UNAVAILABLE / FAILED status without concealing feed disruption
         $durationMs = (int) round((microtime(true) - $startTime) * 1000);
         $dataSource->update([
             'last_fetched_at' => now(),
         ]);
 
         return [
-            'status' => 'SUCCESS',
-            'freshness_state' => 'STATIC',
-            'items_fetched' => 1,
+            'status' => 'FAILED',
+            'freshness_state' => 'UNAVAILABLE',
+            'items_fetched' => 0,
             'items_persisted' => 0,
             'duration_ms' => $durationMs,
+            'error_message' => 'BMKG public data feed unreachable or timed out',
             'provenance' => [
-                'note' => 'BMKG open network offline or timed out; retaining baseline verified telemetries.',
-                'source' => 'BMKG Baseline Registry',
+                'note' => 'BMKG open network offline or timed out; retaining baseline PostGIS records without claiming live status.',
+                'source' => 'BMKG TEWS Open Data API',
             ],
         ];
     }
