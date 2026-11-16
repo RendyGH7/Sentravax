@@ -32,6 +32,7 @@ export const getBaseApiUrl = (): string => {
  */
 export const apiClient = axios.create({
   baseURL: getBaseApiUrl(),
+  timeout: 30000,
   headers: {
     'Content-Type': 'application/json',
     'Accept': 'application/json',
@@ -49,6 +50,7 @@ export const ensureCsrfCookie = async (): Promise<void> => {
   await axios.get(`${backendRoot}/sanctum/csrf-cookie`, {
     withCredentials: true,
     withXSRFToken: true,
+    timeout: 15000,
     headers: {
       'Accept': 'application/json',
     },
