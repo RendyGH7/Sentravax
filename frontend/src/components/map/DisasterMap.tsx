@@ -36,6 +36,8 @@ export interface DisasterMapProps {
   showControls?: boolean;
   showEventList?: boolean;
   boundaryGeoJson?: GeoJsonFeatureCollection | null;
+  onMapClick?: (lat: number, lon: number) => void;
+  selectedLocation?: { latitude: number; longitude: number; label?: string } | null;
 }
 
 export const DisasterMap: React.FC<DisasterMapProps> = ({
@@ -51,6 +53,8 @@ export const DisasterMap: React.FC<DisasterMapProps> = ({
   showControls = true,
   showEventList = true,
   boundaryGeoJson,
+  onMapClick,
+  selectedLocation,
 }) => {
   const isDark = theme === 'dark';
 
@@ -60,6 +64,7 @@ export const DisasterMap: React.FC<DisasterMapProps> = ({
   const tileLayerRef = useRef<L.TileLayer | null>(null);
   const markersGroupRef = useRef<L.LayerGroup | null>(null);
   const boundaryLayerRef = useRef<L.GeoJSON | null>(null);
+  const userMarkerRef = useRef<L.Marker | null>(null);
   const markerMapRef = useRef<Map<number, L.Marker>>(new Map());
   const hasFallenBackRef = useRef<boolean>(false);
 
@@ -228,6 +233,10 @@ export const DisasterMap: React.FC<DisasterMapProps> = ({
 
     return () => {
       resizeObserver.disconnect();
+      if (userMarkerRef.current && mapInstanceRef.current) {
+        mapInstanceRef.current.removeLayer(userMarkerRef.current);
+        userMarkerRef.current = null;
+      }
       map.remove();
       mapInstanceRef.current = null;
       markersGroupRef.current = null;
@@ -236,6 +245,61 @@ export const DisasterMap: React.FC<DisasterMapProps> = ({
       markerMap.clear();
     };
   }, [initialCenter, initialZoom, theme]);
+
+  // =========================================================================
+  // MAP CLICK LISTENER FOR LOCATION SELECTION
+  // =========================================================================
+  useEffect(() => {
+    const map = mapInstanceRef.current;
+    if (!map || !onMapClick) return;
+
+    const handleMapClick = (e: L.LeafletMouseEvent) => {
+      onMapClick(Number(e.latlng.lat.toFixed(5)), Number(e.latlng.lng.toFixed(5)));
+    };
+
+    map.on('click', handleMapClick);
+    return () => {
+      map.off('click', handleMapClick);
+    };
+  }, [onMapClick]);
+
+  // =========================================================================
+  // SELECTED LOCATION PIN MARKER
+  // =========================================================================
+  useEffect(() => {
+    const map = mapInstanceRef.current;
+    if (!map) return;
+
+    if (userMarkerRef.current) {
+      map.removeLayer(userMarkerRef.current);
+      userMarkerRef.current = null;
+    }
+
+    if (selectedLocation && typeof selectedLocation.latitude === 'number' && typeof selectedLocation.longitude === 'number') {
+      const { latitude, longitude, label } = selectedLocation;
+      const userIcon = L.divIcon({
+        className: 'sentravax-user-pin',
+        html: `
+          <div class="relative flex items-center justify-center pointer-events-none">
+            <span class="absolute w-8 h-8 rounded-full bg-[#047857]/30 motion-safe:animate-ping"></span>
+            <span class="absolute w-6 h-6 rounded-full bg-[#047857]/40"></span>
+            <div class="relative z-10 w-4 h-4 rounded-full bg-[#047857] border-2 border-white shadow-md flex items-center justify-center">
+              <span class="w-1.5 h-1.5 rounded-full bg-white"></span>
+            </div>
+          </div>
+        `,
+        iconSize: [32, 32],
+        iconAnchor: [16, 16],
+      });
+
+      const marker = L.marker([latitude, longitude], { icon: userIcon, zIndexOffset: 1000 }).addTo(map);
+      if (label) {
+        marker.bindTooltip(label, { permanent: false, direction: 'top', offset: [0, -12] });
+      }
+      userMarkerRef.current = marker;
+      map.flyTo([latitude, longitude], Math.max(map.getZoom(), 10), { duration: 0.8 });
+    }
+  }, [selectedLocation]);
 
   // Theme switch effect for tile layer
   useEffect(() => {

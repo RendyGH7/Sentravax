@@ -1,6 +1,7 @@
 import type { RegionItem, HazardTypeItem, AlertItem } from './disaster';
 
-export type RiskLevel = 'low' | 'medium' | 'high' | 'critical';
+export type RiskLevel = 'low' | 'medium' | 'high' | 'critical' | 'insufficient_data';
+export type AssessmentStatus = 'ASSESSED' | 'INSUFFICIENT_DATA';
 
 export interface RiskFactorItem {
   weight: number;
@@ -10,6 +11,7 @@ export interface RiskFactorItem {
 }
 
 export interface LocationRiskAssessment {
+  assessment_status?: AssessmentStatus;
   risk_score: number;
   risk_level: RiskLevel;
   risk_label?: string;
@@ -35,6 +37,12 @@ export interface LocationCheckResult {
     source: string;
     data_sources: string[];
     disclaimer: string;
+    is_pilot_coverage?: boolean;
+    coverage_type?: 'PILOT_ASSOCIATION_RADIUS' | 'OUT_OF_COVERAGE';
+    pilot_association_radius_km?: number;
+    hazard_search_radius_km?: number;
+    administrative_polygon_active?: boolean;
+    coverage_note?: string;
   };
 }
 

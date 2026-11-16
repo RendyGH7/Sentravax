@@ -75,10 +75,50 @@ class PublicApiTest extends TestCase
             ->assertJsonStructure([
                 'data' => [
                     'current_page',
-                    'data',
+                    'data' => [
+                        '*' => [
+                            'id',
+                            'title',
+                            'severity',
+                            'status',
+                            'coordinates',
+                            'source',
+                            'source_name',
+                            'provenance_status',
+                            'provenance_label',
+                        ],
+                    ],
                     'total',
                 ],
             ]);
+    }
+
+    public function test_public_event_detail_returns_event_and_provenance(): void
+    {
+        $listRes = $this->getJson('/api/v1/public/events');
+        $eventId = $listRes->json('data.data.0.id');
+
+        if ($eventId) {
+            $response = $this->getJson("/api/v1/public/events/{$eventId}");
+
+            $response->assertStatus(200)
+                ->assertJson(['success' => true])
+                ->assertJsonStructure([
+                    'data' => [
+                        'id',
+                        'title',
+                        'severity',
+                        'status',
+                        'data_source' => [
+                            'id',
+                            'name',
+                            'provider',
+                            'source_type',
+                            'provenance_status',
+                        ],
+                    ],
+                ]);
+        }
     }
 
     public function test_public_map_features_returns_valid_geojson(): void
@@ -91,8 +131,57 @@ class PublicApiTest extends TestCase
                 'type' => 'FeatureCollection',
             ])
             ->assertJsonStructure([
-                'features',
+                'features' => [
+                    '*' => [
+                        'type',
+                        'geometry' => ['type', 'coordinates'],
+                        'properties' => [
+                            'id',
+                            'title',
+                            'hazard_slug',
+                            'hazard_name',
+                            'hazard_icon',
+                            'severity',
+                            'occurred_at',
+                            'source_name',
+                            'provider_name',
+                            'provenance_status',
+                            'provenance_label',
+                        ],
+                    ],
+                ],
             ]);
+
+        $features = $response->json('features');
+        $this->assertNotEmpty($features);
+
+        // Verify that earthquake event has LIVE provenance and BMKG source
+        $earthquake = collect($features)->firstWhere('properties.hazard_slug', 'earthquake');
+        if ($earthquake) {
+            $this->assertEquals('LIVE', $earthquake['properties']['provenance_status']);
+            $this->assertStringContainsString('BMKG', $earthquake['properties']['source_name']);
+        }
+
+        // Verify that curated events have STATIC provenance and Curated source
+        $curatedEvents = collect($features)->filter(fn($f) => in_array($f['properties']['hazard_slug'], ['flood', 'extreme_weather', 'landslide']));
+        $this->assertNotEmpty($curatedEvents);
+        foreach ($curatedEvents as $ev) {
+            $this->assertEquals('STATIC', $ev['properties']['provenance_status']);
+            $this->assertEquals('Data Observasi Terkurasi SENTRAVAX', $ev['properties']['source_name']);
+        }
+    }
+
+    public function test_public_check_location_validates_coordinates(): void
+    {
+        // Out of range latitude
+        $resInvalidLat = $this->getJson('/api/v1/public/check-location?lat=95.5&lon=106.8');
+        $resInvalidLat->assertStatus(422)
+            ->assertJsonValidationErrors(['latitude']);
+
+        // Missing coordinates
+        $resMissing = $this->getJson('/api/v1/public/check-location');
+        $resMissing->assertStatus(422)
+            ->assertJsonValidationErrors(['latitude', 'longitude']);
     }
 
     public function test_public_alerts_returns_active_alerts(): void

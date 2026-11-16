@@ -89,7 +89,7 @@ export const AdminDashboardPage: React.FC = () => {
 
         {/* Metric 2 */}
         <div className="p-5 rounded-2xl bg-[#161616] border border-[#2C2C2C] space-y-2.5 shadow-xs hover:border-[#383838] transition-all">
-          <div className="flex items-center justify-between text-xs text-[#8A8A8A] font-semibold">
+          <div className="fle+x items-center justify-between text-xs text-[#8A8A8A] font-semibold">
             <span>Kejadian Bencana Terkurasi</span>
             <div className="w-8 h-8 rounded-lg bg-rose-500/15 text-[#EF4444] flex items-center justify-center">
               <Flame className="w-4 h-4" />

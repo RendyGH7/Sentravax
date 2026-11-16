@@ -49,9 +49,13 @@ export interface HazardEventDetail extends HazardEventItem {
   source_metadata?: Record<string, unknown> | null;
   alerts?: AlertItem[];
   data_source?: {
+    id?: number;
     name: string;
     provider: string;
+    source_type?: string;
     status: string;
+    provenance_status?: 'LIVE' | 'STATIC' | 'SIMULATED' | 'STALE' | 'UNAVAILABLE';
+    provenance_label?: string;
   } | null;
 }
 
@@ -123,6 +127,10 @@ export interface HazardEventItem {
   occurred_at: string;
   reported_at?: string;
   source?: string;
+  source_name?: string;
+  provider_name?: string;
+  provenance_status?: 'LIVE' | 'STATIC' | 'SIMULATED' | 'STALE' | 'UNAVAILABLE';
+  provenance_label?: string;
 }
 
 export interface AlertItem {
@@ -154,6 +162,10 @@ export interface GeoJsonPointFeature {
     severity?: string;
     status?: string;
     occurred_at?: string;
+    source_name?: string;
+    provider_name?: string;
+    provenance_status?: 'LIVE' | 'STATIC' | 'SIMULATED' | 'STALE' | 'UNAVAILABLE';
+    provenance_label?: string;
     [key: string]: unknown;
   };
 }

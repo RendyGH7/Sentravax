@@ -154,6 +154,17 @@ class SentravaxMasterSeeder extends Seeder
                 'notes' => 'Sumber resmi pengamatan radar cuaca nasional dan prakiraan peringatan dini cuaca ekstrem.',
             ],
             [
+                'name' => 'BMKG TEWS Open Data API',
+                'provider' => 'Badan Meteorologi, Klimatologi, dan Geofisika',
+                'source_type' => 'api',
+                'category' => 'seismology',
+                'endpoint_url' => 'https://data.bmkg.go.id/DataMKG/TEWS/autogempa.json',
+                'status' => 'active',
+                'last_fetched_at' => now()->subMinutes(5),
+                'last_successful_at' => now()->subMinutes(5),
+                'notes' => 'Layanan real-time Indonesia Tsunami Early Warning System (InaTEWS) BMKG untuk pengamatan gempa bumi terkini.',
+            ],
+            [
                 'name' => 'PVMBG Geological & Volcanic Stream',
                 'provider' => 'Pusat Vulkanologi dan Mitigasi Bencana Geologi',
                 'source_type' => 'stream',
@@ -174,6 +185,17 @@ class SentravaxMasterSeeder extends Seeder
                 'last_fetched_at' => now()->subHours(2),
                 'last_successful_at' => now()->subHours(2),
                 'notes' => 'Citra radar sintetis untuk deteksi penurunan tanah (land subsidence) dan akumulasi elevasi basah.',
+            ],
+            [
+                'name' => 'Data Observasi Terkurasi SENTRAVAX',
+                'provider' => 'SENTRAVAX Local Baseline Observation',
+                'source_type' => 'curated',
+                'category' => 'curated',
+                'endpoint_url' => 'https://sentravax.id/data/curated-baseline',
+                'status' => 'active',
+                'last_fetched_at' => now()->subMinutes(15),
+                'last_successful_at' => now()->subMinutes(15),
+                'notes' => 'Katalog observasi kejadian bencana lokal terkurasi untuk pengujian kesiapsiagaan dan analisis wilayah.',
             ],
         ];
 
@@ -251,12 +273,23 @@ class SentravaxMasterSeeder extends Seeder
         $floodType = HazardType::where('slug', 'flood')->first();
         $weatherType = HazardType::where('slug', 'extreme_weather')->first();
         $landslideType = HazardType::where('slug', 'landslide')->first();
-        $bmkgSource = DataSource::where('source_type', 'api')->first();
+        $earthquakeType = HazardType::where('slug', 'earthquake')->first();
+
+        // Dynamically resolve BMKG TEWS Data Source via endpoint URL
+        $bmkgTewsSource = DataSource::where('endpoint_url', 'https://data.bmkg.go.id/DataMKG/TEWS/autogempa.json')->first()
+            ?? DataSource::where('name', 'BMKG TEWS Open Data API')->first()
+            ?? DataSource::where('source_type', 'api')->first();
+
+        $curatedSource = DataSource::where('name', 'Data Observasi Terkurasi SENTRAVAX')->first()
+            ?? DataSource::where('source_type', 'curated')->first()
+            ?? $bmkgTewsSource;
+
         $regionNorth = Region::where('code', 'ID-JK-JU')->first();
         $regionEast = Region::where('code', 'ID-JK-JT')->first();
         $regionBogor = Region::where('code', 'ID-JB-BGR')->first();
+        $regionBanten = Region::where('code', 'ID-BT-ANY')->first();
 
-        if (! $floodType || ! $bmkgSource || ! $regionNorth) {
+        if (! $floodType || ! $bmkgTewsSource || ! $regionNorth) {
             return;
         }
 
@@ -265,7 +298,7 @@ class SentravaxMasterSeeder extends Seeder
                 'title' => 'Banjir Luapan Sungai Ciliwung dan Genangan Pemukiman',
                 'description' => 'Kenaikan debit air sungai mencapai status Siaga 2 menyusul hujan intensitas tinggi di kawasan hulu. Genangan air 40-70 cm dilaporkan di beberapa rukun warga hilir.',
                 'hazard_type_id' => $floodType->id,
-                'data_source_id' => $bmkgSource->id,
+                'data_source_id' => $curatedSource->id,
                 'region_id' => $regionEast?->id,
                 'severity' => 'medium',
                 'status' => 'active',
@@ -279,7 +312,7 @@ class SentravaxMasterSeeder extends Seeder
                 'title' => 'Peringatan Angin Kencang dan Potensi Pohon Tumbang',
                 'description' => 'Peningkatan kecepatan angin lokal hingga 45 km/jam disertai awan cumulonimbus aktif di sepanjang koridor utara ibu kota.',
                 'hazard_type_id' => $weatherType?->id ?? $floodType->id,
-                'data_source_id' => $bmkgSource->id,
+                'data_source_id' => $curatedSource->id,
                 'region_id' => $regionNorth->id,
                 'severity' => 'low',
                 'status' => 'active',
@@ -293,7 +326,7 @@ class SentravaxMasterSeeder extends Seeder
                 'title' => 'Anomali Retakan Tanah Lereng Perbukitan',
                 'description' => 'Saturasi air tanah tinggi memicu indikasi pergerakan tanah di kawasan lereng jalan penghubung puncak.',
                 'hazard_type_id' => $landslideType?->id ?? $floodType->id,
-                'data_source_id' => $bmkgSource->id,
+                'data_source_id' => $curatedSource->id,
                 'region_id' => $regionBogor?->id,
                 'severity' => 'high',
                 'status' => 'active',
@@ -302,6 +335,33 @@ class SentravaxMasterSeeder extends Seeder
                 'lon' => 106.9744,
                 'lat' => -6.6972,
                 'source_metadata' => ['slope_gradient_deg' => 38, 'saturation_pct' => 88],
+            ],
+            [
+                'title' => 'Gempa Bumi Mag 4.1 Pusat gempa berada di laut 24 km selatan Enggano',
+                'description' => 'Kedalaman: 24 km. Potensi: Gempa ini dirasakan untuk diteruskan pada masyarakat.',
+                'hazard_type_id' => $earthquakeType?->id ?? $floodType->id,
+                'data_source_id' => $bmkgTewsSource->id,
+                'region_id' => $regionBanten?->id,
+                'severity' => 'low',
+                'status' => 'active',
+                'occurred_at' => now()->subHours(2),
+                'reported_at' => now()->subHours(2),
+                'lon' => 102.24,
+                'lat' => -5.56,
+                'source_metadata' => [
+                    'Jam' => '14:31:39 WIB',
+                    'Bujur' => '102.24 BT',
+                    'Lintang' => '5.56 LS',
+                    'Potensi' => 'Gempa ini dirasakan untuk diteruskan pada masyarakat',
+                    'Tanggal' => now()->format('d M Y'),
+                    'Wilayah' => 'Pusat gempa berada di laut 24 km selatan Enggano',
+                    'DateTime' => now()->subHours(2)->toIso8601String(),
+                    'Shakemap' => '20261113143139.mmi.jpg',
+                    'Dirasakan' => 'II - III Enggano',
+                    'Kedalaman' => '24 km',
+                    'Magnitude' => '4.1',
+                    'Coordinates' => '-5.56,102.24',
+                ],
             ],
         ];
 
@@ -504,8 +564,11 @@ class SentravaxMasterSeeder extends Seeder
         $floodEvent = HazardEvent::where('hazard_type_id', $floodType?->id)->first();
         $admin = User::where('role', User::ROLE_ADMIN)->first();
 
+        $regionDki = Region::where('code', 'ID-JK')->first();
+        $coastalType = HazardType::where('slug', 'coastal_flood')->first() ?? $floodType;
+
         if ($floodType && $regionEast) {
-            // Seed Alert
+            // Seed Alert 1
             Alert::updateOrCreate(
                 ['title' => 'Peringatan Siaga 2 Luapan Sungai Ciliwung Hilir'],
                 [
@@ -518,9 +581,45 @@ class SentravaxMasterSeeder extends Seeder
                     'broadcast_level' => 'warning',
                     'status' => 'active',
                     'starts_at' => now()->subHours(2),
-                    'expires_at' => now()->addHours(12),
+                    'expires_at' => now()->addDays(7),
                 ]
             );
+
+            // Seed Alert 2
+            if ($regionDki) {
+                Alert::updateOrCreate(
+                    ['title' => 'PERINGATAN DINI: Potensi Gelombang Pasang & Banjir Rob Pesisir'],
+                    [
+                        'hazard_event_id' => null,
+                        'region_id' => $regionDki->id,
+                        'hazard_type_id' => $coastalType?->id,
+                        'created_by' => $admin?->id,
+                        'message' => 'Fase bulan baru memicu potensi pasang maksimum air laut di kawasan pesisir utara Jakarta. Waspada banjir rob 30-50 cm.',
+                        'alert_class' => 'official_warning',
+                        'broadcast_level' => 'regional',
+                        'status' => 'active',
+                        'starts_at' => now()->subHours(1),
+                        'expires_at' => now()->addDays(7),
+                    ]
+                );
+
+                // Seed Alert 3
+                Alert::updateOrCreate(
+                    ['title' => 'DISSEMINASI CAP: Siaga Banjir Luapan DAS Ciliwung Hilir'],
+                    [
+                        'hazard_event_id' => $floodEvent?->id,
+                        'region_id' => $regionDki->id,
+                        'hazard_type_id' => $floodType->id,
+                        'created_by' => $admin?->id,
+                        'message' => 'Protokol Common Alerting Protocol (CAP) aktif: debit kiriman hulu terdeteksi tinggi di pos pantau Depok dan Manggarai.',
+                        'alert_class' => 'official_warning',
+                        'broadcast_level' => 'regional',
+                        'status' => 'active',
+                        'starts_at' => now()->subHours(1),
+                        'expires_at' => now()->addDays(7),
+                    ]
+                );
+            }
 
             // Seed Risk Assessment
             $riskAssessment = RiskAssessment::updateOrCreate(

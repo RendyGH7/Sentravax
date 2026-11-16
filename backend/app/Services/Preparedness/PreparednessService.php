@@ -29,13 +29,13 @@ class PreparednessService
     {
         $eval = $this->riskEngine->evaluateLocationRisk($latitude, $longitude, $regionId);
 
-        // Fetch tailored preparedness checklist recommendations based on dominant hazards
-        $essentialChecklist = PreparednessChecklistItem::where('is_essential', true)
-            ->orderBy('sort_order')
-            ->take(6)
+        // Fetch complete BNPB Go-Bag checklist items (13 items)
+        $essentialChecklist = PreparednessChecklistItem::orderBy('sort_order')
             ->get(['id', 'category', 'name', 'description']);
 
-        // Tailored actionable steps based on risk level
+        // Tailored actionable steps based on risk level and regional coverage
+        $isOutOfCoverage = ($eval['region'] === null);
+
         $actionSteps = match ($eval['risk_level']) {
             'critical' => [
                 'Siapkan Tas Siaga Bencana di dekat pintu keluar sekarang juga.',
@@ -53,8 +53,19 @@ class PreparednessService
                 'Diskusikan titik kumpul keluarga bila terjadi pemadaman listrik atau gempa.',
                 'Pantau perkembangan prakiraan cuaca lokal melalui aplikasi SENTRAVAX.',
             ],
+            'insufficient_data' => $eval['active_threats_count'] > 0 ? [
+                'Perhatian: Koordinat berada di luar radius asosiasi wilayah pilot resolusi tinggi (DKI, Jabar, Banten).',
+                'Terdeteksi kejadian bencana aktif terverifikasi (misal: Gempa BMKG TEWS) dalam radius 25 km. Periksa rincian di bawah.',
+                'Ketiadaan data stasiun sensor lokal membatasi kalkulasi multi-hazard lengkap; status risiko tidak dapat ditetapkan aman.',
+                'Tetap pantau peringatan resmi dari posko BMKG dan BPBD setempat serta siapkan Tas Siaga Bencana.',
+            ] : [
+                'Perhatian: Koordinat berada di luar radius asosiasi wilayah pilot resolusi tinggi (DKI Jakarta, Jawa Barat, Banten).',
+                'Data tidak mencukupi untuk menentukan tingkat risiko lokasi secara akurat (ketiadaan data bukan jaminan aman).',
+                'Tidak terdeteksi ancaman aktif dalam radius 25 km pada catatan telemetri SENTRAVAX.',
+                'Tetap pantau informasi kebencanaan dan prakiraan cuaca dari posko BMKG dan BPBD setempat.',
+            ],
             default => [
-                'Wilayah dalam kondisi aman dan kondusif.',
+                'Wilayah terpantau kondusif berdasarkan telemetri sensor aktif SENTRAVAX.',
                 'Tetap jaga kesiapsiagaan mandiri dan periksa masa kedaluwarsa obat di kotak P3K rumah.',
             ],
         };
@@ -66,6 +77,7 @@ class PreparednessService
                 'region' => $eval['region'],
             ],
             'assessment' => [
+                'assessment_status' => $eval['assessment_status'] ?? ($isOutOfCoverage ? 'INSUFFICIENT_DATA' : 'ASSESSED'),
                 'risk_score' => $eval['risk_score'],
                 'risk_level' => $eval['risk_level'],
                 'risk_label' => $eval['risk_label'],
@@ -82,6 +94,14 @@ class PreparednessService
             'provenance' => [
                 'source' => 'SENTRAVAX Multi-Hazard Geospatial Intelligence Engine',
                 'data_sources' => ['BMKG', 'BNPB', 'PostGIS Regional Telemetry'],
+                'is_pilot_coverage' => !$isOutOfCoverage,
+                'coverage_type' => $eval['coverage']['coverage_type'] ?? ($isOutOfCoverage ? 'OUT_OF_COVERAGE' : 'PILOT_ASSOCIATION_RADIUS'),
+                'pilot_association_radius_km' => 45,
+                'hazard_search_radius_km' => 25,
+                'administrative_polygon_active' => false,
+                'coverage_note' => $eval['coverage']['coverage_note'] ?? ($isOutOfCoverage
+                    ? 'Koordinat berada di luar radius asosiasi wilayah pilot (DKI Jakarta, Jawa Barat, Banten).'
+                    : 'Koordinat berada dalam radius asosiasi wilayah pilot (<= 45 km dari titik acuan regional). Poligon batas administratif belum diaktifkan.'),
                 'disclaimer' => 'Penilaian risiko ini merupakan indikasi probabilistik berbasis data resmi yang tersedia, bukan prediksi mutlak terjadinya bencana.',
             ],
         ];

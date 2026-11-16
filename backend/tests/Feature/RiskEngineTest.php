@@ -70,5 +70,31 @@ class RiskEngineTest extends TestCase
             'hazard_type_id' => $hazardType->id,
         ]);
     }
+
+    public function test_factor_contributions_sum_strictly_equals_final_score(): void
+    {
+        // 1. In-pilot Monas Jakarta coordinates
+        $resultMonas = $this->riskEngine->evaluateLocationRisk(-6.1754, 106.8272);
+        $this->assertEquals('ASSESSED', $resultMonas['assessment_status']);
+
+        $sumFactorsMonas = 0.0;
+        foreach ($resultMonas['factors'] as $factor) {
+            if (isset($factor['contribution'])) {
+                $sumFactorsMonas += (float) $factor['contribution'];
+            }
+        }
+        $this->assertEquals($resultMonas['risk_score'], round($sumFactorsMonas, 1));
+
+        // 2. Out-of-coverage Enggano coordinates with active BMKG threat
+        $resultEnggano = $this->riskEngine->evaluateLocationRisk(-5.56, 102.24);
+        $this->assertEquals('INSUFFICIENT_DATA', $resultEnggano['assessment_status']);
+        $this->assertCount(1, $resultEnggano['factors']['nearby_active_events']['threats'] ?? []);
+
+        $threat = $resultEnggano['factors']['nearby_active_events']['threats'][0];
+        $this->assertEquals('BMKG TEWS Open Data API', $threat['source_name']);
+        $this->assertEquals('Badan Meteorologi, Klimatologi, dan Geofisika', $threat['provider_name']);
+        $this->assertEquals('LIVE', $threat['provenance_status']);
+        $this->assertEquals('LIVE (BMKG TEWS)', $threat['provenance_label']);
+    }
 }
 

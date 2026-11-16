@@ -88,6 +88,9 @@ class BmkgAdapter
         $lon = (float) trim($coords[1] ?? '0');
         $title = sprintf("Gempa Bumi Mag %.1f %s", (float) ($gempa['Magnitude'] ?? 0), $gempa['Wilayah'] ?? 'Indonesia');
 
+        // Prefer dedicated BMKG TEWS data source if registered
+        $actualSource = DataSource::where('endpoint_url', self::BMKG_AUTOGEMPA_URL)->first() ?? $dataSource;
+
         // Match nearest region
         $region = Region::orderByRaw('ST_Distance(center_point, ST_SetSRID(ST_MakePoint(?, ?), 4326))', [$lon, $lat])->first();
 
@@ -98,7 +101,7 @@ class BmkgAdapter
             [
                 'description' => sprintf("Kedalaman: %s. Potensi: %s.", $gempa['Kedalaman'] ?? '-', $gempa['Potensi'] ?? '-'),
                 'hazard_type_id' => $hazardType?->id,
-                'data_source_id' => $dataSource->id,
+                'data_source_id' => $actualSource->id,
                 'region_id' => $region?->id,
                 'severity' => $severity,
                 'status' => 'active',

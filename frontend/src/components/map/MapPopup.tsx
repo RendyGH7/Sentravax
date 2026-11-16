@@ -42,42 +42,57 @@ export interface EventProvenanceInfo {
 }
 
 /**
- * Determine truthful data provenance per event:
- * - ID 4 (Gempa Kolaka): Live external sync from BMKG Open Data TEWS feed.
- * - ID 1, 2, 3: Curated baseline dataset from initial seeder.
+ * Determine truthful data provenance per event directly from backend GeoJSON properties.
+ * No hardcoded IDs or hazard-type assumptions.
+ * If backend does not specify, safely falls back to STATIC without falsely claiming LIVE.
  */
 export function getEventProvenance(feature: GeoJsonPointFeature): EventProvenanceInfo {
-  const eventId = Number(feature.properties.id);
-  const explicitStatus = (feature.properties.provenance_status as string) || (feature.properties.data_status as string);
+  const props = feature.properties;
+  const rawStatus = (props.provenance_status as string) || (props.data_status as string);
+  const backendSourceName = (props.source_name as string) || (props.provider_name as string);
+  const backendLabel = props.provenance_label as string;
 
-  if (explicitStatus) {
-    const s = explicitStatus.toUpperCase();
+  if (rawStatus) {
+    const s = rawStatus.toUpperCase();
     if (s === 'LIVE') {
-      return { status: 'LIVE', label: 'LIVE (TELEMETRI)', sourceName: 'BMKG Open Data Feed', dotColor: '#10B981' };
+      return {
+        status: 'LIVE',
+        label: backendLabel || 'LIVE (TELEMETRI)',
+        sourceName: backendSourceName || 'BMKG Open Data Feed',
+        dotColor: '#10B981',
+      };
     }
     if (s === 'SIMULATED') {
-      return { status: 'SIMULATED', label: 'DATA SIMULASI', sourceName: 'Simulasi Kebencanaan', dotColor: '#A855F7' };
+      return {
+        status: 'SIMULATED',
+        label: backendLabel || 'DATA SIMULASI',
+        sourceName: backendSourceName || 'Simulasi Kebencanaan',
+        dotColor: '#A855F7',
+      };
     }
     if (s === 'STALE') {
-      return { status: 'STALE', label: 'DATA TERTUNDA', sourceName: 'Sensor Telemetri', dotColor: '#F59E0B' };
+      return {
+        status: 'STALE',
+        label: backendLabel || 'DATA TERTUNDA',
+        sourceName: backendSourceName || 'Sensor Telemetri',
+        dotColor: '#F59E0B',
+      };
+    }
+    if (s === 'UNAVAILABLE') {
+      return {
+        status: 'UNAVAILABLE',
+        label: backendLabel || 'TIDAK TERSEDIA',
+        sourceName: backendSourceName || 'Sumber Data Terputus',
+        dotColor: '#EF4444',
+      };
     }
   }
 
-  // Event ID 4 is the live BMKG TEWS real-time earthquake event
-  if (eventId === 4 || feature.properties.hazard_slug === 'earthquake') {
-    return {
-      status: 'LIVE',
-      label: 'LIVE (BMKG TEWS)',
-      sourceName: 'BMKG Open Data TEWS',
-      dotColor: '#10B981',
-    };
-  }
-
-  // Events 1, 2, 3 are seeded baseline observation records
+  // Safe fallback when no status provided: treat as STATIC / Curated, NEVER falsely claim LIVE
   return {
     status: 'STATIC',
-    label: 'STATIC (TERKURASI)',
-    sourceName: 'Data Observasi Terkurasi',
+    label: backendLabel || 'STATIC (TERKURASI)',
+    sourceName: backendSourceName || 'Data Observasi Terkurasi',
     dotColor: '#9CA3AF',
   };
 }

@@ -13,6 +13,8 @@ use Illuminate\Support\Facades\DB;
 class RiskEngineService
 {
     public const METHODOLOGY_VERSION = 'v1.0-deterministic-spatial';
+    public const PILOT_ASSOCIATION_RADIUS_METERS = 45000; // 45 km radius from region center point
+    public const HAZARD_SEARCH_RADIUS_METERS = 25000;     // 25 km active hazard detection radius
 
     /**
      * Evaluate multi-hazard risk for a specific geographic coordinate.
@@ -31,16 +33,25 @@ class RiskEngineService
         }
 
         if (!$region) {
-            // Find enclosing or nearest region via PostGIS
-            $region = Region::whereRaw('ST_Contains(boundary, ST_SetSRID(ST_MakePoint(?, ?), 4326))', [$longitude, $latitude])->first();
+            // Find enclosing region via PostGIS polygon (if boundary geometry is populated)
+            $region = Region::whereNotNull('boundary')
+                ->whereRaw('ST_Contains(boundary, ST_SetSRID(ST_MakePoint(?, ?), 4326))', [$longitude, $latitude])
+                ->first();
+
             if (!$region) {
-                $region = Region::orderByRaw('ST_Distance(center_point, ST_SetSRID(ST_MakePoint(?, ?), 4326))', [$longitude, $latitude])->first();
+                // Associate with nearest pilot reference point if within pilot association radius (<= 45 km in meters via PostGIS geography)
+                $nearest = Region::selectRaw('*, ST_Distance(center_point::geography, ST_SetSRID(ST_MakePoint(?, ?), 4326)::geography) as dist_meters', [$longitude, $latitude])
+                    ->orderBy('dist_meters')
+                    ->first();
+                if ($nearest && ($nearest->dist_meters ?? 999999) <= self::PILOT_ASSOCIATION_RADIUS_METERS) {
+                    $region = $nearest;
+                }
             }
         }
 
-        // 2. Query active hazard events within radius (default: 25 km)
+        // 2. Query active hazard events within exact 25 km radius via PostGIS geography
         $nearbyEvents = HazardEvent::where('status', 'active')
-            ->whereRaw('ST_DWithin(location, ST_SetSRID(ST_MakePoint(?, ?), 4326), 0.25)', [$longitude, $latitude]) // ~25km in degrees
+            ->whereRaw('ST_DWithin(location::geography, ST_SetSRID(ST_MakePoint(?, ?), 4326)::geography, ?)', [$longitude, $latitude, self::HAZARD_SEARCH_RADIUS_METERS])
             ->with(['hazardType', 'dataSource'])
             ->get();
 
@@ -49,6 +60,8 @@ class RiskEngineService
             ->where(function ($query) use ($region) {
                 if ($region) {
                     $query->where('region_id', $region->id);
+                } else {
+                    $query->whereNull('region_id'); // Nationwide broadcast only if location outside defined regions
                 }
             })
             ->where(function ($q) {
@@ -57,18 +70,16 @@ class RiskEngineService
             ->with(['hazardType'])
             ->get();
 
-        // 4. Calculate Risk Score (0 - 100)
+        // 4. Calculate Risk Score (0 - 100) with deterministic decimal precision
         $factors = [];
-        $totalScore = 0.0;
 
-        // Base regional vulnerability factor
+        // Base regional vulnerability factor (constant baseline)
         $baseScore = 15.0;
         $factors['baseline_vulnerability'] = [
             'weight' => 0.15,
-            'contribution' => $baseScore,
+            'contribution' => 15.0,
             'description' => 'Kerentanan geografis dasar kawasan tropis Nusantara.',
         ];
-        $totalScore += $baseScore;
 
         // Event proximity and severity factors
         $eventScore = 0.0;
@@ -87,6 +98,13 @@ class RiskEngineService
             $recencyMultiplier = max(0.4, 1.0 - ($hoursOld * 0.03));
             $weightedVal = round($sevWeight * $recencyMultiplier, 1);
 
+            $sourceType = strtolower($ev->dataSource?->source_type ?? '');
+            $isLiveFeed = ($sourceType === 'api' || $sourceType === 'stream');
+            $provenanceStatus = $isLiveFeed ? 'LIVE' : 'STATIC';
+            $provenanceLabel = $isLiveFeed
+                ? (($ev->hazardType?->slug ?? '') === 'earthquake' ? 'LIVE (BMKG TEWS)' : 'LIVE (TELEMETRI)')
+                : 'STATIC (TERKURASI)';
+
             $eventScore += $weightedVal;
             $activeThreats[] = [
                 'id' => $ev->id,
@@ -96,20 +114,32 @@ class RiskEngineService
                 'severity' => $ev->severity,
                 'occurred_at' => $ev->occurred_at?->toIso8601String(),
                 'contribution' => $weightedVal,
+                'data_source_id' => $ev->data_source_id,
+                'source_name' => $ev->dataSource?->name ?? 'Data Observasi Terkurasi SENTRAVAX',
+                'provider_name' => $ev->dataSource?->provider ?? 'SENTRAVAX Local Baseline Observation',
+                'provenance_status' => $provenanceStatus,
+                'provenance_label' => $provenanceLabel,
             ];
         }
 
-        // Cap event score at 45.0
-        $eventScore = min(45.0, $eventScore);
+        // 5. Factor Contributions with Guaranteed Decimal Consistency
+        $baseContribution = round($baseScore, 1);
+        $eventContribution = (!empty($activeThreats)) ? min(45.0, round($eventScore, 1)) : 0.0;
+
+        $factors['baseline_vulnerability'] = [
+            'weight' => 0.15,
+            'contribution' => $baseContribution,
+            'description' => 'Kerentanan geografis dasar kawasan tropis Nusantara.',
+        ];
+
         if (!empty($activeThreats)) {
             $factors['nearby_active_events'] = [
                 'weight' => 0.45,
-                'contribution' => $eventScore,
+                'contribution' => $eventContribution,
                 'count' => count($nearbyEvents),
                 'threats' => $activeThreats,
                 'description' => 'Indikasi kejadian bahaya aktif dalam radius pemantauan 25 km.',
             ];
-            $totalScore += $eventScore;
         }
 
         // Official alerts factor
@@ -131,41 +161,57 @@ class RiskEngineService
             ];
         }
 
-        $alertScore = min(30.0, $alertScore);
+        $alertContribution = (!empty($alertList)) ? min(30.0, round($alertScore, 1)) : 0.0;
         if (!empty($alertList)) {
             $factors['official_alerts'] = [
                 'weight' => 0.30,
-                'contribution' => $alertScore,
+                'contribution' => $alertContribution,
                 'alerts' => $alertList,
                 'description' => 'Peringatan dini aktif dari otoritas berwenang atau advisori sistem.',
             ];
-            $totalScore += $alertScore;
         }
 
-        // Freshness / Data quality factor
-        $dataFreshness = 'FRESH';
+        // Reconciled Total Score: exact sum of the stored factor contributions rounded to 1 decimal
+        $totalScore = round($baseContribution + $eventContribution + $alertContribution, 1);
+        $finalScore = min(98.0, max(5.0, $totalScore));
+
+        // Coverage and Assessment Status Distinction
+        $isOutOfCoverage = ($region === null);
+        $assessmentStatus = $isOutOfCoverage ? 'INSUFFICIENT_DATA' : 'ASSESSED';
+        $dataFreshness = $isOutOfCoverage ? 'UNAVAILABLE' : 'FRESH';
+
         $factors['data_quality'] = [
             'status' => $dataFreshness,
-            'description' => 'Telemetri PostGIS terintegrasi aktif dengan stempel waktu sinkronisasi terbaru.',
+            'description' => $isOutOfCoverage
+                ? 'Di luar radius asosiasi wilayah pilot. Tidak tersedia data titik acuan regional.'
+                : 'Terhubung dalam radius asosiasi wilayah pilot terintegrasi PostGIS.',
         ];
 
-        // Final score normalized between 5.0 and 98.0
-        $finalScore = min(98.0, max(5.0, round($totalScore, 1)));
+        // Determine Risk Level & Honest Label
+        if ($isOutOfCoverage) {
+            $riskLevel = 'insufficient_data';
+            $riskLabel = count($nearbyEvents) > 0
+                ? 'Data Tidak Mencukupi (Terdeteksi Kejadian BMKG)'
+                : 'Data Tidak Mencukupi (Di Luar Wilayah Pilot)';
+        } else {
+            $riskLevel = match (true) {
+                $finalScore >= 75.0 => 'critical',
+                $finalScore >= 50.0 => 'high',
+                $finalScore >= 25.0 => 'medium',
+                default => 'low',
+            };
 
-        // Determine Risk Level
-        $riskLevel = match (true) {
-            $finalScore >= 75.0 => 'critical',
-            $finalScore >= 50.0 => 'high',
-            $finalScore >= 25.0 => 'medium',
-            default => 'low',
-        };
+            $riskLabel = match ($riskLevel) {
+                'critical' => 'Awas (Risiko Sangat Tinggi)',
+                'high' => 'Siaga (Risiko Tinggi)',
+                'medium' => 'Waspada (Perlu Perhatian)',
+                default => 'Normal (Risiko Rendah)',
+            };
+        }
 
-        $riskLabel = match ($riskLevel) {
-            'critical' => 'Awas (Risiko Sangat Tinggi)',
-            'high' => 'Siaga (Risiko Tinggi)',
-            'medium' => 'Waspada (Perlu Perhatian)',
-            default => 'Normal (Risiko Rendah)',
-        };
+        $coverageNote = $isOutOfCoverage
+            ? 'Koordinat berada di luar radius asosiasi wilayah pilot (<= 45 km dari titik acuan regional DKI Jakarta, Jawa Barat, Banten).'
+            : "Koordinat berada dalam radius asosiasi wilayah pilot (<= 45 km dari titik acuan regional {$region->name}). Poligon batas administratif belum diaktifkan.";
 
         return [
             'region' => $region ? [
@@ -178,12 +224,21 @@ class RiskEngineService
                 'latitude' => $latitude,
                 'longitude' => $longitude,
             ],
+            'assessment_status' => $assessmentStatus,
             'risk_score' => $finalScore,
             'risk_level' => $riskLevel,
             'risk_label' => $riskLabel,
             'factors' => $factors,
             'active_threats_count' => count($nearbyEvents),
             'active_alerts_count' => count($activeAlerts),
+            'coverage' => [
+                'is_pilot_coverage' => !$isOutOfCoverage,
+                'coverage_type' => $isOutOfCoverage ? 'OUT_OF_COVERAGE' : 'PILOT_ASSOCIATION_RADIUS',
+                'pilot_association_radius_km' => 45,
+                'hazard_search_radius_km' => 25,
+                'administrative_polygon_active' => false,
+                'coverage_note' => $coverageNote,
+            ],
             'methodology_version' => self::METHODOLOGY_VERSION,
             'data_freshness' => $dataFreshness,
             'assessed_at' => now()->toIso8601String(),

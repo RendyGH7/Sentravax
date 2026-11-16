@@ -141,6 +141,12 @@ class PublicController extends Controller
                 ],
                 'occurred_at' => $ev->occurred_at?->toIso8601String(),
                 'source' => $ev->dataSource?->name ?? 'SENTRAVAX',
+                'source_name' => $ev->dataSource?->name ?? 'SENTRAVAX',
+                'provider_name' => $ev->dataSource?->provider ?? 'SENTRAVAX',
+                'provenance_status' => in_array($ev->dataSource?->source_type, ['api', 'stream']) ? 'LIVE' : 'STATIC',
+                'provenance_label' => in_array($ev->dataSource?->source_type, ['api', 'stream'])
+                    ? ($ev->hazardType?->slug === 'earthquake' ? 'LIVE (BMKG TEWS)' : 'LIVE (TELEMETRI)')
+                    : 'STATIC (TERKURASI)',
             ];
         });
 
@@ -178,9 +184,15 @@ class PublicController extends Controller
                 'reported_at' => $ev->reported_at?->toIso8601String(),
                 'alerts' => $ev->alerts,
                 'data_source' => $ev->dataSource ? [
+                    'id' => $ev->dataSource->id,
                     'name' => $ev->dataSource->name,
                     'provider' => $ev->dataSource->provider,
+                    'source_type' => $ev->dataSource->source_type,
                     'status' => $ev->dataSource->status,
+                    'provenance_status' => in_array($ev->dataSource->source_type, ['api', 'stream']) ? 'LIVE' : 'STATIC',
+                    'provenance_label' => in_array($ev->dataSource->source_type, ['api', 'stream'])
+                        ? ($ev->hazardType?->slug === 'earthquake' ? 'LIVE (BMKG TEWS)' : 'LIVE (TELEMETRI)')
+                        : 'STATIC (TERKURASI)',
                 ] : null,
             ],
         ]);
@@ -194,14 +206,24 @@ class PublicController extends Controller
         $events = DB::select("
             SELECT he.id, he.title, he.severity, he.status, he.occurred_at,
                    ht.slug as hazard_slug, ht.name as hazard_name, ht.icon as hazard_icon,
+                   ds.id as data_source_id, ds.name as source_name, ds.provider as provider_name, ds.source_type,
                    ST_X(he.location) as lon, ST_Y(he.location) as lat
             FROM hazard_events he
             JOIN hazard_types ht ON he.hazard_type_id = ht.id
+            LEFT JOIN data_sources ds ON he.data_source_id = ds.id
             WHERE he.status = 'active'
               AND he.location IS NOT NULL
         ");
 
         $features = array_map(function ($ev) {
+            $sourceType = strtolower($ev->source_type ?? '');
+            $isLiveFeed = ($sourceType === 'api' || $sourceType === 'stream');
+
+            $provenanceStatus = $isLiveFeed ? 'LIVE' : 'STATIC';
+            $provenanceLabel = $isLiveFeed
+                ? ($ev->hazard_slug === 'earthquake' ? 'LIVE (BMKG TEWS)' : 'LIVE (TELEMETRI)')
+                : 'STATIC (TERKURASI)';
+
             return [
                 'type' => 'Feature',
                 'geometry' => [
@@ -216,6 +238,10 @@ class PublicController extends Controller
                     'hazard_icon' => $ev->hazard_icon,
                     'severity' => $ev->severity,
                     'occurred_at' => $ev->occurred_at,
+                    'source_name' => $ev->source_name ?? 'SENTRAVAX',
+                    'provider_name' => $ev->provider_name ?? 'SENTRAVAX',
+                    'provenance_status' => $provenanceStatus,
+                    'provenance_label' => $provenanceLabel,
                 ],
             ];
         }, $events);
