@@ -189,6 +189,12 @@ class AdminApiTest extends TestCase
         $resAlert->assertStatus(201)
             ->assertJson(['success' => true])
             ->assertJsonStructure(['data' => ['id', 'title', 'alert_class']]);
+
+        // Clean up created alert to keep testing environment pure
+        $alertId = $resAlert->json('data.id');
+        if ($alertId) {
+            \App\Models\Alert::where('id', $alertId)->delete();
+        }
     }
 
     public function test_admin_moderation_verify_and_audit_trail(): void

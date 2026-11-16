@@ -44,9 +44,9 @@ class PublicController extends Controller
                 'monitored_regions' => $regionsCount,
                 'system_status' => 'operational',
                 'telemetry_sync' => [
-                    'status' => $latestSync?->status ?? 'SUCCESS',
-                    'freshness' => $latestSync?->freshness_state ?? 'LIVE',
-                    'last_synced_at' => $latestSync?->synced_at ?? now()->toIso8601String(),
+                    'status' => $latestSync?->status ?? 'UNAVAILABLE',
+                    'freshness' => $latestSync?->freshness_state ?? 'UNAVAILABLE',
+                    'last_synced_at' => $latestSync?->synced_at,
                 ],
             ],
             'meta' => [

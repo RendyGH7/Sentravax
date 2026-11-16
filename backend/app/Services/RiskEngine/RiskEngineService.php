@@ -192,7 +192,12 @@ class RiskEngineService
             $hasStaleFeed = false;
 
             if ($bmkgTews) {
-                if ($bmkgTews->status !== 'active' || ! $bmkgTews->last_successful_at) {
+                $latestSync = DB::table('data_source_sync_runs')
+                    ->where('data_source_id', $bmkgTews->id)
+                    ->latest('synced_at')
+                    ->first();
+
+                if ($bmkgTews->status !== 'active' || ! $bmkgTews->last_successful_at || ($latestSync && in_array($latestSync->status, ['FAILED', 'TIMEOUT']))) {
                     $hasUnavailableFeed = true;
                 } else {
                     $diffMins = Carbon::parse($bmkgTews->last_successful_at)->diffInMinutes(now());
@@ -207,7 +212,12 @@ class RiskEngineService
             // Also inspect live feeds associated with nearby events
             foreach ($nearbyEvents as $ev) {
                 if ($ev->dataSource && in_array($ev->dataSource->source_type, ['api', 'stream'])) {
-                    if ($ev->dataSource->status !== 'active' || ! $ev->dataSource->last_successful_at) {
+                    $evLatestSync = DB::table('data_source_sync_runs')
+                        ->where('data_source_id', $ev->dataSource->id)
+                        ->latest('synced_at')
+                        ->first();
+
+                    if ($ev->dataSource->status !== 'active' || ! $ev->dataSource->last_successful_at || ($evLatestSync && in_array($evLatestSync->status, ['FAILED', 'TIMEOUT']))) {
                         $hasUnavailableFeed = true;
                     } else {
                         $diffMins = Carbon::parse($ev->dataSource->last_successful_at)->diffInMinutes(now());
@@ -223,7 +233,7 @@ class RiskEngineService
             if ($hasUnavailableFeed) {
                 $dataFreshness = 'UNAVAILABLE';
                 $assessmentStatus = 'INSUFFICIENT_DATA';
-                $dataQualityDesc = 'Sumber data telemetri kritis tidak tersedia atau koneksi terputus. Data tidak mencukupi untuk penilaian multi-hazard.';
+                $dataQualityDesc = 'Sumber data telemetri kritis tidak tersedia, mengalami kegagalan koneksi (FAILED), atau koneksi terputus. Data tidak mencukupi untuk penilaian multi-hazard.';
             } elseif ($hasStaleFeed) {
                 $dataFreshness = 'STALE';
                 $assessmentStatus = 'ASSESSED';

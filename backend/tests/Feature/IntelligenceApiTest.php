@@ -193,6 +193,12 @@ class IntelligenceApiTest extends TestCase
                     ],
                 ],
             ]);
+
+        // Clean up test-created alert to prevent leaking into shared DB
+        $alertId = $response->json('data.alert.id');
+        if ($alertId) {
+            \App\Models\Alert::where('id', $alertId)->delete();
+        }
     }
 
     public function test_cross_role_access_rejection_between_admin_and_intelligence(): void

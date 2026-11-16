@@ -2,11 +2,17 @@
 
 namespace Tests\Feature;
 
+use App\Models\DataSource;
+use App\Models\DataSourceSyncRun;
+use App\Models\HazardEvent;
 use App\Models\HazardType;
 use App\Models\Region;
 use App\Models\RiskAssessment;
+use App\Services\ExternalData\DataSyncService;
 use App\Services\RiskEngine\RiskEngineService;
 use Database\Seeders\SentravaxMasterSeeder;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Http;
 use Tests\TestCase;
 
 class RiskEngineTest extends TestCase
@@ -23,6 +29,9 @@ class RiskEngineTest extends TestCase
 
     public function test_risk_engine_evaluates_spatial_coordinates_with_factors(): void
     {
+        $bmkg = \App\Models\DataSource::where('endpoint_url', 'https://data.bmkg.go.id/DataMKG/TEWS/autogempa.json')->first();
+        $bmkg?->update(['status' => 'active', 'last_successful_at' => now()->subMinutes(5)]);
+
         // Central Jakarta coordinates
         $result = $this->riskEngine->evaluateLocationRisk(-6.2088, 106.8456);
 
@@ -73,6 +82,9 @@ class RiskEngineTest extends TestCase
 
     public function test_factor_contributions_sum_strictly_equals_final_score(): void
     {
+        $bmkg = DataSource::where('endpoint_url', 'https://data.bmkg.go.id/DataMKG/TEWS/autogempa.json')->first();
+        $bmkg?->update(['status' => 'active', 'last_successful_at' => now()->subMinutes(5)]);
+
         // 1. In-pilot Monas Jakarta coordinates
         $resultMonas = $this->riskEngine->evaluateLocationRisk(-6.1754, 106.8272);
         $this->assertEquals('ASSESSED', $resultMonas['assessment_status']);
@@ -99,10 +111,11 @@ class RiskEngineTest extends TestCase
 
     public function test_data_quality_gatekeeper_enforces_fresh_stale_unavailable_states(): void
     {
-        $bmkg = \App\Models\DataSource::where('endpoint_url', 'https://data.bmkg.go.id/DataMKG/TEWS/autogempa.json')->first();
+        $bmkg = DataSource::where('endpoint_url', 'https://data.bmkg.go.id/DataMKG/TEWS/autogempa.json')->first();
 
         // 1. Fresh Feed (synced within 60m)
         $bmkg->update(['status' => 'active', 'last_successful_at' => now()->subMinutes(5)]);
+        DB::table('data_source_sync_runs')->where('data_source_id', $bmkg->id)->delete();
         $evalFresh = $this->riskEngine->evaluateLocationRisk(-6.1754, 106.8272);
         $this->assertEquals('FRESH', $evalFresh['data_freshness']);
         $this->assertEquals('ASSESSED', $evalFresh['assessment_status']);
@@ -123,6 +136,176 @@ class RiskEngineTest extends TestCase
 
         // 4. Restore fresh state
         $bmkg->update(['status' => 'active', 'last_successful_at' => now()->subMinutes(5)]);
+    }
+
+    /**
+     * Skenario A: Sumber baru dibuat oleh Seeder, belum pernah berhasil sinkronisasi.
+     * - last_successful_at harus NULL.
+     * - Status awal jujur 'pending'.
+     * - Tidak boleh berstatus FRESH/LIVE tanpa bukti.
+     */
+    public function test_scenario_a_newly_seeded_source_without_sync_is_unavailable_and_never_fresh(): void
+    {
+        $bmkg = DataSource::where('endpoint_url', 'https://data.bmkg.go.id/DataMKG/TEWS/autogempa.json')->first();
+        $bmkg->update([
+            'status' => 'pending',
+            'last_fetched_at' => null,
+            'last_successful_at' => null,
+        ]);
+        DB::table('data_source_sync_runs')->where('data_source_id', $bmkg->id)->delete();
+
+        $this->assertNull($bmkg->fresh()->last_successful_at);
+        $this->assertEquals('pending', $bmkg->fresh()->status);
+
+        $eval = $this->riskEngine->evaluateLocationRisk(-6.1754, 106.8272);
+
+        $this->assertEquals('UNAVAILABLE', $eval['data_freshness']);
+        $this->assertEquals('INSUFFICIENT_DATA', $eval['assessment_status']);
+        $this->assertEquals('insufficient_data', $eval['risk_level']);
+        $this->assertNotEquals('FRESH', $eval['data_freshness']);
+        $this->assertEquals('UNAVAILABLE', $eval['factors']['data_quality']['status']);
+    }
+
+    /**
+     * Skenario B: Sinkronisasi BMKG berhasil.
+     * - last_successful_at diperbarui berdasarkan waktu keberhasilan aktual.
+     * - Status menjadi FRESH karena dalam batas 60 menit.
+     * - assessment_status menjadi ASSESSED.
+     */
+    public function test_scenario_b_successful_bmkg_sync_updates_last_successful_at_and_becomes_fresh(): void
+    {
+        $bmkg = DataSource::where('endpoint_url', 'https://data.bmkg.go.id/DataMKG/TEWS/autogempa.json')->first();
+        DB::table('data_source_sync_runs')->where('data_source_id', $bmkg->id)->delete();
+
+        Http::fake([
+            'https://data.bmkg.go.id/DataMKG/TEWS/autogempa.json' => Http::response([
+                'Infogempa' => [
+                    'gempa' => [
+                        'Tanggal' => '16 Nov 2026',
+                        'Jam' => '10:00:00 WIB',
+                        'DateTime' => '2026-11-16T03:00:00+00:00',
+                        'Coordinates' => '-6.20,106.85',
+                        'Lintang' => '6.20 LS',
+                        'Bujur' => '106.85 BT',
+                        'Magnitude' => '5.2',
+                        'Kedalaman' => '10 km',
+                        'Wilayah' => 'Pusat Jakarta',
+                        'Potensi' => 'Tidak berpotensi tsunami',
+                    ],
+                ],
+            ], 200),
+        ]);
+
+        $syncService = app(DataSyncService::class);
+        $syncRun = $syncService->syncDataSource($bmkg);
+
+        $this->assertEquals('SUCCESS', $syncRun->status);
+        $this->assertEquals('LIVE', $syncRun->freshness_state);
+
+        $bmkgFresh = $bmkg->fresh();
+        $this->assertEquals('active', $bmkgFresh->status);
+        $this->assertNotNull($bmkgFresh->last_successful_at);
+        $this->assertLessThanOrEqual(5, abs(now()->diffInSeconds($bmkgFresh->last_successful_at)));
+
+        $eval = $this->riskEngine->evaluateLocationRisk(-6.1754, 106.8272);
+        $this->assertEquals('FRESH', $eval['data_freshness']);
+        $this->assertEquals('ASSESSED', $eval['assessment_status']);
+
+        // Clean up test-created event to ensure clean shared testing state
+        HazardEvent::where('title', 'like', '%Gempa Bumi Mag 5.2 Pusat Jakarta%')->delete();
+    }
+
+    /**
+     * Skenario C: Sinkronisasi BMKG gagal.
+     * - Status FAILED/UNAVAILABLE tercatat.
+     * - last_successful_at TIDAK berubah / tidak diperbarui.
+     * - DataQuality Gatekeeper mengenali kegagalan dan tidak melaporkan LIVE/FRESH.
+     */
+    public function test_scenario_c_failed_bmkg_sync_does_not_update_last_successful_at_and_reports_unavailable(): void
+    {
+        $bmkg = DataSource::where('endpoint_url', 'https://data.bmkg.go.id/DataMKG/TEWS/autogempa.json')->first();
+        $pastSuccessTime = now()->subMinutes(15);
+        $bmkg->update([
+            'status' => 'active',
+            'last_successful_at' => $pastSuccessTime,
+        ]);
+
+        Http::fake([
+            'https://data.bmkg.go.id/DataMKG/TEWS/autogempa.json' => Http::response(null, 500),
+        ]);
+
+        $syncService = app(DataSyncService::class);
+        $syncRun = $syncService->syncDataSource($bmkg);
+
+        $this->assertEquals('FAILED', $syncRun->status);
+        $this->assertEquals('UNAVAILABLE', $syncRun->freshness_state);
+
+        $bmkgFresh = $bmkg->fresh();
+        // last_successful_at must strictly remain untouched
+        $this->assertEquals($pastSuccessTime->timestamp, $bmkgFresh->last_successful_at->timestamp);
+
+        $eval = $this->riskEngine->evaluateLocationRisk(-6.1754, 106.8272);
+        $this->assertEquals('UNAVAILABLE', $eval['data_freshness']);
+        $this->assertEquals('INSUFFICIENT_DATA', $eval['assessment_status']);
+        $this->assertEquals('insufficient_data', $eval['risk_level']);
+        $this->assertNotEquals('FRESH', $eval['data_freshness']);
+    }
+
+    /**
+     * Skenario D: Data telemetri stale (> 60 menit lalu).
+     * - Data lama tetap dapat diakses di PostGIS sebagai observasi tercatat.
+     * - Gatekeeper melaporkan STALE dan ASSESSED.
+     * - Penjelasan eksplisit bahwa sinkronisasi data tertunda.
+     */
+    public function test_scenario_d_stale_data_retains_cached_observation_with_delay_warning(): void
+    {
+        $bmkg = DataSource::where('endpoint_url', 'https://data.bmkg.go.id/DataMKG/TEWS/autogempa.json')->first();
+        $bmkg->update([
+            'status' => 'active',
+            'last_successful_at' => now()->subMinutes(75),
+        ]);
+        DB::table('data_source_sync_runs')->where('data_source_id', $bmkg->id)->delete();
+
+        $eval = $this->riskEngine->evaluateLocationRisk(-6.1754, 106.8272);
+
+        $this->assertEquals('STALE', $eval['data_freshness']);
+        $this->assertEquals('ASSESSED', $eval['assessment_status']);
+        $this->assertStringContainsString('tertunda', $eval['factors']['data_quality']['description']);
+        $this->assertStringContainsString('> 60 menit', $eval['factors']['data_quality']['description']);
+    }
+
+    /**
+     * Skenario E: Seeder dijalankan berulang kali (idempotensi mutlak).
+     * - Tidak ada duplikasi DataSource.
+     * - Tidak ada penimpaan palsu pada last_successful_at yang sudah tercatat.
+     * - Relasi data tetap utuh.
+     */
+    public function test_scenario_e_seeder_is_fully_idempotent_and_never_overwrites_success_timestamp_or_duplicates_rows(): void
+    {
+        $bmkg = DataSource::where('endpoint_url', 'https://data.bmkg.go.id/DataMKG/TEWS/autogempa.json')->first();
+        $recordedTime = now()->subMinutes(25);
+        $bmkg->update([
+            'status' => 'active',
+            'last_successful_at' => $recordedTime,
+        ]);
+
+        $initialSourcesCount = DataSource::count();
+        $initialRegionsCount = Region::count();
+        $initialHazardEventsCount = HazardEvent::count();
+
+        // Run master seeder repeatedly
+        (new SentravaxMasterSeeder())->run();
+        (new SentravaxMasterSeeder())->run();
+
+        // 1. Zero duplicate rows
+        $this->assertEquals($initialSourcesCount, DataSource::count());
+        $this->assertEquals($initialRegionsCount, Region::count());
+        $this->assertEquals($initialHazardEventsCount, HazardEvent::count());
+
+        // 2. Verified timestamp is strictly preserved and NOT overwritten by fake subMinutes(5)
+        $bmkgRecheck = DataSource::where('endpoint_url', 'https://data.bmkg.go.id/DataMKG/TEWS/autogempa.json')->first();
+        $this->assertEquals($recordedTime->timestamp, $bmkgRecheck->last_successful_at->timestamp);
+        $this->assertEquals('active', $bmkgRecheck->status);
     }
 }
 

@@ -148,9 +148,9 @@ class SentravaxMasterSeeder extends Seeder
                 'source_type' => 'api',
                 'category' => 'weather',
                 'endpoint_url' => 'https://api.bmkg.go.id/public/weather',
-                'status' => 'active',
-                'last_fetched_at' => now()->subMinutes(5),
-                'last_successful_at' => now()->subMinutes(5),
+                'status' => 'pending',
+                'last_fetched_at' => null,
+                'last_successful_at' => null,
                 'notes' => 'Sumber resmi pengamatan radar cuaca nasional dan prakiraan peringatan dini cuaca ekstrem.',
             ],
             [
@@ -159,9 +159,9 @@ class SentravaxMasterSeeder extends Seeder
                 'source_type' => 'api',
                 'category' => 'seismology',
                 'endpoint_url' => 'https://data.bmkg.go.id/DataMKG/TEWS/autogempa.json',
-                'status' => 'active',
-                'last_fetched_at' => now()->subMinutes(5),
-                'last_successful_at' => now()->subMinutes(5),
+                'status' => 'pending',
+                'last_fetched_at' => null,
+                'last_successful_at' => null,
                 'notes' => 'Layanan real-time Indonesia Tsunami Early Warning System (InaTEWS) BMKG untuk pengamatan gempa bumi terkini.',
             ],
             [
@@ -170,9 +170,9 @@ class SentravaxMasterSeeder extends Seeder
                 'source_type' => 'stream',
                 'category' => 'geology',
                 'endpoint_url' => 'https://magma.vsi.esdm.go.id/api/v1',
-                'status' => 'active',
-                'last_fetched_at' => now()->subMinutes(12),
-                'last_successful_at' => now()->subMinutes(12),
+                'status' => 'pending',
+                'last_fetched_at' => null,
+                'last_successful_at' => null,
                 'notes' => 'Pemantauan deformasi lereng, status gunung api, dan zona kerentanan gerakan tanah.',
             ],
             [
@@ -181,9 +181,9 @@ class SentravaxMasterSeeder extends Seeder
                 'source_type' => 'satellite',
                 'category' => 'satellite',
                 'endpoint_url' => 'https://dataspace.copernicus.eu/api',
-                'status' => 'active',
-                'last_fetched_at' => now()->subHours(2),
-                'last_successful_at' => now()->subHours(2),
+                'status' => 'pending',
+                'last_fetched_at' => null,
+                'last_successful_at' => null,
                 'notes' => 'Citra radar sintetis untuk deteksi penurunan tanah (land subsidence) dan akumulasi elevasi basah.',
             ],
             [
@@ -193,14 +193,30 @@ class SentravaxMasterSeeder extends Seeder
                 'category' => 'curated',
                 'endpoint_url' => 'https://sentravax.id/data/curated-baseline',
                 'status' => 'active',
-                'last_fetched_at' => now()->subMinutes(15),
-                'last_successful_at' => now()->subMinutes(15),
+                'last_fetched_at' => null,
+                'last_successful_at' => null,
                 'notes' => 'Katalog observasi kejadian bencana lokal terkurasi untuk pengujian kesiapsiagaan dan analisis wilayah.',
             ],
         ];
 
         foreach ($sources as $src) {
-            DataSource::updateOrCreate(['name' => $src['name']], $src);
+            $existing = DataSource::where('name', $src['name'])->first();
+            if (! $existing) {
+                DataSource::create($src);
+            } else {
+                // Strictly preserve verified sync timestamps and existing active status
+                $updateData = [
+                    'provider' => $src['provider'],
+                    'source_type' => $src['source_type'],
+                    'category' => $src['category'],
+                    'endpoint_url' => $src['endpoint_url'],
+                    'notes' => $src['notes'],
+                ];
+                if (empty($existing->status)) {
+                    $updateData['status'] = $src['status'];
+                }
+                $existing->update($updateData);
+            }
         }
     }
 
@@ -286,9 +302,9 @@ class SentravaxMasterSeeder extends Seeder
                 'source_type' => 'api',
                 'category' => 'seismology',
                 'endpoint_url' => 'https://data.bmkg.go.id/DataMKG/TEWS/autogempa.json',
-                'status' => 'active',
-                'last_fetched_at' => now()->subMinutes(5),
-                'last_successful_at' => now()->subMinutes(5),
+                'status' => 'pending',
+                'last_fetched_at' => null,
+                'last_successful_at' => null,
                 'notes' => 'Layanan real-time Indonesia Tsunami Early Warning System (InaTEWS) BMKG untuk pengamatan gempa bumi terkini.',
             ]);
         }
@@ -305,8 +321,8 @@ class SentravaxMasterSeeder extends Seeder
                 'category' => 'curated',
                 'endpoint_url' => 'https://sentravax.id/data/curated-baseline',
                 'status' => 'active',
-                'last_fetched_at' => now()->subMinutes(15),
-                'last_successful_at' => now()->subMinutes(15),
+                'last_fetched_at' => null,
+                'last_successful_at' => null,
                 'notes' => 'Katalog observasi kejadian bencana lokal terkurasi untuk pengujian kesiapsiagaan dan analisis wilayah.',
             ]);
         }
@@ -693,26 +709,6 @@ class SentravaxMasterSeeder extends Seeder
                     ],
                 ]
             );
-        }
-
-        // Seed Ingestion sync run strictly for verified BMKG TEWS source
-        if ($bmkgTewsSource) {
-            $recentRun = DataSourceSyncRun::where('data_source_id', $bmkgTewsSource->id)
-                ->where('synced_at', '>=', now()->subHours(1))
-                ->first();
-
-            if (! $recentRun) {
-                DataSourceSyncRun::create([
-                    'data_source_id' => $bmkgTewsSource->id,
-                    'status' => 'SUCCESS',
-                    'freshness_state' => 'LIVE',
-                    'items_fetched' => 1,
-                    'items_persisted' => 1,
-                    'duration_ms' => 340,
-                    'provenance_metadata' => ['api_version' => 'v1.0', 'source' => 'BMKG TEWS InaTEWS'],
-                    'synced_at' => now()->subMinutes(10),
-                ]);
-            }
         }
     }
 
