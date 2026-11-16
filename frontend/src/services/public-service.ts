@@ -21,11 +21,11 @@ import type {
   PaginatedData,
 } from '../types';
 
-function normalizeBroadcastLevel(level: unknown): BroadcastLevel {
+export function normalizeBroadcastLevel(level: unknown): BroadcastLevel | null {
   if (level === 'local' || level === 'regional' || level === 'national') {
     return level;
   }
-  return 'regional';
+  return null;
 }
 
 /**
@@ -78,7 +78,14 @@ export const publicService = {
     const res = await apiClient.get<ApiResponse<HazardEventDetail>>(`/public/events/${id}`, {
       signal,
     });
-    return res.data.data;
+    const detail = res.data.data;
+    if (detail && Array.isArray(detail.alerts)) {
+      detail.alerts = detail.alerts.map((item) => ({
+        ...item,
+        broadcast_level: normalizeBroadcastLevel(item.broadcast_level),
+      }));
+    }
+    return detail;
   },
 
   /**

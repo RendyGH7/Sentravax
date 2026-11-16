@@ -212,7 +212,7 @@ export interface AlertDetail {
   title: string;
   message: string;
   alert_class: AlertClass;
-  broadcast_level: BroadcastLevel;
+  broadcast_level: BroadcastLevel | null;
   status: AlertStatus;
   is_active: boolean;
   starts_at: string;
