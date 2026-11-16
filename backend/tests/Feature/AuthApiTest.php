@@ -3,15 +3,32 @@
 namespace Tests\Feature;
 
 use App\Models\User;
+use Illuminate\Support\Facades\DB;
 use Laravel\Sanctum\Sanctum;
 use Tests\TestCase;
 
 class AuthApiTest extends TestCase
 {
+    protected int $maxTokenIdBeforeTest = 0;
+
     protected function setUp(): void
     {
         parent::setUp();
         $this->seed(\Database\Seeders\SentravaxMasterSeeder::class);
+        $this->maxTokenIdBeforeTest = (int) (DB::table('personal_access_tokens')->max('id') ?? 0);
+    }
+
+    protected function tearDown(): void
+    {
+        // Safe and isolated cleanup: only delete tokens created during this test execution
+        DB::table('personal_access_tokens')
+            ->where('id', '>', $this->maxTokenIdBeforeTest)
+            ->delete();
+
+        // Safety cleanup for any registration test user created during the test
+        User::where('email', 'like', 'warga_%@example.com')->delete();
+
+        parent::tearDown();
     }
 
     /**
@@ -82,28 +99,37 @@ class AuthApiTest extends TestCase
     {
         $uniqueEmail = 'warga_' . uniqid() . '@example.com';
 
-        $response = $this->postJson('/api/v1/auth/register', [
-            'name' => 'Warga Baru',
-            'email' => $uniqueEmail,
-            'password' => 'Password123!',
-            'role' => 'admin', // Attack attempt to escalate privilege
-        ]);
-
-        $response->assertStatus(201)
-            ->assertJson([
-                'success' => true,
-                'data' => [
-                    'user' => [
-                        'name' => 'Warga Baru',
-                        'email' => $uniqueEmail,
-                        'role' => User::ROLE_USER,
-                    ],
-                ],
+        try {
+            $response = $this->postJson('/api/v1/auth/register', [
+                'name' => 'Warga Baru',
+                'email' => $uniqueEmail,
+                'password' => 'Password123!',
+                'role' => 'admin', // Attack attempt to escalate privilege
             ]);
 
-        $user = User::where('email', $uniqueEmail)->first();
-        $this->assertNotNull($user);
-        $this->assertEquals(User::ROLE_USER, $user->role);
+            $response->assertStatus(201)
+                ->assertJson([
+                    'success' => true,
+                    'data' => [
+                        'user' => [
+                            'name' => 'Warga Baru',
+                            'email' => $uniqueEmail,
+                            'role' => User::ROLE_USER,
+                        ],
+                    ],
+                ]);
+
+            $user = User::where('email', $uniqueEmail)->first();
+            $this->assertNotNull($user);
+            $this->assertEquals(User::ROLE_USER, $user->role);
+        } finally {
+            // Guaranteed self-cleaning test: delete created test user and tokens even if assertion fails
+            $createdUser = User::where('email', $uniqueEmail)->first();
+            if ($createdUser) {
+                $createdUser->tokens()->delete();
+                $createdUser->delete();
+            }
+        }
     }
 
     /**

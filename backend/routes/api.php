@@ -83,6 +83,7 @@ Route::prefix('public')->group(function () {
     Route::get('/events/{id}', [PublicController::class, 'eventDetail'])->name('api.public.events.detail');
     Route::get('/map/features', [PublicController::class, 'mapFeatures'])->name('api.public.map.features');
     Route::get('/alerts', [PublicController::class, 'alerts'])->name('api.public.alerts');
+    Route::get('/alerts/{id}', [PublicController::class, 'alertDetail'])->name('api.public.alerts.detail');
     Route::get('/hazard-types', [PublicController::class, 'hazardTypes'])->name('api.public.hazard-types');
     Route::get('/regions', [PublicController::class, 'regions'])->name('api.public.regions');
     Route::get('/education', [PublicController::class, 'education'])->name('api.public.education');
