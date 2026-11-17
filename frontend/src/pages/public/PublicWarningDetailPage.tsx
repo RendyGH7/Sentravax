@@ -554,12 +554,12 @@ export const PublicWarningDetailPage: React.FC = () => {
                   </div>
 
                   <p className="text-sm font-bold text-[#111827]">
-                    {alertDetail.issuer.is_verified ? alertDetail.issuer.name : 'Penerbit tidak terverifikasi'}
+                    {alertDetail.issuer.name || 'Penerbit tidak terverifikasi'}
                   </p>
 
                   <p className="text-[11px] text-[#6B7280] leading-relaxed">
                     {alertDetail.issuer.verification_basis ||
-                      'Informasi penerbit dicatat sebagaimana adanya pada diseminasi peringatan dini.'}
+                      'Tidak terdapat data dasar verifikasi penerbit pada sistem.'}
                   </p>
                 </div>
 
@@ -661,14 +661,19 @@ export const PublicWarningDetailPage: React.FC = () => {
           {/* RIGHT COLUMN: ACTIONABLE PREPAREDNESS & HOTLINES */}
           {/* ======================================================== */}
           <div className="space-y-6">
-            {/* 1. ACTIONABLE PREPAREDNESS INSTRUCTIONS */}
+            {/* 1. ACTIONABLE PREPAREDNESS GUIDANCE */}
             <section className="bg-white border border-[#E5E7EB] rounded-2xl p-6 shadow-xs space-y-4">
-              <div className="flex items-center gap-2 text-[#111827]">
-                <BookOpen className="w-5 h-5 text-amber-600" />
-                <h3 className="font-bold text-base">Instruksi & Tindakan Kesiapsiagaan</h3>
+              <div className="flex items-center justify-between flex-wrap gap-2">
+                <div className="flex items-center gap-2 text-[#111827]">
+                  <BookOpen className="w-5 h-5 text-amber-600" />
+                  <h3 className="font-bold text-base">Panduan Kesiapsiagaan Mandiri</h3>
+                </div>
+                <span className="px-2 py-0.5 rounded text-[10px] font-bold bg-amber-100 text-amber-800 border border-amber-200">
+                  Panduan Edukasi Umum
+                </span>
               </div>
               <p className="text-xs text-[#4B5563] leading-relaxed">
-                Langkah perlindungan diri yang disarankan bagi masyarakat di wilayah terdampak peringatan ini:
+                Langkah mitigasi perlindungan diri mandiri yang umum dianjurkan. Panduan ini merupakan edukasi kesiapsiagaan umum dan tidak menggantikan arahan langsung dari petugas di lapangan:
               </p>
 
               <div className="space-y-3">
@@ -678,7 +683,7 @@ export const PublicWarningDetailPage: React.FC = () => {
                   </span>
                   <div className="text-xs text-[#1F2937] space-y-0.5">
                     <p className="font-bold">Tingkatkan Kewaspadaan</p>
-                    <p className="text-[#4B5563]">Pantau saluran radio, televisi, dan kanal peringatan resmi secara berkala.</p>
+                    <p className="text-[#4B5563]">Pantau saluran radio, televisi, dan kanal pengumuman resmi instansi setempat secara berkala.</p>
                   </div>
                 </div>
 
@@ -688,7 +693,7 @@ export const PublicWarningDetailPage: React.FC = () => {
                   </span>
                   <div className="text-xs text-[#1F2937] space-y-0.5">
                     <p className="font-bold">Amankan Dokumen & Aset</p>
-                    <p className="text-[#4B5563]">Pindahkan dokumen penting dan peralatan elektronik ke lokasi yang lebih aman dan tinggi.</p>
+                    <p className="text-[#4B5563]">Simpan dokumen penting di wadah kedap air dan tempatkan peralatan berharga di posisi yang aman.</p>
                   </div>
                 </div>
 
@@ -707,8 +712,8 @@ export const PublicWarningDetailPage: React.FC = () => {
                     4
                   </span>
                   <div className="text-xs text-[#1F2937] space-y-0.5">
-                    <p className="font-bold">Ikuti Arahan Evakuasi</p>
-                    <p className="text-[#4B5563]">Bila petugas BPBD atau otoritas setempat menginstruksikan evakuasi, segera menuju titik kumpul aman.</p>
+                    <p className="font-bold">Ikuti Arahan Petugas Lapangan</p>
+                    <p className="text-[#4B5563]">Bila aparat BPBD atau perangkat desa/kelurahan setempat menginstruksikan evakuasi, segera menuju titik kumpul aman.</p>
                   </div>
                 </div>
               </div>
@@ -720,8 +725,8 @@ export const PublicWarningDetailPage: React.FC = () => {
                 <PhoneCall className="w-5 h-5 text-rose-600" />
                 <h3 className="font-bold text-sm">Nomor Kontak Darurat Nasional</h3>
               </div>
-              <p className="text-xs text-rose-700">
-                Akses cepat ke kontak layanan darurat instansi pemerintah di Indonesia:
+              <p className="text-xs text-rose-700 leading-relaxed">
+                Akses cepat ke kontak layanan darurat instansi berwenang di Indonesia:
               </p>
 
               <div className="grid grid-cols-2 gap-2 pt-1 text-xs font-bold">
@@ -729,22 +734,25 @@ export const PublicWarningDetailPage: React.FC = () => {
                   href="tel:112"
                   className="bg-white p-2.5 rounded-xl border border-rose-200 text-center hover:bg-rose-100 transition-colors text-rose-900 block"
                 >
-                  <p className="text-[10px] text-rose-600 font-semibold">Panggilan Darurat</p>
+                  <p className="text-[10px] text-rose-600 font-semibold">Panggilan Darurat Terpadu</p>
                   <p className="text-base font-extrabold">112</p>
+                  <p className="text-[9px] text-[#6B7280] font-normal mt-0.5">Pemda Penyelenggara</p>
                 </a>
                 <a
                   href="tel:115"
                   className="bg-white p-2.5 rounded-xl border border-rose-200 text-center hover:bg-rose-100 transition-colors text-rose-900 block"
                 >
-                  <p className="text-[10px] text-rose-600 font-semibold">BASARNAS (SAR)</p>
+                  <p className="text-[10px] text-rose-600 font-semibold">BASARNAS</p>
                   <p className="text-base font-extrabold">115</p>
+                  <p className="text-[9px] text-[#6B7280] font-normal mt-0.5">Pencarian & Pertolongan</p>
                 </a>
                 <a
                   href="tel:119"
                   className="bg-white p-2.5 rounded-xl border border-rose-200 text-center hover:bg-rose-100 transition-colors text-rose-900 block"
                 >
-                  <p className="text-[10px] text-rose-600 font-semibold">Kemenkes / Medis</p>
+                  <p className="text-[10px] text-rose-600 font-semibold">PSC Darurat Medis</p>
                   <p className="text-base font-extrabold">119</p>
+                  <p className="text-[9px] text-[#6B7280] font-normal mt-0.5">Layanan Kesehatan</p>
                 </a>
                 <a
                   href="tel:117"
@@ -752,8 +760,13 @@ export const PublicWarningDetailPage: React.FC = () => {
                 >
                   <p className="text-[10px] text-rose-600 font-semibold">Pusdalops BNPB</p>
                   <p className="text-base font-extrabold">117</p>
+                  <p className="text-[9px] text-[#6B7280] font-normal mt-0.5">Call Center Penanggulangan</p>
                 </a>
               </div>
+
+              <p className="text-[11px] text-rose-700 leading-relaxed pt-1 border-t border-rose-200/60">
+                <span className="font-semibold">Catatan Layanan:</span> Panggilan nomor 112 diselenggarakan secara bertahap oleh pemerintah daerah kabupaten/kota terkait. Ketersediaan layanan darurat bergantung pada kesiapan implementasi pemda dan cakupan operator telekomunikasi di wilayah setempat.
+              </p>
             </section>
 
             {/* 3. RELATED PLATFORM LINKS */}

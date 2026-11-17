@@ -56,13 +56,13 @@ async function runStep3TestSuite() {
     assert('Page H1 Title', titleText?.includes('Pusat Peringatan Dini Kebencanaan'), titleText);
 
     const bodyText = await page.$eval('body', (el) => el.innerText);
-    assert('Telemetry Banner', bodyText.includes('PUSAT PERINGATAN DINI RESMI (CAP STANDARD)'));
+    assert('Telemetry Banner', bodyText.includes('PUSAT INFORMASI PERINGATAN DINI PUBLIK'));
 
     // Metric chips check
     assert('Metric Total Peringatan', bodyText.includes('Peringatan Terdata'));
     assert('Metric Cakupan Siaran', bodyText.includes('Cakupan Siaran'));
-    assert('Metric Standar Protokol', bodyText.includes('Standar Protokol'));
-    assert('Metric Status Siaga', bodyText.includes('SIAGA 24/7'));
+    assert('Metric Status Peringatan', bodyText.includes('Status Peringatan'));
+    assert('Metric Sumber Pembaruan', bodyText.includes('Sinkronisasi Berkala'));
 
     // Urgent Callout Banner
     assert('Urgent Warning Callout', bodyText.toUpperCase().includes('PERINGATAN UTAMA'));
@@ -209,14 +209,16 @@ async function runStep3TestSuite() {
     assert('Broadcast Center Map Rendered', !!miniMap);
 
     // Preparedness Actions & Hotlines
-    assert('Actionable Preparedness Section', detail1Body.includes('Instruksi & Tindakan Kesiapsiagaan'));
+    assert('Actionable Preparedness Section', detail1Body.includes('Panduan Kesiapsiagaan Mandiri'));
+    assert('Preparedness Educational Disclaimer', detail1Body.includes('Panduan Edukasi Umum'));
     assert('Action 1 Tingkatkan Kewaspadaan', detail1Body.includes('Tingkatkan Kewaspadaan'));
     assert('Action 3 Tas Siaga Bencana', detail1Body.includes('Tas Siaga Bencana'));
     assert('Emergency Hotlines Section', detail1Body.includes('Nomor Kontak Darurat Nasional'));
-    assert('Hotline 112', detail1Body.includes('112'));
-    assert('Hotline 115', detail1Body.includes('115'));
-    assert('Hotline 119', detail1Body.includes('119'));
-    assert('Hotline 117', detail1Body.includes('117'));
+    assert('Hotline 112 Pemda', detail1Body.includes('112') && detail1Body.includes('Pemda Penyelenggara'));
+    assert('Hotline 115 BASARNAS', detail1Body.includes('115') && detail1Body.includes('BASARNAS'));
+    assert('Hotline 119 PSC Darurat Medis', detail1Body.includes('119') && detail1Body.includes('PSC Darurat Medis'));
+    assert('Hotline 117 Pusdalops BNPB', detail1Body.includes('117') && detail1Body.includes('Pusdalops BNPB'));
+    assert('112 Regional Dissemination Note', detail1Body.includes('pemerintah daerah kabupaten/kota'));
 
     // -------------------------------------------------------------
     // TEST 4: ALERT DETAIL PAGE — ALERT #2 (/warnings/2)

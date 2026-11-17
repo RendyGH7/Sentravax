@@ -95,7 +95,9 @@ export const PublicLayout: React.FC = () => {
           <nav className="hidden lg:flex items-center gap-1">
             {navLinks.map((link) => {
               const Icon = link.icon;
-              const isActive = location.pathname === link.path;
+              const isActive =
+                location.pathname === link.path ||
+                (link.path !== '/' && location.pathname.startsWith(link.path + '/'));
               return (
                 <Link
                   key={link.path}
@@ -175,7 +177,9 @@ export const PublicLayout: React.FC = () => {
           <div className="lg:hidden bg-[#FFFFFF] border-b border-[#E5E7EB] px-4 pt-2 pb-4 space-y-1">
             {navLinks.map((link) => {
               const Icon = link.icon;
-              const isActive = location.pathname === link.path;
+              const isActive =
+                location.pathname === link.path ||
+                (link.path !== '/' && location.pathname.startsWith(link.path + '/'));
               return (
                 <Link
                   key={link.path}

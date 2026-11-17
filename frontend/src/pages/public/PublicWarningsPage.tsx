@@ -376,14 +376,14 @@ export const PublicWarningsPage: React.FC = () => {
           <div className="flex flex-col md:flex-row md:items-end justify-between gap-6">
             <div className="space-y-3 max-w-3xl">
               <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-amber-100 text-amber-900 text-xs font-bold border border-amber-200">
-                <span className="w-2 h-2 rounded-full bg-rose-500 animate-pulse" />
-                <span>PUSAT PERINGATAN DINI RESMI (CAP STANDARD)</span>
+                <span className="w-2 h-2 rounded-full bg-amber-600" />
+                <span>PUSAT INFORMASI PERINGATAN DINI PUBLIK</span>
               </div>
               <h1 className="text-2xl sm:text-3xl lg:text-4xl font-extrabold tracking-tight text-[#111827]">
                 Pusat Peringatan Dini Kebencanaan
               </h1>
               <p className="text-sm sm:text-base text-[#4B5563] leading-relaxed">
-                Pemberitahuan peringatan resmi dan advisori dini berstandar protokol diseminasi CAP untuk memitigasi dampak bahaya dan melindungi keselamatan warga di seluruh kawasan rawan bencana.
+                Agregasi peringatan dini resmi dan advisori kewaspadaan bahaya kebencanaan untuk membantu masyarakat mempersiapkan langkah antisipasi dan keselamatan.
               </p>
             </div>
 
@@ -406,7 +406,7 @@ export const PublicWarningsPage: React.FC = () => {
             </div>
           </div>
 
-          {/* Quick Metrics Bar */}
+          {/* Quick Metrics Bar (Truthful Data Transparency) */}
           <div className="mt-8 grid grid-cols-2 sm:grid-cols-4 gap-3 sm:gap-4">
             <div className="bg-white/90 backdrop-blur-xs p-3.5 sm:p-4 rounded-2xl border border-[#E5E7EB] shadow-xs flex items-center gap-3">
               <div className="w-10 h-10 rounded-xl bg-rose-50 text-rose-700 flex items-center justify-center font-bold">
@@ -433,8 +433,10 @@ export const PublicWarningsPage: React.FC = () => {
                 <ShieldAlert className="w-5 h-5" />
               </div>
               <div>
-                <p className="text-[11px] font-semibold text-[#6B7280]">Standar Protokol</p>
-                <p className="text-sm sm:text-base font-extrabold text-[#111827]">CAP Otoritatif</p>
+                <p className="text-[11px] font-semibold text-[#6B7280]">Status Peringatan</p>
+                <p className="text-sm sm:text-base font-extrabold text-[#111827]">
+                  {alerts.filter((a) => a.is_active || a.status === 'active').length} Peringatan Aktif
+                </p>
               </div>
             </div>
 
@@ -443,8 +445,8 @@ export const PublicWarningsPage: React.FC = () => {
                 <CheckCircle2 className="w-5 h-5 text-emerald-600" />
               </div>
               <div>
-                <p className="text-[11px] font-semibold text-[#6B7280]">Status Jaringan</p>
-                <p className="text-xs sm:text-sm font-extrabold text-emerald-700">SIAGA 24/7</p>
+                <p className="text-[11px] font-semibold text-[#6B7280]">Sumber Pembaruan</p>
+                <p className="text-xs sm:text-sm font-extrabold text-emerald-700">Sinkronisasi Berkala</p>
               </div>
             </div>
           </div>
@@ -865,8 +867,8 @@ export const PublicWarningsPage: React.FC = () => {
 
                         {/* Issuer Info (Strict Semantic Truthfulness) */}
                         <div className="pt-1 text-[11px] flex items-center justify-between gap-2 border-t border-[#F3F4F6]">
-                          <span className="text-[#6B7280] truncate max-w-[170px]">
-                            {alt.issuer?.is_verified ? alt.issuer.name : 'Penerbit tidak terverifikasi'}
+                          <span className="text-[#6B7280] truncate max-w-[170px]" title={alt.issuer?.name || 'Penerbit tidak terverifikasi'}>
+                            {alt.issuer?.name || 'Penerbit tidak terverifikasi'}
                           </span>
 
                           <span

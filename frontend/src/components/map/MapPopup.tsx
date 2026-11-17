@@ -169,14 +169,21 @@ export function createMapPopupHtml(feature: GeoJsonPointFeature, theme: UITheme 
         </div>
 
         <!-- Footer Action -->
-        <div style="margin-top: 2px; display: flex; justify-content: flex-end;">
+        <div style="margin-top: 4px; display: flex; flex-direction: column; gap: 4px;">
+          <a 
+            href="/disasters/${safeEventId}" 
+            class="sentravax-popup-detail-link"
+            style="display: block; text-align: center; width: 100%; padding: 6px 10px; border-radius: 8px; font-size: 11px; font-weight: 700; text-decoration: none; border: 1px solid #047857; background-color: #047857; color: #FFFFFF; transition: opacity 150ms;"
+          >
+            Buka Detail Kejadian &rarr;
+          </a>
           <button 
             type="button" 
             data-event-id="${safeEventId}" 
             class="sentravax-popup-action-btn"
-            style="width: 100%; padding: 7px 12px; border-radius: 8px; font-size: 11px; font-weight: 700; cursor: pointer; border: 1px solid ${isDark ? '#3D3D3D' : '#D1D5DB'}; background-color: ${isDark ? '#2B2B2B' : '#FFFFFF'}; color: ${textColor}; transition: background 150ms;"
+            style="width: 100%; padding: 5px 10px; border-radius: 8px; font-size: 10.5px; font-weight: 600; cursor: pointer; border: 1px solid ${isDark ? '#3D3D3D' : '#D1D5DB'}; background-color: ${isDark ? '#2B2B2B' : '#FFFFFF'}; color: ${textColor}; transition: background 150ms;"
           >
-            Pusatkan & Telusuri Kejadian
+            Pusatkan Peta ke Lokasi
           </button>
         </div>
       </div>
