@@ -270,7 +270,7 @@ export const IntelligenceRiskAnalysisPage: React.FC = () => {
             <span className="font-mono uppercase text-[#F59E0B] font-bold tracking-wide">
               MESIN ANALISIS RISIKO MULTI-HAZARD
             </span>
-            <span className="text-[#8A8A8A] font-mono">| PostGIS Geography (Buffer 25 km & Pilot 45 km)</span>
+            <span className="text-[#8A8A8A] font-mono">| PostGIS Geography (Pencarian 25 km | Asosiasi Pilot 45 km)</span>
             <span className="px-2 py-0.5 rounded text-[10px] font-mono bg-[#212121] text-[#D4D4D4] border border-[#2C2C2C]">
               v1.0-deterministic-spatial
             </span>
@@ -292,13 +292,13 @@ export const IntelligenceRiskAnalysisPage: React.FC = () => {
                 const updatedList = await intelligenceService.getRiskAssessments();
                 setAssessments(updatedList);
                 if (updatedList.length > 0) setActiveAssessment(updatedList[0]);
-                toast.success('Data penilaian risiko berhasil disegarkan.');
+                toast.success('Data penilaian risiko regional terkini berhasil disegarkan.');
               } finally {
                 setIsLoading(false);
               }
             }}
             className="inline-flex items-center gap-2 px-4 py-2.5 rounded-xl bg-[#212121] hover:bg-[#2B2B2B] text-[#D4D4D4] hover:text-[#FFFFFF] border border-[#2C2C2C] text-xs font-semibold transition-colors"
-            aria-label="Segarkan data riwayat evaluasi"
+            aria-label="Segarkan data penilaian risiko regional terkini"
           >
             <RefreshCw className="w-4 h-4" />
             <span>Segarkan</span>
@@ -390,7 +390,7 @@ export const IntelligenceRiskAnalysisPage: React.FC = () => {
 
         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pt-2">
           <p className="text-[11px] text-[#8A8A8A] leading-relaxed">
-            Evaluasi mengalkulasi ancaman dalam radius 25 km dari titik acuan regional terpilih serta status peringatan aktif.
+            Evaluasi mengalkulasi ancaman dalam radius pencarian geospasial 25 km dari titik acuan regional terpilih, status peringatan aktif, serta kerentanan dasar.
           </p>
 
           <button
@@ -451,9 +451,15 @@ export const IntelligenceRiskAnalysisPage: React.FC = () => {
                   </span>
                   <span className="text-sm font-mono text-[#8A8A8A]">/ 100</span>
                 </div>
-                <p className="text-[11px] text-[#A3A3A3]">
-                  Skor deterministik berbasis agregasi faktor PostGIS.
-                </p>
+                {activeAssessment.risk_level === 'insufficient_data' ? (
+                  <p className="text-[11px] text-amber-400 font-medium">
+                    ⚠️ Status data belum mencukupi untuk penetapan level risiko definitif.
+                  </p>
+                ) : (
+                  <p className="text-[11px] text-[#A3A3A3]">
+                    Skor deterministik berbasis agregasi faktor PostGIS.
+                  </p>
+                )}
               </div>
 
               {/* Data Quality & Freshness */}
@@ -474,25 +480,25 @@ export const IntelligenceRiskAnalysisPage: React.FC = () => {
                 </p>
               </div>
 
-              {/* Impact Radius Buffer */}
+              {/* Direct Impact Buffer (Default Parameter) */}
               <div className="p-5 rounded-2xl bg-[#212121] border border-[#2C2C2C] space-y-2">
-                <span className="text-xs font-mono uppercase text-[#8A8A8A] font-semibold">Radius Dampak Analisis</span>
+                <span className="text-xs font-mono uppercase text-[#8A8A8A] font-semibold">Radius Zona Dampak Langsung (Default Buffer)</span>
                 <div className="text-2xl font-bold text-[#FFFFFF] font-mono">
                   {activeAssessment.impact_radius_meters?.toLocaleString('id-ID')} m
                 </div>
                 <p className="text-[11px] text-[#A3A3A3]">
-                  Buffer spasial dampak kejadian langsung.
+                  Parameter buffer estimasi default sistem (2.000 m), bukan hasil pengukuran poligon insiden aktual real-time.
                 </p>
               </div>
 
-              {/* Affected Population */}
+              {/* Affected Population (Baseline Regional Estimate) */}
               <div className="p-5 rounded-2xl bg-[#212121] border border-[#2C2C2C] space-y-2">
-                <span className="text-xs font-mono uppercase text-[#8A8A8A] font-semibold">Estimasi Populasi Terpapar</span>
+                <span className="text-xs font-mono uppercase text-[#8A8A8A] font-semibold">Estimasi Populasi (Baseline Regional)</span>
                 <div className="text-2xl font-bold text-[#FFFFFF] font-mono">
                   {activeAssessment.affected_population_estimate?.toLocaleString('id-ID')} Jiwa
                 </div>
                 <p className="text-[11px] text-[#A3A3A3]">
-                  Proyeksi demografi spasial per mesh regional.
+                  Estimasi agregat demografi regional default/baseline, bukan hasil sensus atau survei spasial presisi real-time.
                 </p>
               </div>
             </div>
@@ -679,10 +685,10 @@ export const IntelligenceRiskAnalysisPage: React.FC = () => {
         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 border-b border-[#2C2C2C] pb-4">
           <div>
             <h3 className="text-base font-bold text-[#FFFFFF]">
-              Perbandingan Risiko Antarwilayah (Wilayah Pilot Terkalibrasi)
+              Penilaian Risiko Regional Terkini (Latest Regional Assessments)
             </h3>
             <p className="text-xs text-[#8A8A8A]">
-              Menampilkan riwayat penilaian yang telah dievaluasi oleh Risk Engine pada database aktual.
+              Menampilkan hasil penilaian risiko terbaru yang telah dievaluasi oleh Risk Engine untuk setiap wilayah pilot dan jenis bahaya (bukan log time-series historis lengkap).
             </p>
           </div>
 

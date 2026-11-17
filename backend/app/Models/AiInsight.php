@@ -23,6 +23,10 @@ class AiInsight extends Model
         'evidence',
     ];
 
+    protected $appends = [
+        'confidence_level',
+    ];
+
     protected function casts(): array
     {
         return [
@@ -30,6 +34,11 @@ class AiInsight extends Model
             'confidence_score' => 'decimal:3',
             'evidence' => 'array',
         ];
+    }
+
+    public function getConfidenceLevelAttribute(): string
+    {
+        return $this->evidence['confidence_level'] ?? ($this->confidence_score >= 0.85 ? 'HIGH' : ($this->confidence_score >= 0.60 ? 'MEDIUM' : 'LOW'));
     }
 
     public function region(): BelongsTo

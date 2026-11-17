@@ -53,9 +53,9 @@ async function run() {
     );
 
     // -------------------------------------------------------------
-    // TEST 2: Authenticate as Intelligence Analyst
+    // TEST 2: Authenticate as Intelligence Officer (role: intelligence)
     // -------------------------------------------------------------
-    console.log('\n--- 2. Authenticating as Intelligence Analyst ---');
+    console.log('\n--- 2. Authenticating as Intelligence Officer (role: intelligence) ---');
     await page.goto(`${BASE_URL}/login`, { waitUntil: 'networkidle0' });
 
     // Click Intelijen preset button
@@ -83,7 +83,7 @@ async function run() {
     const workspaceUrl = page.url();
     assert(
       workspaceUrl.includes('/intelligence-center/risk-analysis'),
-      'Analyst successfully navigated to /intelligence-center/risk-analysis',
+      'Intelligence Officer (role: intelligence) successfully navigated to /intelligence-center/risk-analysis',
       `URL: ${workspaceUrl}`
     );
 
@@ -131,8 +131,8 @@ async function run() {
     // TEST 5: Interactive Risk Evaluation Execution
     // -------------------------------------------------------------
     console.log('\n--- 5. Executing Risk Evaluation via API ---');
-    // Type custom title
-    await page.type('#risk-title', 'Evaluasi Kesiapsiagaan Ciliwung Automated Test');
+    // Type realistic operational title
+    await page.type('#risk-title', 'Penilaian Risiko Banjir dan Genangan Banten');
 
     // Click submit evaluation
     const evalBtn = await page.$('button[type="submit"]');
@@ -153,6 +153,14 @@ async function run() {
       assert(
         updatedUpper.includes('SKOR RISIKO TERHITUNG') && updatedText.includes('/ 100'),
         'Calculated risk score display is rendered'
+      );
+      assert(
+        updatedUpper.includes('RADIUS ZONA DAMPAK LANGSUNG') && updatedUpper.includes('DEFAULT BUFFER'),
+        'Direct impact zone radius label is accurately distinguished from search radius and marked as default buffer'
+      );
+      assert(
+        updatedUpper.includes('ESTIMASI POPULASI (BASELINE REGIONAL)'),
+        'Population estimate is honestly declared as baseline regional demographic estimate'
       );
       assert(
         updatedText.includes('Integritas Skor & Penjelasan Metodologi:'),
@@ -189,7 +197,7 @@ async function run() {
     // -------------------------------------------------------------
     console.log('\n--- 7. Verifying Regional Risk Comparison Table ---');
     assert(
-      factorText.includes('Perbandingan Risiko Antarwilayah'),
+      factorText.includes('Penilaian Risiko Regional Terkini'),
       'Regional comparison table header is rendered'
     );
 

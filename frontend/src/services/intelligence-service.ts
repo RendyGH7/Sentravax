@@ -21,6 +21,9 @@ import type {
 } from '../types/intelligence';
 
 export interface ReportsQueueParams {
+  status?: 'all' | 'pending' | 'investigating' | 'verified' | 'rejected' | string;
+  region_id?: number;
+  hazard_type_id?: number;
   cluster_id?: string;
   page?: number;
   per_page?: number;
@@ -125,6 +128,15 @@ export const intelligenceService = {
   // ==========================================
 
   /**
+   * Retrieve list of generated proactive intelligence insights.
+   * Endpoint: GET /api/v1/intel/insights
+   */
+  async getInsights(params?: { region_id?: number; hazard_type_id?: number; insight_type?: string; limit?: number }): Promise<ProactiveAiInsightItem[]> {
+    const res = await apiClient.get<ApiResponse<ProactiveAiInsightItem[]>>('/intel/insights', { params });
+    return res.data.data;
+  },
+
+  /**
    * Generate transparent proactive intelligence insight with evidence attribution.
    * Endpoint: POST /api/v1/intel/insights/generate
    */
@@ -138,12 +150,15 @@ export const intelligenceService = {
   // ==========================================
 
   /**
-   * Retrieve triage queue of unverified community reports with spatiotemporal duplicate tags.
+   * Retrieve triage queue of community reports with spatiotemporal duplicate tags.
    * Endpoint: GET /api/v1/intel/reports/queue
    */
   async getReportsQueue(params?: ReportsQueueParams): Promise<PaginatedData<CommunityReportQueueItem>> {
     const res = await apiClient.get<ApiResponse<CommunityReportQueueItem[]>>('/intel/reports/queue', {
       params: {
+        status: params?.status,
+        region_id: params?.region_id,
+        hazard_type_id: params?.hazard_type_id,
         cluster_id: params?.cluster_id,
         page: params?.page,
         per_page: params?.per_page ?? 20,
@@ -168,7 +183,16 @@ export const intelligenceService = {
   },
 
   /**
-   * Verify or reject community report from intelligence triage desk.
+   * Retrieve single community report detail with audit trail and triage metadata.
+   * Endpoint: GET /api/v1/intel/reports/{id}
+   */
+  async getReportDetail(id: number): Promise<CommunityReportQueueItem> {
+    const res = await apiClient.get<ApiResponse<CommunityReportQueueItem>>(`/intel/reports/${id}`);
+    return res.data.data;
+  },
+
+  /**
+   * Verify, investigate, or reject community report from intelligence triage desk.
    * Endpoint: POST /api/v1/intel/reports/{id}/verify
    */
   async verifyReport(id: number, payload: ReportVerificationPayload): Promise<CommunityReportQueueItem> {

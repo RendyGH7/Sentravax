@@ -207,10 +207,12 @@ Route::prefix('intel')->middleware(['auth:sanctum', 'role:intelligence'])->group
     // Multi-Hazard Risk Engine & Proactive AI Insights
     Route::get('/risk/assessments', [IntelligenceCenterController::class, 'listAssessments'])->name('api.intel.risk.assessments');
     Route::post('/risk/evaluate', [IntelligenceCenterController::class, 'evaluateRisk'])->name('api.intel.risk.evaluate');
+    Route::get('/insights', [IntelligenceCenterController::class, 'listInsights'])->name('api.intel.insights.list');
     Route::post('/insights/generate', [IntelligenceCenterController::class, 'generateInsight'])->name('api.intel.insights.generate');
 
     // Intelligence Verification Queue & CAP Alert Dissemination
     Route::get('/reports/queue', [IntelligenceCenterController::class, 'reportsQueue'])->name('api.intel.reports.queue');
+    Route::get('/reports/{id}', [IntelligenceCenterController::class, 'showReport'])->name('api.intel.reports.show');
     Route::post('/reports/{id}/verify', [IntelligenceCenterController::class, 'verifyReport'])->name('api.intel.reports.verify');
     Route::post('/alerts/dispatch', [IntelligenceCenterController::class, 'dispatchAlert'])->name('api.intel.alerts.dispatch');
 });

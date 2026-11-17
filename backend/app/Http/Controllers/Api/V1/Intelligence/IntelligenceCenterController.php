@@ -186,26 +186,34 @@ class IntelligenceCenterController extends Controller
     }
 
     /**
-     * List historical multi-hazard risk assessments evaluated by the Risk Engine.
+     * List latest regional multi-hazard risk assessments evaluated by the Risk Engine.
      */
     public function listAssessments(Request $request): JsonResponse
     {
+        $validated = $request->validate([
+            'region_id' => ['nullable', 'integer', 'exists:regions,id'],
+            'hazard_type_id' => ['nullable', 'integer', 'exists:hazard_types,id'],
+            'limit' => ['nullable', 'integer', 'min:1', 'max:100'],
+        ]);
+
+        $limit = min(100, max(1, $request->integer('limit', 50)));
+
         $query = RiskAssessment::with(['region:id,code,name,level', 'hazardType:id,slug,name,icon'])
             ->latest('assessed_at');
 
-        if ($request->filled('region_id')) {
-            $query->where('region_id', $request->integer('region_id'));
+        if (!empty($validated['region_id'])) {
+            $query->where('region_id', $validated['region_id']);
         }
 
-        if ($request->filled('hazard_type_id')) {
-            $query->where('hazard_type_id', $request->integer('hazard_type_id'));
+        if (!empty($validated['hazard_type_id'])) {
+            $query->where('hazard_type_id', $validated['hazard_type_id']);
         }
 
-        $assessments = $query->get();
+        $assessments = $query->limit($limit)->get();
 
         return response()->json([
             'success' => true,
-            'message' => 'Daftar riwayat penilaian risiko wilayah berhasil dimuat.',
+            'message' => 'Daftar penilaian risiko regional terkini berhasil dimuat.',
             'data' => $assessments,
         ]);
     }
@@ -235,6 +243,47 @@ class IntelligenceCenterController extends Controller
     }
 
     /**
+     * List generated proactive intelligence insights.
+     */
+    public function listInsights(Request $request): JsonResponse
+    {
+        $validated = $request->validate([
+            'region_id' => ['nullable', 'integer', 'exists:regions,id'],
+            'hazard_type_id' => ['nullable', 'integer', 'exists:hazard_types,id'],
+            'insight_type' => ['nullable', 'string'],
+            'limit' => ['nullable', 'integer', 'min:1', 'max:100'],
+        ]);
+
+        $limit = min(100, max(1, $request->integer('limit', 50)));
+
+        $query = AiInsight::with([
+            'region:id,code,name,level',
+            'hazardType:id,slug,name,icon',
+            'riskAssessment:id,risk_score,risk_level,assessed_at',
+        ])->latest();
+
+        if (!empty($validated['region_id'])) {
+            $query->where('region_id', $validated['region_id']);
+        }
+
+        if (!empty($validated['hazard_type_id'])) {
+            $query->where('hazard_type_id', $validated['hazard_type_id']);
+        }
+
+        if (!empty($validated['insight_type'])) {
+            $query->where('insight_type', $validated['insight_type']);
+        }
+
+        $insights = $query->limit($limit)->get();
+
+        return response()->json([
+            'success' => true,
+            'message' => 'Daftar AI Proactive Insights berhasil dimuat.',
+            'data' => $insights,
+        ]);
+    }
+
+    /**
      * Generate deterministic proactive intelligence insight with transparent explanation.
      */
     public function generateInsight(Request $request): JsonResponse
@@ -259,10 +308,18 @@ class IntelligenceCenterController extends Controller
     }
 
     /**
-     * Queue of unverified reports for intelligence analysis, with duplicate cluster tagging.
+     * Queue of reports for intelligence triage & verification, with duplicate cluster tagging and prioritization.
      */
     public function reportsQueue(Request $request): JsonResponse
     {
+        $validated = $request->validate([
+            'status' => ['nullable', 'string', 'in:all,pending,investigating,verified,rejected'],
+            'region_id' => ['nullable', 'integer', 'exists:regions,id'],
+            'hazard_type_id' => ['nullable', 'integer', 'exists:hazard_types,id'],
+            'cluster_id' => ['nullable', 'string'],
+            'per_page' => ['nullable', 'integer', 'min:1', 'max:100'],
+        ]);
+
         $query = CommunityReport::query()
             ->select([
                 'id',
@@ -274,23 +331,55 @@ class IntelligenceCenterController extends Controller
                 'photo_path',
                 'status',
                 'cluster_id',
+                'moderation_notes',
+                'verified_by',
+                'verified_at',
                 'created_at',
                 DB::raw('ST_Y(location) as latitude'),
                 DB::raw('ST_X(location) as longitude'),
             ])
-            ->where('status', 'pending')
-            ->with(['hazardType:id,slug,name,icon', 'region:id,code,name,level', 'user:id,name,email']);
+            ->with([
+                'hazardType:id,slug,name,icon',
+                'region:id,code,name,level',
+                'user:id,name',
+                'verifications.verifier:id,name,role',
+            ]);
 
-        if ($request->filled('cluster_id')) {
-            $query->where('cluster_id', $request->query('cluster_id'));
+        $status = $validated['status'] ?? 'pending';
+        if ($status !== 'all') {
+            $query->where('status', $status);
         }
 
-        $reports = $query->latest()->paginate($request->integer('per_page', 20));
+        if (!empty($validated['region_id'])) {
+            $query->where('region_id', $validated['region_id']);
+        }
+
+        if (!empty($validated['hazard_type_id'])) {
+            $query->where('hazard_type_id', $validated['hazard_type_id']);
+        }
+
+        if (!empty($validated['cluster_id'])) {
+            $query->where('cluster_id', $validated['cluster_id']);
+        }
+
+        $perPage = min(100, max(1, $request->integer('per_page', 20)));
+        $reports = $query->latest()->paginate($perPage);
+
+        // Enrich items with intelligent prioritization & duplicate triage analysis
+        $enrichedItems = collect($reports->items())->map(function ($report) {
+            $triage = $this->intelligenceService->calculateReportTriage($report);
+            $reportArray = $report->toArray();
+            $reportArray['priority_score'] = $triage['priority_score'];
+            $reportArray['priority_level'] = $triage['priority_level'];
+            $reportArray['priority_reasons'] = $triage['priority_reasons'];
+            $reportArray['duplicate_detection'] = $triage['duplicate_detection'];
+            return $reportArray;
+        });
 
         return response()->json([
             'success' => true,
             'message' => 'Antrean verifikasi intelijen berhasil dimuat.',
-            'data' => $reports->items(),
+            'data' => $enrichedItems,
             'meta' => [
                 'current_page' => $reports->currentPage(),
                 'last_page' => $reports->lastPage(),
@@ -301,7 +390,59 @@ class IntelligenceCenterController extends Controller
     }
 
     /**
-     * Verify or reject report from the Intelligence Center.
+     * Show single community report with full triage and audit trail.
+     */
+    public function showReport(int $id): JsonResponse
+    {
+        $report = CommunityReport::query()
+            ->select([
+                'id',
+                'user_id',
+                'hazard_type_id',
+                'region_id',
+                'title',
+                'description',
+                'photo_path',
+                'status',
+                'cluster_id',
+                'moderation_notes',
+                'verified_by',
+                'verified_at',
+                'created_at',
+                DB::raw('ST_Y(location) as latitude'),
+                DB::raw('ST_X(location) as longitude'),
+            ])
+            ->with([
+                'hazardType:id,slug,name,icon',
+                'region:id,code,name,level',
+                'user:id,name',
+                'verifications.verifier:id,name,role',
+            ])
+            ->find($id);
+
+        if (!$report) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Laporan bencana tidak ditemukan.',
+            ], 404);
+        }
+
+        $triage = $this->intelligenceService->calculateReportTriage($report);
+        $reportArray = $report->toArray();
+        $reportArray['priority_score'] = $triage['priority_score'];
+        $reportArray['priority_level'] = $triage['priority_level'];
+        $reportArray['priority_reasons'] = $triage['priority_reasons'];
+        $reportArray['duplicate_detection'] = $triage['duplicate_detection'];
+
+        return response()->json([
+            'success' => true,
+            'message' => 'Detail laporan verifikasi intelijen berhasil dimuat.',
+            'data' => $reportArray,
+        ]);
+    }
+
+    /**
+     * Verify, investigate, or reject report from the Intelligence Center with audit trail.
      */
     public function verifyReport(Request $request, int $id): JsonResponse
     {
@@ -315,33 +456,69 @@ class IntelligenceCenterController extends Controller
         }
 
         $validated = $request->validate([
-            'status' => ['required', 'string', Rule::in(['verified', 'rejected'])],
-            'notes' => ['nullable', 'string', 'max:1000'],
+            'status' => ['required', 'string', Rule::in(['investigating', 'verified', 'rejected'])],
+            'notes' => [
+                Rule::requiredIf(fn () => $request->input('status') === 'rejected'),
+                'nullable',
+                'string',
+                'max:1000',
+            ],
+        ], [
+            'notes.required' => 'Wajib mencantumkan catatan/alasan saat menolak laporan masyarakat.',
         ]);
 
         $intelUser = $request->user();
 
-        $previousStatus = $report->status;
+        return DB::transaction(function () use ($report, $validated, $intelUser, $request) {
+            $previousStatus = $report->status;
 
-        $report->status = $validated['status'];
-        $report->verified_by = $intelUser->id;
-        $report->verified_at = now();
-        $report->moderation_notes = $validated['notes'] ?? null;
-        $report->save();
+            $report->status = $validated['status'];
+            $report->verified_by = $intelUser->id;
+            $report->verified_at = now();
+            $report->moderation_notes = $validated['notes'] ?? null;
+            $report->save();
 
-        ReportVerification::create([
-            'community_report_id' => $report->id,
-            'verified_by' => $intelUser->id,
-            'previous_status' => $previousStatus,
-            'new_status' => $validated['status'],
-            'notes' => $validated['notes'] ?? null,
-        ]);
+            // Append-only audit record creation
+            ReportVerification::create([
+                'community_report_id' => $report->id,
+                'verified_by' => $intelUser->id,
+                'previous_status' => $previousStatus,
+                'new_status' => $validated['status'],
+                'notes' => $validated['notes'] ?? null,
+                'evidence_links' => [
+                    'action' => 'status_transition',
+                    'action_label' => match ($validated['status']) {
+                        'investigating' => 'Marked as Investigating',
+                        'verified' => 'Verified as Valid Disaster Event',
+                        'rejected' => 'Rejected / False Alarm',
+                        default => 'Status Update',
+                    },
+                    'actor_name' => $intelUser->name,
+                    'actor_role' => $intelUser->role,
+                    'ip_address' => $request->ip(),
+                ],
+            ]);
 
-        return response()->json([
-            'success' => true,
-            'message' => "Laporan #{$report->id} berhasil diverifikasi oleh Intelijen ({$report->status}).",
-            'data' => $report,
-        ]);
+            $report->load([
+                'hazardType:id,slug,name,icon',
+                'region:id,code,name,level',
+                'user:id,name',
+                'verifications.verifier:id,name,role',
+            ]);
+
+            $triage = $this->intelligenceService->calculateReportTriage($report);
+            $reportArray = $report->toArray();
+            $reportArray['priority_score'] = $triage['priority_score'];
+            $reportArray['priority_level'] = $triage['priority_level'];
+            $reportArray['priority_reasons'] = $triage['priority_reasons'];
+            $reportArray['duplicate_detection'] = $triage['duplicate_detection'];
+
+            return response()->json([
+                'success' => true,
+                'message' => "Laporan #{$report->id} berhasil diperbarui statusnya ({$report->status}).",
+                'data' => $reportArray,
+            ]);
+        });
     }
 
     /**

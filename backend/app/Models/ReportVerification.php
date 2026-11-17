@@ -23,6 +23,21 @@ class ReportVerification extends Model
         'evidence_links' => 'array',
     ];
 
+    /**
+     * The "booted" method of the model.
+     * Enforce append-only audit trail behavior: records can never be updated or deleted.
+     */
+    protected static function booted(): void
+    {
+        static::updating(function () {
+            throw new \RuntimeException('Audit trail records in report_verifications are append-only and cannot be modified.');
+        });
+
+        static::deleting(function () {
+            throw new \RuntimeException('Audit trail records in report_verifications are append-only and cannot be deleted.');
+        });
+    }
+
     public function communityReport(): BelongsTo
     {
         return $this->belongsTo(CommunityReport::class);

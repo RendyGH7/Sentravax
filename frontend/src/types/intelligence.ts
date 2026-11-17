@@ -1,6 +1,8 @@
 import type { HazardTypeItem, RegionItem } from './disaster';
 import type { DataSourceItem } from './admin';
 
+export type { HazardTypeItem, RegionItem, DataSourceItem };
+
 /**
  * Valid broadcast levels according to locked backend contract.
  * Strictly: local, regional, national.
@@ -89,14 +91,49 @@ export interface SimulationProjectionData {
 }
 
 /**
+ * Individual indicator contributing to AI Proactive Insight.
+ */
+export interface AiInsightIndicator {
+  name: string;
+  value: string | number;
+  unit?: string;
+}
+
+/**
+ * External or internal data source status attached to insight evidence.
+ */
+export interface AiInsightDataSourceInfo {
+  name: string;
+  type: string;
+  status: string;
+}
+
+/**
+ * Threat escalation evaluation data and triggers.
+ */
+export interface AiInsightThreatEscalation {
+  is_escalating: boolean;
+  level: 'CRITICAL' | 'ELEVATED' | 'INVESTIGATION_SIGNAL' | 'DATA_UNAVAILABLE' | 'STABLE';
+  triggers: string[];
+}
+
+/**
  * Audit and spatial evidence metadata attached to AI Proactive Insights.
  */
 export interface AiInsightEvidence {
   region_code?: string;
   hazard_slug?: string;
+  confidence_level?: 'HIGH' | 'MEDIUM' | 'LOW' | 'INSUFFICIENT_DATA';
+  confidence_basis?: string;
+  evidence_strength?: 'HIGH' | 'MEDIUM' | 'LOW' | 'INSUFFICIENT_DATA';
+  threat_escalation?: AiInsightThreatEscalation;
+  indicators?: AiInsightIndicator[];
+  data_sources?: AiInsightDataSourceInfo[];
+  data_freshness?: string;
+  computed_risk_score?: number;
+  methodology?: string;
   active_hazard_events?: number;
   verified_community_reports?: number;
-  computed_risk_score?: number;
   telemetry_sync?: string;
   [key: string]: unknown;
 }
@@ -114,6 +151,7 @@ export interface ProactiveAiInsightItem {
   summary: string;
   recommendations: string[];
   confidence_score: number;
+  confidence_level?: 'HIGH' | 'MEDIUM' | 'LOW' | 'INSUFFICIENT_DATA';
   generation_mode: string;
   model_name?: string | null;
   evidence?: AiInsightEvidence | Record<string, unknown> | null;
@@ -121,6 +159,7 @@ export interface ProactiveAiInsightItem {
   updated_at?: string;
   hazard_type?: HazardTypeItem | null;
   region?: RegionItem | null;
+  risk_assessment?: RiskAssessmentItem | null;
 }
 
 /**
@@ -276,6 +315,46 @@ export interface IntelGeoJsonFeatureCollection {
 }
 
 /**
+ * Candidate report detected within 1.5km spatiotemporal duplicate window.
+ */
+export interface DuplicateCandidateItem {
+  id: number;
+  title: string;
+  status: string;
+  cluster_id?: string | null;
+  created_at: string;
+  dist_deg?: number;
+}
+
+/**
+ * Spatiotemporal duplicate detection metadata.
+ */
+export interface ReportDuplicateDetection {
+  is_duplicate_suspect: boolean;
+  cluster_id?: string | null;
+  nearby_count: number;
+  candidates?: DuplicateCandidateItem[];
+}
+
+/**
+ * Audit log entry recording verification decision on community report.
+ */
+export interface ReportVerificationAuditItem {
+  id: number;
+  community_report_id: number;
+  verified_by: number;
+  previous_status: string;
+  new_status: string;
+  notes?: string | null;
+  created_at: string;
+  verifier?: {
+    id: number;
+    name: string;
+    role: string;
+  } | null;
+}
+
+/**
  * Item in the intelligence verification queue for crowdsourced reports.
  * Emitted by GET /api/v1/intel/reports/queue.
  */
@@ -287,11 +366,18 @@ export interface CommunityReportQueueItem {
   title: string;
   description: string;
   photo_path?: string | null;
-  status: 'pending' | 'verified' | 'rejected' | 'investigation';
+  status: 'pending' | 'investigating' | 'verified' | 'rejected';
   cluster_id?: string | null;
+  moderation_notes?: string | null;
+  verified_by?: number | null;
+  verified_at?: string | null;
   created_at: string;
   latitude: number | null;
   longitude: number | null;
+  priority_score?: number;
+  priority_level?: 'CRITICAL' | 'HIGH' | 'MEDIUM' | 'LOW';
+  priority_reasons?: string[];
+  duplicate_detection?: ReportDuplicateDetection;
   hazard_type?: HazardTypeItem | null;
   region?: RegionItem | null;
   user?: {
@@ -299,13 +385,14 @@ export interface CommunityReportQueueItem {
     name: string;
     email: string;
   } | null;
+  verifications?: ReportVerificationAuditItem[];
 }
 
 /**
  * Request payload for POST /api/v1/intel/reports/{id}/verify.
  */
 export interface ReportVerificationPayload {
-  status: 'verified' | 'rejected';
+  status: 'investigating' | 'verified' | 'rejected';
   notes?: string | null;
 }
 
