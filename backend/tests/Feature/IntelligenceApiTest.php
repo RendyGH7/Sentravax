@@ -229,18 +229,38 @@ class IntelligenceApiTest extends TestCase
         }
     }
 
-    public function test_unauthenticated_and_regular_users_cannot_access_reports_queue(): void
+    public function test_admin_and_user_and_guest_are_strictly_forbidden_from_all_intelligence_endpoints(): void
     {
-        // 1. Unauthenticated visitor receives 401
-        $this->getJson('/api/v1/intel/reports/queue')->assertStatus(401);
-        $this->getJson('/api/v1/intel/reports/1')->assertStatus(401);
-        $this->postJson('/api/v1/intel/reports/1/verify', ['status' => 'verified'])->assertStatus(401);
+        $endpoints = [
+            ['GET', '/api/v1/intel/insights', []],
+            ['POST', '/api/v1/intel/insights/generate', ['region_id' => 1, 'hazard_type_id' => 1]],
+            ['GET', '/api/v1/intel/reports/queue', []],
+            ['GET', '/api/v1/intel/reports/1', []],
+            ['POST', '/api/v1/intel/reports/1/verify', ['status' => 'verified']],
+        ];
 
-        // 2. Regular citizen user receives 403 Forbidden
+        // 1. Unauthenticated visitor receives 401 across all 5 endpoints
+        foreach ($endpoints as [$method, $uri, $payload]) {
+            $res = $method === 'GET' ? $this->getJson($uri) : $this->postJson($uri, $payload);
+            $res->assertStatus(401);
+        }
+
+        // 2. Regular citizen user receives 403 Forbidden across all 5 endpoints
         $regularUser = User::where('role', 'user')->first();
-        $this->actingAs($regularUser)->getJson('/api/v1/intel/reports/queue')->assertStatus(403);
-        $this->actingAs($regularUser)->getJson('/api/v1/intel/reports/1')->assertStatus(403);
-        $this->actingAs($regularUser)->postJson('/api/v1/intel/reports/1/verify', ['status' => 'verified'])->assertStatus(403);
+        foreach ($endpoints as [$method, $uri, $payload]) {
+            $res = $method === 'GET'
+                ? $this->actingAs($regularUser)->getJson($uri)
+                : $this->actingAs($regularUser)->postJson($uri, $payload);
+            $res->assertStatus(403);
+        }
+
+        // 3. Admin user receives 403 Forbidden across all 5 endpoints (strict role separation)
+        foreach ($endpoints as [$method, $uri, $payload]) {
+            $res = $method === 'GET'
+                ? $this->actingAs($this->admin)->getJson($uri)
+                : $this->actingAs($this->admin)->postJson($uri, $payload);
+            $res->assertStatus(403);
+        }
     }
 
     public function test_intel_reports_queue_and_verification_audit(): void
@@ -473,6 +493,9 @@ class IntelligenceApiTest extends TestCase
 
             $candidateIds = array_map(fn ($c) => $c->id, $triage['duplicate_detection']['candidates']);
 
+            // Reference report must NEVER detect itself as a duplicate candidate
+            $this->assertNotContains($refId, $candidateIds, 'Reference report must never detect itself as a duplicate candidate.');
+
             // Both before and after reports of same hazard must be detected
             $this->assertContains($candAId, $candidateIds, 'Candidate A (2h before) was detected symmetrically.');
             $this->assertContains($candBId, $candidateIds, 'Candidate B (2h after) was detected symmetrically.');
@@ -601,6 +624,45 @@ class IntelligenceApiTest extends TestCase
         // 2. Admin user trying to access Intelligence Center receives 403 Forbidden
         $resAdminToIntel = $this->actingAs($this->admin)->getJson('/api/v1/intel/overview');
         $resAdminToIntel->assertStatus(403);
+    }
+
+    public function test_verification_transaction_atomicity_and_invalid_state_handling(): void
+    {
+        $user = User::where('role', 'user')->first();
+        $hazardType = HazardType::first();
+        $region = Region::first();
+
+        $reportId = \DB::table('community_reports')->insertGetId([
+            'user_id' => $user->id,
+            'hazard_type_id' => $hazardType->id,
+            'region_id' => $region->id,
+            'title' => 'Laporan Uji Rollback Transaksi',
+            'description' => 'Memastikan integritas status jika terjadi input tidak valid.',
+            'status' => 'pending',
+            'location' => \DB::raw("ST_SetSRID(ST_MakePoint(106.8456, -6.2088), 4326)"),
+            'created_at' => now(),
+            'updated_at' => now(),
+        ]);
+
+        try {
+            // 1. Invalid status request fails with 422 and does NOT change report status
+            $resInvalid = $this->actingAs($this->intel)->postJson("/api/v1/intel/reports/{$reportId}/verify", [
+                'status' => 'invalid_status_value',
+            ]);
+            $resInvalid->assertStatus(422);
+
+            $reportAfter = \App\Models\CommunityReport::find($reportId);
+            $this->assertEquals('pending', $reportAfter->status);
+            $this->assertNull($reportAfter->verified_by);
+
+            // 2. Non-existent report returns 404
+            $res404 = $this->actingAs($this->intel)->postJson('/api/v1/intel/reports/99999999/verify', [
+                'status' => 'verified',
+            ]);
+            $res404->assertStatus(404);
+        } finally {
+            \DB::table('community_reports')->where('id', $reportId)->delete();
+        }
     }
 }
 

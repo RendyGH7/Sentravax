@@ -5,11 +5,18 @@ $app = require __DIR__ . '/../backend/bootstrap/app.php';
 $kernel = $app->make(Illuminate\Contracts\Console\Kernel::class);
 $kernel->bootstrap();
 
-// Reset report 8 to pending and remove test verifications
-\DB::table('report_verifications')->where('community_report_id', 8)->delete();
-\DB::table('community_reports')->where('id', 8)->update(['status' => 'pending']);
+// Reset any non-baseline community report back to pending
+\DB::table('community_reports')->where('id', '!=', 1)->update([
+    'status' => 'pending',
+    'verified_by' => null,
+    'verified_at' => null,
+    'moderation_notes' => null,
+]);
 
-// Remove test-created insights (id > 1) to restore pure baseline state
+// Remove test verifications (keep only baseline verification id: 1)
+\DB::table('report_verifications')->where('id', '!=', 1)->delete();
+
+// Remove test-created insights (keep only baseline insight id: 1)
 \DB::table('ai_insights')->where('id', '>', 1)->delete();
 
-echo "Database purity restored: Report #8 reset to pending, test verifications and test insights cleaned.\n";
+echo "Database purity restored: Baseline state preserved.\n";
