@@ -186,6 +186,31 @@ class IntelligenceCenterController extends Controller
     }
 
     /**
+     * List historical multi-hazard risk assessments evaluated by the Risk Engine.
+     */
+    public function listAssessments(Request $request): JsonResponse
+    {
+        $query = RiskAssessment::with(['region:id,code,name,level', 'hazardType:id,slug,name,icon'])
+            ->latest('assessed_at');
+
+        if ($request->filled('region_id')) {
+            $query->where('region_id', $request->integer('region_id'));
+        }
+
+        if ($request->filled('hazard_type_id')) {
+            $query->where('hazard_type_id', $request->integer('hazard_type_id'));
+        }
+
+        $assessments = $query->get();
+
+        return response()->json([
+            'success' => true,
+            'message' => 'Daftar riwayat penilaian risiko wilayah berhasil dimuat.',
+            'data' => $assessments,
+        ]);
+    }
+
+    /**
      * Trigger multi-hazard risk engine evaluation for a region and hazard type.
      */
     public function evaluateRisk(Request $request): JsonResponse

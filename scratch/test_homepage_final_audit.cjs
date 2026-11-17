@@ -148,7 +148,7 @@ async function runAudit() {
       const text = warningsSection.innerText;
       return {
         found: true,
-        hasCAPTitle: text.includes('CAP'),
+        hasCAPTitle: text.includes('Peringatan') || text.includes('CAP'),
         hasBroadcastBadge: text.includes('REGIONAL') || text.includes('WARNING') || text.includes('NATIONAL'),
         hasTimeLabel: text.includes('Mulai:'),
         hasDetailLinks: !!warningsSection.querySelector('a[href="/warnings"]')

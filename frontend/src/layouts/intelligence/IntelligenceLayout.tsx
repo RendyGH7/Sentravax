@@ -144,40 +144,42 @@ export const IntelligenceLayout: React.FC = () => {
       </aside>
 
       {/* Main Intelligence Viewport */}
-      <div className="flex-1 lg:pl-72 flex flex-col min-h-screen">
+      <div className="flex-1 lg:pl-72 flex flex-col min-h-screen min-w-0">
         {/* Command Top Header Bar */}
         <header className="h-16 bg-[#161616] border-b border-[#2C2C2C] sticky top-0 z-30 px-4 sm:px-6 flex items-center justify-between">
-          <div className="flex items-center gap-3">
+          <div className="flex items-center gap-3 min-w-0">
             <button
               type="button"
               onClick={() => setSidebarOpen(true)}
-              className="lg:hidden p-2 text-[#8A8A8A] hover:text-[#FFFFFF] rounded-lg hover:bg-[#212121] min-w-[44px] min-h-[44px] flex items-center justify-center"
+              className="lg:hidden p-2 text-[#8A8A8A] hover:text-[#FFFFFF] rounded-lg hover:bg-[#212121] min-w-[44px] min-h-[44px] flex items-center justify-center shrink-0"
               aria-label="Buka menu"
             >
               <Menu className="w-5 h-5" />
             </button>
-            <div className="flex items-center gap-2">
-              <span className="w-2.5 h-2.5 rounded-full bg-[#10B981] animate-pulse"></span>
-              <h2 className="text-xs sm:text-sm font-bold tracking-wide text-[#FFFFFF] uppercase font-mono">
+            <div className="flex items-center gap-2 min-w-0">
+              <span className="w-2.5 h-2.5 rounded-full bg-[#10B981] animate-pulse shrink-0"></span>
+              <h2 className="text-xs sm:text-sm font-bold tracking-wide text-[#FFFFFF] uppercase font-mono truncate">
                 Pusat Komando Intelijen Geospasial
               </h2>
             </div>
           </div>
 
-          <div className="flex items-center gap-3 text-xs font-mono">
+          <div className="flex items-center gap-2 sm:gap-3 text-xs font-mono shrink-0">
             <div className="hidden md:flex items-center gap-2 bg-[#212121] px-3.5 py-1.5 rounded-lg border border-[#2C2C2C] text-[#D4D4D4]">
               <Wifi className="w-3.5 h-3.5 text-[#10B981]" />
               <span>BMKG / PVMBG: STREAMING AKTIF</span>
             </div>
-            <div className="flex items-center gap-2 bg-[#212121] text-[#F59E0B] px-3.5 py-1.5 rounded-lg border border-amber-500/30 font-bold">
-              <Server className="w-3.5 h-3.5" />
-              <span>{user?.name ? `${user.role.toUpperCase()}: ${user.name.split(' ')[0]}` : 'INTELLIGENCE: OPS'}</span>
+            <div className="flex items-center gap-2 bg-[#212121] text-[#F59E0B] px-2.5 sm:px-3.5 py-1.5 rounded-lg border border-amber-500/30 font-bold">
+              <Server className="w-3.5 h-3.5 shrink-0" />
+              <span className="truncate max-w-[120px] sm:max-w-none">
+                {user?.name ? `${user.role.toUpperCase()}: ${user.name.split(' ')[0]}` : 'INTELLIGENCE: OPS'}
+              </span>
             </div>
           </div>
         </header>
 
         {/* Page Viewport */}
-        <main className="flex-1 p-4 sm:p-6 lg:p-8 max-w-[1600px] w-full mx-auto">
+        <main className="flex-1 p-4 sm:p-6 lg:p-8 max-w-[1600px] w-full mx-auto min-w-0">
           <Outlet />
         </main>
       </div>

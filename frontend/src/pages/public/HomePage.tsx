@@ -320,7 +320,7 @@ export const HomePage: React.FC = () => {
                   </span>
                 </div>
                 <div className="p-3 rounded-xl bg-white border border-[#E5E7EB] shadow-2xs">
-                  <span className="text-[11px] text-[#6B7280] block font-medium">Peringatan CAP</span>
+                  <span className="text-[11px] text-[#6B7280] block font-medium">Peringatan Aktif</span>
                   <span className="text-xl font-extrabold text-[#C2410C]">
                     {overviewLoading ? '...' : (overview?.active_alerts ?? 0)}
                   </span>
@@ -515,7 +515,7 @@ export const HomePage: React.FC = () => {
                   Peringatan Dini
                 </h3>
                 <p className="text-xs text-[#4B5563] mt-1 leading-relaxed">
-                  Feed notifikasi resmi standar CAP (Waspada, Siaga, Kritis) dari instansi berwenang.
+                  Feed notifikasi peringatan dini kebencanaan untuk langkah antisipasi dan keselamatan warga.
                 </p>
               </div>
               <span className="text-xs font-bold text-[#A16207] flex items-center gap-1 pt-1">
@@ -689,7 +689,7 @@ export const HomePage: React.FC = () => {
               Peringatan Dini Otoritatif
             </span>
             <h2 id="early-warnings-heading" className="text-xl sm:text-2xl font-extrabold text-[#111827] tracking-tight mt-1">
-              Peringatan Resmi Berstandar CAP
+              Pusat Informasi Peringatan Dini
             </h2>
             <p className="text-xs sm:text-sm text-[#4B5563] mt-1">
               Diseminasi peringatan darurat berjenjang untuk langkah tanggap darurat warga.

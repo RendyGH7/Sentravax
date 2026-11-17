@@ -205,6 +205,7 @@ Route::prefix('intel')->middleware(['auth:sanctum', 'role:intelligence'])->group
     Route::get('/map', [IntelligenceCenterController::class, 'map'])->name('api.intel.map');
 
     // Multi-Hazard Risk Engine & Proactive AI Insights
+    Route::get('/risk/assessments', [IntelligenceCenterController::class, 'listAssessments'])->name('api.intel.risk.assessments');
     Route::post('/risk/evaluate', [IntelligenceCenterController::class, 'evaluateRisk'])->name('api.intel.risk.evaluate');
     Route::post('/insights/generate', [IntelligenceCenterController::class, 'generateInsight'])->name('api.intel.insights.generate');
 
