@@ -6,6 +6,7 @@ use App\Models\Alert;
 use App\Models\HazardEvent;
 use App\Models\HazardType;
 use App\Models\Region;
+use App\Models\User;
 use Carbon\Carbon;
 use Database\Seeders\SentravaxMasterSeeder;
 use Tests\TestCase;
@@ -355,11 +356,12 @@ class PublicApiTest extends TestCase
     public function test_public_alerts_filtering_and_draft_protection(): void
     {
         // 1. Create a draft alert to test protection
+        $adminUser = User::where('role', 'admin')->first() ?? User::first();
         $draftAlert = Alert::create([
             'hazard_event_id' => null,
             'region_id' => Region::first()?->id,
             'hazard_type_id' => HazardType::first()?->id,
-            'created_by' => 1,
+            'created_by' => $adminUser?->id,
             'title' => 'DRAFT ALERT DO NOT EXPOSE ' . uniqid(),
             'message' => 'Internal draft alert.',
             'alert_class' => 'official_warning',
@@ -471,11 +473,12 @@ class PublicApiTest extends TestCase
         }
 
         // 3. Draft alert must return 404
+        $adminUser = User::where('role', 'admin')->first() ?? User::first();
         $draftAlert = Alert::create([
             'hazard_event_id' => null,
             'region_id' => Region::first()?->id,
             'hazard_type_id' => HazardType::first()?->id,
-            'created_by' => 1,
+            'created_by' => $adminUser?->id,
             'title' => 'SECRET DRAFT ' . uniqid(),
             'message' => 'Must not be viewed.',
             'alert_class' => 'platform_advisory',

@@ -93,7 +93,6 @@ class UserReportController extends Controller
             ->with([
                 'hazardType:id,slug,name,icon',
                 'region:id,code,name,level',
-                'verifications.verifier:id,name,role',
             ])
             ->first();
 
@@ -102,6 +101,11 @@ class UserReportController extends Controller
                 'success' => false,
                 'message' => 'Laporan bencana tidak ditemukan.',
             ], 404);
+        }
+
+        // Only expose rejection reason if report was rejected; conceal internal investigative notes
+        if ($report->status !== 'rejected') {
+            $report->moderation_notes = null;
         }
 
         return response()->json([

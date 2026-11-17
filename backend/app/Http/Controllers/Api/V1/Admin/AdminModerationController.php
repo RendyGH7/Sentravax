@@ -37,7 +37,7 @@ class AdminModerationController extends Controller
             ->with([
                 'hazardType:id,slug,name,icon',
                 'region:id,code,name,level',
-                'user:id,name,email',
+                'user:id,name',
                 'verifier:id,name',
             ]);
 
@@ -84,7 +84,6 @@ class AdminModerationController extends Controller
                 'photo_path',
                 'status',
                 'cluster_id',
-                'moderation_notes',
                 'verified_by',
                 'verified_at',
                 'created_at',
@@ -92,11 +91,10 @@ class AdminModerationController extends Controller
                 DB::raw('ST_X(location) as longitude'),
             ])
             ->with([
-                'hazardType',
-                'region',
-                'user:id,name,email,phone',
+                'hazardType:id,slug,name,icon',
+                'region:id,code,name,level',
+                'user:id,name',
                 'verifier:id,name,role',
-                'verifications.verifier:id,name,role',
             ])
             ->find($id);
 
@@ -153,6 +151,9 @@ class AdminModerationController extends Controller
             'new_status' => $validated['status'],
             'notes' => $validated['notes'] ?? null,
         ]);
+
+        // Notify citizen reporter of verified status update without leaking moderation notes
+        app(\App\Services\Notification\NotificationService::class)->notifyReportStatusChange($report, $previousStatus, $validated['status']);
 
         return response()->json([
             'success' => true,

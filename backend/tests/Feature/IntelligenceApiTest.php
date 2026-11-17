@@ -412,6 +412,7 @@ class IntelligenceApiTest extends TestCase
             'created_at' => now()->subMinutes(15),
         ]);
         $fullReport->id = 999992;
+        $fullReport->created_at = now()->subMinutes(15);
 
         $triageFull = $service->calculateReportTriage($fullReport);
         $this->assertGreaterThanOrEqual(50, $triageFull['priority_score']);
@@ -662,6 +663,112 @@ class IntelligenceApiTest extends TestCase
             $res404->assertStatus(404);
         } finally {
             \DB::table('community_reports')->where('id', $reportId)->delete();
+        }
+    }
+
+    public function test_report_never_detects_itself_as_duplicate(): void
+    {
+        $service = app(\App\Services\Intelligence\IntelligenceService::class);
+        $user = User::where('role', 'user')->first();
+        $hazardType = HazardType::first();
+        $region = Region::first();
+
+        $reportId = \DB::table('community_reports')->insertGetId([
+            'user_id' => $user->id,
+            'hazard_type_id' => $hazardType->id,
+            'region_id' => $region->id,
+            'title' => 'Laporan Uji Eksklusi Diri Sendiri',
+            'description' => 'Memastikan laporan tidak pernah mendeteksi dirinya sendiri sebagai duplikat.',
+            'status' => 'pending',
+            'location' => \DB::raw("ST_SetSRID(ST_MakePoint(106.8456, -6.2088), 4326)"),
+            'created_at' => now(),
+            'updated_at' => now(),
+        ]);
+
+        try {
+            $report = \App\Models\CommunityReport::find($reportId);
+            $triage = $service->calculateReportTriage($report);
+
+            $candidateIds = array_map(fn ($c) => $c->id, $triage['duplicate_detection']['candidates']);
+            $this->assertNotContains($reportId, $candidateIds, 'Laporan yang sedang dianalisis tidak boleh muncul dalam daftar kandidat duplikat.');
+
+            $clusterResult = $service->analyzeAndClusterReport($report, 106.8456, -6.2088);
+            $nearbyIds = array_map(fn ($c) => $c->id, $clusterResult['nearby_reports']);
+            $this->assertNotContains($reportId, $nearbyIds, 'Laporan tidak boleh mendeteksi dirinya sendiri dalam clustering.');
+        } finally {
+            \DB::table('community_reports')->where('id', $reportId)->delete();
+        }
+    }
+
+    public function test_verification_transaction_rolls_back_if_audit_record_fails(): void
+    {
+        $user = User::where('role', 'user')->first();
+        $hazardType = HazardType::first();
+        $region = Region::first();
+
+        $reportId = \DB::table('community_reports')->insertGetId([
+            'user_id' => $user->id,
+            'hazard_type_id' => $hazardType->id,
+            'region_id' => $region->id,
+            'title' => 'Laporan Uji Rollback DB Transaction',
+            'description' => 'Memastikan status laporan di-rollback jika pembuatan audit log gagal.',
+            'status' => 'pending',
+            'location' => \DB::raw("ST_SetSRID(ST_MakePoint(106.8456, -6.2088), 4326)"),
+            'created_at' => now(),
+            'updated_at' => now(),
+        ]);
+
+        // Temporarily register an Eloquent creating listener that throws on ReportVerification
+        $eventName = 'eloquent.creating: ' . \App\Models\ReportVerification::class;
+        \Illuminate\Support\Facades\Event::listen($eventName, function () {
+            throw new \RuntimeException('Simulated audit trail persistence failure.');
+        });
+
+        try {
+            try {
+                $this->actingAs($this->intel)->postJson("/api/v1/intel/reports/{$reportId}/verify", [
+                    'status' => 'verified',
+                    'notes' => 'Catatan verifikasi yang seharusnya gagal rollback.',
+                ]);
+            } catch (\Throwable $e) {
+                // Expected exception
+            }
+
+            // Assert that community report status remains 'pending' (transaction rollback)
+            $reportAfter = \App\Models\CommunityReport::find($reportId);
+            $this->assertEquals('pending', $reportAfter->status, 'Report status must roll back to pending on audit failure.');
+            $this->assertNull($reportAfter->verified_by, 'verified_by must remain null after rollback.');
+        } finally {
+            \Illuminate\Support\Facades\Event::forget($eventName);
+            \DB::table('community_reports')->where('id', $reportId)->delete();
+        }
+    }
+
+    public function test_privacy_and_isolation_of_internal_audit_notes_and_pii(): void
+    {
+        // 1. Citizen fetching their own report cannot see internal verifications audit trail
+        $citizen = User::where('role', 'user')->first();
+        $resUser = $this->actingAs($citizen)->getJson('/api/v1/user/reports/1');
+        if ($resUser->status() === 200) {
+            $this->assertArrayNotHasKey('verifications', $resUser->json('data'));
+        }
+
+        // 2. Admin viewing report does not receive verifications audit trail or reporter email/phone
+        $resAdmin = $this->actingAs($this->admin)->getJson('/api/v1/admin/reports/1');
+        if ($resAdmin->status() === 200) {
+            $this->assertArrayNotHasKey('verifications', $resAdmin->json('data'));
+            $this->assertArrayNotHasKey('email', $resAdmin->json('data.user') ?? []);
+            $this->assertArrayNotHasKey('phone', $resAdmin->json('data.user') ?? []);
+        }
+
+        // 3. Intelligence queue only exposes id and name for reporter, no email or phone
+        $resIntelQueue = $this->actingAs($this->intel)->getJson('/api/v1/intel/reports/queue');
+        $resIntelQueue->assertStatus(200);
+        foreach ($resIntelQueue->json('data') as $rep) {
+            if (!empty($rep['user'])) {
+                $this->assertArrayNotHasKey('email', $rep['user']);
+                $this->assertArrayNotHasKey('phone', $rep['user']);
+            }
         }
     }
 }

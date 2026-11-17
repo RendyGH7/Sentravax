@@ -65,21 +65,34 @@ export const intelligenceService = {
    * Retrieve real-time data source status and sync runs for operational provenance.
    * Endpoint: GET /api/v1/public/data-sources
    */
-  async getDataSources(): Promise<DataSourceItem[]> {
+  async getPublicDataSources(): Promise<DataSourceItem[]> {
     const res = await apiClient.get<ApiResponse<DataSourceItem[]>>('/public/data-sources');
     return res.data.data;
   },
 
   // ==========================================
-  // 3. GEOSPATIAL MAP LAYERS
+  // 3. GEOSPATIAL MAP LAYERS & BOUNDING BOX
   // ==========================================
 
   /**
    * Retrieve geospatial intelligence layers (hazard events & community reports) as GeoJSON FeatureCollection.
+   * Supports PostGIS Bounding Box filtering (bbox=minLon,minLat,maxLon,maxLat).
    * Endpoint: GET /api/v1/intel/map
    */
-  async getMapFeatures(): Promise<IntelGeoJsonFeatureCollection> {
-    const res = await apiClient.get<ApiResponse<IntelGeoJsonFeatureCollection>>('/intel/map');
+  async getMapFeatures(params?: {
+    bbox?: [number, number, number, number];
+    layer?: string;
+  }): Promise<IntelGeoJsonFeatureCollection> {
+    const queryParams: Record<string, string> = {};
+    if (params?.bbox) {
+      queryParams.bbox = params.bbox.join(',');
+    }
+    if (params?.layer) {
+      queryParams.layer = params.layer;
+    }
+    const res = await apiClient.get<ApiResponse<IntelGeoJsonFeatureCollection>>('/intel/map', {
+      params: queryParams,
+    });
     return res.data.data;
   },
 
@@ -201,7 +214,7 @@ export const intelligenceService = {
   },
 
   // ==========================================
-  // 7. CAP EARLY WARNING DISSEMINATION (FOR STEP 4)
+  // 7. CAP EARLY WARNING DISSEMINATION
   // ==========================================
 
   /**
@@ -210,6 +223,60 @@ export const intelligenceService = {
    */
   async dispatchAlert(payload: AlertDispatchPayload): Promise<AlertDispatchResponse> {
     const res = await apiClient.post<ApiResponse<AlertDispatchResponse>>('/intel/alerts/dispatch', payload);
+    return res.data.data;
+  },
+
+  // ==========================================
+  // 8. GEOSPATIAL INTELLIGENCE & OPERATIONAL MONITORING (PHASE 3.1 STEP 4)
+  // ==========================================
+
+  /**
+   * Fetch data sources registered in the system with their real-time telemetry.
+   * Endpoint: GET /api/v1/intel/data-sources
+   */
+  async getDataSources(): Promise<DataSourceItem[]> {
+    const res = await apiClient.get<ApiResponse<DataSourceItem[]>>('/intel/data-sources');
+    return res.data.data;
+  },
+
+  /**
+   * Fetch operational monitoring telemetry tailored for Geospatial Intelligence analysts.
+   * Endpoint: GET /api/v1/intel/monitoring/operational
+   */
+  async getOperationalMonitoring(): Promise<{
+    telemetry_stream: {
+      status: string;
+      active_sources: number;
+      total_sources: number;
+      last_heartbeat: string;
+    };
+    spatial_layers_health: Record<string, string>;
+    freshness_summary: Record<string, number>;
+    sources: DataSourceItem[];
+    operational_alerts: Array<{
+      severity: string;
+      source_id: number;
+      source_name: string;
+      message: string;
+    }>;
+  }> {
+    const res = await apiClient.get<ApiResponse<{
+      telemetry_stream: {
+        status: string;
+        active_sources: number;
+        total_sources: number;
+        last_heartbeat: string;
+      };
+      spatial_layers_health: Record<string, string>;
+      freshness_summary: Record<string, number>;
+      sources: DataSourceItem[];
+      operational_alerts: Array<{
+        severity: string;
+        source_id: number;
+        source_name: string;
+        message: string;
+      }>;
+    }>>('/intel/monitoring/operational');
     return res.data.data;
   },
 };

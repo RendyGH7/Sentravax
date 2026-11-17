@@ -1,0 +1,1 @@
+<?php require " vendor/autoload.php\; \ = require_once \bootstrap/app.php\; \->make(\Illuminate\Contracts\Console\Kernel\)->bootstrap(); echo json_encode(App\Models\CommunityReport::find(10));

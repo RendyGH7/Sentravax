@@ -38,7 +38,15 @@ class AiInsight extends Model
 
     public function getConfidenceLevelAttribute(): string
     {
-        return $this->evidence['confidence_level'] ?? ($this->confidence_score >= 0.85 ? 'HIGH' : ($this->confidence_score >= 0.60 ? 'MEDIUM' : 'LOW'));
+        return $this->evidence['confidence_level'] ?? (
+            (float) $this->confidence_score <= 0.05
+                ? 'INSUFFICIENT_DATA'
+                : ((float) $this->confidence_score >= 0.85
+                    ? 'HIGH'
+                    : ((float) $this->confidence_score >= 0.60
+                        ? 'MEDIUM'
+                        : 'LOW'))
+        );
     }
 
     public function region(): BelongsTo

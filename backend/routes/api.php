@@ -6,6 +6,7 @@ use App\Http\Controllers\Api\V1\Admin\AdminOverviewController;
 use App\Http\Controllers\Api\V1\Admin\AdminUserController;
 use App\Http\Controllers\Api\V1\AuthController;
 use App\Http\Controllers\Api\V1\Intelligence\IntelligenceCenterController;
+use App\Http\Controllers\Api\V1\Notification\NotificationController;
 use App\Http\Controllers\Api\V1\Public\PublicController;
 use App\Http\Controllers\Api\V1\User\UserPortalController;
 use App\Http\Controllers\Api\V1\User\UserPreparednessController;
@@ -92,6 +93,20 @@ Route::prefix('public')->group(function () {
 });
 
 // ==========================================
+// 3.5 IN-APP NOTIFICATION ENGINE & PREFERENCES (Authenticated: any role)
+// ==========================================
+Route::middleware(['auth:sanctum'])->group(function () {
+    Route::get('/notifications', [NotificationController::class, 'index'])->name('api.notifications.index');
+    Route::get('/notifications/{id}', [NotificationController::class, 'show'])->name('api.notifications.show');
+    Route::patch('/notifications/{id}/read', [NotificationController::class, 'markAsRead'])->name('api.notifications.read');
+    Route::post('/notifications/{id}/read', [NotificationController::class, 'markAsRead'])->name('api.notifications.read.post');
+    Route::post('/notifications/read-all', [NotificationController::class, 'markAllAsRead'])->name('api.notifications.read-all');
+
+    Route::get('/me/notification-preferences', [NotificationController::class, 'getPreferences'])->name('api.me.notification-preferences');
+    Route::put('/me/notification-preferences', [NotificationController::class, 'updatePreferences'])->name('api.me.notification-preferences.update');
+});
+
+// ==========================================
 // 4. USER PORTAL & SIAGA PERSONAL (Role: user, admin, intelligence)
 // ==========================================
 Route::prefix('user')->middleware(['auth:sanctum', 'role:user,admin,intelligence'])->group(function () {
@@ -113,10 +128,14 @@ Route::prefix('user')->middleware(['auth:sanctum', 'role:user,admin,intelligence
     Route::post('/saved-regions', [UserPortalController::class, 'saveRegion'])->name('api.user.saved-regions.store');
     Route::delete('/saved-regions/{id}', [UserPortalController::class, 'deleteSavedRegion'])->name('api.user.saved-regions.delete');
 
-    // Notifications
-    Route::get('/notifications', [UserPortalController::class, 'notifications'])->name('api.user.notifications');
-    Route::post('/notifications/{id}/read', [UserPortalController::class, 'markNotificationAsRead'])->name('api.user.notifications.read');
-    Route::post('/notifications/read-all', [UserPortalController::class, 'markAllNotificationsAsRead'])->name('api.user.notifications.read-all');
+    // In-App Notifications & Preferences (User Prefix)
+    Route::get('/notifications', [NotificationController::class, 'index'])->name('api.user.notifications');
+    Route::get('/notifications/{id}', [NotificationController::class, 'show'])->name('api.user.notifications.show');
+    Route::patch('/notifications/{id}/read', [NotificationController::class, 'markAsRead'])->name('api.user.notifications.read');
+    Route::post('/notifications/{id}/read', [NotificationController::class, 'markAsRead'])->name('api.user.notifications.read.post');
+    Route::post('/notifications/read-all', [NotificationController::class, 'markAllAsRead'])->name('api.user.notifications.read-all');
+    Route::get('/notification-preferences', [NotificationController::class, 'getPreferences'])->name('api.user.notification-preferences');
+    Route::put('/notification-preferences', [NotificationController::class, 'updatePreferences'])->name('api.user.notification-preferences.update');
 
     // Flagship: SENTRAVAX Siaga Personal (Preparedness & Simulation)
     Route::prefix('preparedness')->group(function () {
@@ -152,7 +171,24 @@ Route::prefix('admin')->middleware(['auth:sanctum', 'role:admin'])->group(functi
     // System Overview & Data Sources
     Route::get('/overview', [AdminOverviewController::class, 'overview'])->name('api.admin.overview');
     Route::get('/data-sources', [AdminOverviewController::class, 'dataSources'])->name('api.admin.data-sources');
+    Route::get('/data-sources/{id}', [AdminOverviewController::class, 'showDataSource'])->name('api.admin.data-sources.show');
+    Route::put('/data-sources/{id}/toggle', [AdminOverviewController::class, 'toggleDataSource'])->name('api.admin.data-sources.toggle');
     Route::post('/data-sources/{id}/sync', [AdminOverviewController::class, 'triggerSync'])->name('api.admin.data-sources.sync');
+
+    // Operational Infrastructure Health & Queue Monitoring
+    Route::prefix('monitoring')->group(function () {
+        Route::get('/health', [AdminOverviewController::class, 'systemHealth'])->name('api.admin.monitoring.health');
+        Route::get('/system-health', [AdminOverviewController::class, 'systemHealth'])->name('api.admin.monitoring.system-health');
+        Route::get('/jobs/failed', [AdminOverviewController::class, 'failedJobs'])->name('api.admin.monitoring.jobs.failed');
+        Route::get('/failed-jobs', [AdminOverviewController::class, 'failedJobs'])->name('api.admin.monitoring.failed-jobs');
+        Route::post('/jobs/{id}/retry', [AdminOverviewController::class, 'retryFailedJob'])->name('api.admin.monitoring.jobs.retry');
+        Route::post('/jobs/failed/{id}/retry', [AdminOverviewController::class, 'retryFailedJob'])->name('api.admin.monitoring.jobs.failed.retry');
+        Route::post('/failed-jobs/{id}/retry', [AdminOverviewController::class, 'retryFailedJob'])->name('api.admin.monitoring.failed-jobs.retry');
+        Route::post('/jobs/{id}/dismiss', [AdminOverviewController::class, 'dismissFailedJob'])->name('api.admin.monitoring.jobs.dismiss');
+        Route::delete('/jobs/{id}', [AdminOverviewController::class, 'dismissFailedJob'])->name('api.admin.monitoring.jobs.delete');
+        Route::delete('/jobs/failed/{id}', [AdminOverviewController::class, 'dismissFailedJob'])->name('api.admin.monitoring.jobs.failed.delete');
+        Route::delete('/failed-jobs/{id}', [AdminOverviewController::class, 'dismissFailedJob'])->name('api.admin.monitoring.failed-jobs.delete');
+    });
 
     // User Management (strictly 3 roles)
     Route::get('/users', [AdminUserController::class, 'index'])->name('api.admin.users.index');
@@ -203,6 +239,8 @@ Route::prefix('intel')->middleware(['auth:sanctum', 'role:intelligence'])->group
     // Command Center Telemetry & Spatial Layers
     Route::get('/overview', [IntelligenceCenterController::class, 'overview'])->name('api.intel.overview');
     Route::get('/map', [IntelligenceCenterController::class, 'map'])->name('api.intel.map');
+    Route::get('/data-sources', [IntelligenceCenterController::class, 'dataSources'])->name('api.intel.data-sources');
+    Route::get('/monitoring/operational', [IntelligenceCenterController::class, 'operationalMonitoring'])->name('api.intel.monitoring.operational');
 
     // Multi-Hazard Risk Engine & Proactive AI Insights
     Route::get('/risk/assessments', [IntelligenceCenterController::class, 'listAssessments'])->name('api.intel.risk.assessments');

@@ -200,18 +200,24 @@ class UserPortalApiTest extends TestCase
 
         $reportId = $resSubmit->json('data.id');
 
-        // 2. View user reports
-        $resList = $this->actingAs($this->user)->getJson('/api/v1/user/reports');
-        $resList->assertStatus(200)->assertJson(['success' => true]);
+        try {
+            // 2. View user reports
+            $resList = $this->actingAs($this->user)->getJson('/api/v1/user/reports');
+            $resList->assertStatus(200)->assertJson(['success' => true]);
 
-        // 3. View single report detail
-        $resDetail = $this->actingAs($this->user)->getJson("/api/v1/user/reports/{$reportId}");
-        $resDetail->assertStatus(200)
-            ->assertJson([
-                'success' => true,
-                'data' => [
-                    'id' => $reportId,
-                ],
-            ]);
+            // 3. View single report detail
+            $resDetail = $this->actingAs($this->user)->getJson("/api/v1/user/reports/{$reportId}");
+            $resDetail->assertStatus(200)
+                ->assertJson([
+                    'success' => true,
+                    'data' => [
+                        'id' => $reportId,
+                    ],
+                ]);
+        } finally {
+            if ($reportId && $reportId > 9) {
+                \DB::table('community_reports')->where('id', $reportId)->delete();
+            }
+        }
     }
 }

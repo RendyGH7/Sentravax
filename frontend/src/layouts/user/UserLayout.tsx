@@ -1,7 +1,8 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Outlet, Link, useLocation, useNavigate } from 'react-router-dom';
 import { PATHS } from '../../app/router/paths';
 import { useAuth } from '../../app/context/useAuth';
+import { notificationService } from '../../services/notification-service';
 import { 
   Shield, 
   LayoutDashboard, 
@@ -20,9 +21,28 @@ import { toast } from 'sonner';
 
 export const UserLayout: React.FC = () => {
   const [sidebarOpen, setSidebarOpen] = useState(false);
+  const [unreadNotifs, setUnreadNotifs] = useState<number>(0);
   const location = useLocation();
   const navigate = useNavigate();
   const { user, logout } = useAuth();
+
+  useEffect(() => {
+    let isMounted = true;
+    const fetchUnread = async () => {
+      try {
+        const res = await notificationService.getNotifications({ status: 'unread', per_page: 1 });
+        if (isMounted && res.success) {
+          setUnreadNotifs(res.meta?.unread_count ?? 0);
+        }
+      } catch {
+        // Non-blocking header counter
+      }
+    };
+    fetchUnread();
+    return () => {
+      isMounted = false;
+    };
+  }, [location.pathname]);
 
   const handleLogout = async () => {
     await logout();
@@ -111,7 +131,12 @@ export const UserLayout: React.FC = () => {
                 }`}
               >
                 <Icon className={`w-4 h-4 ${isActive ? 'text-[#047857]' : 'text-[#6B7280]'}`} />
-                <span>{item.name}</span>
+                <span className="flex-1">{item.name}</span>
+                {item.path === PATHS.USER.NOTIFICATIONS && unreadNotifs > 0 && (
+                  <span className="px-1.5 py-0.5 rounded-full text-[10px] font-black bg-[#EF4444] text-white">
+                    {unreadNotifs > 99 ? '99+' : unreadNotifs}
+                  </span>
+                )}
               </Link>
             );
           })}
@@ -138,9 +163,9 @@ export const UserLayout: React.FC = () => {
       </aside>
 
       {/* Main Content Area */}
-      <div className="flex-1 lg:pl-64 flex flex-col min-h-screen">
+      <div className="flex-1 lg:pl-64 flex flex-col min-h-screen min-w-0 max-w-full overflow-x-hidden">
         {/* Top Header */}
-        <header className="h-16 bg-[#FFFFFF] border-b border-[#E5E7EB] sticky top-0 z-30 px-4 sm:px-6 flex items-center justify-between shadow-xs">
+        <header className="h-16 bg-[#FFFFFF] border-b border-[#E5E7EB] sticky top-0 z-30 px-4 sm:px-6 flex items-center justify-between shadow-xs min-w-0 max-w-full">
           <div className="flex items-center gap-3">
             <button
               type="button"
@@ -163,7 +188,11 @@ export const UserLayout: React.FC = () => {
               aria-label="Notifikasi"
             >
               <Bell className="w-4 h-4" />
-              <span className="absolute top-1.5 right-1.5 w-2 h-2 rounded-full bg-[#C2410C]"></span>
+              {unreadNotifs > 0 && (
+                <span className="absolute -top-0.5 -right-0.5 min-w-[18px] h-[18px] px-1 rounded-full bg-[#EF4444] text-white text-[10px] font-black flex items-center justify-center">
+                  {unreadNotifs > 99 ? '99+' : unreadNotifs}
+                </span>
+              )}
             </Link>
             <Link
               to={PATHS.USER.CREATE_REPORT}
@@ -176,7 +205,7 @@ export const UserLayout: React.FC = () => {
         </header>
 
         {/* Page Content */}
-        <main className="flex-1 p-4 sm:p-6 lg:p-8 max-w-7xl w-full mx-auto">
+        <main className="flex-1 p-4 sm:p-6 lg:p-8 max-w-7xl w-full mx-auto min-w-0">
           <Outlet />
         </main>
       </div>

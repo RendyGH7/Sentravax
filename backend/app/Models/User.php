@@ -117,6 +117,16 @@ class User extends Authenticatable implements MustVerifyEmail, PasskeyUser
         return $this->hasMany(UserNotification::class);
     }
 
+    public function notificationPreference(): \Illuminate\Database\Eloquent\Relations\HasOne
+    {
+        return $this->hasOne(UserNotificationPreference::class);
+    }
+
+    public function notificationDeliveryLogs(): \Illuminate\Database\Eloquent\Relations\HasMany
+    {
+        return $this->hasMany(NotificationDeliveryLog::class);
+    }
+
     public function hazardPreferences(): \Illuminate\Database\Eloquent\Relations\HasMany
     {
         return $this->hasMany(UserHazardPreference::class);

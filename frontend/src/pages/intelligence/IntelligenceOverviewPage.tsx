@@ -545,8 +545,16 @@ export const IntelligenceOverviewPage: React.FC = () => {
                         </span>
                       )}
                     </div>
-                    <span className="text-[11px] font-mono text-[#10B981] font-bold">
-                      Keyakinan: {(Number(insight.confidence_score) * 100).toFixed(1)}%
+                    <span className={`text-[11px] font-mono font-bold ${
+                      insight.confidence_level === 'INSUFFICIENT_DATA' || Number(insight.confidence_score) === 0
+                        ? 'text-stone-400'
+                        : insight.confidence_level === 'HIGH' || Number(insight.confidence_score) >= 0.85
+                        ? 'text-[#10B981]'
+                        : insight.confidence_level === 'MEDIUM' || Number(insight.confidence_score) >= 0.60
+                        ? 'text-[#F59E0B]'
+                        : 'text-[#A3A3A3]'
+                    }`}>
+                      Kekuatan Bukti: {insight.confidence_level ?? (Number(insight.confidence_score) === 0 ? 'INSUFFICIENT_DATA' : (Number(insight.confidence_score) >= 0.85 ? 'HIGH' : (Number(insight.confidence_score) >= 0.60 ? 'MEDIUM' : 'LOW')))}
                     </span>
                   </div>
 

@@ -6,6 +6,7 @@ use App\Models\DataSource;
 use App\Models\HazardEvent;
 use App\Models\HazardType;
 use App\Models\Region;
+use Carbon\Carbon;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Log;
@@ -33,13 +34,31 @@ class BmkgAdapter
                 $gempa = $payload['Infogempa']['gempa'] ?? null;
 
                 if ($gempa) {
-                    $itemsPersisted = $this->persistBmkgEarthquake($gempa, $dataSource, $earthquakeHazard);
+                    $observedAt = null;
+                    if (!empty($gempa['DateTime'])) {
+                        try {
+                            $observedAt = Carbon::parse($gempa['DateTime']);
+                        } catch (\Throwable) {
+                            $observedAt = null;
+                        }
+                    }
+                    if (!$observedAt && !empty($gempa['Tanggal']) && !empty($gempa['Jam'])) {
+                        try {
+                            $observedAt = Carbon::parse($gempa['Tanggal'] . ' ' . $gempa['Jam']);
+                        } catch (\Throwable) {
+                            $observedAt = null;
+                        }
+                    }
+                    $observedAt = $observedAt ?? now();
+
+                    $itemsPersisted = $this->persistBmkgEarthquake($gempa, $dataSource, $earthquakeHazard, $observedAt);
 
                     $durationMs = (int) round((microtime(true) - $startTime) * 1000);
                     $dataSource->update([
                         'status' => 'active',
                         'last_fetched_at' => now(),
                         'last_successful_at' => now(),
+                        'last_observed_at' => $observedAt,
                     ]);
 
                     return [
@@ -48,9 +67,11 @@ class BmkgAdapter
                         'items_fetched' => 1,
                         'items_persisted' => $itemsPersisted,
                         'duration_ms' => $durationMs,
+                        'observed_at' => $observedAt,
                         'provenance' => [
                             'endpoint' => self::BMKG_AUTOGEMPA_URL,
                             'event_time' => ($gempa['Tanggal'] ?? '') . ' ' . ($gempa['Jam'] ?? ''),
+                            'observed_at' => $observedAt->toIso8601String(),
                             'magnitude' => $gempa['Magnitude'] ?? null,
                             'wilayah' => $gempa['Wilayah'] ?? null,
                             'source' => 'BMKG Open Data Feed',
@@ -82,7 +103,7 @@ class BmkgAdapter
         ];
     }
 
-    private function persistBmkgEarthquake(array $gempa, DataSource $dataSource, ?HazardType $hazardType): int
+    private function persistBmkgEarthquake(array $gempa, DataSource $dataSource, ?HazardType $hazardType, ?Carbon $observedAt = null): int
     {
         $coords = explode(',', $gempa['Coordinates'] ?? '0,0');
         $lat = (float) trim($coords[0] ?? '0');
@@ -106,7 +127,7 @@ class BmkgAdapter
                 'region_id' => $region?->id,
                 'severity' => $severity,
                 'status' => 'active',
-                'occurred_at' => now(),
+                'occurred_at' => $observedAt ?? now(),
                 'reported_at' => now(),
                 'source_metadata' => $gempa,
             ]

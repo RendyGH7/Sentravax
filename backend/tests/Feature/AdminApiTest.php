@@ -216,25 +216,32 @@ class AdminApiTest extends TestCase
             'updated_at' => now(),
         ]);
 
-        // Admin verifies report
-        $resVerify = $this->actingAs($this->admin)->postJson("/api/v1/admin/reports/{$reportId}/verify", [
-            'status' => 'verified',
-            'notes' => 'Terkonfirmasi dengan stasiun pemantauan terdekat.',
-        ]);
-
-        $resVerify->assertStatus(200)
-            ->assertJson([
-                'success' => true,
-                'data' => [
-                    'status' => 'verified',
-                ],
+        try {
+            // Admin verifies report
+            $resVerify = $this->actingAs($this->admin)->postJson("/api/v1/admin/reports/{$reportId}/verify", [
+                'status' => 'verified',
+                'notes' => 'Terkonfirmasi dengan stasiun pemantauan terdekat.',
             ]);
 
-        // Assert audit trail was recorded
-        $this->assertDatabaseHas('report_verifications', [
-            'community_report_id' => $reportId,
-            'verified_by' => $this->admin->id,
-            'new_status' => 'verified',
-        ]);
+            $resVerify->assertStatus(200)
+                ->assertJson([
+                    'success' => true,
+                    'data' => [
+                        'status' => 'verified',
+                    ],
+                ]);
+
+            // Assert audit trail was recorded
+            $this->assertDatabaseHas('report_verifications', [
+                'community_report_id' => $reportId,
+                'verified_by' => $this->admin->id,
+                'new_status' => 'verified',
+            ]);
+        } finally {
+            if ($reportId && $reportId > 9) {
+                \DB::table('report_verifications')->where('community_report_id', $reportId)->delete();
+                \DB::table('community_reports')->where('id', $reportId)->delete();
+            }
+        }
     }
 }

@@ -25,16 +25,19 @@ class ReportVerification extends Model
 
     /**
      * The "booted" method of the model.
-     * Enforce append-only audit trail behavior: records can never be updated or deleted.
+     * Enforce append-only audit trail behavior at the application layer:
+     * Eloquent records can never be updated or deleted.
+     * Note: This enforces immutability at the application/ORM level,
+     * not claiming hardware or direct SQL DBA-level immutability.
      */
     protected static function booted(): void
     {
         static::updating(function () {
-            throw new \RuntimeException('Audit trail records in report_verifications are append-only and cannot be modified.');
+            throw new \RuntimeException('Audit trail records in report_verifications are append-only at the application layer and cannot be modified.');
         });
 
         static::deleting(function () {
-            throw new \RuntimeException('Audit trail records in report_verifications are append-only and cannot be deleted.');
+            throw new \RuntimeException('Audit trail records in report_verifications are append-only at the application layer and cannot be deleted.');
         });
     }
 

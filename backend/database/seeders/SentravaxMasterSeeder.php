@@ -40,6 +40,7 @@ class SentravaxMasterSeeder extends Seeder
         $this->seedEducationContents();
         $this->seedAlertsAndRiskAssessments();
         $this->seedSampleUserPreparedness();
+        $this->seedBaselineCommunityReports();
     }
 
     /**
@@ -149,9 +150,18 @@ class SentravaxMasterSeeder extends Seeder
                 'category' => 'weather',
                 'endpoint_url' => 'https://api.bmkg.go.id/public/weather',
                 'status' => 'pending',
+                'sync_interval_minutes' => 15,
+                'rate_limit_rpm' => 60,
+                'terms_of_service' => 'BMKG Open Data Policy - Attribution Required',
+                'is_simulated' => false,
                 'last_fetched_at' => null,
                 'last_successful_at' => null,
                 'notes' => 'Sumber resmi pengamatan radar cuaca nasional dan prakiraan peringatan dini cuaca ekstrem.',
+                'metadata' => [
+                    'docs_url' => 'https://data.bmkg.go.id',
+                    'contact' => 'pusdatin@bmkg.go.id',
+                    'freshness_threshold_minutes' => 60,
+                ],
             ],
             [
                 'name' => 'BMKG TEWS Open Data API',
@@ -160,9 +170,18 @@ class SentravaxMasterSeeder extends Seeder
                 'category' => 'seismology',
                 'endpoint_url' => 'https://data.bmkg.go.id/DataMKG/TEWS/autogempa.json',
                 'status' => 'pending',
+                'sync_interval_minutes' => 5,
+                'rate_limit_rpm' => 120,
+                'terms_of_service' => 'InaTEWS Open Public Protocol - Realtime Seismic Stream',
+                'is_simulated' => false,
                 'last_fetched_at' => null,
                 'last_successful_at' => null,
                 'notes' => 'Layanan real-time Indonesia Tsunami Early Warning System (InaTEWS) BMKG untuk pengamatan gempa bumi terkini.',
+                'metadata' => [
+                    'docs_url' => 'https://data.bmkg.go.id/gempabumi',
+                    'contact' => 'inatews@bmkg.go.id',
+                    'freshness_threshold_minutes' => 30,
+                ],
             ],
             [
                 'name' => 'PVMBG Geological & Volcanic Stream',
@@ -171,9 +190,18 @@ class SentravaxMasterSeeder extends Seeder
                 'category' => 'geology',
                 'endpoint_url' => 'https://magma.vsi.esdm.go.id/api/v1',
                 'status' => 'pending',
+                'sync_interval_minutes' => 30,
+                'rate_limit_rpm' => 60,
+                'terms_of_service' => 'MAGMA Indonesia Open API Policy',
+                'is_simulated' => false,
                 'last_fetched_at' => null,
                 'last_successful_at' => null,
                 'notes' => 'Pemantauan deformasi lereng, status gunung api, dan zona kerentanan gerakan tanah.',
+                'metadata' => [
+                    'docs_url' => 'https://magma.esdm.go.id',
+                    'contact' => 'pvmbg@esdm.go.id',
+                    'freshness_threshold_minutes' => 180,
+                ],
             ],
             [
                 'name' => 'InSAR Sentinel-1 Ground Deformation',
@@ -182,9 +210,18 @@ class SentravaxMasterSeeder extends Seeder
                 'category' => 'satellite',
                 'endpoint_url' => 'https://dataspace.copernicus.eu/api',
                 'status' => 'pending',
+                'sync_interval_minutes' => 720,
+                'rate_limit_rpm' => 30,
+                'terms_of_service' => 'Copernicus Open Access Hub Terms of Use',
+                'is_simulated' => false,
                 'last_fetched_at' => null,
                 'last_successful_at' => null,
                 'notes' => 'Citra radar sintetis untuk deteksi penurunan tanah (land subsidence) dan akumulasi elevasi basah.',
+                'metadata' => [
+                    'docs_url' => 'https://dataspace.copernicus.eu',
+                    'contact' => 'eosupport@copernicus.eu',
+                    'freshness_threshold_minutes' => 1440,
+                ],
             ],
             [
                 'name' => 'Data Observasi Terkurasi SENTRAVAX',
@@ -193,9 +230,19 @@ class SentravaxMasterSeeder extends Seeder
                 'category' => 'curated',
                 'endpoint_url' => 'https://sentravax.id/data/curated-baseline',
                 'status' => 'active',
+                'sync_interval_minutes' => 1440,
+                'rate_limit_rpm' => 300,
+                'terms_of_service' => 'SENTRAVAX Internal Benchmark & Demonstration License',
+                'is_simulated' => true,
                 'last_fetched_at' => null,
                 'last_successful_at' => null,
                 'notes' => 'Katalog observasi kejadian bencana lokal terkurasi untuk pengujian kesiapsiagaan dan analisis wilayah.',
+                'metadata' => [
+                    'docs_url' => 'https://sentravax.id/docs/data-baseline',
+                    'contact' => 'intel@sentravax.go.id',
+                    'freshness_threshold_minutes' => 2880,
+                    'simulation_tag' => 'DEMONSTRATION_CURATED_DATA',
+                ],
             ],
         ];
 
@@ -211,6 +258,11 @@ class SentravaxMasterSeeder extends Seeder
                     'category' => $src['category'],
                     'endpoint_url' => $src['endpoint_url'],
                     'notes' => $src['notes'],
+                    'sync_interval_minutes' => $src['sync_interval_minutes'],
+                    'rate_limit_rpm' => $src['rate_limit_rpm'],
+                    'terms_of_service' => $src['terms_of_service'],
+                    'is_simulated' => $src['is_simulated'],
+                    'metadata' => $src['metadata'],
                 ];
                 if (empty($existing->status)) {
                     $updateData['status'] = $src['status'];
@@ -757,6 +809,83 @@ class SentravaxMasterSeeder extends Seeder
                     ['is_completed' => true, 'completed_at' => now()]
                 );
             }
+        }
+    }
+
+    /**
+     * Seed Baseline Community Disaster Reports & Verifications.
+     */
+    private function seedBaselineCommunityReports(): void
+    {
+        $citizen = User::where('email', 'user@sentravax.id')->first();
+        $admin = User::where('role', User::ROLE_ADMIN)->first();
+        $hazardFlood = HazardType::where('slug', 'flood')->first() ?? HazardType::first();
+        $regionCentral = Region::where('code', 'ID-JK-PST')->first() ?? Region::first();
+        $regionNorth = Region::where('code', 'ID-JK-UTR')->first() ?? Region::find(2);
+
+        if ($citizen && $admin && $hazardFlood) {
+            // Baseline Report 1: Verified
+            if (!DB::table('community_reports')->where('id', 1)->exists()) {
+                DB::table('community_reports')->insert([
+                    'id' => 1,
+                    'user_id' => $citizen->id,
+                    'hazard_type_id' => $hazardFlood->id,
+                    'region_id' => $regionCentral?->id ?? 1,
+                    'title' => 'Genangan Jalur Rel Kereta',
+                    'description' => 'Bantalan rel terendam air setinggi 20cm.',
+                    'media' => null,
+                    'status' => 'verified',
+                    'verified_by' => $admin->id,
+                    'verified_at' => '2026-11-17 05:52:31',
+                    'moderation_notes' => 'Terkonfirmasi dengan stasiun pemantauan terdekat.',
+                    'created_at' => '2026-11-17 05:52:31',
+                    'updated_at' => '2026-11-17 05:52:31',
+                    'location' => DB::raw("'0101000020E6100000D95F764F1EB65A40849ECDAACFD518C0'::geometry"),
+                    'photo_path' => null,
+                    'cluster_id' => null,
+                ]);
+            }
+
+            // Baseline Report 9: Pending
+            if (!DB::table('community_reports')->where('id', 9)->exists()) {
+                DB::table('community_reports')->insert([
+                    'id' => 9,
+                    'user_id' => $citizen->id,
+                    'hazard_type_id' => $hazardFlood->id,
+                    'region_id' => $regionNorth?->id ?? 2,
+                    'title' => 'Banjir Genangan 40cm Menutupi Akses Jalan',
+                    'description' => 'Air meluap cepat dari drainase utama akibat curah hujan lebat.',
+                    'media' => null,
+                    'status' => 'pending',
+                    'verified_by' => null,
+                    'verified_at' => null,
+                    'moderation_notes' => null,
+                    'created_at' => '2026-11-17 05:52:57',
+                    'updated_at' => '2026-11-17 05:54:12',
+                    'location' => DB::raw("'0101000020E610000060764F1E16B65A40EBE2361AC0DB18C0'::geometry"),
+                    'photo_path' => null,
+                    'cluster_id' => 'cluster_dpeRuDEXZE',
+                ]);
+            }
+
+            // Ensure Report Verification 1
+            if (!DB::table('report_verifications')->where('id', 1)->exists()) {
+                DB::table('report_verifications')->insert([
+                    'id' => 1,
+                    'community_report_id' => 1,
+                    'verified_by' => $admin->id,
+                    'previous_status' => 'pending',
+                    'new_status' => 'verified',
+                    'notes' => 'Terkonfirmasi dengan stasiun pemantauan terdekat.',
+                    'evidence_links' => null,
+                    'created_at' => '2026-11-17 05:52:31',
+                    'updated_at' => '2026-11-17 05:52:31',
+                ]);
+            }
+
+            // Reset Postgres sequences safely
+            DB::statement("SELECT setval('community_reports_id_seq', (SELECT COALESCE(MAX(id), 1) FROM community_reports))");
+            DB::statement("SELECT setval('report_verifications_id_seq', (SELECT COALESCE(MAX(id), 1) FROM report_verifications))");
         }
     }
 }

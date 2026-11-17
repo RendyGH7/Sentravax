@@ -492,7 +492,7 @@ export const IntelligenceAiInsightsPage: React.FC = () => {
                 </div>
 
                 <div className="flex items-center gap-2.5">
-                  {renderConfidenceBadge(parsedEvidence?.confidence_level || 'HIGH')}
+                  {renderConfidenceBadge(parsedEvidence?.confidence_level || activeInsight.confidence_level || 'LOW')}
                 </div>
               </div>
 
@@ -688,7 +688,7 @@ export const IntelligenceAiInsightsPage: React.FC = () => {
                           {inItem.hazard_type?.name || '-'}
                         </td>
                         <td className="py-3 px-3">
-                          {renderConfidenceBadge((inItem.evidence as AiInsightEvidence)?.confidence_level || 'HIGH')}
+                          {renderConfidenceBadge((inItem.evidence as AiInsightEvidence)?.confidence_level || inItem.confidence_level || 'LOW')}
                         </td>
                         <td className="py-3 px-3 font-mono text-[11px] text-[#8A8A8A]">
                           {formatTimestamp(inItem.created_at)}

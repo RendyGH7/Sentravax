@@ -262,7 +262,7 @@ class IntelligenceService
             SELECT id, title, status, cluster_id, created_at,
                    ROUND(ST_Distance(location::geography, ST_SetSRID(ST_MakePoint(?, ?), 4326)::geography)::numeric, 1) as distance_meters
             FROM community_reports
-            WHERE id != ?
+            WHERE id != COALESCE(?, 0)
               AND hazard_type_id = ?
               AND created_at BETWEEN (?::timestamp - INTERVAL '6 hours') AND (?::timestamp + INTERVAL '6 hours')
               AND ST_DWithin(location::geography, ST_SetSRID(ST_MakePoint(?, ?), 4326)::geography, 1500)
@@ -308,7 +308,11 @@ class IntelligenceService
             $reasons[] = "Kelengkapan Data: Dilengkapi bukti dokumentasi foto lapangan (indikator kelengkapan informasi, bukan bukti kebenaran) (+10).";
         }
 
-        $isRecent = $report->created_at && $report->created_at->greaterThanOrEqualTo(now()->subHours(2));
+        $isRecent = false;
+        if ($report->created_at) {
+            $reportTime = $report->created_at instanceof \Carbon\Carbon ? $report->created_at : \Carbon\Carbon::parse($report->created_at);
+            $isRecent = $reportTime->greaterThanOrEqualTo(now()->subHours(2));
+        }
         if ($isRecent) {
             $score += 10;
             $reasons[] = "Prioritas Triase: Laporan baru masuk dalam kurun waktu 2 jam terakhir (+10).";
@@ -361,7 +365,7 @@ class IntelligenceService
             SELECT id, cluster_id, title, status,
                    ROUND(ST_Distance(location::geography, ST_SetSRID(ST_MakePoint(?, ?), 4326)::geography)::numeric, 1) as distance_meters
             FROM community_reports
-            WHERE id != ?
+            WHERE id != COALESCE(?, 0)
               AND hazard_type_id = ?
               AND created_at BETWEEN (?::timestamp - INTERVAL '6 hours') AND (?::timestamp + INTERVAL '6 hours')
               AND ST_DWithin(location::geography, ST_SetSRID(ST_MakePoint(?, ?), 4326)::geography, 1500)

@@ -19,6 +19,17 @@ class DataSource extends Model
         'last_fetched_at',
         'last_successful_at',
         'notes',
+        'sync_interval_minutes',
+        'rate_limit_rpm',
+        'terms_of_service',
+        'last_observed_at',
+        'is_simulated',
+        'metadata',
+    ];
+
+    protected $appends = [
+        'freshness_state',
+        'freshness_info',
     ];
 
     protected function casts(): array
@@ -26,7 +37,22 @@ class DataSource extends Model
         return [
             'last_fetched_at' => 'datetime',
             'last_successful_at' => 'datetime',
+            'last_observed_at' => 'datetime',
+            'is_simulated' => 'boolean',
+            'sync_interval_minutes' => 'integer',
+            'rate_limit_rpm' => 'integer',
+            'metadata' => 'array',
         ];
+    }
+
+    public function getFreshnessInfoAttribute(): array
+    {
+        return app(\App\Services\ExternalData\FreshnessClassifierService::class)->classify($this);
+    }
+
+    public function getFreshnessStateAttribute(): string
+    {
+        return $this->freshness_info['freshness_state'] ?? 'UNKNOWN';
     }
 
     public function hazardEvents(): HasMany
