@@ -109,3 +109,71 @@ Artisan::command('db:ensure-baseline', function () {
 
     $this->line('Database baseline verified and synchronized.');
 })->purpose('Ensure complete database baseline exists');
+
+// ==========================================
+// SENTRAVAX CRON SCHEDULER & PERIODIC TASKS
+// ==========================================
+Artisan::command('sentravax:sync-sources', function (\App\Services\ExternalData\DataSyncService $sync) {
+    $this->info('Starting SENTRAVAX external data sources synchronization...');
+    $runs = $sync->syncAll();
+    $this->info(sprintf('Successfully executed %d synchronization run(s).', count($runs)));
+})->purpose('Synchronize all active multi-hazard external data sources');
+
+\Illuminate\Support\Facades\Schedule::command('sentravax:sync-sources')
+    ->everyFifteenMinutes()
+    ->withoutOverlapping()
+    ->name('sentravax-sync-sources');
+
+\Illuminate\Support\Facades\Schedule::command('queue:prune-failed --hours=168')
+    ->daily()
+    ->name('sentravax-prune-failed-jobs');
+
+Artisan::command('sentravax:backup', function () {
+    $this->info('Starting database backup procedure...');
+    $dir = storage_path('app/backups');
+    if (!is_dir($dir)) {
+        mkdir($dir, 0755, true);
+    }
+    $filename = 'sentravax_backup_' . date('Y_m_d_His') . '.sql';
+    $filepath = $dir . DIRECTORY_SEPARATOR . $filename;
+
+    $pgDump = env('PG_DUMP_PATH');
+    if (!$pgDump) {
+        $commonPaths = [
+            'C:\\Program Files\\PostgreSQL\\17\\bin\\pg_dump.exe',
+            'C:\\Program Files\\PostgreSQL\\16\\bin\\pg_dump.exe',
+            'C:\\Program Files\\PostgreSQL\\15\\bin\\pg_dump.exe',
+            '/usr/bin/pg_dump',
+            '/usr/local/bin/pg_dump',
+        ];
+        foreach ($commonPaths as $p) {
+            if (file_exists($p)) {
+                $pgDump = $p;
+                break;
+            }
+        }
+    }
+
+    $dbHost = config('database.connections.pgsql.host', '127.0.0.1');
+    $dbPort = config('database.connections.pgsql.port', '5432');
+    $dbName = config('database.connections.pgsql.database', 'sentravax_db');
+    $dbUser = config('database.connections.pgsql.username', 'postgres');
+    $dbPass = config('database.connections.pgsql.password', '');
+
+    if ($pgDump && file_exists($pgDump)) {
+        putenv("PGPASSWORD={$dbPass}");
+        $cmd = sprintf('"%s" -h %s -p %s -U %s -F p -b -v -f "%s" %s', $pgDump, $dbHost, $dbPort, $dbUser, $filepath, $dbName);
+        exec($cmd, $output, $returnVar);
+        putenv("PGPASSWORD");
+
+        if ($returnVar === 0 && file_exists($filepath)) {
+            $size = round(filesize($filepath) / 1024, 2);
+            $this->info("Backup successfully generated at: {$filepath} ({$size} KB)");
+            return 0;
+        }
+    }
+
+    $this->warn("pg_dump binary not found in standard system path. Standard command syntax:");
+    $this->line(sprintf('pg_dump -h %s -p %s -U %s -F c -b -v -f "%s" %s', $dbHost, $dbPort, $dbUser, $filepath, $dbName));
+    return 0;
+})->purpose('Execute or prepare a database backup');

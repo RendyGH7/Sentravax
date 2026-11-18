@@ -32,6 +32,8 @@ use Illuminate\Support\Facades\Route;
 Route::get('/health', function () {
     $dbConnected = false;
     $postgisVersion = 'Unavailable';
+    $storageWritable = false;
+    $queueStatus = 'unknown';
 
     try {
         $result = DB::select('SELECT PostGIS_Version() as version');
@@ -41,17 +43,36 @@ Route::get('/health', function () {
         $dbConnected = false;
     }
 
-    $status = $dbConnected ? 200 : 503;
+    try {
+        $storageWritable = is_writable(storage_path('app/public')) || is_writable(storage_path());
+    } catch (\Throwable) {
+        $storageWritable = false;
+    }
+
+    try {
+        $failedJobsCount = DB::table('failed_jobs')->count();
+        $queueStatus = $failedJobsCount > 0 ? "degraded ({$failedJobsCount} failed jobs)" : 'operational';
+    } catch (\Throwable) {
+        $queueStatus = 'unavailable';
+    }
+
+    $latestSync = DB::table('data_source_sync_runs')->latest('synced_at')->first();
+
+    $isHealthy = $dbConnected && $storageWritable;
+    $status = $isHealthy ? 200 : 503;
 
     return response()->json([
-        'success' => $dbConnected,
-        'message' => $dbConnected ? 'SENTRAVAX API is operational' : 'System degraded: Database connection unavailable',
+        'success' => $isHealthy,
+        'message' => $isHealthy ? 'SENTRAVAX API is operational' : 'System degraded',
         'data' => [
             'application' => 'SENTRAVAX',
             'version' => '1.0.0',
-            'status' => $dbConnected ? 'operational' : 'degraded',
+            'status' => $isHealthy ? 'operational' : 'degraded',
             'database' => $dbConnected ? 'connected' : 'disconnected',
             'postgis' => $postgisVersion,
+            'storage' => $storageWritable ? 'writable' : 'unwritable',
+            'queue' => $queueStatus,
+            'latest_telemetry_sync' => $latestSync?->synced_at,
             'framework' => 'Laravel ' . app()->version(),
             'environment' => app()->environment(),
         ],
@@ -64,7 +85,7 @@ Route::get('/health', function () {
 // ==========================================
 // 2. AUTHENTICATION (Laravel Sanctum)
 // ==========================================
-Route::prefix('auth')->group(function () {
+Route::prefix('auth')->middleware(['throttle:auth'])->group(function () {
     Route::post('/login', [AuthController::class, 'login'])->name('api.auth.login');
     Route::post('/register', [AuthController::class, 'register'])->name('api.auth.register');
     Route::post('/token', [AuthController::class, 'issueToken'])->name('api.auth.token');
@@ -93,7 +114,7 @@ Route::prefix('public')->group(function () {
     Route::get('/data-sources', [PublicController::class, 'dataSources'])->name('api.public.data-sources');
     Route::get('/shelters', [PublicController::class, 'shelters'])->name('api.public.shelters');
     Route::get('/shelters/{id}', [PublicController::class, 'shelterDetail'])->name('api.public.shelters.detail');
-    Route::post('/reports', [PublicController::class, 'submitReport'])->name('api.public.reports.submit');
+    Route::post('/reports', [PublicController::class, 'submitReport'])->middleware(['throttle:public-report'])->name('api.public.reports.submit');
     Route::get('/reports/{id}', [PublicController::class, 'checkReportStatus'])->name('api.public.reports.status');
 });
 

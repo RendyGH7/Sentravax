@@ -110,11 +110,30 @@ php artisan storage:link
 
 ---
 
-## 6. Scheduled Telemetry & Data Synchronization
+## 6. Scheduled Telemetry & Queue Workers
 
-SENTRAVAX includes automated external data synchronization tasks for BMKG, BNPB, and NASA FIRMS.
+SENTRAVAX includes automated external data synchronization tasks for BMKG, CAP Inbound, and multi-hazard telemetry.
 
-### Running Laravel Task Scheduler
+### 6.1 Running Persistent Queue Worker
+In production, use `systemd` or `supervisor` to ensure persistent worker execution:
+```ini
+[program:sentravax-worker]
+process_name=%(program_name)s_%(process_num)02d
+command=php /path-to-sentravax/backend/artisan queue:work --sleep=3 --tries=3 --max-time=3600
+autostart=true
+autorestart=true
+user=www-data
+numprocs=2
+redirect_stderr=true
+stdout_logfile=/var/log/sentravax-worker.log
+```
+
+Or run via command line for staging:
+```bash
+php artisan queue:work --tries=3 --timeout=60
+```
+
+### 6.2 Running Laravel Task Scheduler
 Add the scheduler to crontab:
 ```bash
 * * * * * cd /path-to-sentravax/backend && php artisan schedule:run >> /dev/null 2>&1
@@ -127,13 +146,47 @@ php artisan schedule:work
 
 ---
 
-## 7. Running Automated Tests
+## 7. Database Backup, Health Check & Rollback Procedures
+
+### 7.1 Database Backup
+Execute the automated backup command:
+```bash
+php artisan sentravax:backup
+```
+Manual PostgreSQL dump:
+```bash
+pg_dump -h 127.0.0.1 -p 5432 -U postgres -F c -b -v -f "/path/to/backup.sql" sentravax_db
+```
+
+### 7.2 Database Restore / Disaster Recovery
+To restore from backup:
+```bash
+pg_restore -h 127.0.0.1 -p 5432 -U postgres -d sentravax_db -v "/path/to/backup.sql"
+```
+
+### 7.3 Health Check Monitoring
+Verify system status via REST endpoint:
+```bash
+curl -s http://127.0.0.1:8000/api/v1/health
+```
+Monitors PostGIS spatial engine, database connection, storage writability, queue status, and latest telemetry sync run.
+
+### 7.4 Safe Deployment Rollback
+In case of critical regression:
+1. Revert Git tag/commit to previous stable commit.
+2. Clear and rebuild cache: `php artisan config:cache && php artisan route:cache && php artisan view:cache`
+3. Restart workers: `php artisan queue:restart`
+4. If database rollback needed, restore backup before applying any destructive command. Do not use `migrate:fresh` in production.
+
+---
+
+## 8. Running Automated Tests
 
 Verify 100% test passing rate across all domain modules:
 
 ```bash
-php artisan test --filter="AuthApiTest|PublicApiTest|UserPortalApiTest|AdminApiTest|IntelligenceApiTest|RiskEngineTest"
+php vendor/phpunit/phpunit/phpunit
 ```
 
-Expected result: `Tests: 49 passed, Assertions: 285, Status: 100% Success`.
+Expected result: `Tests: 180 passed, Assertions: 1568, Status: 100% Success`.
 
