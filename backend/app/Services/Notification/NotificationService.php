@@ -29,7 +29,13 @@ class NotificationService
     public function createNotification(User $user, array $data): ?UserNotification
     {
         $category = $data['category'] ?? UserNotification::CATEGORY_SYSTEM;
-        $urgency = $data['urgency'] ?? UserNotification::URGENCY_INFO;
+        $urgency = match (strtolower(trim((string) ($data['urgency'] ?? 'info')))) {
+            'warning', 'critical' => UserNotification::URGENCY_CRITICAL,
+            'watch', 'high' => UserNotification::URGENCY_HIGH,
+            'advisory', 'medium' => UserNotification::URGENCY_MEDIUM,
+            'low' => UserNotification::URGENCY_LOW,
+            default => UserNotification::URGENCY_INFO,
+        };
         $title = trim((string) ($data['title'] ?? ''));
         $body = trim((string) ($data['body'] ?? $data['message'] ?? ''));
         $relatedType = $data['related_type'] ?? null;
@@ -76,10 +82,10 @@ class NotificationService
             return null;
         }
 
-        // 4. Persistence with race-condition safe database unique index
+        // 4. Persistence with race-condition safe database unique index and atomic delivery log
         try {
-            $notification = DB::transaction(function () use ($user, $title, $body, $category, $urgency, $relatedType, $relatedId, $fingerprint, $expiresAt, $payload) {
-                return UserNotification::create([
+            return DB::transaction(function () use ($user, $title, $body, $category, $urgency, $relatedType, $relatedId, $fingerprint, $expiresAt, $payload) {
+                $notification = UserNotification::create([
                     'user_id' => $user->id,
                     'title' => $title,
                     'body' => $body,
@@ -92,20 +98,20 @@ class NotificationService
                     'expires_at' => $expiresAt,
                     'payload' => $payload,
                 ]);
+
+                $this->deliveryService->recordLog(
+                    userId: $user->id,
+                    notificationId: $notification->id,
+                    status: NotificationDeliveryLog::STATUS_DELIVERED,
+                    fingerprint: $fingerprint,
+                    category: $category,
+                    urgency: $urgency,
+                    reason: "Notifikasi in-app berhasil dikirimkan.",
+                    metadata: ['notification_id' => $notification->id]
+                );
+
+                return $notification;
             });
-
-            $this->deliveryService->recordLog(
-                userId: $user->id,
-                notificationId: $notification->id,
-                status: NotificationDeliveryLog::STATUS_DELIVERED,
-                fingerprint: $fingerprint,
-                category: $category,
-                urgency: $urgency,
-                reason: "Notifikasi in-app berhasil dikirimkan.",
-                metadata: ['notification_id' => $notification->id]
-            );
-
-            return $notification;
         } catch (UniqueConstraintViolationException $e) {
             // Race condition intercepted by unique constraint
             $this->deliveryService->recordLog(
@@ -140,8 +146,12 @@ class NotificationService
      */
     public function notifyPublishedInsight(AiInsight $insight): int
     {
-        // Guard 1: Must not be draft or low confidence
-        if ($insight->confidence_score < 0.70 || empty($insight->title) || empty($insight->summary)) {
+        // Guard 1: Must not be draft, preliminary, or low confidence
+        if ($insight->confidence_score < 0.70 
+            || empty($insight->title) 
+            || empty($insight->summary)
+            || in_array($insight->insight_type, ['preliminary_draft', 'draft'], true)
+            || $insight->generation_mode === 'simulated') {
             return 0;
         }
 
@@ -220,17 +230,19 @@ class NotificationService
             return 0;
         }
 
-        if (!$alert->region_id) {
+        if ($alert->broadcast_level === 'national') {
+            $targetUserIds = User::where('role', User::ROLE_USER)->pluck('id');
+        } elseif ($alert->region_id) {
+            $targetUserIds = UserSavedRegion::where('region_id', $alert->region_id)
+                ->where('notify_alerts', true)
+                ->pluck('user_id')
+                ->unique();
+
+            if ($targetUserIds->isEmpty()) {
+                $targetUserIds = User::where('role', User::ROLE_USER)->limit(20)->pluck('id');
+            }
+        } else {
             return 0;
-        }
-
-        $targetUserIds = UserSavedRegion::where('region_id', $alert->region_id)
-            ->where('notify_alerts', true)
-            ->pluck('user_id')
-            ->unique();
-
-        if ($targetUserIds->isEmpty()) {
-            $targetUserIds = User::where('role', User::ROLE_USER)->limit(20)->pluck('id');
         }
 
         $deliveredCount = 0;

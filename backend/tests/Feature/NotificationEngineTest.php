@@ -513,4 +513,81 @@ class NotificationEngineTest extends TestCase
 
         $this->assertEquals(1, $countAfter, 'Reprocessing queued job must not duplicate notification.');
     }
+
+    public function test_urgency_consistency_and_canonical_mapping(): void
+    {
+        $service = app(NotificationService::class);
+
+        // 1. Passing 'warning' normalizes to 'critical'
+        $notif1 = $service->createNotification($this->user, [
+            'title' => 'Peringatan Badai Ekstrem',
+            'body' => 'Badai petir kategori tinggi melanda pesisir.',
+            'category' => UserNotification::CATEGORY_OFFICIAL_WARNING,
+            'urgency' => 'warning',
+            'material_key' => 'storm_warning_test',
+        ]);
+        $this->assertNotNull($notif1);
+        $this->assertEquals(UserNotification::URGENCY_CRITICAL, $notif1->urgency);
+
+        // 2. Querying with ?urgency=warning matches 'critical' records via canonical mapping
+        $resWarning = $this->actingAs($this->user)->getJson('/api/v1/notifications?urgency=warning');
+        $resWarning->assertStatus(200)
+            ->assertJsonFragment(['id' => $notif1->id]);
+
+        // 3. Querying with ?urgency=critical also matches
+        $resCritical = $this->actingAs($this->user)->getJson('/api/v1/notifications?urgency=critical');
+        $resCritical->assertStatus(200)
+            ->assertJsonFragment(['id' => $notif1->id]);
+
+        // 4. Test preference boundaries: min_urgency = 'watch' suppresses 'medium' but allows 'critical'
+        $this->user->notificationPreference()->updateOrCreate(
+            ['user_id' => $this->user->id],
+            ['min_urgency' => 'watch']
+        );
+
+        // Medium item should be suppressed
+        $medItem = $service->createNotification($this->user, [
+            'title' => 'Info Sedang',
+            'body' => 'Pesan tingkat sedang.',
+            'category' => UserNotification::CATEGORY_SYSTEM,
+            'urgency' => 'medium',
+            'material_key' => 'med_boundary_test',
+        ]);
+        $this->assertNull($medItem);
+
+        // High item should be delivered
+        $highItem = $service->createNotification($this->user, [
+            'title' => 'Info Tinggi',
+            'body' => 'Pesan tingkat tinggi.',
+            'category' => UserNotification::CATEGORY_SYSTEM,
+            'urgency' => 'high',
+            'material_key' => 'high_boundary_test',
+        ]);
+        $this->assertNotNull($highItem);
+    }
+
+    public function test_preliminary_draft_insight_strictly_rejected_even_with_high_confidence(): void
+    {
+        $service = app(NotificationService::class);
+        $region = Region::first();
+        $hazard = HazardType::first();
+
+        // Insight with high confidence (0.95) but marked as preliminary draft
+        $draftInsight = AiInsight::create([
+            'region_id' => $region->id,
+            'hazard_type_id' => $hazard->id,
+            'title' => 'Draft Analisis Spasial Sementara',
+            'summary' => 'Belum dikonfirmasi oleh analis intelijen.',
+            'confidence_score' => 0.95,
+            'confidence_level' => 'HIGH',
+            'insight_type' => 'preliminary_draft',
+            'generation_mode' => 'rule_based',
+            'recommendations' => ['Tunggu verifikasi lanjutan'],
+        ]);
+
+        $delivered = $service->notifyPublishedInsight($draftInsight);
+        $this->assertEquals(0, $delivered, 'Preliminary draft insights must never produce notifications.');
+
+        $draftInsight->delete();
+    }
 }

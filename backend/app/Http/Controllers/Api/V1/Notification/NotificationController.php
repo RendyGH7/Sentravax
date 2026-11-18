@@ -48,9 +48,17 @@ class NotificationController extends Controller
             $query->where('category', $validated['category']);
         }
 
-        // Filter by urgency
+        // Filter by urgency with canonical mapping compatibility
         if (!empty($validated['urgency']) && $validated['urgency'] !== 'all') {
-            $query->where('urgency', $validated['urgency']);
+            $urgencyValue = strtolower(trim($validated['urgency']));
+            $mappedUrgencies = match ($urgencyValue) {
+                'warning', 'critical' => ['critical', 'warning'],
+                'watch', 'high' => ['high', 'watch'],
+                'advisory', 'medium' => ['medium', 'advisory'],
+                'low' => ['low'],
+                default => [$urgencyValue],
+            };
+            $query->whereIn('urgency', $mappedUrgencies);
         }
 
         $perPage = (int) ($validated['per_page'] ?? 15);
