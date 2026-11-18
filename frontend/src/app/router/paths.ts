@@ -15,6 +15,8 @@ export const PATHS = {
   },
   USER: {
     DASHBOARD: '/user/dashboard',
+    SIAGA: '/user/siaga',
+    PREPAREDNESS: '/user/siaga',
     REPORTS: '/user/reports',
     CREATE_REPORT: '/user/reports/create',
     REGIONS: '/user/regions',

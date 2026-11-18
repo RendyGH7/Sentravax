@@ -15,7 +15,8 @@ import {
   ArrowLeft,
   Menu,
   X,
-  UserCheck
+  UserCheck,
+  ShieldCheck
 } from 'lucide-react';
 import { toast } from 'sonner';
 
@@ -56,6 +57,7 @@ export const UserLayout: React.FC = () => {
 
   const menuItems = [
     { name: 'Dashboard', path: PATHS.USER.DASHBOARD, icon: LayoutDashboard },
+    { name: 'Kesiapsiagaan Mandiri', path: PATHS.USER.SIAGA, icon: ShieldCheck },
     { name: 'Laporan Saya', path: PATHS.USER.REPORTS, icon: FileText },
     { name: 'Buat Laporan', path: PATHS.USER.CREATE_REPORT, icon: PlusCircle },
     { name: 'Wilayah Pantauan', path: PATHS.USER.REGIONS, icon: MapPin },

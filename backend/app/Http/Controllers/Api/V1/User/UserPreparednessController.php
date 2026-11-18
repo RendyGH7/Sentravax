@@ -55,17 +55,45 @@ class UserPreparednessController extends Controller
             'secondary_meeting_point' => ['nullable', 'string', 'max:255'],
             'evacuation_notes' => ['nullable', 'string'],
             'custom_provisions' => ['nullable', 'array'],
+            'assembly_point' => ['nullable', 'string', 'max:255'],
+            'evacuation_route' => ['nullable', 'string'],
         ]);
+
+        $updateData = [
+            'title' => $validated['title'],
+            'primary_meeting_point' => $validated['primary_meeting_point'] ?? ($validated['assembly_point'] ?? null),
+            'secondary_meeting_point' => $validated['secondary_meeting_point'] ?? null,
+            'evacuation_notes' => $validated['evacuation_notes'] ?? ($validated['evacuation_route'] ?? null),
+        ];
+
+        if (array_key_exists('custom_provisions', $validated)) {
+            $updateData['custom_provisions'] = $validated['custom_provisions'];
+        }
 
         $plan = PreparednessPlan::updateOrCreate(
             ['user_id' => $user->id],
-            $validated
+            $updateData
         );
 
         return response()->json([
             'success' => true,
             'message' => 'Rencana siaga keluarga berhasil disimpan.',
             'data' => $plan,
+        ]);
+    }
+
+    /**
+     * List User Emergency Contacts.
+     */
+    public function getContacts(Request $request): JsonResponse
+    {
+        $contacts = PreparednessContact::where('user_id', $request->user()->id)
+            ->orderBy('is_emergency_priority', 'desc')
+            ->get();
+
+        return response()->json([
+            'success' => true,
+            'data' => $contacts,
         ]);
     }
 
@@ -81,6 +109,7 @@ class UserPreparednessController extends Controller
             'relationship' => ['required', 'string', 'max:50'],
             'phone_number' => ['required', 'string', 'max:30'],
             'is_emergency_priority' => ['nullable', 'boolean'],
+            'is_primary' => ['nullable', 'boolean'],
         ]);
 
         $contact = PreparednessContact::create([
@@ -88,7 +117,7 @@ class UserPreparednessController extends Controller
             'name' => $validated['name'],
             'relationship' => $validated['relationship'],
             'phone_number' => $validated['phone_number'],
-            'is_emergency_priority' => $validated['is_emergency_priority'] ?? true,
+            'is_emergency_priority' => $validated['is_emergency_priority'] ?? ($validated['is_primary'] ?? true),
         ]);
 
         return response()->json([

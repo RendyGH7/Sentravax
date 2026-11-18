@@ -215,6 +215,15 @@ export const userService = {
   },
 
   /**
+   * Get user's emergency contacts list.
+   * Endpoint: GET /api/v1/user/preparedness/contacts
+   */
+  async getEmergencyContacts(): Promise<EmergencyContactItem[]> {
+    const res = await apiClient.get<ApiResponse<EmergencyContactItem[]>>('/user/preparedness/contacts');
+    return res.data.data;
+  },
+
+  /**
    * Add a new emergency priority contact for family safety.
    * Endpoint: POST /api/v1/user/preparedness/contacts
    */

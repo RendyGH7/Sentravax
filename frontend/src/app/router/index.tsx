@@ -24,6 +24,7 @@ import { NotFoundPage } from '../../pages/public/NotFoundPage';
 
 // User Portal Pages
 import { UserDashboardPage } from '../../pages/user/UserDashboardPage';
+import { UserPreparednessPage } from '../../pages/user/UserPreparednessPage';
 import { UserReportsPage } from '../../pages/user/UserReportsPage';
 import { UserCreateReportPage } from '../../pages/user/UserCreateReportPage';
 import { UserRegionsPage } from '../../pages/user/UserRegionsPage';
@@ -82,6 +83,7 @@ export const router = createBrowserRouter([
     children: [
       { index: true, element: <UserDashboardPage /> },
       { path: 'dashboard', element: <UserDashboardPage /> },
+      { path: 'siaga', element: <UserPreparednessPage /> },
       { path: 'reports', element: <UserReportsPage /> },
       { path: 'reports/create', element: <UserCreateReportPage /> },
       { path: 'regions', element: <UserRegionsPage /> },

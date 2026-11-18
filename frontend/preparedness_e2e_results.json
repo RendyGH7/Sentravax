@@ -1,0 +1,54 @@
+{
+  "timestamp": "2026-11-18T05:07:14.656Z",
+  "allPassed": true,
+  "results": [
+    {
+      "stepNum": 1,
+      "name": "Guest ditolak mengakses /user/siaga",
+      "passed": true,
+      "details": "Dialihkan ke: http://localhost:5173/login"
+    },
+    {
+      "stepNum": 2,
+      "name": "Login Akun Warga Terverifikasi",
+      "passed": true,
+      "details": "Berhasil masuk ke: http://localhost:5173/user/siaga"
+    },
+    {
+      "stepNum": 3,
+      "name": "Buka Portal Kesiapsiagaan Warga (/user/siaga)",
+      "passed": true,
+      "details": "Header dan 3 Tab (Rencana, Kontak, Tas Siaga) ter-render sempurna"
+    },
+    {
+      "stepNum": 4,
+      "name": "Update dan Simpan Rencana Siaga Keluarga",
+      "passed": true,
+      "details": "Titik Kumpul Utama diisi: \"Taman Balai RW 08 Sentosa\""
+    },
+    {
+      "stepNum": 5,
+      "name": "Tambah Kontak Darurat Keluarga Baru",
+      "passed": true,
+      "details": "Kontak \"Paman Bambang Sutrisno\" berhasil ditambahkan dan tampil di list"
+    },
+    {
+      "stepNum": 6,
+      "name": "Hapus Kontak Darurat dengan Konfirmasi Modal",
+      "passed": true,
+      "details": "Kontak berhasil dihapus dari UI dan database"
+    },
+    {
+      "stepNum": 7,
+      "name": "Toggle Status Item Tas Siaga Bencana (Go-Bag)",
+      "passed": true,
+      "details": "Item dicentang, persentase kesiapan awal: 0%"
+    },
+    {
+      "stepNum": 8,
+      "name": "Reload Browser & Konfirmasi Persistensi Basis Data",
+      "passed": true,
+      "details": "Titik Kumpul \"Taman Balai RW 08 Sentosa\" tersimpan di database dan dimuat kembali setelah refresh"
+    }
+  ]
+}
