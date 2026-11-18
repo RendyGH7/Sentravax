@@ -41,9 +41,9 @@ class AiInsight extends Model
         return $this->evidence['confidence_level'] ?? (
             (float) $this->confidence_score <= 0.05
                 ? 'INSUFFICIENT_DATA'
-                : ((float) $this->confidence_score >= 0.85
+                : ((float) $this->confidence_score >= 0.900
                     ? 'HIGH'
-                    : ((float) $this->confidence_score >= 0.60
+                    : ((float) $this->confidence_score >= 0.700
                         ? 'MEDIUM'
                         : 'LOW'))
         );

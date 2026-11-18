@@ -142,12 +142,19 @@ class NotificationService
 
     /**
      * Dispatch notification for a Published AI Insight.
-     * Draft insights are strictly excluded from public notification.
+     * Only insights with verified evidence strength (canonical MEDIUM >= 0.700 or HIGH >= 0.900) are notified.
+     * Preliminary draft, simulated, and low confidence insights are strictly excluded.
      */
     public function notifyPublishedInsight(AiInsight $insight): int
     {
-        // Guard 1: Must not be draft, preliminary, or low confidence
-        if ($insight->confidence_score < 0.70 
+        $score = (float) $insight->confidence_score;
+        $level = $insight->confidence_level;
+
+        // Guard 1: Must meet minimum verified evidence strength (canonical MEDIUM >= 0.700)
+        // Scores < 0.700 (including 0.699, LOW 0.400, INSUFFICIENT_DATA 0.000) are rejected.
+        if ($score < 0.700 
+            || $level === 'LOW' 
+            || $level === 'INSUFFICIENT_DATA'
             || empty($insight->title) 
             || empty($insight->summary)
             || in_array($insight->insight_type, ['preliminary_draft', 'draft'], true)
@@ -177,11 +184,15 @@ class NotificationService
         $targetUserIds = $targetUserIds->unique();
         $deliveredCount = 0;
 
-        $urgency = ($insight->confidence_level === 'HIGH' || $insight->confidence_score >= 0.85)
+        // Canonical Urgency Mapping based on Step 3 Evidence Strength:
+        // HIGH Evidence (score >= 0.900) -> URGENCY_HIGH
+        // MEDIUM Evidence (0.700 <= score < 0.900) -> URGENCY_MEDIUM
+        $isHighEvidence = ($level === 'HIGH' || $score >= 0.900);
+        $urgency = $isHighEvidence
             ? UserNotification::URGENCY_HIGH
             : UserNotification::URGENCY_MEDIUM;
 
-        $materialKey = hash('sha256', ($insight->confidence_level ?? 'MED') . ':' . substr($insight->summary, 0, 100));
+        $materialKey = hash('sha256', ($isHighEvidence ? 'HIGH' : 'MEDIUM') . ':' . substr($insight->summary, 0, 100));
 
         foreach ($targetUserIds as $userId) {
             $user = User::find($userId);
@@ -201,8 +212,10 @@ class NotificationService
                     'insight_id' => $insight->id,
                     'region_id' => $insight->region_id,
                     'hazard_type_id' => $insight->hazard_type_id,
-                    'confidence_score' => $insight->confidence_score,
-                    'confidence_level' => $insight->confidence_level,
+                    'evidence_strength' => $isHighEvidence ? 'HIGH' : 'MEDIUM',
+                    'confidence_level' => $level,
+                    'confidence_score' => $score,
+                    'disclaimer' => 'Skor ini menunjukkan kekuatan bukti observasi terverifikasi, bukan probabilitas kejadian bencana.',
                 ],
             ]);
 

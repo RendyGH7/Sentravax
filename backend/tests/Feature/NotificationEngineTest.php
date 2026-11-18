@@ -282,7 +282,7 @@ class NotificationEngineTest extends TestCase
             'hazard_type_id' => $hazard->id,
             'title' => 'Potensi Banjir Bandang DAS Hulu',
             'summary' => 'Debit sungai meningkat 300% dalam 2 jam terakhir.',
-            'confidence_score' => 0.88,
+            'confidence_score' => 0.900,
             'confidence_level' => 'HIGH',
             'insight_type' => 'risk_analysis',
             'generation_mode' => 'rule_based',
@@ -299,6 +299,7 @@ class NotificationEngineTest extends TestCase
 
         $this->assertNotNull($notif);
         $this->assertStringContainsString('Potensi Banjir Bandang DAS Hulu', $notif->title);
+        $this->assertEquals(UserNotification::URGENCY_HIGH, $notif->urgency);
 
         // 2. Low-confidence or draft insight does NOT create notification
         $draftInsight = AiInsight::create([
@@ -589,5 +590,107 @@ class NotificationEngineTest extends TestCase
         $this->assertEquals(0, $delivered, 'Preliminary draft insights must never produce notifications.');
 
         $draftInsight->delete();
+    }
+
+    public function test_ai_evidence_strength_boundaries_and_remediation(): void
+    {
+        $service = app(NotificationService::class);
+        $region = Region::first();
+        $hazard = HazardType::first();
+
+        // 1. Exact boundary 0.900 (Canonical HIGH Evidence Strength)
+        $insightHigh = AiInsight::create([
+            'region_id' => $region->id,
+            'hazard_type_id' => $hazard->id,
+            'title' => 'Insight Boundary 0.900 High',
+            'summary' => 'Korelasi multi-sumber kejadian dan peringatan resmi terverifikasi.',
+            'confidence_score' => 0.900,
+            'confidence_level' => 'HIGH',
+            'insight_type' => 'proactive_resilience',
+            'generation_mode' => 'rule_based',
+            'recommendations' => ['Pantau status siaga'],
+        ]);
+        $deliveredHigh = $service->notifyPublishedInsight($insightHigh);
+        $this->assertGreaterThan(0, $deliveredHigh);
+        $notifHigh = UserNotification::where('related_id', $insightHigh->id)->first();
+        $this->assertNotNull($notifHigh);
+        $this->assertEquals(UserNotification::URGENCY_HIGH, $notifHigh->urgency);
+        $this->assertEquals('HIGH', $notifHigh->payload['evidence_strength']);
+        $this->assertStringContainsString('kekuatan bukti', $notifHigh->payload['disclaimer']);
+
+        // 2. Exact boundary 0.899 (Just below HIGH -> Canonical MEDIUM Evidence Strength)
+        $insight899 = AiInsight::create([
+            'region_id' => $region->id,
+            'hazard_type_id' => $hazard->id,
+            'title' => 'Insight Boundary 0.899 Medium',
+            'summary' => 'Tervalidasi satu sumber data resmi utama.',
+            'confidence_score' => 0.899,
+            'insight_type' => 'proactive_resilience',
+            'generation_mode' => 'rule_based',
+            'recommendations' => ['Cek kesiapan wilayah'],
+        ]);
+        $delivered899 = $service->notifyPublishedInsight($insight899);
+        $this->assertGreaterThan(0, $delivered899);
+        $notif899 = UserNotification::where('related_id', $insight899->id)->first();
+        $this->assertNotNull($notif899);
+        $this->assertEquals(UserNotification::URGENCY_MEDIUM, $notif899->urgency);
+        $this->assertEquals('MEDIUM', $notif899->payload['evidence_strength']);
+
+        // 3. Exact boundary 0.700 (Canonical MEDIUM Evidence Strength threshold)
+        $insight700 = AiInsight::create([
+            'region_id' => $region->id,
+            'hazard_type_id' => $hazard->id,
+            'title' => 'Insight Boundary 0.700 Medium Threshold',
+            'summary' => 'Tervalidasi laporan warga terkonfirmasi posko.',
+            'confidence_score' => 0.700,
+            'confidence_level' => 'MEDIUM',
+            'insight_type' => 'proactive_resilience',
+            'generation_mode' => 'rule_based',
+            'recommendations' => ['Waspada potensi lokal'],
+        ]);
+        $delivered700 = $service->notifyPublishedInsight($insight700);
+        $this->assertGreaterThan(0, $delivered700);
+        $notif700 = UserNotification::where('related_id', $insight700->id)->first();
+        $this->assertNotNull($notif700);
+        $this->assertEquals(UserNotification::URGENCY_MEDIUM, $notif700->urgency);
+        $this->assertEquals('MEDIUM', $notif700->payload['evidence_strength']);
+
+        // 4. Exact boundary 0.699 (Just below MEDIUM threshold -> Canonical LOW Evidence Strength -> REJECTED)
+        $insight699 = AiInsight::create([
+            'region_id' => $region->id,
+            'hazard_type_id' => $hazard->id,
+            'title' => 'Insight Boundary 0.699 Below Threshold',
+            'summary' => 'Bukti di bawah batas minimum verifikasi multi-sumber.',
+            'confidence_score' => 0.699,
+            'insight_type' => 'proactive_resilience',
+            'generation_mode' => 'rule_based',
+            'recommendations' => ['Pantau berkala'],
+        ]);
+        $delivered699 = $service->notifyPublishedInsight($insight699);
+        $this->assertEquals(0, $delivered699, 'Score 0.699 must be rejected as below MEDIUM threshold.');
+        $notif699 = UserNotification::where('related_id', $insight699->id)->first();
+        $this->assertNull($notif699);
+
+        // 5. Canonical LOW 0.400 -> REJECTED
+        $insight400 = AiInsight::create([
+            'region_id' => $region->id,
+            'hazard_type_id' => $hazard->id,
+            'title' => 'Insight Canonical 0.400 Low',
+            'summary' => 'Inferensi berbasis kerentanan baseline tanpa insiden aktif.',
+            'confidence_score' => 0.400,
+            'confidence_level' => 'LOW',
+            'insight_type' => 'proactive_resilience',
+            'generation_mode' => 'rule_based',
+            'recommendations' => ['Pantau berkala'],
+        ]);
+        $delivered400 = $service->notifyPublishedInsight($insight400);
+        $this->assertEquals(0, $delivered400, 'Canonical LOW 0.400 must never produce notifications.');
+
+        // Clean up created boundary insights
+        $insightHigh->delete();
+        $insight899->delete();
+        $insight700->delete();
+        $insight699->delete();
+        $insight400->delete();
     }
 }
