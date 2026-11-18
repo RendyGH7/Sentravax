@@ -7,6 +7,12 @@ import type {
   SystemHealthData,
   FailedJobItem,
 } from '../types/admin';
+import type {
+  ShelterItem,
+  ShelterDetail,
+  ShelterFormData,
+  AdminShelterStats,
+} from '../types/shelter';
 
 export interface AdminOverviewApiResponse {
   counts: AdminOverviewStats;
@@ -177,5 +183,106 @@ export const adminService = {
    */
   async deleteEducation(id: number): Promise<void> {
     await apiClient.delete<ApiResponse<null>>(`/admin/education/${id}`);
+  },
+
+  /**
+   * List all shelters for admin management with filters and operational metrics.
+   * Endpoint: GET /api/v1/admin/shelters
+   */
+  async getShelters(params?: {
+    q?: string;
+    facility_type?: string;
+    operational_status?: string;
+    verification_status?: string;
+    region_id?: number;
+    with_trashed?: boolean;
+    page?: number;
+    per_page?: number;
+  }): Promise<{
+    data: ShelterItem[];
+    stats: AdminShelterStats;
+    meta: { current_page: number; last_page: number; total: number; per_page: number };
+  }> {
+    const res = await apiClient.get<ApiResponse<{
+      data: ShelterItem[];
+      current_page: number;
+      last_page: number;
+      total: number;
+      per_page: number;
+    }> & { stats: AdminShelterStats }>('/admin/shelters', { params });
+
+    const innerData = res.data.data;
+    return {
+      data: innerData.data,
+      stats: res.data.stats || {
+        total: 0,
+        verified: 0,
+        pending: 0,
+        open: 0,
+        full: 0,
+        standby: 0,
+        closed: 0,
+        total_capacity: 0,
+        total_occupancy: 0,
+      },
+      meta: {
+        current_page: innerData.current_page,
+        last_page: innerData.last_page,
+        total: innerData.total,
+        per_page: innerData.per_page,
+      },
+    };
+  },
+
+  /**
+   * Get single shelter detail for admin inspection & editing.
+   * Endpoint: GET /api/v1/admin/shelters/{id}
+   */
+  async getShelter(id: number): Promise<ShelterDetail> {
+    const res = await apiClient.get<ApiResponse<ShelterDetail>>(`/admin/shelters/${id}`);
+    return res.data.data;
+  },
+
+  /**
+   * Register a new verified or pending emergency shelter.
+   * Endpoint: POST /api/v1/admin/shelters
+   */
+  async createShelter(payload: ShelterFormData): Promise<ShelterDetail> {
+    const res = await apiClient.post<ApiResponse<ShelterDetail>>('/admin/shelters', payload);
+    return res.data.data;
+  },
+
+  /**
+   * Update shelter information and log revision to provenance audit trail.
+   * Endpoint: PUT /api/v1/admin/shelters/{id}
+   */
+  async updateShelter(id: number, payload: Partial<ShelterFormData>): Promise<ShelterDetail> {
+    const res = await apiClient.put<ApiResponse<ShelterDetail>>(`/admin/shelters/${id}`, payload);
+    return res.data.data;
+  },
+
+  /**
+   * Quick update shelter operational status, occupancy, or verification status.
+   * Endpoint: PUT /api/v1/admin/shelters/{id}/status
+   */
+  async updateShelterStatus(
+    id: number,
+    payload: {
+      operational_status?: string;
+      verification_status?: string;
+      current_occupancy?: number;
+      notes?: string;
+    }
+  ): Promise<ShelterDetail> {
+    const res = await apiClient.put<ApiResponse<ShelterDetail>>(`/admin/shelters/${id}/status`, payload);
+    return res.data.data;
+  },
+
+  /**
+   * Soft-deactivate shelter, preserving complete public audit history.
+   * Endpoint: DELETE /api/v1/admin/shelters/{id}
+   */
+  async deleteShelter(id: number): Promise<void> {
+    await apiClient.delete<ApiResponse<null>>(`/admin/shelters/${id}`);
   },
 };

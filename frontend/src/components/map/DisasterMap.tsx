@@ -21,7 +21,9 @@ import {
   OSM_FALLBACK_TILE_LAYER,
   SEVERITY_CONFIGS,
 } from './map-config';
-import { AlertCircle, RefreshCw, Layers, ChevronRight, MapPin } from 'lucide-react';
+import { AlertCircle, RefreshCw, Layers, ChevronRight, MapPin, Shield } from 'lucide-react';
+import type { ShelterItem } from '../../types/shelter';
+import { createShelterMarkerIcon, createShelterPopupHtml } from './shelter-map-utils';
 
 export interface DisasterMapProps {
   theme?: UITheme;
@@ -38,6 +40,7 @@ export interface DisasterMapProps {
   boundaryGeoJson?: GeoJsonFeatureCollection | null;
   onMapClick?: (lat: number, lon: number) => void;
   selectedLocation?: { latitude: number; longitude: number; label?: string } | null;
+  initialShowShelters?: boolean;
 }
 
 export const DisasterMap: React.FC<DisasterMapProps> = ({
@@ -55,6 +58,7 @@ export const DisasterMap: React.FC<DisasterMapProps> = ({
   boundaryGeoJson,
   onMapClick,
   selectedLocation,
+  initialShowShelters = true,
 }) => {
   const isDark = theme === 'dark';
 
@@ -63,9 +67,11 @@ export const DisasterMap: React.FC<DisasterMapProps> = ({
   const mapInstanceRef = useRef<L.Map | null>(null);
   const tileLayerRef = useRef<L.TileLayer | null>(null);
   const markersGroupRef = useRef<L.LayerGroup | null>(null);
+  const sheltersGroupRef = useRef<L.LayerGroup | null>(null);
   const boundaryLayerRef = useRef<L.GeoJSON | null>(null);
   const userMarkerRef = useRef<L.Marker | null>(null);
   const markerMapRef = useRef<Map<number, L.Marker>>(new Map());
+  const shelterMarkerMapRef = useRef<Map<number, L.Marker>>(new Map());
   const hasFallenBackRef = useRef<boolean>(false);
 
   // State Management
@@ -75,6 +81,12 @@ export const DisasterMap: React.FC<DisasterMapProps> = ({
   const [isLoading, setIsLoading] = useState<boolean>(true);
   const [error, setError] = useState<string | null>(null);
   const [reloadCounter, setReloadCounter] = useState<number>(0);
+
+  // Shelter Layer State
+  const [showShelters, setShowShelters] = useState<boolean>(initialShowShelters);
+  const [shelters, setShelters] = useState<ShelterItem[]>([]);
+  const [shelterFacilityFilter, setShelterFacilityFilter] = useState<string>('all');
+  const [shelterAccessibilityOnly, setShelterAccessibilityOnly] = useState<boolean>(false);
 
   // Provenance & Telemetry Metadata
   const [dataStatus, setDataStatus] = useState<DataFreshnessStatus>('LIVE');
@@ -93,11 +105,17 @@ export const DisasterMap: React.FC<DisasterMapProps> = ({
 
     const loadData = async () => {
       try {
-        // Parallel fetch for map features, overview provenance, and hazard types
-        const [featuresRes, overviewRes, hazardTypesRes] = await Promise.allSettled([
+        // Parallel fetch for map features, overview provenance, hazard types, and shelters
+        const [featuresRes, overviewRes, hazardTypesRes, sheltersRes] = await Promise.allSettled([
           publicService.getMapFeatures(),
           publicService.getOverview(),
           publicService.getHazardTypes(),
+          publicService.getShelters({
+            verification_status: 'all',
+            lat: selectedLocation?.latitude,
+            lon: selectedLocation?.longitude,
+            per_page: 100,
+          }),
         ]);
 
         if (!isMounted) return;
@@ -148,6 +166,11 @@ export const DisasterMap: React.FC<DisasterMapProps> = ({
         if (hazardTypesRes.status === 'fulfilled') {
           setHazardTypes(hazardTypesRes.value);
         }
+
+        // 4. Process Shelters & Assembly Points
+        if (sheltersRes.status === 'fulfilled') {
+          setShelters(sheltersRes.value.data || []);
+        }
       } catch (err) {
         if (!isMounted) return;
         const msg = getApiErrorMessage(err);
@@ -165,7 +188,7 @@ export const DisasterMap: React.FC<DisasterMapProps> = ({
     return () => {
       isMounted = false;
     };
-  }, [reloadCounter]);
+  }, [reloadCounter, selectedLocation?.latitude, selectedLocation?.longitude]);
 
   const handleRetry = () => {
     setIsLoading(true);
@@ -221,6 +244,10 @@ export const DisasterMap: React.FC<DisasterMapProps> = ({
     const markersGroup = L.layerGroup().addTo(map);
     markersGroupRef.current = markersGroup;
 
+    // Shelters Layer Group Setup
+    const sheltersGroup = L.layerGroup().addTo(map);
+    sheltersGroupRef.current = sheltersGroup;
+
     mapInstanceRef.current = map;
 
     // ResizeObserver to handle fluid container dimension changes
@@ -230,6 +257,7 @@ export const DisasterMap: React.FC<DisasterMapProps> = ({
     resizeObserver.observe(container);
 
     const markerMap = markerMapRef.current;
+    const shelterMarkerMap = shelterMarkerMapRef.current;
 
     return () => {
       resizeObserver.disconnect();
@@ -240,9 +268,11 @@ export const DisasterMap: React.FC<DisasterMapProps> = ({
       map.remove();
       mapInstanceRef.current = null;
       markersGroupRef.current = null;
+      sheltersGroupRef.current = null;
       tileLayerRef.current = null;
       boundaryLayerRef.current = null;
       markerMap.clear();
+      shelterMarkerMap.clear();
     };
   }, [initialCenter, initialZoom, theme]);
 
@@ -450,6 +480,55 @@ export const DisasterMap: React.FC<DisasterMapProps> = ({
   }, [selectedEventId]);
 
   // =========================================================================
+  // SHELTER FILTER COMPUTATION & MARKER RENDERING
+  // =========================================================================
+  const filteredShelters = useMemo(() => {
+    return shelters.filter((s) => {
+      if (shelterFacilityFilter !== 'all' && s.facility_type !== shelterFacilityFilter) {
+        return false;
+      }
+      if (shelterAccessibilityOnly && !s.wheelchair_accessible && !s.elderly_friendly) {
+        return false;
+      }
+      return true;
+    });
+  }, [shelters, shelterFacilityFilter, shelterAccessibilityOnly]);
+
+  useEffect(() => {
+    const sheltersGroup = sheltersGroupRef.current;
+    if (!sheltersGroup) return;
+
+    sheltersGroup.clearLayers();
+    shelterMarkerMapRef.current.clear();
+
+    if (!showShelters) return;
+
+    filteredShelters.forEach((shelter) => {
+      const lat = shelter.latitude;
+      const lon = shelter.longitude;
+      if (typeof lat !== 'number' || typeof lon !== 'number') return;
+
+      const markerIcon = createShelterMarkerIcon(shelter, false, theme);
+      const marker = L.marker([lat, lon], {
+        icon: markerIcon,
+        title: shelter.name,
+        alt: `Fasilitas Shelter: ${shelter.name}`,
+        zIndexOffset: 500,
+      });
+
+      const popupHtml = createShelterPopupHtml(shelter, theme, shelter.distance_km);
+      marker.bindPopup(popupHtml, {
+        maxWidth: 340,
+        minWidth: 280,
+        className: 'sentravax-shelter-popup',
+      });
+
+      sheltersGroup.addLayer(marker);
+      shelterMarkerMapRef.current.set(shelter.id, marker);
+    });
+  }, [filteredShelters, showShelters, theme]);
+
+  // =========================================================================
   // 5. MAP NAVIGATION ACTIONS
   // =========================================================================
   const handleZoomIn = () => {
@@ -500,7 +579,44 @@ export const DisasterMap: React.FC<DisasterMapProps> = ({
         </div>
       )}
 
-      {/* 2. Map Controls (Zoom, Reset, Legend, List Drawer) */}
+      {/* 1.5 Shelter Layer Sub-Toolbar */}
+      {showShelters && (
+        <div className="absolute top-16 left-3 z-20 flex flex-wrap items-center gap-1.5 p-1.5 rounded-xl bg-white/95 dark:bg-[#161616]/95 backdrop-blur-xs border border-[#E5E7EB] dark:border-[#2C2C2C] shadow-xs text-xs pointer-events-auto">
+          <div className="flex items-center gap-1 px-2 py-0.5 text-[11px] font-bold text-[#065F46] dark:text-[#34D399]">
+            <Shield className="w-3.5 h-3.5 text-[#047857]" />
+            <span>Layer Shelter ({filteredShelters.length})</span>
+          </div>
+          <select
+            value={shelterFacilityFilter}
+            onChange={(e) => setShelterFacilityFilter(e.target.value)}
+            className="text-[11px] py-1 px-2 rounded-lg border border-[#E5E7EB] dark:border-[#374151] bg-white dark:bg-[#212121] text-[#111827] dark:text-[#F3F4F6] focus:outline-none focus:ring-1 focus:ring-[#047857] cursor-pointer"
+            aria-label="Filter jenis fasilitas shelter"
+          >
+            <option value="all">Semua Jenis Fasilitas</option>
+            <option value="assembly_point">Titik Kumpul Aman</option>
+            <option value="community_hall">Balai Warga / GOR</option>
+            <option value="stadium">Stadion Evakuasi</option>
+            <option value="school">Sekolah</option>
+            <option value="health_facility">Fasilitas Kesehatan</option>
+            <option value="government_office">Kantor Pemerintah</option>
+          </select>
+          <button
+            type="button"
+            onClick={() => setShelterAccessibilityOnly((prev) => !prev)}
+            className={cn(
+              'px-2 py-1 rounded-lg text-[11px] font-medium transition-colors flex items-center gap-1 border cursor-pointer select-none',
+              shelterAccessibilityOnly
+                ? 'bg-[#047857] text-white border-[#047857]'
+                : 'bg-transparent text-[#4B5563] dark:text-[#9CA3AF] border-transparent hover:bg-[#F3F4F6] dark:hover:bg-[#262626]'
+            )}
+            title="Tampilkan hanya fasilitas yang ramah lansia & disabilitas"
+          >
+            ♿ Ramah Lansia/Disabilitas
+          </button>
+        </div>
+      )}
+
+      {/* 2. Map Controls (Zoom, Reset, Legend, List Drawer, Shelter Toggle) */}
       {showControls && (
         <div className="absolute top-3 right-3 z-20">
           <MapControls
@@ -512,6 +628,8 @@ export const DisasterMap: React.FC<DisasterMapProps> = ({
             onToggleList={showEventList ? () => setIsListOpen((prev) => !prev) : undefined}
             isListOpen={isListOpen}
             hasListToggle={showEventList && features.length > 0}
+            onToggleShelters={() => setShowShelters((prev) => !prev)}
+            isSheltersOpen={showShelters}
             theme={theme}
           />
         </div>

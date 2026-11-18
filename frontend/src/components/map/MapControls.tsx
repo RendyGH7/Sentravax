@@ -1,5 +1,5 @@
 import React from 'react';
-import { Plus, Minus, RotateCcw, Layers, List } from 'lucide-react';
+import { Plus, Minus, RotateCcw, Layers, List, Shield } from 'lucide-react';
 import { cn } from '../../lib/utils';
 import type { UITheme } from '../ui/Button';
 
@@ -12,6 +12,8 @@ export interface MapControlsProps {
   onToggleList?: () => void;
   isListOpen?: boolean;
   hasListToggle?: boolean;
+  onToggleShelters?: () => void;
+  isSheltersOpen?: boolean;
   theme?: UITheme;
   className?: string;
 }
@@ -25,6 +27,8 @@ export const MapControls: React.FC<MapControlsProps> = ({
   onToggleList,
   isListOpen = false,
   hasListToggle = false,
+  onToggleShelters,
+  isSheltersOpen = false,
   theme = 'light',
   className,
 }) => {
@@ -97,6 +101,25 @@ export const MapControls: React.FC<MapControlsProps> = ({
           )}
         >
           <Layers className="w-4 h-4 sm:w-4.5 sm:h-4.5" aria-hidden="true" />
+        </button>
+      )}
+
+      {/* Toggle Verified Shelters Layer Button */}
+      {onToggleShelters && (
+        <button
+          type="button"
+          onClick={onToggleShelters}
+          aria-label={isSheltersOpen ? 'Sembunyikan layer shelter resmi' : 'Tampilkan layer shelter resmi'}
+          aria-expanded={isSheltersOpen}
+          title={isSheltersOpen ? 'Layer Shelter Aktif' : 'Tampilkan Titik Kumpul & Shelter'}
+          className={cn(
+            btnBaseStyles,
+            isSheltersOpen
+              ? 'bg-[#047857] text-white border-[#047857] hover:bg-[#065F46]'
+              : ''
+          )}
+        >
+          <Shield className="w-4 h-4 sm:w-4.5 sm:h-4.5" aria-hidden="true" />
         </button>
       )}
 

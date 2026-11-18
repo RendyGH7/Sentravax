@@ -20,6 +20,12 @@ import type {
   DataSourceItem,
   PaginatedData,
 } from '../types';
+import type {
+  ShelterDetail,
+  ShelterFilterParams,
+  ShelterListResponse,
+  ShelterGeoJsonCollection,
+} from '../types/shelter';
 
 export function normalizeBroadcastLevel(level: unknown): BroadcastLevel | null {
   if (level === 'local' || level === 'regional' || level === 'national') {
@@ -179,6 +185,39 @@ export const publicService = {
    */
   async getDataSources(): Promise<DataSourceItem[]> {
     const res = await apiClient.get<ApiResponse<DataSourceItem[]>>('/public/data-sources');
+    return res.data.data;
+  },
+
+  /**
+   * Get list of verified emergency shelters and assembly points.
+   * Endpoint: GET /api/v1/public/shelters
+   */
+  async getShelters(params?: ShelterFilterParams): Promise<ShelterListResponse> {
+    const res = await apiClient.get<ApiResponse<ShelterListResponse>>('/public/shelters', {
+      params,
+    });
+    return res.data.data;
+  },
+
+  /**
+   * Get shelters in GeoJSON FeatureCollection format for interactive Leaflet maps.
+   * Endpoint: GET /api/v1/public/shelters?format=geojson
+   */
+  async getSheltersGeoJson(params?: Omit<ShelterFilterParams, 'format'>): Promise<ShelterGeoJsonCollection> {
+    const res = await apiClient.get<ShelterGeoJsonCollection>('/public/shelters', {
+      params: { ...params, format: 'geojson' },
+    });
+    return res.data;
+  },
+
+  /**
+   * Get single shelter details, facilities, verified agency, and official evacuation corridor guidance.
+   * Endpoint: GET /api/v1/public/shelters/{id}
+   */
+  async getShelterDetail(id: number, lat?: number, lon?: number): Promise<ShelterDetail> {
+    const res = await apiClient.get<ApiResponse<ShelterDetail>>(`/public/shelters/${id}`, {
+      params: lat !== undefined && lon !== undefined ? { lat, lon } : undefined,
+    });
     return res.data.data;
   },
 };

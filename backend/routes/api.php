@@ -3,6 +3,7 @@
 use App\Http\Controllers\Api\V1\Admin\AdminDisasterController;
 use App\Http\Controllers\Api\V1\Admin\AdminModerationController;
 use App\Http\Controllers\Api\V1\Admin\AdminOverviewController;
+use App\Http\Controllers\Api\V1\Admin\AdminShelterController;
 use App\Http\Controllers\Api\V1\Admin\AdminUserController;
 use App\Http\Controllers\Api\V1\AuthController;
 use App\Http\Controllers\Api\V1\Intelligence\IntelligenceCenterController;
@@ -90,6 +91,8 @@ Route::prefix('public')->group(function () {
     Route::get('/education', [PublicController::class, 'education'])->name('api.public.education');
     Route::get('/education/{slug}', [PublicController::class, 'educationDetail'])->name('api.public.education.detail');
     Route::get('/data-sources', [PublicController::class, 'dataSources'])->name('api.public.data-sources');
+    Route::get('/shelters', [PublicController::class, 'shelters'])->name('api.public.shelters');
+    Route::get('/shelters/{id}', [PublicController::class, 'shelterDetail'])->name('api.public.shelters.detail');
 });
 
 // ==========================================
@@ -223,6 +226,14 @@ Route::prefix('admin')->middleware(['auth:sanctum', 'role:admin'])->group(functi
     Route::get('/reports/{id}', [AdminModerationController::class, 'show'])->name('api.admin.reports.show');
     Route::post('/reports/{id}/verify', [AdminModerationController::class, 'verify'])->name('api.admin.reports.verify');
     Route::delete('/reports/{id}', [AdminModerationController::class, 'destroy'])->name('api.admin.reports.destroy');
+
+    // Verified Shelters & Evacuation Points Registry
+    Route::get('/shelters', [AdminShelterController::class, 'index'])->name('api.admin.shelters.index');
+    Route::post('/shelters', [AdminShelterController::class, 'store'])->name('api.admin.shelters.store');
+    Route::get('/shelters/{id}', [AdminShelterController::class, 'show'])->name('api.admin.shelters.show');
+    Route::put('/shelters/{id}', [AdminShelterController::class, 'update'])->name('api.admin.shelters.update');
+    Route::put('/shelters/{id}/status', [AdminShelterController::class, 'updateStatus'])->name('api.admin.shelters.update-status');
+    Route::delete('/shelters/{id}', [AdminShelterController::class, 'destroy'])->name('api.admin.shelters.destroy');
 });
 
 // ==========================================

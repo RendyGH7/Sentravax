@@ -1,5 +1,5 @@
 import React from 'react';
-import { X, Activity, Waves, CloudLightning, Mountain, Anchor, Info } from 'lucide-react';
+import { X, Activity, Waves, CloudLightning, Mountain, Anchor, Info, Shield } from 'lucide-react';
 import { cn } from '../../lib/utils';
 import { Badge, type DataFreshnessStatus } from '../ui/Badge';
 import { SEVERITY_CONFIGS } from './map-config';
@@ -131,6 +131,27 @@ export const MapLegend: React.FC<MapLegendProps> = ({
             <li className="flex items-center gap-2">
               <Anchor className="w-3.5 h-3.5 text-teal-600 shrink-0" aria-hidden="true" />
               <span>Banjir Rob Pesisir</span>
+            </li>
+          </ul>
+        </div>
+
+        {/* Fasilitas Keselamatan & Evakuasi */}
+        <div>
+          <span className={cn('font-bold block mb-2', isDark ? 'text-[#D4D4D4]' : 'text-[#111827]')}>
+            Fasilitas Evakuasi & Shelter:
+          </span>
+          <ul className="space-y-1.5 text-[11px]">
+            <li className="flex items-center gap-2">
+              <span className="w-5 h-5 rounded-full bg-[#10B981] flex items-center justify-center text-white shrink-0 shadow-xs">
+                <Shield className="w-3 h-3" />
+              </span>
+              <span>Shelter & Titik Kumpul Terverifikasi (BPBD)</span>
+            </li>
+            <li className="flex items-center gap-2">
+              <span className="w-5 h-5 rounded-full bg-[#F59E0B] flex items-center justify-center text-white shrink-0 shadow-xs">
+                <Shield className="w-3 h-3" />
+              </span>
+              <span>Fasilitas Dalam Proses Verifikasi</span>
             </li>
           </ul>
         </div>

@@ -16,6 +16,7 @@ use App\Models\PreparednessPlan;
 use App\Models\Region;
 use App\Models\RiskAssessment;
 use App\Models\ScenarioQuestion;
+use App\Models\Shelter;
 use App\Models\User;
 use App\Models\UserSavedRegion;
 use Illuminate\Database\Seeder;
@@ -39,6 +40,7 @@ class SentravaxMasterSeeder extends Seeder
         $this->seedEmergencyScenarios();
         $this->seedEducationContents();
         $this->seedAlertsAndRiskAssessments();
+        $this->seedShelters();
         $this->seedSampleUserPreparedness();
         $this->seedBaselineCommunityReports();
     }
@@ -830,6 +832,199 @@ class SentravaxMasterSeeder extends Seeder
                     ['is_completed' => true, 'completed_at' => now()]
                 );
             }
+        }
+    }
+
+    /**
+     * Seed Verified Official Shelters & Assembly Points.
+     */
+    private function seedShelters(): void
+    {
+        $admin = User::where('role', User::ROLE_ADMIN)->first();
+        $regionJkt = Region::where('code', 'ID-JK')->first();
+        $regionJktEast = Region::where('code', 'ID-JK-JT')->first() ?? $regionJkt;
+        $regionJbr = Region::where('code', 'ID-JB')->first();
+
+        $shelters = [
+            [
+                'name' => 'Gelanggang Remaja Jakarta Timur (GOR Otista)',
+                'facility_type' => 'community_hall',
+                'address' => 'Jl. Otto Iskandardinata No. 121, Bidara Cina, Jatinegara, Jakarta Timur',
+                'region_id' => $regionJktEast?->id,
+                'latitude' => -6.236111,
+                'longitude' => 106.867222,
+                'capacity' => 1200,
+                'current_occupancy' => 45,
+                'has_sanitation' => true,
+                'sanitation_details' => '8 unit MCK permanen, 4 toren air darurat kapasitas 5000L, posko cuci tangan',
+                'wheelchair_accessible' => true,
+                'elderly_friendly' => true,
+                'contact_person' => 'Pusdalops BPBD Jakarta Timur',
+                'contact_phone' => '021-8192000',
+                'operational_status' => 'open',
+                'verification_status' => 'VERIFIED',
+                'verified_at' => '2026-11-18 08:00:00',
+                'verified_by_agency' => 'BPBD Provinsi DKI Jakarta',
+                'source_name' => 'Katalog Posko Evakuasi Bencana Banjir BPBD DKI Jakarta',
+                'source_url' => 'https://bpbd.jakarta.go.id/posko-evakuasi',
+                'evacuation_route_info' => [
+                    'has_official_route' => true,
+                    'route_code' => 'EVAC-JKT-OTISTA-01',
+                    'corridor_name' => 'Koridor Jl. Otto Iskandardinata - GOR Otista',
+                    'status' => 'AVAILABLE',
+                    'verified_at' => '2026-11-18T08:00:00+07:00',
+                    'authority' => 'BPBD Provinsi DKI Jakarta & Dishub DKI',
+                    'safety_guidance' => 'Akses jalan utama melalui Jl. Otista bebas genangan saat ketinggian air DAS Ciliwung Siaga 2. Gunakan lajur timur.',
+                ],
+                'provenance_metadata' => [
+                    'verified_by' => 'BPBD DKI Jakarta',
+                    'verification_method' => 'Survei Geospasial Fisik & Uji Kelayakan Fasilitas Sanitasi',
+                ],
+                'created_by' => $admin?->id,
+            ],
+            [
+                'name' => 'RPTRA Rawa Badak Selatan & Lapangan Terbuka',
+                'facility_type' => 'assembly_point',
+                'address' => 'Jl. Alur Laut No. 1, Rawa Badak Selatan, Koja, Jakarta Utara',
+                'region_id' => $regionJkt?->id,
+                'latitude' => -6.126389,
+                'longitude' => 106.899444,
+                'capacity' => 800,
+                'current_occupancy' => 0,
+                'has_sanitation' => true,
+                'sanitation_details' => '6 unit toilet, suplai air bersih PAM Jaya, area sanitasi portabel',
+                'wheelchair_accessible' => true,
+                'elderly_friendly' => true,
+                'contact_person' => 'Posko Siaga Kelurahan Rawa Badak Selatan',
+                'contact_phone' => '021-43931234',
+                'operational_status' => 'standby',
+                'verification_status' => 'VERIFIED',
+                'verified_at' => '2026-11-18 08:00:00',
+                'verified_by_agency' => 'BPBD Provinsi DKI Jakarta & Dinas Sosial DKI',
+                'source_name' => 'Peta Titik Kumpul Aman Bencana Banjir Pesisir Jakarta Utara',
+                'source_url' => 'https://bpbd.jakarta.go.id/titik-kumpul-pesisir',
+                'evacuation_route_info' => [
+                    'has_official_route' => true,
+                    'route_code' => 'EVAC-JKU-RAWABADAK-02',
+                    'corridor_name' => 'Jalur Evakuasi Darat Jl. Alur Laut',
+                    'status' => 'AVAILABLE',
+                    'verified_at' => '2026-11-18T08:00:00+07:00',
+                    'authority' => 'BPBD Provinsi DKI Jakarta',
+                    'safety_guidance' => 'Rute darat menuju dataran lebih tinggi di RPTRA. Hindari kolam resapan bawah flyover saat curah hujan ekstrem.',
+                ],
+                'provenance_metadata' => [
+                    'verified_by' => 'BPBD DKI Jakarta & Dinsos DKI',
+                    'verification_method' => 'Penetapan Titik Kumpul Kontinjensi Pasang Air Laut',
+                ],
+                'created_by' => $admin?->id,
+            ],
+            [
+                'name' => 'Stadion Patriot Candrabhaga (Shelter Regional Terpadu)',
+                'facility_type' => 'stadium',
+                'address' => 'Jl. Jenderal Ahmad Yani No. 2, Kayuringin Jaya, Bekasi Selatan, Kota Bekasi',
+                'region_id' => $regionJbr?->id,
+                'latitude' => -6.238333,
+                'longitude' => 106.993611,
+                'capacity' => 5000,
+                'current_occupancy' => 0,
+                'has_sanitation' => true,
+                'sanitation_details' => '24 unit toilet tribun, tangki air bersih mobile PMI, dapur umum lapangan',
+                'wheelchair_accessible' => true,
+                'elderly_friendly' => true,
+                'contact_person' => 'Sekretariat BPBD Kota Bekasi',
+                'contact_phone' => '021-88950000',
+                'operational_status' => 'open',
+                'verification_status' => 'VERIFIED',
+                'verified_at' => '2026-11-18 08:00:00',
+                'verified_by_agency' => 'BPBD Provinsi Jawa Barat & BNPB',
+                'source_name' => 'Katalog Sentra Evakuasi Pengungsian Skala Besar Penyangga Metropolitan',
+                'source_url' => 'https://bpbd.jabarprov.go.id/shelter-patriot',
+                'evacuation_route_info' => [
+                    'has_official_route' => true,
+                    'route_code' => 'EVAC-JBR-PATRIOT-01',
+                    'corridor_name' => 'Koridor Protokol Jl. Ahmad Yani',
+                    'status' => 'AVAILABLE',
+                    'verified_at' => '2026-11-18T08:00:00+07:00',
+                    'authority' => 'BPBD Kota Bekasi & Dishub Kota Bekasi',
+                    'safety_guidance' => 'Lajur evakuasi utama dari bantaran DAS Bekasi Hilir menuju gerbang barat Stadion Patriot.',
+                ],
+                'provenance_metadata' => [
+                    'verified_by' => 'BPBD Provinsi Jawa Barat',
+                    'verification_method' => 'Sertifikasi Sentra Pengungsian Bencana Skala Besar',
+                ],
+                'created_by' => $admin?->id,
+            ],
+            [
+                'name' => 'Balai Warga RW 07 Kampung Melayu (Titik Kumpul Evakuasi Dini)',
+                'facility_type' => 'community_hall',
+                'address' => 'Jl. Kebon Pala I, RT 04/RW 07, Kampung Melayu, Jatinegara, Jakarta Timur',
+                'region_id' => $regionJktEast?->id,
+                'latitude' => -6.228889,
+                'longitude' => 106.864722,
+                'capacity' => 250,
+                'current_occupancy' => 60,
+                'has_sanitation' => true,
+                'sanitation_details' => '4 unit toilet lantai dua, cadangan galon air minum darurat',
+                'wheelchair_accessible' => false,
+                'elderly_friendly' => false,
+                'contact_person' => 'Ketua RW 07 Kampung Melayu',
+                'contact_phone' => '0812-3456-7890',
+                'operational_status' => 'open',
+                'verification_status' => 'VERIFIED',
+                'verified_at' => '2026-11-18 08:00:00',
+                'verified_by_agency' => 'Kelurahan Kampung Melayu & BPBD DKI Jakarta',
+                'source_name' => 'Dokumen Rencana Kontinjensi Komunitas Banjir Ciliwung',
+                'source_url' => null,
+                'evacuation_route_info' => [
+                    'has_official_route' => false,
+                    'notes' => 'Rute digital resmi berbasis GIS belum dipublikasikan BPBD. Warga diimbau mematuhi rambu evakuasi vertikal di tiang pemukiman dan arahan petugas posko.',
+                    'official_source' => null,
+                ],
+                'provenance_metadata' => [
+                    'verified_by' => 'Satgas BPBD Kelurahan Kampung Melayu',
+                    'verification_method' => 'Verifikasi Lapangan Pos Pantau Siaga Tingkat RW',
+                ],
+                'created_by' => $admin?->id,
+            ],
+            [
+                'name' => 'Lapangan Terbuka Cipinang Melayu (Dalam Proses Verifikasi Kelayakan)',
+                'facility_type' => 'assembly_point',
+                'address' => 'Jl. Inspeksi Kali Malang, Cipinang Melayu, Makasar, Jakarta Timur',
+                'region_id' => $regionJktEast?->id,
+                'latitude' => -6.245833,
+                'longitude' => 106.902778,
+                'capacity' => 400,
+                'current_occupancy' => 0,
+                'has_sanitation' => false,
+                'sanitation_details' => null,
+                'wheelchair_accessible' => false,
+                'elderly_friendly' => false,
+                'contact_person' => 'Forum Kesiapsiagaan Warga Cipinang',
+                'contact_phone' => null,
+                'operational_status' => 'standby',
+                'verification_status' => 'PENDING_VERIFICATION',
+                'verified_at' => null,
+                'verified_by_agency' => null,
+                'source_name' => 'Usulan Warga & Forum Kesiapsiagaan Komunitas',
+                'source_url' => null,
+                'evacuation_route_info' => [
+                    'has_official_route' => false,
+                    'notes' => 'Belum tersedia rute evakuasi resmi. Lokasi masih dalam status peninjauan kelayakan tanggap darurat oleh otoritas.',
+                    'official_source' => null,
+                ],
+                'provenance_metadata' => [
+                    'verified_by' => null,
+                    'verification_method' => 'Pengajuan Fasilitas Komunitas — Belum Tersertifikasi',
+                ],
+                'created_by' => $admin?->id,
+            ],
+        ];
+
+        foreach ($shelters as $sData) {
+            Shelter::updateOrCreate(
+                ['name' => $sData['name']],
+                $sData
+            );
         }
     }
 

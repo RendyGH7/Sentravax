@@ -1,0 +1,15 @@
+{
+  "public_map_loaded": true,
+  "shelter_layer_rendered": true,
+  "shelter_popup_verified": true,
+  "admin_login_success": true,
+  "admin_shelters_page_loaded": true,
+  "admin_stats_verified": true,
+  "admin_audit_drawer_verified": true,
+  "screenshots": [
+    "C:\\Users\\RENDY\\OneDrive\\Documents\\Sentravax\\frontend\\e2e-screenshots\\shelters\\01_public_map_with_shelters.png",
+    "C:\\Users\\RENDY\\OneDrive\\Documents\\Sentravax\\frontend\\e2e-screenshots\\shelters\\02_shelter_popup_directive.png",
+    "C:\\Users\\RENDY\\OneDrive\\Documents\\Sentravax\\frontend\\e2e-screenshots\\shelters\\03_admin_shelters_cms.png",
+    "C:\\Users\\RENDY\\OneDrive\\Documents\\Sentravax\\frontend\\e2e-screenshots\\shelters\\04_admin_audit_history_drawer.png"
+  ]
+}

@@ -9,6 +9,7 @@ use App\Models\EducationContent;
 use App\Models\HazardEvent;
 use App\Models\HazardType;
 use App\Models\Region;
+use App\Models\Shelter;
 use App\Services\Preparedness\PreparednessService;
 use Carbon\Carbon;
 use Illuminate\Http\JsonResponse;
@@ -786,6 +787,217 @@ class PublicController extends Controller
                 'notes' => $ds->notes,
             ];
         });
+
+        return response()->json([
+            'success' => true,
+            'data' => $data,
+        ]);
+    }
+
+    /**
+     * List Verified Shelters and Assembly Points with geospatial filtering.
+     */
+    public function shelters(Request $request): JsonResponse
+    {
+        $validator = Validator::make($request->all(), [
+            'q' => ['nullable', 'string', 'max:100'],
+            'facility_type' => ['nullable', 'string', 'max:50'],
+            'operational_status' => ['nullable', 'string', Rule::in(['open', 'standby', 'full', 'closed', 'all'])],
+            'verification_status' => ['nullable', 'string', Rule::in(['VERIFIED', 'PENDING_VERIFICATION', 'INACTIVE', 'UNKNOWN', 'SIMULATED', 'all'])],
+            'region_id' => ['nullable', 'integer', 'exists:regions,id'],
+            'wheelchair_accessible' => ['nullable', 'boolean'],
+            'elderly_friendly' => ['nullable', 'boolean'],
+            'has_sanitation' => ['nullable', 'boolean'],
+            'lat' => ['nullable', 'numeric', 'between:-90,90'],
+            'lon' => ['nullable', 'numeric', 'between:-180,180'],
+            'radius_km' => ['nullable', 'numeric', 'min:0.1', 'max:500'],
+            'format' => ['nullable', 'string', Rule::in(['json', 'geojson'])],
+            'per_page' => ['nullable', 'integer', 'min:1', 'max:100'],
+        ]);
+
+        if ($validator->fails()) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Parameter filter shelter tidak valid.',
+                'errors' => $validator->errors(),
+            ], 422);
+        }
+
+        $hasCoords = $request->filled('lat') && $request->filled('lon');
+        $lat = $hasCoords ? (float) $request->query('lat') : null;
+        $lon = $hasCoords ? (float) $request->query('lon') : null;
+        $radiusKm = $request->query('radius_km') ? (float) $request->query('radius_km') : null;
+
+        $query = Shelter::query()->with('region:id,code,name,level');
+
+        // Verification Status Filter: Default to VERIFIED for public safety unless 'all' or explicit requested
+        $verStatus = $request->query('verification_status', 'VERIFIED');
+        if ($verStatus !== 'all') {
+            $query->where('verification_status', $verStatus);
+        }
+
+        // Operational Status Filter: Default to open/standby/full unless explicit
+        if ($request->filled('operational_status') && $request->query('operational_status') !== 'all') {
+            $query->where('operational_status', $request->query('operational_status'));
+        }
+
+        if ($request->filled('facility_type') && $request->query('facility_type') !== 'all') {
+            $query->where('facility_type', $request->query('facility_type'));
+        }
+
+        if ($request->filled('region_id')) {
+            $query->where('region_id', $request->query('region_id'));
+        }
+
+        if ($request->boolean('wheelchair_accessible')) {
+            $query->where('wheelchair_accessible', true);
+        }
+
+        if ($request->boolean('elderly_friendly')) {
+            $query->where('elderly_friendly', true);
+        }
+
+        if ($request->boolean('has_sanitation')) {
+            $query->where('has_sanitation', true);
+        }
+
+        if ($request->filled('q')) {
+            $search = '%' . strtolower($request->query('q')) . '%';
+            $query->where(function ($q) use ($search) {
+                $q->whereRaw('LOWER(name) LIKE ?', [$search])
+                  ->orWhereRaw('LOWER(address) LIKE ?', [$search])
+                  ->orWhereRaw('LOWER(verified_by_agency) LIKE ?', [$search]);
+            });
+        }
+
+        // Geospatial distance and radius filtering
+        if ($hasCoords) {
+            $query->select('shelters.*')
+                ->selectRaw('
+                    ST_Distance(
+                        location::geography,
+                        ST_SetSRID(ST_MakePoint(?, ?), 4326)::geography
+                    ) / 1000.0 AS distance_km
+                ', [$lon, $lat]);
+
+            if ($radiusKm !== null) {
+                $query->whereRaw('
+                    ST_DWithin(
+                        location::geography,
+                        ST_SetSRID(ST_MakePoint(?, ?), 4326)::geography,
+                        ?
+                    )
+                ', [$lon, $lat, $radiusKm * 1000]);
+            }
+
+            $query->orderBy('distance_km', 'asc');
+        } else {
+            $query->latest('verified_at')->latest('id');
+        }
+
+        $format = $request->query('format', 'json');
+
+        if ($format === 'geojson') {
+            $shelters = $query->take(200)->get();
+            $features = $shelters->map(function ($s) {
+                return [
+                    'type' => 'Feature',
+                    'geometry' => [
+                        'type' => 'Point',
+                        'coordinates' => [$s->longitude, $s->latitude],
+                    ],
+                    'properties' => [
+                        'id' => $s->id,
+                        'name' => $s->name,
+                        'facility_type' => $s->facility_type,
+                        'address' => $s->address,
+                        'region' => $s->region ? ['id' => $s->region->id, 'name' => $s->region->name] : null,
+                        'capacity' => $s->capacity,
+                        'current_occupancy' => $s->current_occupancy,
+                        'occupancy_rate' => $s->capacity > 0 ? round(($s->current_occupancy / $s->capacity) * 100, 1) : 0,
+                        'has_sanitation' => (bool) $s->has_sanitation,
+                        'sanitation_details' => $s->sanitation_details,
+                        'wheelchair_accessible' => (bool) $s->wheelchair_accessible,
+                        'elderly_friendly' => (bool) $s->elderly_friendly,
+                        'contact_person' => $s->contact_person,
+                        'contact_phone' => $s->contact_phone,
+                        'operational_status' => $s->operational_status,
+                        'verification_status' => $s->verification_status,
+                        'is_verified' => $s->verification_status === 'VERIFIED',
+                        'verified_at' => $s->verified_at?->toIso8601String(),
+                        'verified_by_agency' => $s->verified_by_agency,
+                        'source_name' => $s->source_name,
+                        'source_url' => $s->source_url,
+                        'evacuation_route_info' => $s->evacuation_route_info,
+                        'distance_km' => isset($s->distance_km) ? round((float) $s->distance_km, 2) : null,
+                    ],
+                ];
+            });
+
+            return response()->json([
+                'success' => true,
+                'type' => 'FeatureCollection',
+                'features' => $features,
+                'meta' => [
+                    'total_features' => count($features),
+                    'disclaimer' => 'Titik kumpul dan shelter berstatus VERIFIED adalah fasilitas resmi tervalidasi BPBD/BNPB. Rute evakuasi hanya ditampilkan jika telah memiliki penetapan resmi dari instansi berwenang.',
+                ],
+            ]);
+        }
+
+        $perPage = $request->integer('per_page', 20);
+        $paginated = $query->paginate($perPage);
+
+        $paginated->getCollection()->transform(function ($s) {
+            $s->distance_km = isset($s->distance_km) ? round((float) $s->distance_km, 2) : null;
+            $s->is_verified = $s->verification_status === 'VERIFIED';
+            $s->occupancy_rate = $s->capacity > 0 ? round(($s->current_occupancy / $s->capacity) * 100, 1) : 0;
+            return $s;
+        });
+
+        return response()->json([
+            'success' => true,
+            'data' => $paginated,
+            'meta' => [
+                'disclaimer' => 'Titik kumpul dan shelter berstatus VERIFIED adalah fasilitas resmi tervalidasi BPBD/BNPB. Rute evakuasi hanya ditampilkan jika telah memiliki penetapan resmi dari instansi berwenang.',
+            ],
+        ]);
+    }
+
+    /**
+     * Single Shelter Detail with full provenance & evacuation guidance.
+     */
+    public function shelterDetail(int $id, Request $request): JsonResponse
+    {
+        $hasCoords = $request->filled('lat') && $request->filled('lon');
+        $lat = $hasCoords ? (float) $request->query('lat') : null;
+        $lon = $hasCoords ? (float) $request->query('lon') : null;
+
+        $query = Shelter::query()->with(['region:id,code,name,level']);
+
+        if ($hasCoords) {
+            $query->select('shelters.*')
+                ->selectRaw('
+                    ST_Distance(
+                        location::geography,
+                        ST_SetSRID(ST_MakePoint(?, ?), 4326)::geography
+                    ) / 1000.0 AS distance_km
+                ', [$lon, $lat]);
+        }
+
+        $shelter = $query->find($id);
+
+        if (!$shelter) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Fasilitas shelter tidak ditemukan.',
+            ], 404);
+        }
+
+        $data = $shelter->toArray();
+        $data['distance_km'] = isset($shelter->distance_km) ? round((float) $shelter->distance_km, 2) : null;
+        $data['is_verified'] = $shelter->verification_status === 'VERIFIED';
+        $data['occupancy_rate'] = $shelter->capacity > 0 ? round(($shelter->current_occupancy / $shelter->capacity) * 100, 1) : 0;
 
         return response()->json([
             'success' => true,
