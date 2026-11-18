@@ -11,14 +11,24 @@ class Alert extends Model
     protected $table = 'alerts';
 
     protected $fillable = [
+        'external_identifier',
         'hazard_event_id',
         'region_id',
         'hazard_type_id',
         'created_by',
         'title',
+        'sender_name',
         'message',
+        'instruction',
+        'area_description',
         'alert_class',
         'broadcast_level',
+        'cap_urgency',
+        'cap_severity',
+        'cap_certainty',
+        'source_url',
+        'polygon_coordinates',
+        'raw_provenance',
         'status',
         'starts_at',
         'expires_at',
@@ -29,6 +39,7 @@ class Alert extends Model
         return [
             'starts_at' => 'datetime',
             'expires_at' => 'datetime',
+            'raw_provenance' => 'array',
         ];
     }
 

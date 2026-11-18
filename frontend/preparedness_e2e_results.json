@@ -1,5 +1,5 @@
 {
-  "timestamp": "2026-11-18T05:07:14.656Z",
+  "timestamp": "2026-11-18T05:46:21.799Z",
   "allPassed": true,
   "results": [
     {
@@ -22,33 +22,33 @@
     },
     {
       "stepNum": 4,
-      "name": "Update dan Simpan Rencana Siaga Keluarga",
+      "name": "Family Plan: Persistensi Titik Kumpul & Catatan Pasca-Refresh",
       "passed": true,
-      "details": "Titik Kumpul Utama diisi: \"Taman Balai RW 08 Sentosa\""
+      "details": "Data tersimpan dan dimuat kembali dari API: \"Taman Balai RW 08 Sentosa\" & \"Lapangan Barat Kelurahan\""
     },
     {
       "stepNum": 5,
-      "name": "Tambah Kontak Darurat Keluarga Baru",
+      "name": "Emergency Contacts: Tambah Kontak & Persistensi Pasca-Refresh",
       "passed": true,
-      "details": "Kontak \"Paman Bambang Sutrisno\" berhasil ditambahkan dan tampil di list"
+      "details": "Kontak \"Ibu Ratna Dewi\" tetap tampil setelah refresh browser"
     },
     {
       "stepNum": 6,
-      "name": "Hapus Kontak Darurat dengan Konfirmasi Modal",
+      "name": "Emergency Contacts: Hapus Kontak & Konfirmasi Pasca-Refresh",
       "passed": true,
-      "details": "Kontak berhasil dihapus dari UI dan database"
+      "details": "Kontak \"Ibu Ratna Dewi\" terhapus secara permanen dan tidak muncul kembali setelah refresh"
     },
     {
       "stepNum": 7,
-      "name": "Toggle Status Item Tas Siaga Bencana (Go-Bag)",
+      "name": "Go-Bag Checklist: Centang Multiple Item & Persentase Pasca-Refresh",
       "passed": true,
-      "details": "Item dicentang, persentase kesiapan awal: 0%"
+      "details": "Baseline: 0% -> Item 1 ON: 7.7% (7.7%) -> Item 2 ON: 15.4% (15.4%) -> Pasca-Refresh: 15.4% (2 item centang)"
     },
     {
       "stepNum": 8,
-      "name": "Reload Browser & Konfirmasi Persistensi Basis Data",
+      "name": "Go-Bag Checklist: Batalkan Centang (Untoggle) & Persistensi Pasca-Refresh",
       "passed": true,
-      "details": "Titik Kumpul \"Taman Balai RW 08 Sentosa\" tersimpan di database dan dimuat kembali setelah refresh"
+      "details": "Pasca-Untoggle Item 1: 7.7% -> Pasca-Refresh: 7.7% (1 item centang tersisa)"
     }
   ]
 }

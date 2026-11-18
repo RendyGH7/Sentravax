@@ -318,4 +318,79 @@ class UserPreparednessPortalTest extends TestCase
         // User B's completion status must remain false
         $this->assertFalse($itemFound['is_completed']);
     }
+
+    public function test_admin_and_intelligence_roles_have_isolated_personal_preparedness(): void
+    {
+        $admin = User::where('email', 'admin@sentravax.go.id')->firstOrFail();
+        $intel = User::where('email', 'intelligence@sentravax.go.id')->firstOrFail();
+
+        // 1. User creates private contact
+        $userContact = PreparednessContact::create([
+            'user_id' => $this->user->id,
+            'name' => 'Kontak Pribadi Warga',
+            'relationship' => 'Istri',
+            'phone_number' => '081234567890',
+            'is_emergency_priority' => true,
+        ]);
+
+        // 2. Admin accesses preparedness plan -> isolated to Admin's user_id
+        $adminRes = $this->actingAs($admin)->getJson('/api/v1/user/preparedness/plan');
+        $adminRes->assertStatus(200);
+        $this->assertEquals($admin->id, $adminRes->json('data.plan.user_id'));
+
+        // 3. Admin attempts to delete user's contact -> 404 ModelNotFoundException
+        $adminDelRes = $this->actingAs($admin)->deleteJson("/api/v1/user/preparedness/contacts/{$userContact->id}");
+        $adminDelRes->assertStatus(404);
+
+        // 4. Intelligence attempts to delete user's contact -> 404 ModelNotFoundException
+        $intelDelRes = $this->actingAs($intel)->deleteJson("/api/v1/user/preparedness/contacts/{$userContact->id}");
+        $intelDelRes->assertStatus(404);
+
+        // 5. Contact remains untouched in DB
+        $this->assertDatabaseHas('preparedness_contacts', ['id' => $userContact->id]);
+
+        $userContact->delete();
+    }
+
+    public function test_checklist_percentage_calculation_precision_and_toggle_behavior(): void
+    {
+        $items = PreparednessChecklistItem::orderBy('sort_order')->take(2)->get();
+        $this->assertCount(2, $items);
+        $item1 = $items[0];
+        $item2 = $items[1];
+
+        // Clean user progress for these 2 items
+        PreparednessChecklistProgress::where('user_id', $this->user->id)
+            ->whereIn('checklist_item_id', [$item1->id, $item2->id])
+            ->delete();
+
+        // 1. Initial baseline check
+        $res0 = $this->actingAs($this->user)->getJson('/api/v1/user/preparedness/checklist');
+        $res0->assertStatus(200);
+        $initialTotal = $res0->json('data.stats.total_items');
+        $this->assertGreaterThan(0, $initialTotal);
+
+        // 2. Toggle item 1 ON
+        $res1 = $this->actingAs($this->user)->postJson("/api/v1/user/preparedness/checklist/{$item1->id}/toggle");
+        $res1->assertStatus(200);
+        $completedAfter1 = $res1->json('data.total_completed');
+        $pctAfter1 = $res1->json('data.percentage');
+        $this->assertEquals(round(($completedAfter1 / $initialTotal) * 100, 1), $pctAfter1);
+
+        // 3. Toggle item 2 ON
+        $res2 = $this->actingAs($this->user)->postJson("/api/v1/user/preparedness/checklist/{$item2->id}/toggle");
+        $res2->assertStatus(200);
+        $completedAfter2 = $res2->json('data.total_completed');
+        $pctAfter2 = $res2->json('data.percentage');
+        $this->assertEquals($completedAfter1 + 1, $completedAfter2);
+        $this->assertEquals(round(($completedAfter2 / $initialTotal) * 100, 1), $pctAfter2);
+
+        // 4. Untoggle item 1 OFF
+        $res3 = $this->actingAs($this->user)->postJson("/api/v1/user/preparedness/checklist/{$item1->id}/toggle");
+        $res3->assertStatus(200);
+        $completedAfter3 = $res3->json('data.total_completed');
+        $pctAfter3 = $res3->json('data.percentage');
+        $this->assertEquals($completedAfter2 - 1, $completedAfter3);
+        $this->assertEquals(round(($completedAfter3 / $initialTotal) * 100, 1), $pctAfter3);
+    }
 }

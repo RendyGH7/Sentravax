@@ -1,5 +1,5 @@
 import apiClient from '../lib/axios';
-import type { ApiResponse } from '../types';
+import type { ApiResponse, EducationContentItem, AdminEducationPayload } from '../types';
 import type {
   AdminOverviewStats,
   InfrastructureStatus,
@@ -127,5 +127,55 @@ export const adminService = {
       `/admin/monitoring/failed-jobs/${id}`
     );
     return res.data.data;
+  },
+
+  /**
+   * List education mitigation guides for administration.
+   * Endpoint: GET /api/v1/admin/education
+   */
+  async getEducationList(params?: {
+    category?: string;
+    hazard_type_id?: number;
+    search?: string;
+    is_published?: string;
+    page?: number;
+    per_page?: number;
+  }): Promise<{ data: EducationContentItem[]; meta: { current_page: number; last_page: number; total: number; per_page: number } }> {
+    const res = await apiClient.get<ApiResponse<EducationContentItem[]>>('/admin/education', { params });
+    return {
+      data: res.data.data,
+      meta: (res.data.meta as { current_page: number; last_page: number; total: number; per_page: number }) || {
+        current_page: 1,
+        last_page: 1,
+        total: res.data.data.length,
+        per_page: 15,
+      },
+    };
+  },
+
+  /**
+   * Create a new education mitigation guide.
+   * Endpoint: POST /api/v1/admin/education
+   */
+  async createEducation(payload: AdminEducationPayload): Promise<EducationContentItem> {
+    const res = await apiClient.post<ApiResponse<EducationContentItem>>('/admin/education', payload);
+    return res.data.data;
+  },
+
+  /**
+   * Update an existing education mitigation guide.
+   * Endpoint: PUT /api/v1/admin/education/{id}
+   */
+  async updateEducation(id: number, payload: Partial<AdminEducationPayload>): Promise<EducationContentItem> {
+    const res = await apiClient.put<ApiResponse<EducationContentItem>>(`/admin/education/${id}`, payload);
+    return res.data.data;
+  },
+
+  /**
+   * Delete an education guide.
+   * Endpoint: DELETE /api/v1/admin/education/{id}
+   */
+  async deleteEducation(id: number): Promise<void> {
+    await apiClient.delete<ApiResponse<null>>(`/admin/education/${id}`);
   },
 };

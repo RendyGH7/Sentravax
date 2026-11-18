@@ -12,6 +12,7 @@ class DataSyncService
         protected BmkgAdapter $bmkgAdapter,
         protected BnpbAdapter $bnpbAdapter,
         protected NasaFirmsAdapter $nasaFirmsAdapter,
+        protected CapAdapter $capAdapter,
         protected FreshnessClassifierService $freshnessClassifier
     ) {}
 
@@ -23,10 +24,14 @@ class DataSyncService
         $startTime = microtime(true);
 
         try {
+            $name = strtolower($dataSource->name);
+            $sourceType = strtolower($dataSource->source_type ?? '');
+
             $res = match (true) {
-                str_contains(strtolower($dataSource->name), 'bmkg') => $this->bmkgAdapter->sync($dataSource),
-                str_contains(strtolower($dataSource->name), 'bnpb') => $this->bnpbAdapter->sync($dataSource),
-                str_contains(strtolower($dataSource->name), 'firms') || str_contains(strtolower($dataSource->name), 'nasa') => $this->nasaFirmsAdapter->sync($dataSource),
+                str_contains($name, 'cap') || $sourceType === 'cap' => $this->capAdapter->sync($dataSource),
+                str_contains($name, 'bmkg') => $this->bmkgAdapter->sync($dataSource),
+                str_contains($name, 'bnpb') => $this->bnpbAdapter->sync($dataSource),
+                str_contains($name, 'firms') || str_contains($name, 'nasa') => $this->nasaFirmsAdapter->sync($dataSource),
                 default => [
                     'status' => 'SUCCESS',
                     'freshness_state' => $dataSource->is_simulated ? 'SIMULATED' : 'STATIC',

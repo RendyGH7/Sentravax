@@ -156,8 +156,55 @@ export interface RegionsQueryParams {
 export interface EducationQueryParams {
   category?: string;
   hazard_type_id?: number;
+  hazard_type_slug?: string;
+  search?: string;
+  q?: string;
   page?: number;
   per_page?: number;
+}
+
+export type EmergencyServiceCategory =
+  | 'national_emergency'
+  | 'disaster_bpbd'
+  | 'search_rescue'
+  | 'medical_first_aid'
+  | 'fire_rescue'
+  | 'police_security';
+
+export type EmergencyDirectoryRegion = 'nasional' | 'dki_jakarta' | 'jawa_barat' | 'banten';
+
+export interface EmergencyDirectoryItem {
+  id: string;
+  name: string;
+  service_code: string;
+  phone_number: string;
+  category: EmergencyServiceCategory;
+  category_label: string;
+  region: EmergencyDirectoryRegion;
+  region_label: string;
+  description: string;
+  operating_hours: string;
+  toll_free: boolean;
+  is_verified: boolean;
+  authority: string;
+}
+
+export interface EmergencyDirectoryQueryParams {
+  category?: string;
+  region?: string;
+  search?: string;
+  q?: string;
+}
+
+export interface AdminEducationPayload {
+  hazard_type_id?: number | null;
+  title: string;
+  category: string;
+  summary: string;
+  content_body: string;
+  content_type?: string;
+  is_published?: boolean;
+  sort_order?: number;
 }
 
 export interface CheckLocationParams {
@@ -191,10 +238,19 @@ export interface HazardEventItem {
 
 export interface AlertItem {
   id: number;
+  external_identifier?: string | null;
   title: string;
+  sender_name?: string | null;
   message: string;
+  instruction?: string | null;
+  area_description?: string | null;
   alert_class: AlertClass;
   broadcast_level: BroadcastLevel | null;
+  cap_urgency?: string | null;
+  cap_severity?: string | null;
+  cap_certainty?: string | null;
+  source_url?: string | null;
+  polygon_coordinates?: string | null;
   status: AlertStatus;
   is_active?: boolean;
   starts_at: string;
@@ -209,10 +265,20 @@ export interface AlertItem {
 
 export interface AlertDetail {
   id: number;
+  external_identifier?: string | null;
   title: string;
+  sender_name?: string | null;
   message: string;
+  instruction?: string | null;
+  area_description?: string | null;
   alert_class: AlertClass;
   broadcast_level: BroadcastLevel | null;
+  cap_urgency?: string | null;
+  cap_severity?: string | null;
+  cap_certainty?: string | null;
+  source_url?: string | null;
+  polygon_coordinates?: string | null;
+  raw_provenance?: Record<string, unknown> | null;
   status: AlertStatus;
   is_active: boolean;
   starts_at: string;

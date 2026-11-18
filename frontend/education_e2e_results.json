@@ -1,0 +1,60 @@
+{
+  "timestamp": "2026-11-18T06:25:07.347Z",
+  "allPassed": true,
+  "results": [
+    {
+      "stepNum": 1,
+      "name": "Public Education Hub Loaded (Guest)",
+      "passed": true,
+      "details": "Heading: \"Edukasi Mitigasi Multi-Hazard & Direktori Darurat\""
+    },
+    {
+      "stepNum": 2,
+      "name": "Mitigation Guide Cards Rendered",
+      "passed": true,
+      "details": "Found 4 guide cards"
+    },
+    {
+      "stepNum": 3,
+      "name": "Search Filter by Keyword",
+      "passed": true,
+      "details": "Found 1 guides matching \"Banjir\""
+    },
+    {
+      "stepNum": 4,
+      "name": "Guide Modal Reader Opened with Safe Markdown",
+      "passed": true,
+      "details": "Markdown parsed: H2=true, List=true, Emergency Callout=true"
+    },
+    {
+      "stepNum": 5,
+      "name": "Emergency Directory Loaded with Official Hotlines",
+      "passed": true,
+      "details": "Verified 112=true, 115=true, 117=true, Total Tel Links=16"
+    },
+    {
+      "stepNum": 6,
+      "name": "Emergency Region Filter (DKI Jakarta)",
+      "passed": true,
+      "details": "Cards shown for DKI: 13"
+    },
+    {
+      "stepNum": 7,
+      "name": "Admin Education CMS Page Loaded",
+      "passed": true,
+      "details": "Admin H1: \"Manajemen Literasi & Panduan Mitigasi\""
+    },
+    {
+      "stepNum": 8,
+      "name": "Admin Successfully Created Guide",
+      "passed": true,
+      "details": "Newly created guide found in table"
+    },
+    {
+      "stepNum": 9,
+      "name": "Admin Deleted Test Guide (Clean Up)",
+      "passed": true,
+      "details": "Test article successfully removed"
+    }
+  ]
+}

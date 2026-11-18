@@ -244,6 +244,27 @@ class SentravaxMasterSeeder extends Seeder
                     'simulation_tag' => 'DEMONSTRATION_CURATED_DATA',
                 ],
             ],
+            [
+                'name' => 'BMKG Common Alerting Protocol (CAP) Inbound Feed',
+                'provider' => 'Badan Meteorologi, Klimatologi, dan Geofisika',
+                'source_type' => 'cap',
+                'category' => 'warning',
+                'endpoint_url' => 'https://www.bmkg.go.id/alerts/nowcast/id',
+                'status' => 'active',
+                'sync_interval_minutes' => 5,
+                'rate_limit_rpm' => 60,
+                'terms_of_service' => 'Data Terbuka BMKG (UU No. 31/2009 tentang Meteorologi, Klimatologi, dan Geofisika)',
+                'is_simulated' => false,
+                'last_fetched_at' => null,
+                'last_successful_at' => null,
+                'notes' => 'Feed resmi peringatan dini cuaca ekstrem dan bencana hidrometeorologis nasional dalam standar OASIS CAP v1.2.',
+                'metadata' => [
+                    'docs_url' => 'https://www.bmkg.go.id/alerts/nowcast/id',
+                    'contact' => 'cuaca.ekstrem@bmkg.go.id',
+                    'freshness_threshold_minutes' => 30,
+                    'protocol_standard' => 'OASIS CAP v1.2 / ITU-T X.1303',
+                ],
+            ],
         ];
 
         foreach ($sources as $src) {

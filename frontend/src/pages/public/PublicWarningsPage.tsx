@@ -450,6 +450,35 @@ export const PublicWarningsPage: React.FC = () => {
               </div>
             </div>
           </div>
+
+          {/* Classification & Provenance Distinction Legend */}
+          <div className="mt-6 p-4 rounded-xl bg-white/90 backdrop-blur-xs border border-[#E5E7EB] shadow-xs">
+            <p className="text-[11px] font-bold text-[#6B7280] uppercase tracking-wider mb-2.5">
+              Klasifikasi Jenis Data & Asal Informasi (Data Provenance):
+            </p>
+            <div className="grid grid-cols-2 sm:grid-cols-5 gap-2 text-xs">
+              <div className="p-2.5 rounded-lg bg-rose-50 border border-rose-200">
+                <span className="font-bold text-rose-800 block text-[11px]">Official Warning (CAP)</span>
+                <span className="text-[10px] text-rose-600">Peringatan resmi BMKG / BNPB terverifikasi</span>
+              </div>
+              <div className="p-2.5 rounded-lg bg-indigo-50 border border-indigo-200">
+                <span className="font-bold text-indigo-800 block text-[11px]">SENTRAVAX Insight</span>
+                <span className="text-[10px] text-indigo-600">Analisis inferensi AI & Risk Engine internal</span>
+              </div>
+              <div className="p-2.5 rounded-lg bg-teal-50 border border-teal-200">
+                <span className="font-bold text-teal-800 block text-[11px]">Observed Data</span>
+                <span className="text-[10px] text-teal-600">Sensor & telemetri fisik pengamatan langsung</span>
+              </div>
+              <div className="p-2.5 rounded-lg bg-amber-50 border border-amber-200">
+                <span className="font-bold text-amber-800 block text-[11px]">Community Report</span>
+                <span className="text-[10px] text-amber-600">Laporan warga lapangan hasil triage terverifikasi</span>
+              </div>
+              <div className="p-2.5 rounded-lg bg-slate-100 border border-slate-200">
+                <span className="font-bold text-slate-800 block text-[11px]">Simulated Data</span>
+                <span className="text-[10px] text-slate-600">Data gladi simulasi pengujian kedaruratan</span>
+              </div>
+            </div>
+          </div>
         </div>
       </section>
 

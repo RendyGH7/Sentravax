@@ -421,7 +421,7 @@ class OperationalMonitoringTest extends TestCase
         $this->assertEquals(FreshnessClassifierService::STATE_SIMULATED, $classifier->classify($curated)['freshness_state']);
 
         // State 2: UNAVAILABLE (inactive source)
-        $inactive = DataSource::where('status', 'inactive')->first() ?? DataSource::first();
+        $inactive = DataSource::where('source_type', '!=', 'curated')->where('is_simulated', false)->firstOrFail();
         $inactive->update(['status' => 'inactive']);
         $this->assertEquals(FreshnessClassifierService::STATE_UNAVAILABLE, $classifier->classify($inactive)['freshness_state']);
         $inactive->update(['status' => 'active']);

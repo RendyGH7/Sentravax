@@ -29,7 +29,7 @@ async function setReactInput(page, selector, value) {
 
 async function runTest() {
   console.log('========================================================================');
-  console.log('SENTRAVAX — E2E TEST: USER PREPAREDNESS PORTAL & FAMILY EMERGENCY PLAN');
+  console.log('SENTRAVAX — E2E FINAL VERIFICATION: USER PREPAREDNESS PORTAL');
   console.log('========================================================================\n');
 
   const browser = await puppeteer.launch({
@@ -85,7 +85,7 @@ async function runTest() {
     record(2, 'Login Akun Warga Terverifikasi', loginSuccess, `Berhasil masuk ke: ${afterLoginUrl}`);
 
     // -------------------------------------------------------------
-    // SKENARIO 3: Buka halaman /user/siaga dan verifikasi navigasi & judul
+    // SKENARIO 3: Buka halaman /user/siaga & Verifikasi Struktur Navigasi
     // -------------------------------------------------------------
     await page.goto('http://localhost:5173/user/siaga', { waitUntil: 'networkidle2' });
     await new Promise(r => setTimeout(r, 1500));
@@ -99,13 +99,14 @@ async function runTest() {
     record(3, 'Buka Portal Kesiapsiagaan Warga (/user/siaga)', hasHeader && hasTabs, 'Header dan 3 Tab (Rencana, Kontak, Tas Siaga) ter-render sempurna');
 
     // -------------------------------------------------------------
-    // SKENARIO 4: Edit dan Simpan Rencana Siaga Keluarga
+    // SKENARIO 4: Family Plan — Simpan & Verifikasi Persistensi Pasca-Refresh
     // -------------------------------------------------------------
+    const testTitle = 'Rencana Siaga Keluarga Teladan 2026';
     const testMeetingPoint = 'Taman Balai RW 08 Sentosa';
     const testSecondaryPoint = 'Lapangan Barat Kelurahan';
     const testNotes = 'Lansia butuh obat darah tinggi. Hubungi RT jika komunikasi terputus.';
 
-    await setReactInput(page, 'input[placeholder*="Rencana Siaga Keluarga"]', 'Rencana Siaga Keluarga Mandiri 2026');
+    await setReactInput(page, 'input[placeholder*="Rencana Siaga Keluarga"]', testTitle);
     await setReactInput(page, 'input[placeholder*="Halaman Masjid"]', testMeetingPoint);
     await setReactInput(page, 'input[placeholder*="Lapangan Sepak Bola"]', testSecondaryPoint);
     await setReactInput(page, 'textarea', testNotes);
@@ -117,14 +118,29 @@ async function runTest() {
     });
     await new Promise(r => setTimeout(r, 2000));
 
-    await page.screenshot({ path: path.join(SCREENSHOT_DIR, '04_plan_saved.png') });
-    const contentAfterSave = await page.evaluate(() => document.body.innerText);
-    const saveConfirmed = contentAfterSave.includes('berhasil disimpan') || contentAfterSave.includes('Titik Kumpul Ditetapkan');
-    record(4, 'Update dan Simpan Rencana Siaga Keluarga', saveConfirmed, `Titik Kumpul Utama diisi: "${testMeetingPoint}"`);
+    // Reload browser to verify server-side persistence
+    await page.reload({ waitUntil: 'networkidle2' });
+    await new Promise(r => setTimeout(r, 1500));
+
+    const planValuesAfterReload = await page.evaluate(() => {
+      const inputs = Array.from(document.querySelectorAll('input[type="text"]')).map(i => i.value);
+      const textarea = document.querySelector('textarea')?.value || '';
+      return { inputs, textarea };
+    });
+
+    const planPersisted = planValuesAfterReload.inputs.includes(testTitle) &&
+                          planValuesAfterReload.inputs.includes(testMeetingPoint) &&
+                          planValuesAfterReload.inputs.includes(testSecondaryPoint) &&
+                          planValuesAfterReload.textarea.includes(testNotes);
+
+    await page.screenshot({ path: path.join(SCREENSHOT_DIR, '04_plan_persisted_after_refresh.png') });
+    record(4, 'Family Plan: Persistensi Titik Kumpul & Catatan Pasca-Refresh', planPersisted, 
+      `Data tersimpan dan dimuat kembali dari API: "${testMeetingPoint}" & "${testSecondaryPoint}"`);
 
     // -------------------------------------------------------------
-    // SKENARIO 5: Buka Tab Kontak Darurat, Tambah Kontak Baru
+    // SKENARIO 5: Emergency Contacts — Tambah, Refresh, Hapus, Refresh
     // -------------------------------------------------------------
+    // Switch to Contacts tab
     await page.evaluate(() => {
       const buttons = Array.from(document.querySelectorAll('button, [role="tab"]'));
       const contactTab = buttons.find(b => b.innerText.includes('Kontak Darurat'));
@@ -141,11 +157,15 @@ async function runTest() {
     await new Promise(r => setTimeout(r, 1000));
 
     // Fill modal form using setReactInput
-    await setReactInput(page, 'input[placeholder*="Budi Santoso"]', 'Paman Bambang Sutrisno');
-    await setReactInput(page, 'input[placeholder*="Saudara Kandung"]', 'Paman / Keluarga Jauh');
-    await setReactInput(page, 'input[placeholder*="081234567890"]', '081299112233');
+    const contactName = 'Ibu Ratna Dewi';
+    const contactRel = 'Ibu Kandung';
+    const contactPhone = '081299887711';
 
-    // Click "Simpan Kontak" inside modal
+    await setReactInput(page, 'input[placeholder*="Budi Santoso"]', contactName);
+    await setReactInput(page, 'input[placeholder*="Saudara Kandung"]', contactRel);
+    await setReactInput(page, 'input[placeholder*="081234567890"]', contactPhone);
+
+    // Click "Simpan Kontak"
     await page.evaluate(() => {
       const buttons = Array.from(document.querySelectorAll('button'));
       const saveBtn = buttons.find(b => b.innerText.includes('Simpan Kontak'));
@@ -153,19 +173,29 @@ async function runTest() {
     });
     await new Promise(r => setTimeout(r, 2000));
 
-    await page.screenshot({ path: path.join(SCREENSHOT_DIR, '05_contact_added.png') });
-    const contentAfterContactAdd = await page.evaluate(() => document.body.innerText);
-    const contactAdded = contentAfterContactAdd.includes('Paman Bambang Sutrisno') && contentAfterContactAdd.includes('081299112233');
-    record(5, 'Tambah Kontak Darurat Keluarga Baru', contactAdded, 'Kontak "Paman Bambang Sutrisno" berhasil ditambahkan dan tampil di list');
+    // Reload browser to verify contact persisted
+    await page.reload({ waitUntil: 'networkidle2' });
+    await new Promise(r => setTimeout(r, 1500));
 
-    // -------------------------------------------------------------
-    // SKENARIO 6: Hapus Kontak Darurat dengan Konfirmasi Modal
-    // -------------------------------------------------------------
-    // Click delete button for the newly added contact
+    // Switch back to Contacts tab after reload
     await page.evaluate(() => {
-      const delBtn = document.querySelector('button[aria-label*="Paman Bambang Sutrisno"]');
-      if (delBtn) delBtn.click();
+      const buttons = Array.from(document.querySelectorAll('button, [role="tab"]'));
+      const contactTab = buttons.find(b => b.innerText.includes('Kontak Darurat'));
+      if (contactTab) contactTab.click();
     });
+    await new Promise(r => setTimeout(r, 1000));
+
+    const contentAfterAddReload = await page.evaluate(() => document.body.innerText);
+    const contactPersistedAfterReload = contentAfterAddReload.includes(contactName) && contentAfterAddReload.includes(contactPhone);
+    await page.screenshot({ path: path.join(SCREENSHOT_DIR, '05a_contact_persisted_after_refresh.png') });
+    record(5, 'Emergency Contacts: Tambah Kontak & Persistensi Pasca-Refresh', contactPersistedAfterReload, 
+      `Kontak "${contactName}" tetap tampil setelah refresh browser`);
+
+    // Now delete the contact
+    await page.evaluate((name) => {
+      const delBtn = document.querySelector(`button[aria-label*="${name}"]`);
+      if (delBtn) delBtn.click();
+    }, contactName);
     await new Promise(r => setTimeout(r, 1000));
 
     // Confirm deletion in modal
@@ -176,16 +206,28 @@ async function runTest() {
     });
     await new Promise(r => setTimeout(r, 2000));
 
-    await page.screenshot({ path: path.join(SCREENSHOT_DIR, '06_contact_deleted.png') });
-    const contactRemoved = await page.evaluate(() => {
-      const card = document.querySelector('button[aria-label*="Paman Bambang Sutrisno"]');
-      return card === null;
+    // Reload browser to verify contact deletion is persistent
+    await page.reload({ waitUntil: 'networkidle2' });
+    await new Promise(r => setTimeout(r, 1500));
+
+    // Switch to Contacts tab after reload
+    await page.evaluate(() => {
+      const buttons = Array.from(document.querySelectorAll('button, [role="tab"]'));
+      const contactTab = buttons.find(b => b.innerText.includes('Kontak Darurat'));
+      if (contactTab) contactTab.click();
     });
-    record(6, 'Hapus Kontak Darurat dengan Konfirmasi Modal', contactRemoved, 'Kontak berhasil dihapus dari UI dan database');
+    await new Promise(r => setTimeout(r, 1000));
+
+    const contentAfterDelReload = await page.evaluate(() => document.body.innerText);
+    const contactDeletedPersisted = !contentAfterDelReload.includes(contactName);
+    await page.screenshot({ path: path.join(SCREENSHOT_DIR, '05b_contact_deleted_after_refresh.png') });
+    record(6, 'Emergency Contacts: Hapus Kontak & Konfirmasi Pasca-Refresh', contactDeletedPersisted, 
+      `Kontak "${contactName}" terhapus secara permanen dan tidak muncul kembali setelah refresh`);
 
     // -------------------------------------------------------------
-    // SKENARIO 7: Buka Tab Tas Siaga Bencana & Toggle Item Checklist
+    // SKENARIO 7: Go-Bag Checklist — Centang Multiple Item & Verifikasi Persentase
     // -------------------------------------------------------------
+    // Switch to Checklist tab
     await page.evaluate(() => {
       const buttons = Array.from(document.querySelectorAll('button, [role="tab"]'));
       const checklistTab = buttons.find(b => b.innerText.includes('Tas Siaga Bencana'));
@@ -193,38 +235,114 @@ async function runTest() {
     });
     await new Promise(r => setTimeout(r, 1000));
 
-    const initialPercent = await page.evaluate(() => {
-      const el = document.querySelector('.text-3xl');
-      return el ? el.innerText : '0%';
+    // Reset all checkboxes to unchecked state first for deterministic baseline
+    const resetCount = await page.evaluate(async () => {
+      const checkedBoxes = Array.from(document.querySelectorAll('input[type="checkbox"]:checked'));
+      for (const cb of checkedBoxes) {
+        cb.click();
+        await new Promise(r => setTimeout(r, 300));
+      }
+      return checkedBoxes.length;
+    });
+    if (resetCount > 0) {
+      await new Promise(r => setTimeout(r, 1500));
+    }
+
+    const baselineStats = await page.evaluate(() => {
+      const pctEl = document.querySelector('.text-3xl');
+      return pctEl ? pctEl.innerText : '0%';
     });
 
-    // Toggle the first checkbox item
+    // Toggle Item 1 ON
     await page.evaluate(() => {
-      const firstCheck = document.querySelector('input[type="checkbox"]');
-      if (firstCheck) firstCheck.click();
+      const checkboxes = Array.from(document.querySelectorAll('input[type="checkbox"]'));
+      if (checkboxes[0]) checkboxes[0].click();
     });
-    await new Promise(r => setTimeout(r, 2000));
+    await new Promise(r => setTimeout(r, 1800));
 
-    await page.screenshot({ path: path.join(SCREENSHOT_DIR, '07_checklist_toggled.png') });
-    const contentAfterToggle = await page.evaluate(() => document.body.innerText);
-    const toggleSuccess = contentAfterToggle.includes('siap') || contentAfterToggle.includes('Standar BNPB');
-    record(7, 'Toggle Status Item Tas Siaga Bencana (Go-Bag)', toggleSuccess, `Item dicentang, persentase kesiapan awal: ${initialPercent}`);
+    const statsAfter1 = await page.evaluate(() => {
+      const pctEl = document.querySelector('.text-3xl');
+      return pctEl ? pctEl.innerText : '0%';
+    });
 
-    // -------------------------------------------------------------
-    // SKENARIO 8: Reload Halaman & Konfirmasi Persistensi Data
-    // -------------------------------------------------------------
+    // Toggle Item 2 ON
+    await page.evaluate(() => {
+      const checkboxes = Array.from(document.querySelectorAll('input[type="checkbox"]'));
+      if (checkboxes[1]) checkboxes[1].click();
+    });
+    await new Promise(r => setTimeout(r, 1800));
+
+    const statsAfter2 = await page.evaluate(() => {
+      const pctEl = document.querySelector('.text-3xl');
+      return pctEl ? pctEl.innerText : '0%';
+    });
+
+    // Reload browser to verify multiple items remain checked and percentage matches
     await page.reload({ waitUntil: 'networkidle2' });
-    await new Promise(r => setTimeout(r, 2000));
+    await new Promise(r => setTimeout(r, 1500));
 
-    await page.screenshot({ path: path.join(SCREENSHOT_DIR, '08_reloaded_state.png') });
-    
-    // Check input value of primary meeting point from DOM input
-    const meetingPointValue = await page.evaluate(() => {
-      const inputs = Array.from(document.querySelectorAll('input[type="text"]'));
-      return inputs.map(i => i.value);
+    // Switch to Checklist tab
+    await page.evaluate(() => {
+      const buttons = Array.from(document.querySelectorAll('button, [role="tab"]'));
+      const checklistTab = buttons.find(b => b.innerText.includes('Tas Siaga Bencana'));
+      if (checklistTab) checklistTab.click();
     });
-    const planPersisted = meetingPointValue.includes(testMeetingPoint);
-    record(8, 'Reload Browser & Konfirmasi Persistensi Basis Data', planPersisted, `Titik Kumpul "${testMeetingPoint}" tersimpan di database dan dimuat kembali setelah refresh`);
+    await new Promise(r => setTimeout(r, 1000));
+
+    const statsAfterReload = await page.evaluate(() => {
+      const pctEl = document.querySelector('.text-3xl');
+      const checkedBoxes = Array.from(document.querySelectorAll('input[type="checkbox"]:checked'));
+      return {
+        pctText: pctEl ? pctEl.innerText : '0%',
+        checkedCount: checkedBoxes.length
+      };
+    });
+
+    await page.screenshot({ path: path.join(SCREENSHOT_DIR, '06a_checklist_multi_persisted.png') });
+    const multiItemPersisted = statsAfterReload.checkedCount === 2 && statsAfterReload.pctText === '15.4%';
+    record(7, 'Go-Bag Checklist: Centang Multiple Item & Persentase Pasca-Refresh', multiItemPersisted, 
+      `Baseline: ${baselineStats} -> Item 1 ON: ${statsAfter1} (7.7%) -> Item 2 ON: ${statsAfter2} (15.4%) -> Pasca-Refresh: ${statsAfterReload.pctText} (${statsAfterReload.checkedCount} item centang)`);
+
+    // -------------------------------------------------------------
+    // SKENARIO 8: Go-Bag Checklist — Batalkan Centang (Untoggle) & Verifikasi Pasca-Refresh
+    // -------------------------------------------------------------
+    // Untoggle Item 1 OFF (leaves Item 2 checked)
+    await page.evaluate(() => {
+      const checkboxes = Array.from(document.querySelectorAll('input[type="checkbox"]'));
+      if (checkboxes[0]) checkboxes[0].click();
+    });
+    await new Promise(r => setTimeout(r, 1800));
+
+    const statsAfterUntoggle = await page.evaluate(() => {
+      const pctEl = document.querySelector('.text-3xl');
+      return pctEl ? pctEl.innerText : '0%';
+    });
+
+    // Reload browser to verify untoggle persisted
+    await page.reload({ waitUntil: 'networkidle2' });
+    await new Promise(r => setTimeout(r, 1500));
+
+    // Switch to Checklist tab
+    await page.evaluate(() => {
+      const buttons = Array.from(document.querySelectorAll('button, [role="tab"]'));
+      const checklistTab = buttons.find(b => b.innerText.includes('Tas Siaga Bencana'));
+      if (checklistTab) checklistTab.click();
+    });
+    await new Promise(r => setTimeout(r, 1000));
+
+    const statsAfterUntoggleReload = await page.evaluate(() => {
+      const pctEl = document.querySelector('.text-3xl');
+      const checkedBoxes = Array.from(document.querySelectorAll('input[type="checkbox"]:checked'));
+      return {
+        pctText: pctEl ? pctEl.innerText : '0%',
+        checkedCount: checkedBoxes.length
+      };
+    });
+
+    await page.screenshot({ path: path.join(SCREENSHOT_DIR, '07a_checklist_untoggle_persisted.png') });
+    const untogglePersisted = statsAfterUntoggleReload.checkedCount === 1 && statsAfterUntoggleReload.pctText === '7.7%';
+    record(8, 'Go-Bag Checklist: Batalkan Centang (Untoggle) & Persistensi Pasca-Refresh', untogglePersisted, 
+      `Pasca-Untoggle Item 1: ${statsAfterUntoggle} -> Pasca-Refresh: ${statsAfterUntoggleReload.pctText} (${statsAfterUntoggleReload.checkedCount} item centang tersisa)`);
 
   } catch (err) {
     console.error('Error during E2E test:', err);

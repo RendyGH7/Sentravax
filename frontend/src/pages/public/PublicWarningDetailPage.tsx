@@ -530,6 +530,19 @@ export const PublicWarningDetailPage: React.FC = () => {
               </div>
             </section>
 
+            {/* OFFICIAL INSTRUCTION BOX (CAP ACTIONABLE GUIDANCE) */}
+            {alertDetail.instruction && (
+              <section className="bg-white border border-teal-200 rounded-2xl p-6 shadow-xs space-y-3">
+                <h2 className="text-base font-bold text-teal-900 flex items-center gap-2">
+                  <BookOpen className="w-4 h-4 text-teal-600" />
+                  <span>Instruksi Keselamatan Resmi (Official CAP Instruction)</span>
+                </h2>
+                <div className="text-sm text-teal-950 leading-relaxed p-4 bg-teal-50/70 rounded-xl border border-teal-200 font-medium">
+                  {alertDetail.instruction}
+                </div>
+              </section>
+            )}
+
             {/* ISSUER & DATA PROVENANCE (STRICT SEMANTIC SEPARATION) */}
             <section className="bg-white border border-[#E5E7EB] rounded-2xl p-6 shadow-xs space-y-4">
               <h2 className="text-base font-bold text-[#111827] flex items-center gap-2">
@@ -561,6 +574,20 @@ export const PublicWarningDetailPage: React.FC = () => {
                     {alertDetail.issuer.verification_basis ||
                       'Tidak terdapat data dasar verifikasi penerbit pada sistem.'}
                   </p>
+
+                  {alertDetail.external_identifier && (
+                    <div className="text-[10px] font-mono text-[#6B7280] pt-1.5 border-t border-gray-200 break-all">
+                      <span className="font-semibold text-slate-700">CAP ID: </span>
+                      {alertDetail.external_identifier}
+                    </div>
+                  )}
+
+                  {alertDetail.area_description && (
+                    <div className="text-[11px] text-[#4B5563] pt-0.5">
+                      <span className="font-semibold text-slate-700">Cakupan Wilayah: </span>
+                      {alertDetail.area_description}
+                    </div>
+                  )}
                 </div>
 
                 {/* 2. EVENT DATA SOURCE BOX */}

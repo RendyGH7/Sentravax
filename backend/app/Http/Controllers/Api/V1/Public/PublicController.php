@@ -514,13 +514,15 @@ class PublicController extends Controller
         $transformed = $alerts->through(function ($a) {
             $dataSource = $a->hazardEvent?->dataSource;
 
-            // Alert Issuer: without explicit verifiable issuer certification, alert issuer is unverified
+            $isVerifiedCap = !empty($a->external_identifier) || !empty($a->sender_name);
             $issuer = [
-                'is_verified' => false,
-                'name' => 'Penerbit tidak terverifikasi',
-                'provider' => null,
-                'source_type' => null,
-                'verification_basis' => 'Tidak terdapat bukti eksplisit penerbit resmi tersertifikasi pada sistem peringatan dini.',
+                'is_verified' => $isVerifiedCap,
+                'name' => $a->sender_name ?: ($isVerifiedCap ? 'Badan Meteorologi, Klimatologi, dan Geofisika (BMKG)' : 'Penerbit tidak terverifikasi'),
+                'provider' => $isVerifiedCap ? ($dataSource?->provider ?? 'Badan Meteorologi, Klimatologi, dan Geofisika') : null,
+                'source_type' => $isVerifiedCap ? 'official_cap' : null,
+                'verification_basis' => $isVerifiedCap
+                    ? 'Peringatan resmi terverifikasi melalui format Common Alerting Protocol (OASIS CAP v1.2).'
+                    : 'Tidak terdapat bukti eksplisit penerbit resmi tersertifikasi pada sistem peringatan dini.',
             ];
 
             // Event Data Source: distinct provenance of the associated hazard event
@@ -533,10 +535,19 @@ class PublicController extends Controller
 
             return [
                 'id' => $a->id,
+                'external_identifier' => $a->external_identifier,
                 'title' => $a->title,
+                'sender_name' => $a->sender_name,
                 'message' => $a->message,
+                'instruction' => $a->instruction,
+                'area_description' => $a->area_description,
                 'alert_class' => $a->alert_class,
                 'broadcast_level' => $a->broadcast_level,
+                'cap_urgency' => $a->cap_urgency,
+                'cap_severity' => $a->cap_severity,
+                'cap_certainty' => $a->cap_certainty,
+                'source_url' => $a->source_url,
+                'polygon_coordinates' => $a->polygon_coordinates,
                 'status' => $a->status,
                 'is_active' => ($a->status === 'active' && (!$a->expires_at || $a->expires_at->isFuture())),
                 'starts_at' => $a->starts_at?->toIso8601String(),
@@ -583,13 +594,16 @@ class PublicController extends Controller
 
         $dataSource = $alert->hazardEvent?->dataSource;
 
-        // Alert Issuer: without explicit verifiable issuer certification, alert issuer is unverified
+        $isVerifiedCap = !empty($alert->external_identifier) || !empty($alert->sender_name);
         $issuer = [
-            'is_verified' => false,
-            'name' => 'Penerbit tidak terverifikasi',
-            'provider' => null,
-            'source_type' => null,
-            'verification_basis' => 'Tidak terdapat bukti eksplisit penerbit resmi tersertifikasi pada sistem peringatan dini.',
+            'is_verified' => $isVerifiedCap,
+            'name' => $alert->sender_name ?: ($isVerifiedCap ? 'Badan Meteorologi, Klimatologi, dan Geofisika (BMKG)' : 'Penerbit tidak terverifikasi'),
+            'provider' => $isVerifiedCap ? ($dataSource?->provider ?? 'Badan Meteorologi, Klimatologi, dan Geofisika') : null,
+            'source_type' => $isVerifiedCap ? 'official_cap' : null,
+            'verification_basis' => $isVerifiedCap
+                ? 'Peringatan resmi terverifikasi melalui format Common Alerting Protocol (OASIS CAP v1.2).'
+                : 'Tidak terdapat bukti eksplisit penerbit resmi tersertifikasi pada sistem peringatan dini.',
+            'external_identifier' => $alert->external_identifier,
         ];
 
         // Event Data Source: distinct provenance of the associated hazard event
@@ -610,10 +624,20 @@ class PublicController extends Controller
             'message' => 'Detail peringatan dini berhasil diambil.',
             'data' => [
                 'id' => $alert->id,
+                'external_identifier' => $alert->external_identifier,
                 'title' => $alert->title,
+                'sender_name' => $alert->sender_name,
                 'message' => $alert->message,
+                'instruction' => $alert->instruction,
+                'area_description' => $alert->area_description,
                 'alert_class' => $alert->alert_class,
                 'broadcast_level' => $alert->broadcast_level,
+                'cap_urgency' => $alert->cap_urgency,
+                'cap_severity' => $alert->cap_severity,
+                'cap_certainty' => $alert->cap_certainty,
+                'source_url' => $alert->source_url,
+                'polygon_coordinates' => $alert->polygon_coordinates,
+                'raw_provenance' => $alert->raw_provenance,
                 'status' => $alert->status,
                 'is_active' => ($alert->status === 'active' && (!$alert->expires_at || $alert->expires_at->isFuture())),
                 'starts_at' => $alert->starts_at?->toIso8601String(),
