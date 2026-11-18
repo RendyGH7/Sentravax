@@ -1,0 +1,11 @@
+{
+  "step1_public_home_speeddial": true,
+  "step2_public_location_risk_check": true,
+  "step3_public_disaster_map": true,
+  "step4_public_education_hub": true,
+  "step5_public_zero_barrier_report": true,
+  "step6_citizen_user_portal_readiness": true,
+  "step7_intel_command_center_telemetry": true,
+  "step8_intel_alert_operations_cap": true,
+  "step9_admin_dashboard_operations": true
+}

@@ -216,7 +216,7 @@ export const HomePage: React.FC = () => {
           {[
             { num: '117', label: 'BNPB Bencana' },
             { num: '115', label: 'Basarnas SAR' },
-            { num: '118', label: 'Ambulans' },
+            { num: '119', label: 'Ambulans Medis' },
             { num: '113', label: 'Damkar' },
             { num: '110', label: 'Polisi' },
           ].map((h) => (
