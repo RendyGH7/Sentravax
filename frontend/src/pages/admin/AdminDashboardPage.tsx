@@ -92,6 +92,50 @@ export const AdminDashboardPage: React.FC = () => {
         </div>
       </div>
 
+      {/* Quick Action Navigation Toolbar */}
+      <div className="flex items-center gap-2 overflow-x-auto pb-1 scrollbar-none text-xs">
+        <Link
+          to={PATHS.ADMIN.REPORTS}
+          className="inline-flex items-center gap-2 px-3.5 py-2 rounded-xl bg-[#212121] hover:bg-[#2B2B2B] text-[#FFFFFF] font-bold border border-[#2C2C2C] transition-all whitespace-nowrap shadow-xs"
+        >
+          <FileCheck2 className="w-3.5 h-3.5 text-[#F59E0B]" />
+          <span>Moderasi Laporan</span>
+          {counts.pending_verification_reports > 0 && (
+            <span className="px-1.5 py-0.5 rounded-full text-[10px] bg-amber-500/20 text-[#F59E0B] font-mono">
+              {counts.pending_verification_reports}
+            </span>
+          )}
+        </Link>
+        <Link
+          to={PATHS.ADMIN.SHELTERS}
+          className="inline-flex items-center gap-2 px-3.5 py-2 rounded-xl bg-[#212121] hover:bg-[#2B2B2B] text-[#FFFFFF] font-bold border border-[#2C2C2C] transition-all whitespace-nowrap shadow-xs"
+        >
+          <ShieldCheck className="w-3.5 h-3.5 text-[#10B981]" />
+          <span>Kelola Shelter Resmi</span>
+        </Link>
+        <Link
+          to={PATHS.ADMIN.DISASTERS}
+          className="inline-flex items-center gap-2 px-3.5 py-2 rounded-xl bg-[#212121] hover:bg-[#2B2B2B] text-[#FFFFFF] font-bold border border-[#2C2C2C] transition-all whitespace-nowrap shadow-xs"
+        >
+          <Flame className="w-3.5 h-3.5 text-[#EF4444]" />
+          <span>Kurasi Bencana</span>
+        </Link>
+        <Link
+          to={PATHS.ADMIN.DATA_SOURCES}
+          className="inline-flex items-center gap-2 px-3.5 py-2 rounded-xl bg-[#212121] hover:bg-[#2B2B2B] text-[#FFFFFF] font-bold border border-[#2C2C2C] transition-all whitespace-nowrap shadow-xs"
+        >
+          <Database className="w-3.5 h-3.5 text-[#38BDF8]" />
+          <span>Status Sumber Data</span>
+        </Link>
+        <Link
+          to={PATHS.ADMIN.USERS}
+          className="inline-flex items-center gap-2 px-3.5 py-2 rounded-xl bg-[#212121] hover:bg-[#2B2B2B] text-[#FFFFFF] font-bold border border-[#2C2C2C] transition-all whitespace-nowrap shadow-xs"
+        >
+          <Users className="w-3.5 h-3.5 text-[#A78BFA]" />
+          <span>Manajemen Pengguna</span>
+        </Link>
+      </div>
+
       {/* 4 Metric Cards (Grey & Black with Strong Gold, Emerald, & Coral) */}
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
         {/* Metric 1: Total Users */}

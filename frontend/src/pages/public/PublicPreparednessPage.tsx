@@ -28,7 +28,8 @@ import {
   ArrowRight,
   Crosshair,
   Radio,
-  Sparkles
+  Sparkles,
+  PhoneCall
 } from 'lucide-react';
 
 function formatDate(dateString?: string): string {
@@ -156,6 +157,8 @@ export const PublicPreparednessPage: React.FC = () => {
     }
   }, [checkedItems]);
 
+  const [checklistFilter, setChecklistFilter] = useState<string>('all');
+
   const handleResetChecklist = () => {
     setCheckedItems({});
     try {
@@ -163,6 +166,15 @@ export const PublicPreparednessPage: React.FC = () => {
     } catch {
       // Ignore
     }
+  };
+
+  const handleCheckAllChecklist = () => {
+    if (!analysisResult?.recommendations?.recommended_checklist_items) return;
+    const allChecked: Record<number, boolean> = {};
+    analysisResult.recommendations.recommended_checklist_items.forEach((item) => {
+      allChecked[item.id] = true;
+    });
+    setCheckedItems(allChecked);
   };
 
   // Unique accessible IDs for form fields
@@ -374,36 +386,67 @@ export const PublicPreparednessPage: React.FC = () => {
 
   return (
     <div className="space-y-10 py-6 px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto">
+      {/* 0. 1-CLICK EMERGENCY HOTLINE SPEED-DIAL BAR */}
+      <section aria-label="Kontak Darurat Cepat" className="p-3.5 rounded-2xl bg-white border border-[#E5E7EB] shadow-xs">
+        <div className="flex flex-col md:flex-row md:items-center justify-between gap-3">
+          <div className="flex items-center gap-2">
+            <div className="w-8 h-8 rounded-xl bg-red-50 text-red-600 flex items-center justify-center font-bold shrink-0">
+              <PhoneCall className="w-4 h-4 animate-pulse" />
+            </div>
+            <div>
+              <span className="text-xs font-bold text-[#111827] block">Panggilan Darurat Siaga (1-Klik):</span>
+              <span className="text-[11px] text-[#6B7280]">Bebas pulsa nasional 24/7 untuk tanggap darurat</span>
+            </div>
+          </div>
+
+          <div className="flex flex-wrap items-center gap-2">
+            {[
+              { name: 'BNPB', number: '117' },
+              { name: 'Basarnas', number: '115' },
+              { name: 'Ambulans', number: '119' },
+              { name: 'Damkar', number: '113' },
+              { name: 'Polisi', number: '110' },
+            ].map((h) => (
+              <a
+                key={h.number}
+                href={`tel:${h.number}`}
+                className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-neutral-50 hover:bg-neutral-100 border border-neutral-200 text-xs font-bold text-neutral-800 transition-colors"
+              >
+                <span className="text-red-600 font-mono font-extrabold">{h.number}</span>
+                <span className="text-[11px] text-neutral-600">{h.name}</span>
+              </a>
+            ))}
+          </div>
+        </div>
+      </section>
+
       {/* ========================================================================= */}
       {/* SECTION 1: HERO & SCOPE TRANSPARENCY                                     */}
       {/* ========================================================================= */}
-      <section aria-labelledby="siaga-hero-heading" className="space-y-4">
-        <div className="flex flex-wrap items-center gap-2">
-          <Badge variant="success" size="sm">
-            FITUR UNGGULAN PUBLIK
-          </Badge>
-          <Badge variant="neutral" size="sm">
-            TELEMETRI POSTGIS
-          </Badge>
-        </div>
-
-        <div className="max-w-3xl space-y-2">
-          <h1 id="siaga-hero-heading" className="text-2xl sm:text-3xl lg:text-4xl font-extrabold text-[#111827] tracking-tight leading-tight">
-            SIAGA PERSONAL: Cek Risiko Lokasi Mandiri
-          </h1>
-          <p className="text-sm sm:text-base text-[#4B5563] leading-relaxed">
-            Evaluasi indeks kerentanan multi-ancaman bencana deterministik di sekitar tempat tinggal, kantor, atau lokasi perjalanan Anda. Dapatkan rekomendasi mitigasi keluarga dan daftar perlengkapan darurat berbasis panduan resmi BNPB.
-          </p>
-        </div>
-
-        {/* Pilot Scope Transparency Callout */}
-        <div className="p-4 rounded-2xl bg-[#F0FDF4] border border-[#DCFCE7] flex items-start gap-3 text-xs text-[#065F46] leading-relaxed">
-          <Info className="w-4 h-4 text-[#047857] shrink-0 mt-0.5" />
+      <section aria-labelledby="siaga-hero-heading" className="space-y-3">
+        <div className="flex flex-col md:flex-row md:items-center justify-between gap-3">
           <div>
-            <span className="font-bold">Cakupan Wilayah Terpantau: </span>
-            SENTRAVAX saat ini memprioritaskan integrasi data geospasial pada wilayah pilot 
-            <span className="font-semibold text-[#047857]"> DKI Jakarta, Jawa Barat, Banten, dan sekitarnya</span>. 
-            Koordinat di luar wilayah pilot tetap dapat dianalisis berdasarkan baseline kerentanan geospasial nasional dan jejaring BMKG.
+            <div className="flex flex-wrap items-center gap-2 mb-1.5">
+              <Badge variant="success" size="sm">SIAGA MANDIRI</Badge>
+              <Badge variant="neutral" size="sm">POSTGIS DETERMINISTIK</Badge>
+              <span className="text-xs font-mono text-neutral-500">Cakupan: DKI Jakarta, Jabar, Banten & Nasional</span>
+            </div>
+            <h1 id="siaga-hero-heading" className="text-2xl sm:text-3xl font-extrabold text-[#111827] tracking-tight">
+              SIAGA PERSONAL: Cek Risiko &amp; Mitigasi Lokasi
+            </h1>
+          </div>
+
+          <div className="flex items-center gap-2 shrink-0">
+            <Link to={PATHS.PUBLIC.EDUCATION}>
+              <Button variant="outline" size="sm" rightIcon={<ArrowRight className="w-3.5 h-3.5" />}>
+                Panduan Edukasi
+              </Button>
+            </Link>
+            <Link to={`${PATHS.PUBLIC.MAP}?layer=shelters`}>
+              <Button variant="primary" size="sm">
+                Peta Shelter Terverifikasi
+              </Button>
+            </Link>
           </div>
         </div>
       </section>
@@ -960,10 +1003,17 @@ export const PublicPreparednessPage: React.FC = () => {
                         Centang perlengkapan yang sudah Anda siapkan di rumah secara mandiri.
                       </p>
                     </div>
-                    <div className="flex items-center gap-3">
+                    <div className="flex items-center gap-2">
                       <span data-testid="gobag-count" className="text-xs font-mono font-bold text-[#047857]">
                         {Object.values(checkedItems).filter(Boolean).length} / {analysisResult.recommendations.recommended_checklist_items.length} Siap
                       </span>
+                      <button
+                        onClick={handleCheckAllChecklist}
+                        type="button"
+                        className="text-[11px] text-[#047857] hover:underline font-semibold cursor-pointer"
+                      >
+                        Tandai Semua
+                      </button>
                       {Object.values(checkedItems).filter(Boolean).length > 0 && (
                         <button
                           onClick={handleResetChecklist}
@@ -977,8 +1027,28 @@ export const PublicPreparednessPage: React.FC = () => {
                     </div>
                   </div>
 
+                  {/* Category Filter Chips */}
+                  <div className="flex items-center gap-1.5 overflow-x-auto pb-1 text-xs">
+                    {['all', 'dokumen', 'medis', 'logistik'].map((cat) => (
+                      <button
+                        key={cat}
+                        type="button"
+                        onClick={() => setChecklistFilter(cat)}
+                        className={`px-2.5 py-1 rounded-lg font-bold capitalize transition-all ${
+                          checklistFilter === cat
+                            ? 'bg-[#047857] text-white shadow-xs'
+                            : 'bg-neutral-100 hover:bg-neutral-200 text-neutral-700'
+                        }`}
+                      >
+                        {cat === 'all' ? 'Semua Item' : cat}
+                      </button>
+                    ))}
+                  </div>
+
                   <div className="grid grid-cols-1 sm:grid-cols-2 gap-2.5">
-                    {analysisResult.recommendations.recommended_checklist_items.map((item: GoBagChecklistItem) => {
+                    {analysisResult.recommendations.recommended_checklist_items
+                      .filter((item) => checklistFilter === 'all' || item.category?.toLowerCase() === checklistFilter)
+                      .map((item: GoBagChecklistItem) => {
                       const isChecked = Boolean(checkedItems[item.id]);
 
                       return (
