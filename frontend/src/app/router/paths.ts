@@ -8,6 +8,7 @@ export const PATHS = {
     WARNING_DETAIL: '/warnings/:id',
     PREPAREDNESS: '/preparedness',
     EDUCATION: '/education',
+    REPORT: '/report',
     ABOUT: '/about',
     LOGIN: '/login',
     REGISTER: '/register',

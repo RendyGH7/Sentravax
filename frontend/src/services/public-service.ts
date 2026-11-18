@@ -19,6 +19,9 @@ import type {
   EducationContentItem,
   DataSourceItem,
   PaginatedData,
+  CreateReportPayload,
+  CreateReportResult,
+  CommunityReportDetail,
 } from '../types';
 import type {
   ShelterDetail,
@@ -218,6 +221,46 @@ export const publicService = {
     const res = await apiClient.get<ApiResponse<ShelterDetail>>(`/public/shelters/${id}`, {
       params: lat !== undefined && lon !== undefined ? { lat, lon } : undefined,
     });
+    return res.data.data;
+  },
+
+  /**
+   * Submit emergency community disaster report without requiring login (Zero-Barrier).
+   * Endpoint: POST /api/v1/public/reports
+   */
+  async submitReport(payload: CreateReportPayload & { reporter_name?: string; reporter_contact?: string }): Promise<CreateReportResult & { tracking_code: string }> {
+    const formData = new FormData();
+    formData.append('hazard_type_id', String(payload.hazard_type_id));
+    formData.append('region_id', String(payload.region_id));
+    formData.append('title', payload.title);
+    formData.append('description', payload.description);
+    formData.append('latitude', String(payload.latitude));
+    formData.append('longitude', String(payload.longitude));
+    if (payload.reporter_name) {
+      formData.append('reporter_name', payload.reporter_name);
+    }
+    if (payload.reporter_contact) {
+      formData.append('reporter_contact', payload.reporter_contact);
+    }
+    if (payload.photo) {
+      formData.append('photo', payload.photo);
+    }
+
+    const res = await apiClient.post<ApiResponse<CreateReportResult & { tracking_code: string }>>('/public/reports', formData, {
+      headers: {
+        'Content-Type': 'multipart/form-data',
+      },
+      timeout: 60000,
+    });
+    return res.data.data;
+  },
+
+  /**
+   * Check status of a submitted report by ID.
+   * Endpoint: GET /api/v1/public/reports/{id}
+   */
+  async checkReportStatus(id: number): Promise<CommunityReportDetail & { tracking_code: string }> {
+    const res = await apiClient.get<ApiResponse<CommunityReportDetail & { tracking_code: string }>>(`/public/reports/${id}`);
     return res.data.data;
   },
 };

@@ -65,6 +65,7 @@ export const router = createBrowserRouter([
       { path: 'warnings/:id', element: <PublicWarningDetailPage /> },
       { path: 'preparedness', element: <PublicPreparednessPage /> },
       { path: 'education', element: <PublicEducationPage /> },
+      { path: 'report', element: <UserCreateReportPage /> },
       { path: 'about', element: <PublicAboutPage /> },
       { path: 'login', element: <LoginPage /> },
       { path: 'register', element: <RegisterPage /> },

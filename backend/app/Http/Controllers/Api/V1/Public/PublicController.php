@@ -4,24 +4,28 @@ namespace App\Http\Controllers\Api\V1\Public;
 
 use App\Http\Controllers\Controller;
 use App\Models\Alert;
+use App\Models\CommunityReport;
 use App\Models\DataSource;
 use App\Models\EducationContent;
 use App\Models\HazardEvent;
 use App\Models\HazardType;
 use App\Models\Region;
 use App\Models\Shelter;
+use App\Services\Intelligence\IntelligenceService;
 use App\Services\Preparedness\PreparednessService;
 use Carbon\Carbon;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Validation\Rule;
 
 class PublicController extends Controller
 {
     public function __construct(
-        protected PreparednessService $preparednessService
+        protected PreparednessService $preparednessService,
+        protected IntelligenceService $intelligenceService
     ) {}
 
     /**
@@ -1002,6 +1006,124 @@ class PublicController extends Controller
         return response()->json([
             'success' => true,
             'data' => $data,
+        ]);
+    }
+
+    /**
+     * Submit a community disaster report publicly without requiring authentication (Emergency Zero-Barrier).
+     * Automatically clusters with nearby reports and queues for verification.
+     */
+    public function submitReport(Request $request): JsonResponse
+    {
+        $validated = $request->validate([
+            'hazard_type_id' => ['required', 'integer', 'exists:hazard_types,id'],
+            'region_id' => ['required', 'integer', 'exists:regions,id'],
+            'title' => ['required', 'string', 'max:150'],
+            'description' => ['required', 'string', 'max:2000'],
+            'latitude' => ['required', 'numeric', 'between:-11.5,6.5'],
+            'longitude' => ['required', 'numeric', 'between:95.0,141.5'],
+            'photo' => ['nullable', 'file', 'image', 'max:5120'],
+            'reporter_name' => ['nullable', 'string', 'max:100'],
+            'reporter_contact' => ['nullable', 'string', 'max:100'],
+        ]);
+
+        $photoPath = null;
+        if ($request->hasFile('photo')) {
+            $photoPath = $request->file('photo')->store('community_reports', 'public');
+        }
+
+        // Optional authenticated user, otherwise null for guest
+        $userId = $request->user('sanctum')?->id;
+        $lat = (float) $validated['latitude'];
+        $lon = (float) $validated['longitude'];
+
+        $mediaData = [
+            'reporter_name' => $validated['reporter_name'] ?? ($userId ? $request->user('sanctum')->name : 'Warga Anonim'),
+            'reporter_contact' => $validated['reporter_contact'] ?? null,
+            'source' => $userId ? 'authenticated_citizen' : 'zero_barrier_public',
+        ];
+
+        $reportId = DB::table('community_reports')->insertGetId([
+            'user_id' => $userId,
+            'hazard_type_id' => $validated['hazard_type_id'],
+            'region_id' => $validated['region_id'],
+            'title' => $validated['title'],
+            'description' => $validated['description'],
+            'photo_path' => $photoPath,
+            'media' => json_encode($mediaData),
+            'status' => 'pending',
+            'location' => DB::raw("ST_SetSRID(ST_MakePoint({$lon}, {$lat}), 4326)"),
+            'created_at' => now(),
+            'updated_at' => now(),
+        ]);
+
+        $report = CommunityReport::find($reportId);
+
+        // Run deterministic spatiotemporal clustering analysis
+        $clustering = $this->intelligenceService->analyzeAndClusterReport($report);
+
+        return response()->json([
+            'success' => true,
+            'message' => 'Laporan kejadian bencana darurat berhasil dikirim tanpa hambatan dan masuk antrean verifikasi.',
+            'data' => [
+                'id' => $report->id,
+                'tracking_code' => 'SVX-REP-' . str_pad((string)$report->id, 5, '0', STR_PAD_LEFT),
+                'title' => $report->title,
+                'status' => $report->status,
+                'photo_url' => $photoPath ? Storage::disk('public')->url($photoPath) : null,
+                'clustering' => $clustering,
+                'created_at' => $report->created_at->toIso8601String(),
+            ],
+        ], 201);
+    }
+
+    /**
+     * Publicly check status of a submitted report by ID.
+     */
+    public function checkReportStatus(int $id): JsonResponse
+    {
+        $report = CommunityReport::query()
+            ->select([
+                'id',
+                'hazard_type_id',
+                'region_id',
+                'title',
+                'description',
+                'photo_path',
+                'status',
+                'created_at',
+                'verified_at',
+                'moderation_notes',
+                DB::raw('ST_Y(location) as latitude'),
+                DB::raw('ST_X(location) as longitude'),
+            ])
+            ->with(['hazardType:id,slug,name,icon', 'region:id,code,name,level'])
+            ->find($id);
+
+        if (!$report) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Laporan bencana dengan ID tersebut tidak ditemukan.',
+            ], 404);
+        }
+
+        return response()->json([
+            'success' => true,
+            'data' => [
+                'id' => $report->id,
+                'tracking_code' => 'SVX-REP-' . str_pad((string)$report->id, 5, '0', STR_PAD_LEFT),
+                'title' => $report->title,
+                'description' => $report->description,
+                'status' => $report->status,
+                'hazard_type' => $report->hazardType,
+                'region' => $report->region,
+                'latitude' => $report->latitude,
+                'longitude' => $report->longitude,
+                'photo_url' => $report->photo_path ? Storage::disk('public')->url($report->photo_path) : null,
+                'moderation_notes' => $report->status === 'rejected' ? $report->moderation_notes : null,
+                'created_at' => $report->created_at->toIso8601String(),
+                'verified_at' => $report->verified_at?->toIso8601String(),
+            ],
         ]);
     }
 }

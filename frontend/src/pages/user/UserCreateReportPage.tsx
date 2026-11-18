@@ -1,45 +1,207 @@
-import React, { useState } from 'react';
-import { Link } from 'react-router-dom';
+import React, { useState, useEffect } from 'react';
+import { Link, useNavigate } from 'react-router-dom';
 import { PATHS } from '../../app/router/paths';
+import { useAuth } from '../../app/context/useAuth';
+import { userService } from '../../services/user-service';
+import { publicService } from '../../services/public-service';
+import type { HazardTypeItem, RegionItem } from '../../types';
 import { 
-  MapPin, 
   Camera, 
   SendHorizontal, 
   ArrowLeft,
   CheckCircle2,
-  Navigation
+  Navigation,
+  Layers,
+  Phone,
+  User as UserIcon,
+  X,
+  ShieldAlert
 } from 'lucide-react';
 import { toast } from 'sonner';
 
 export const UserCreateReportPage: React.FC = () => {
-  const [hazardType, setHazardType] = useState('flood');
-  const [locationText, setLocationText] = useState('Jl. Sulawesi No. 12, Tanjung Priok');
-  const [coordinates, setCoordinates] = useState('-6.1158, 106.8833');
+  const navigate = useNavigate();
+  const { user, isAuthenticated } = useAuth();
+
+  const [hazardTypes, setHazardTypes] = useState<HazardTypeItem[]>([]);
+  const [regions, setRegions] = useState<RegionItem[]>([]);
+  const [isLoadingMeta, setIsLoadingMeta] = useState(true);
+
+  // Form states
+  const [hazardTypeId, setHazardTypeId] = useState<number | ''>('');
+  const [regionId, setRegionId] = useState<number | ''>('');
+  const [title, setTitle] = useState('');
   const [description, setDescription] = useState('');
+  const [latitude, setLatitude] = useState<number>(-6.1754);
+  const [longitude, setLongitude] = useState<number>(106.8272);
+  const [photo, setPhoto] = useState<File | null>(null);
+  const [photoPreview, setPhotoPreview] = useState<string | null>(null);
+
+  // Zero-Barrier guest fields
+  const [reporterName, setReporterName] = useState(user?.name || '');
+  const [reporterContact, setReporterContact] = useState('');
+
+  // Submission outcome states
   const [isSubmitting, setIsSubmitting] = useState(false);
-  const [submitted, setSubmitted] = useState(false);
+  const [submittedReport, setSubmittedReport] = useState<{
+    id: number;
+    tracking_code?: string;
+    title: string;
+    status: string;
+    cluster_id?: string;
+    is_duplicate?: boolean;
+    photo_url?: string | null;
+  } | null>(null);
+
+  useEffect(() => {
+    let isMounted = true;
+    async function loadMetadata() {
+      setIsLoadingMeta(true);
+      try {
+        const [hazards, regList] = await Promise.all([
+          publicService.getHazardTypes(),
+          publicService.getRegions(),
+        ]);
+        if (isMounted) {
+          setHazardTypes(hazards);
+          if (hazards.length > 0) {
+            setHazardTypeId(hazards[0].id);
+          }
+          setRegions(regList);
+          if (regList.length > 0) {
+            setRegionId(regList[0].id);
+          }
+        }
+      } catch (err) {
+        console.error('Failed to load report metadata:', err);
+        toast.error('Gagal memuat daftar jenis bahaya dan wilayah.');
+      } finally {
+        if (isMounted) setIsLoadingMeta(false);
+      }
+    }
+    loadMetadata();
+    return () => {
+      isMounted = false;
+    };
+  }, []);
 
   const handleDetectLocation = () => {
+    if (!navigator.geolocation) {
+      toast.error('Geolocation tidak didukung oleh browser Anda.');
+      return;
+    }
     toast.info('Mengambil titik koordinat GPS perangkat...');
-    setTimeout(() => {
-      setCoordinates('-6.1162, 106.8841');
-      toast.success('Koordinat GPS berhasil disematkan.');
-    }, 600);
+    navigator.geolocation.getCurrentPosition(
+      (pos) => {
+        const lat = parseFloat(pos.coords.latitude.toFixed(6));
+        const lon = parseFloat(pos.coords.longitude.toFixed(6));
+        setLatitude(lat);
+        setLongitude(lon);
+        toast.success(`Koordinat GPS tersimpan: ${lat}, ${lon}`);
+      },
+      (err) => {
+        console.warn('Geolocation error:', err);
+        toast.warning('Akses GPS ditolak/tidak tersedia. Menggunakan estimasi koordinat.');
+      },
+      { timeout: 10000, enableHighAccuracy: true }
+    );
   };
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handlePhotoChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    if (e.target.files && e.target.files[0]) {
+      const file = e.target.files[0];
+      if (file.size > 5 * 1024 * 1024) {
+        toast.error('Ukuran berkas melebihi batas 5MB.');
+        return;
+      }
+      setPhoto(file);
+      setPhotoPreview(URL.createObjectURL(file));
+    }
+  };
+
+  const removePhoto = () => {
+    setPhoto(null);
+    if (photoPreview) {
+      URL.revokeObjectURL(photoPreview);
+      setPhotoPreview(null);
+    }
+  };
+
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    if (!hazardTypeId) {
+      toast.error('Pilih jenis bahaya bencana.');
+      return;
+    }
+    if (!regionId) {
+      toast.error('Pilih wilayah administrasi kejadian.');
+      return;
+    }
+    if (!title.trim()) {
+      toast.error('Judul ringkas kejadian wajib diisi.');
+      return;
+    }
     if (!description.trim()) {
-      toast.error('Silakan isi deskripsi kondisi lapangan.');
+      toast.error('Deskripsi kondisi lapangan wajib diisi.');
       return;
     }
 
     setIsSubmitting(true);
-    setTimeout(() => {
+    try {
+      if (isAuthenticated) {
+        // Authenticated citizen report
+        const res = await userService.createReport({
+          hazard_type_id: Number(hazardTypeId),
+          region_id: Number(regionId),
+          title: title.trim(),
+          description: description.trim(),
+          latitude,
+          longitude,
+          photo,
+        });
+
+        setSubmittedReport({
+          id: res.id,
+          tracking_code: `SVX-REP-${String(res.id).padStart(5, '0')}`,
+          title: res.title,
+          status: res.status,
+          cluster_id: res.clustering?.cluster_id,
+          is_duplicate: res.clustering?.is_duplicate,
+          photo_url: res.photo_url,
+        });
+        toast.success('Laporan berhasil dikirim dan masuk antrean verifikasi!');
+      } else {
+        // Emergency Zero-Barrier public report
+        const res = await publicService.submitReport({
+          hazard_type_id: Number(hazardTypeId),
+          region_id: Number(regionId),
+          title: title.trim(),
+          description: description.trim(),
+          latitude,
+          longitude,
+          photo,
+          reporter_name: reporterName.trim() || undefined,
+          reporter_contact: reporterContact.trim() || undefined,
+        });
+
+        setSubmittedReport({
+          id: res.id,
+          tracking_code: res.tracking_code || `SVX-REP-${String(res.id).padStart(5, '0')}`,
+          title: res.title,
+          status: res.status,
+          cluster_id: res.clustering?.cluster_id,
+          is_duplicate: res.clustering?.is_duplicate,
+          photo_url: res.photo_url,
+        });
+        toast.success('Laporan darurat berhasil dikirim tanpa hambatan login!');
+      }
+    } catch (err: any) {
+      console.error('Failed to submit report:', err);
+      const msg = err.response?.data?.message || 'Gagal mengirim laporan bencana.';
+      toast.error(msg);
+    } finally {
       setIsSubmitting(false);
-      setSubmitted(true);
-      toast.success('Laporan berhasil dikirim dan masuk antrean verifikasi posko.');
-    }, 800);
+    }
   };
 
   return (
@@ -47,42 +209,85 @@ export const UserCreateReportPage: React.FC = () => {
       {/* Top Header */}
       <div className="flex items-center justify-between pb-4 border-b border-[#E5E7EB]">
         <div>
-          <Link
-            to={PATHS.USER.REPORTS}
+          <button
+            type="button"
+            onClick={() => navigate(-1)}
             className="inline-flex items-center gap-1.5 text-xs text-[#047857] hover:text-[#065F46] mb-1 font-semibold transition-colors"
           >
             <ArrowLeft className="w-3.5 h-3.5" />
-            Kembali ke Daftar Laporan
-          </Link>
-          <h1 className="text-xl sm:text-2xl font-extrabold text-[#111827] tracking-tight">
-            Formulir Pelaporan Kejadian Bencana
-          </h1>
+            Kembali
+          </button>
+          <div className="flex items-center gap-2">
+            <h1 className="text-xl sm:text-2xl font-extrabold text-[#111827] tracking-tight">
+              Pelaporan Kejadian Bencana Warga
+            </h1>
+            {!isAuthenticated && (
+              <span className="text-[11px] font-bold px-2.5 py-0.5 rounded-full bg-[#ECFDF5] text-[#047857] border border-[#A7F3D0]">
+                Zero-Barrier Public
+              </span>
+            )}
+          </div>
+          <p className="text-xs text-[#6B7280] mt-0.5">
+            Laporan Anda langsung dianalisis oleh AI Clustering Engine dan diteruskan ke posko darurat BPBD.
+          </p>
         </div>
       </div>
 
-      {submitted ? (
-        <div className="p-8 rounded-2xl bg-[#FFFFFF] border border-[#E5E7EB] text-center space-y-4 shadow-xs">
-          <div className="w-14 h-14 rounded-full bg-[#ECFDF5] border border-[#A7F3D0] flex items-center justify-center text-[#047857] mx-auto">
-            <CheckCircle2 className="w-8 h-8" />
+      {submittedReport ? (
+        <div className="p-8 rounded-2xl bg-[#FFFFFF] border border-[#E5E7EB] text-center space-y-5 shadow-xs">
+          <div className="w-16 h-16 rounded-full bg-[#ECFDF5] border border-[#A7F3D0] flex items-center justify-center text-[#047857] mx-auto">
+            <CheckCircle2 className="w-9 h-9" />
           </div>
-          <h2 className="text-xl font-bold text-[#111827]">Laporan Berhasil Diterima</h2>
+          <div>
+            <h2 className="text-xl font-bold text-[#111827]">Laporan Berhasil Diterima</h2>
+            <p className="text-xs font-mono font-bold text-[#047857] mt-1">
+              Kode Pelacakan: {submittedReport.tracking_code}
+            </p>
+          </div>
+
           <p className="text-sm text-[#4B5563] max-w-md mx-auto leading-relaxed">
-            Data laporan kejadian Anda telah tersimpan dan saat ini sedang ditinjau oleh operator posko darurat.
+            Data laporan kejadian Anda telah tersimpan ke dalam repositori geospasial SENTRAVAX dan saat ini berada dalam antrean verifikasi operator.
           </p>
-          <div className="flex items-center justify-center gap-3 pt-3">
-            <Link
-              to={PATHS.USER.REPORTS}
-              className="px-5 py-2.5 rounded-xl bg-[#047857] text-white text-xs font-bold hover:bg-[#065F46] transition-colors shadow-xs"
-            >
-              Lihat Riwayat Laporan
-            </Link>
+
+          {submittedReport.cluster_id && (
+            <div className="p-3.5 rounded-xl bg-[#F0FDF4] border border-[#BBF7D0] text-left text-xs max-w-md mx-auto space-y-1">
+              <div className="flex items-center gap-2 text-[#15803D] font-bold">
+                <Layers className="w-4 h-4" />
+                <span>Analisis Spatiotemporal AI</span>
+              </div>
+              <p className="text-[#374151]">
+                {submittedReport.is_duplicate 
+                  ? `Laporan Anda telah diagregasi ke dalam klaster kejadian aktif (${submittedReport.cluster_id}) untuk memperkuat bobot bukti lapangan.`
+                  : `Laporan Anda membentuk klaster kejadian baru (${submittedReport.cluster_id}).`}
+              </p>
+            </div>
+          )}
+
+          <div className="flex flex-wrap items-center justify-center gap-3 pt-3">
+            {isAuthenticated ? (
+              <Link
+                to={PATHS.USER.REPORTS}
+                className="px-5 py-2.5 rounded-xl bg-[#047857] text-white text-xs font-bold hover:bg-[#065F46] transition-colors shadow-xs"
+              >
+                Lihat Riwayat Laporan
+              </Link>
+            ) : (
+              <Link
+                to={PATHS.PUBLIC.MAP}
+                className="px-5 py-2.5 rounded-xl bg-[#047857] text-white text-xs font-bold hover:bg-[#065F46] transition-colors shadow-xs"
+              >
+                Pantau Peta Risiko
+              </Link>
+            )}
             <button
               type="button"
               onClick={() => {
-                setSubmitted(false);
+                setSubmittedReport(null);
+                setTitle('');
                 setDescription('');
+                removePhoto();
               }}
-              className="px-5 py-2.5 rounded-lg bg-[#F9FAFB] border border-[#E5E7EB] text-[#111827] text-xs font-medium hover:bg-[#F3F4F6] transition-colors"
+              className="px-5 py-2.5 rounded-xl bg-[#F9FAFB] border border-[#E5E7EB] text-[#111827] text-xs font-medium hover:bg-[#F3F4F6] transition-colors"
             >
               Kirim Laporan Lain
             </button>
@@ -90,116 +295,221 @@ export const UserCreateReportPage: React.FC = () => {
         </div>
       ) : (
         <form onSubmit={handleSubmit} className="p-6 sm:p-8 rounded-2xl bg-[#FFFFFF] border border-[#E5E7EB] shadow-xs space-y-6">
-          {/* Hazard Type Selector */}
+          {/* Zero-Barrier Alert Banner */}
+          {!isAuthenticated && (
+            <div className="p-4 rounded-xl bg-[#FEF3C7] border border-[#FDE68A] flex items-start gap-3 text-xs text-[#92400E]">
+              <ShieldAlert className="w-5 h-5 flex-shrink-0 text-[#D97706] mt-0.5" />
+              <div>
+                <span className="font-bold block text-sm">Mode Tanggap Darurat (Zero-Barrier)</span>
+                Anda tidak perlu login untuk melaporkan bahaya. Informasi yang Anda sampaikan akan langsung masuk ke radar kesiapsiagaan posko darurat.
+              </div>
+            </div>
+          )}
+
+          {/* 1. Hazard Type Selector */}
           <div className="space-y-2">
             <label className="block text-xs font-bold text-[#111827] uppercase tracking-wider">
-              1. Jenis Kejadian Bencana
+              1. Jenis Bahaya / Bencana
             </label>
-            <div className="grid grid-cols-2 sm:grid-cols-4 gap-2.5">
-              {[
-                { id: 'flood', label: 'Banjir / Genangan' },
-                { id: 'landslide', label: 'Tanah Longsor' },
-                { id: 'earthquake', label: 'Gempa Bumi' },
-                { id: 'extreme_weather', label: 'Cuaca Ekstrem' },
-              ].map((item) => (
-                <button
-                  key={item.id}
-                  type="button"
-                  onClick={() => setHazardType(item.id)}
-                  className={`p-3 rounded-xl border text-xs font-medium text-left transition-all ${
-                    hazardType === item.id
-                      ? 'bg-[#ECFDF5] border-[#047857] text-[#047857] font-bold shadow-xs'
-                      : 'bg-[#FFFFFF] border-[#E5E7EB] text-[#4B5563] hover:bg-[#F9FAFB]'
-                  }`}
-                >
-                  {item.label}
-                </button>
-              ))}
+            {isLoadingMeta ? (
+              <div className="h-10 bg-[#F3F4F6] animate-pulse rounded-xl" />
+            ) : (
+              <div className="grid grid-cols-2 sm:grid-cols-3 gap-2.5">
+                {hazardTypes.map((ht) => (
+                  <button
+                    key={ht.id}
+                    type="button"
+                    onClick={() => setHazardTypeId(ht.id)}
+                    className={`p-3 rounded-xl border text-xs font-medium text-left transition-all flex items-center justify-between ${
+                      hazardTypeId === ht.id
+                        ? 'bg-[#ECFDF5] border-[#047857] text-[#047857] font-bold shadow-xs ring-1 ring-[#047857]'
+                        : 'bg-[#FFFFFF] border-[#E5E7EB] text-[#4B5563] hover:bg-[#F9FAFB]'
+                    }`}
+                  >
+                    <span>{ht.name}</span>
+                    {hazardTypeId === ht.id && <CheckCircle2 className="w-4 h-4 text-[#047857]" />}
+                  </button>
+                ))}
+              </div>
+            )}
+          </div>
+
+          {/* 2. Region & Title */}
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+            <div className="space-y-1.5">
+              <label className="block text-xs font-bold text-[#111827] uppercase tracking-wider">
+                2. Wilayah Administrasi
+              </label>
+              <select
+                value={regionId}
+                onChange={(e) => setRegionId(Number(e.target.value))}
+                className="w-full px-3.5 py-2.5 rounded-xl bg-[#FFFFFF] border border-[#E5E7EB] text-[#111827] text-xs font-medium focus:outline-none focus:border-[#047857] focus:ring-1 focus:ring-[#047857]"
+              >
+                {regions.map((reg) => (
+                  <option key={reg.id} value={reg.id}>
+                    {reg.name} ({reg.level})
+                  </option>
+                ))}
+              </select>
+            </div>
+
+            <div className="space-y-1.5">
+              <label className="block text-xs font-bold text-[#111827] uppercase tracking-wider">
+                3. Judul Ringkas Kejadian
+              </label>
+              <input
+                type="text"
+                value={title}
+                onChange={(e) => setTitle(e.target.value)}
+                placeholder="Contoh: Tanggul Jebol di RW 04"
+                maxLength={150}
+                required
+                className="w-full px-3.5 py-2.5 rounded-xl bg-[#FFFFFF] border border-[#E5E7EB] text-[#111827] text-xs focus:outline-none focus:border-[#047857] focus:ring-1 focus:ring-[#047857]"
+              />
             </div>
           </div>
 
-          {/* Location Details */}
-          <div className="space-y-3">
-            <label className="block text-xs font-bold text-[#111827] uppercase tracking-wider">
-              2. Lokasi dan Titik Koordinat
-            </label>
-
-            <div>
-              <label className="block text-xs text-[#4B5563] mb-1 font-semibold">Alamat atau Petunjuk Lokasi</label>
-              <div className="relative">
-                <MapPin className="w-4 h-4 text-[#6B7280] absolute left-3 top-3" />
-                <input
-                  type="text"
-                  value={locationText}
-                  onChange={(e) => setLocationText(e.target.value)}
-                  placeholder="Contoh: Jl. Ahmad Yani RT 02 RW 05"
-                  className="w-full pl-10 pr-4 py-2.5 rounded-xl bg-[#FFFFFF] border border-[#E5E7EB] text-[#111827] text-sm focus:outline-none focus:border-[#047857] focus:ring-1 focus:ring-[#047857]"
-                />
-              </div>
-            </div>
-
-            <div className="flex items-center gap-2">
-              <input
-                type="text"
-                value={coordinates}
-                readOnly
-                className="flex-1 px-3 py-2 rounded-xl bg-[#F9FAFB] border border-[#E5E7EB] text-xs font-mono text-[#4B5563]"
-              />
+          {/* 3. Coordinates & GPS */}
+          <div className="space-y-2">
+            <div className="flex items-center justify-between">
+              <label className="block text-xs font-bold text-[#111827] uppercase tracking-wider">
+                4. Koordinat Lapangan (PostGIS)
+              </label>
               <button
                 type="button"
                 onClick={handleDetectLocation}
-                className="inline-flex items-center gap-1.5 px-3.5 py-2 rounded-xl bg-[#ECFDF5] hover:bg-[#D1FAE5] border border-[#A7F3D0] text-[#047857] text-xs font-bold transition-colors"
+                className="inline-flex items-center gap-1.5 text-xs text-[#047857] hover:text-[#065F46] font-bold"
               >
                 <Navigation className="w-3.5 h-3.5" />
-                <span>Deteksi GPS</span>
+                <span>Gunakan Titik GPS Saya</span>
               </button>
+            </div>
+            <div className="grid grid-cols-2 gap-3">
+              <div>
+                <label className="block text-[11px] text-[#6B7280] mb-1 font-semibold">Latitude</label>
+                <input
+                  type="number"
+                  step="any"
+                  value={latitude}
+                  onChange={(e) => setLatitude(parseFloat(e.target.value) || 0)}
+                  className="w-full px-3 py-2 rounded-xl bg-[#F9FAFB] border border-[#E5E7EB] text-xs font-mono text-[#111827]"
+                />
+              </div>
+              <div>
+                <label className="block text-[11px] text-[#6B7280] mb-1 font-semibold">Longitude</label>
+                <input
+                  type="number"
+                  step="any"
+                  value={longitude}
+                  onChange={(e) => setLongitude(parseFloat(e.target.value) || 0)}
+                  className="w-full px-3 py-2 rounded-xl bg-[#F9FAFB] border border-[#E5E7EB] text-xs font-mono text-[#111827]"
+                />
+              </div>
             </div>
           </div>
 
-          {/* Description */}
-          <div className="space-y-2">
+          {/* 4. Description */}
+          <div className="space-y-1.5">
             <label className="block text-xs font-bold text-[#111827] uppercase tracking-wider">
-              3. Deskripsi Kondisi Lapangan
+              5. Deskripsi Kondisi Lapangan
             </label>
             <textarea
               rows={4}
               value={description}
               onChange={(e) => setDescription(e.target.value)}
               placeholder="Jelaskan ketinggian air, kerusakan akses jalan, fasilitas terancam, atau kebutuhan evakuasi darurat..."
-              className="w-full p-3.5 rounded-xl bg-[#FFFFFF] border border-[#E5E7EB] text-[#111827] text-sm focus:outline-none focus:border-[#047857] focus:ring-1 focus:ring-[#047857]"
+              maxLength={2000}
+              required
+              className="w-full p-3.5 rounded-xl bg-[#FFFFFF] border border-[#E5E7EB] text-[#111827] text-xs focus:outline-none focus:border-[#047857] focus:ring-1 focus:ring-[#047857]"
             />
-          </div>
-
-          {/* Photo Upload Placeholder */}
-          <div className="space-y-2">
-            <label className="block text-xs font-bold text-[#111827] uppercase tracking-wider">
-              4. Foto Dokumentasi Visual (Opsional)
-            </label>
-            <div className="p-6 rounded-2xl border border-dashed border-[#D1D5DB] bg-[#F9FAFB] text-center space-y-2">
-              <Camera className="w-6 h-6 text-[#6B7280] mx-auto" />
-              <div className="text-xs text-[#4B5563]">
-                <span>Ambil foto langsung melalui kamera atau telusuri berkas gambar</span>
-              </div>
-              <p className="text-[11px] text-[#6B7280]">Format didukung: JPG, PNG, WebP (Maksimal 5 MB)</p>
+            <div className="text-[11px] text-right text-[#9CA3AF]">
+              {description.length}/2000 karakter
             </div>
           </div>
 
+          {/* 5. Photo Upload */}
+          <div className="space-y-2">
+            <label className="block text-xs font-bold text-[#111827] uppercase tracking-wider">
+              6. Dokumentasi Foto Lapangan (Opsional)
+            </label>
+            {photoPreview ? (
+              <div className="relative inline-block border rounded-xl overflow-hidden shadow-xs">
+                <img
+                  src={photoPreview}
+                  alt="Preview"
+                  className="w-48 h-36 object-cover"
+                />
+                <button
+                  type="button"
+                  onClick={removePhoto}
+                  className="absolute top-2 right-2 p-1.5 rounded-full bg-black/70 text-white hover:bg-black transition-colors"
+                >
+                  <X className="w-3.5 h-3.5" />
+                </button>
+              </div>
+            ) : (
+              <label className="p-6 rounded-2xl border border-dashed border-[#D1D5DB] bg-[#F9FAFB] hover:bg-[#F3F4F6] transition-colors cursor-pointer block text-center space-y-2">
+                <input
+                  type="file"
+                  accept="image/jpeg,image/png,image/webp"
+                  onChange={handlePhotoChange}
+                  className="hidden"
+                />
+                <Camera className="w-6 h-6 text-[#6B7280] mx-auto" />
+                <div className="text-xs text-[#4B5563]">
+                  <span className="font-semibold text-[#047857]">Pilih berkas foto</span> atau potret langsung
+                </div>
+                <p className="text-[11px] text-[#6B7280]">Format: JPG, PNG, WebP (Maksimal 5 MB)</p>
+              </label>
+            )}
+          </div>
+
+          {/* 6. Guest Contact (Zero-Barrier) */}
+          {!isAuthenticated && (
+            <div className="pt-2 border-t border-[#E5E7EB] space-y-3">
+              <label className="block text-xs font-bold text-[#111827] uppercase tracking-wider">
+                7. Identitas Pelapor (Opsional)
+              </label>
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                <div className="relative">
+                  <UserIcon className="w-4 h-4 text-[#9CA3AF] absolute left-3 top-3" />
+                  <input
+                    type="text"
+                    value={reporterName}
+                    onChange={(e) => setReporterName(e.target.value)}
+                    placeholder="Nama Lengkap / Panggilan"
+                    className="w-full pl-9 pr-3 py-2 rounded-xl bg-[#FFFFFF] border border-[#E5E7EB] text-xs text-[#111827] focus:outline-none focus:border-[#047857]"
+                  />
+                </div>
+                <div className="relative">
+                  <Phone className="w-4 h-4 text-[#9CA3AF] absolute left-3 top-3" />
+                  <input
+                    type="text"
+                    value={reporterContact}
+                    onChange={(e) => setReporterContact(e.target.value)}
+                    placeholder="No. WhatsApp / HP (Untuk verifikasi)"
+                    className="w-full pl-9 pr-3 py-2 rounded-xl bg-[#FFFFFF] border border-[#E5E7EB] text-xs text-[#111827] focus:outline-none focus:border-[#047857]"
+                  />
+                </div>
+              </div>
+            </div>
+          )}
+
           {/* Submit Action */}
-          <div className="pt-4 border-t border-[#E5E7EB] flex justify-end gap-3">
-            <Link
-              to={PATHS.USER.REPORTS}
-              className="px-5 py-2.5 rounded-xl bg-[#F9FAFB] hover:bg-[#F3F4F6] border border-[#E5E7EB] text-xs font-semibold text-[#4B5563] transition-colors"
-            >
-              Batal
-            </Link>
-            <button
-              type="submit"
-              disabled={isSubmitting}
-              className="inline-flex items-center gap-2 px-6 py-2.5 rounded-xl bg-[#047857] hover:bg-[#065F46] text-white text-xs font-bold transition-all shadow-xs disabled:opacity-50"
-            >
-              <SendHorizontal className="w-3.5 h-3.5" />
-              <span>{isSubmitting ? 'Mengirim Laporan...' : 'Kirim Laporan Resmi'}</span>
-            </button>
+          <div className="pt-4 border-t border-[#E5E7EB] flex items-center justify-between">
+            <span className="text-[11px] text-[#6B7280]">
+              * Laporan palsu dapat dikenakan sanksi peraturan perundangan.
+            </span>
+            <div className="flex gap-3">
+              <button
+                type="submit"
+                disabled={isSubmitting}
+                className="inline-flex items-center gap-2 px-6 py-2.5 rounded-xl bg-[#047857] hover:bg-[#065F46] text-white text-xs font-bold transition-all shadow-xs disabled:opacity-50"
+              >
+                <SendHorizontal className="w-3.5 h-3.5" />
+                <span>{isSubmitting ? 'Mengirim Laporan...' : 'Kirim Laporan Resmi'}</span>
+              </button>
+            </div>
           </div>
         </form>
       )}

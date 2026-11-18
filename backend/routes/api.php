@@ -93,6 +93,8 @@ Route::prefix('public')->group(function () {
     Route::get('/data-sources', [PublicController::class, 'dataSources'])->name('api.public.data-sources');
     Route::get('/shelters', [PublicController::class, 'shelters'])->name('api.public.shelters');
     Route::get('/shelters/{id}', [PublicController::class, 'shelterDetail'])->name('api.public.shelters.detail');
+    Route::post('/reports', [PublicController::class, 'submitReport'])->name('api.public.reports.submit');
+    Route::get('/reports/{id}', [PublicController::class, 'checkReportStatus'])->name('api.public.reports.status');
 });
 
 // ==========================================

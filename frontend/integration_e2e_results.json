@@ -1,0 +1,18 @@
+{
+  "public_report_zero_barrier": true,
+  "user_reports_page": true,
+  "user_regions_watchlist": true,
+  "user_settings_page": true,
+  "intel_earth_map": true,
+  "intel_events_page": true,
+  "intel_alert_operations": true,
+  "screenshots": [
+    "C:\\Users\\RENDY\\OneDrive\\Documents\\Sentravax\\frontend\\e2e-screenshots\\integration\\01_public_zero_barrier_report.png",
+    "C:\\Users\\RENDY\\OneDrive\\Documents\\Sentravax\\frontend\\e2e-screenshots\\integration\\02_user_reports_history.png",
+    "C:\\Users\\RENDY\\OneDrive\\Documents\\Sentravax\\frontend\\e2e-screenshots\\integration\\03_user_regions_watchlist.png",
+    "C:\\Users\\RENDY\\OneDrive\\Documents\\Sentravax\\frontend\\e2e-screenshots\\integration\\04_user_settings_privacy.png",
+    "C:\\Users\\RENDY\\OneDrive\\Documents\\Sentravax\\frontend\\e2e-screenshots\\integration\\05_intel_earth_map.png",
+    "C:\\Users\\RENDY\\OneDrive\\Documents\\Sentravax\\frontend\\e2e-screenshots\\integration\\06_intel_events_desk.png",
+    "C:\\Users\\RENDY\\OneDrive\\Documents\\Sentravax\\frontend\\e2e-screenshots\\integration\\07_intel_alert_operations.png"
+  ]
+}
