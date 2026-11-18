@@ -12,17 +12,24 @@ use App\Services\ExternalData\DataSyncService;
 use App\Services\RiskEngine\RiskEngineService;
 use Database\Seeders\SentravaxMasterSeeder;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Foundation\Testing\DatabaseTransactions;
 use Illuminate\Support\Facades\Http;
 use Tests\TestCase;
 
 class RiskEngineTest extends TestCase
 {
+    use DatabaseTransactions;
+
     protected RiskEngineService $riskEngine;
 
     protected function setUp(): void
     {
         parent::setUp();
         $this->seed(SentravaxMasterSeeder::class);
+
+        DB::table('data_source_sync_runs')->delete();
+        $bmkg = DataSource::where('endpoint_url', 'https://data.bmkg.go.id/DataMKG/TEWS/autogempa.json')->first();
+        $bmkg?->update(['status' => 'active', 'last_successful_at' => now()->subMinutes(5)]);
 
         $this->riskEngine = app(RiskEngineService::class);
     }
