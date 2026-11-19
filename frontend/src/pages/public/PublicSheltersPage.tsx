@@ -373,11 +373,16 @@ export const PublicSheltersPage: React.FC = () => {
                   </strong>
                 </div>
                 {selectedShelter.evacuation_route_info?.route_code && (
-                  <div className="flex items-center justify-between">
-                    <span className="text-[#6B7280]">Koridor Rute Evakuasi:</span>
-                    <strong className="font-mono text-[#047857]">
-                      {selectedShelter.evacuation_route_info.route_code}
-                    </strong>
+                  <div className="space-y-0.5">
+                    <div className="flex items-center justify-between">
+                      <span className="text-[#6B7280]">Koridor Rute Evakuasi:</span>
+                      <strong className="font-mono text-[#047857]">
+                        {selectedShelter.evacuation_route_info.route_code}
+                      </strong>
+                    </div>
+                    <span className="text-[10px] text-[#9CA3AF] block text-right">
+                      *Kode penetapan koridor BPBD/Dishub (bukan navigasi belokan GPS)
+                    </span>
                   </div>
                 )}
               </div>

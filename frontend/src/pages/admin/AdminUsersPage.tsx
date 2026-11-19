@@ -12,7 +12,6 @@ import {
   X,
   CheckCircle,
   AlertCircle,
-  Phone,
   Mail,
   Calendar,
 } from 'lucide-react';
@@ -36,7 +35,6 @@ export const AdminUsersPage: React.FC = () => {
     email: '',
     role: 'user',
     password: '',
-    phone: '',
   });
 
   // Edit Role Modal State
@@ -98,11 +96,10 @@ export const AdminUsersPage: React.FC = () => {
         email: createForm.email.trim(),
         role: createForm.role,
         password: createForm.password,
-        phone: createForm.phone?.trim() || undefined,
       });
       toast.success(`Pengguna ${created.name} (${created.role}) berhasil didaftarkan.`);
       setIsCreateModalOpen(false);
-      setCreateForm({ name: '', email: '', role: 'user', password: '', phone: '' });
+      setCreateForm({ name: '', email: '', role: 'user', password: '' });
       loadUsers();
     } catch (err: any) {
       console.error('Failed to create user:', err);
@@ -299,7 +296,7 @@ export const AdminUsersPage: React.FC = () => {
                 <tr className="bg-[#F9FAFB] border-b border-[#E5E7EB] text-[11px] font-bold text-[#6B7280] uppercase tracking-wider">
                   <th className="py-3 px-4">Pengguna</th>
                   <th className="py-3 px-4">Peran (Role)</th>
-                  <th className="py-3 px-4">Kontak</th>
+                  <th className="py-3 px-4">Status Akun</th>
                   <th className="py-3 px-4">Tanggal Bergabung</th>
                   <th className="py-3 px-4 text-right">Aksi</th>
                 </tr>
@@ -323,14 +320,10 @@ export const AdminUsersPage: React.FC = () => {
                     </td>
                     <td className="py-3.5 px-4">{getRoleBadge(u.role)}</td>
                     <td className="py-3.5 px-4">
-                      {u.phone ? (
-                        <span className="inline-flex items-center gap-1 text-[11px] text-[#374151]">
-                          <Phone className="w-3 h-3 text-[#9CA3AF]" />
-                          {u.phone}
-                        </span>
-                      ) : (
-                        <span className="text-[11px] text-[#9CA3AF] italic">Tidak ada</span>
-                      )}
+                      <span className="inline-flex items-center gap-1 text-[11px] font-semibold text-[#047857] bg-[#ECFDF5] border border-[#A7F3D0] px-2 py-0.5 rounded-full">
+                        <CheckCircle className="w-3 h-3" />
+                        Aktif
+                      </span>
                     </td>
                     <td className="py-3.5 px-4 text-[#6B7280]">
                       <span className="inline-flex items-center gap-1 text-[11px]">
@@ -448,17 +441,6 @@ export const AdminUsersPage: React.FC = () => {
                   placeholder="••••••••"
                   value={createForm.password}
                   onChange={(e) => setCreateForm({ ...createForm, password: e.target.value })}
-                  className="w-full px-3 py-2 rounded-lg border border-[#D1D5DB] focus:ring-2 focus:ring-[#047857] focus:outline-none"
-                />
-              </div>
-
-              <div>
-                <label className="block font-semibold text-[#374151] mb-1">Nomor Telepon Darurat (Opsional)</label>
-                <input
-                  type="text"
-                  placeholder="+628123456789"
-                  value={createForm.phone || ''}
-                  onChange={(e) => setCreateForm({ ...createForm, phone: e.target.value })}
                   className="w-full px-3 py-2 rounded-lg border border-[#D1D5DB] focus:ring-2 focus:ring-[#047857] focus:outline-none"
                 />
               </div>

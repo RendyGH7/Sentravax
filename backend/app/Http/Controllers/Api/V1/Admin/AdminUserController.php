@@ -16,7 +16,7 @@ class AdminUserController extends Controller
      */
     public function index(Request $request): JsonResponse
     {
-        $query = User::query()->select(['id', 'name', 'email', 'role', 'phone', 'created_at', 'updated_at']);
+        $query = User::query()->select(['id', 'name', 'email', 'role', 'created_at', 'updated_at']);
 
         if ($request->has('role') && in_array($request->query('role'), ['admin', 'intelligence', 'user'])) {
             $query->where('role', $request->query('role'));
@@ -55,7 +55,6 @@ class AdminUserController extends Controller
             'email' => ['required', 'string', 'email', 'max:255', 'unique:users,email'],
             'role' => ['required', 'string', Rule::in(['admin', 'intelligence', 'user'])],
             'password' => ['required', 'string', 'min:8'],
-            'phone' => ['nullable', 'string', 'max:20'],
         ]);
 
         $user = User::create([
@@ -63,13 +62,12 @@ class AdminUserController extends Controller
             'email' => $validated['email'],
             'role' => $validated['role'],
             'password' => Hash::make($validated['password']),
-            'phone' => $validated['phone'] ?? null,
         ]);
 
         return response()->json([
             'success' => true,
             'message' => "Pengguna {$user->name} ({$user->role}) berhasil didaftarkan.",
-            'data' => $user->only(['id', 'name', 'email', 'role', 'phone', 'created_at']),
+            'data' => $user->only(['id', 'name', 'email', 'role', 'created_at']),
         ], 201);
     }
 

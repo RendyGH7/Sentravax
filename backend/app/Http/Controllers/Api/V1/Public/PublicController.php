@@ -1017,12 +1017,13 @@ class PublicController extends Controller
                 ', [$lon, $lat]);
         }
 
-        $shelter = $query->find($id);
+        // Only return officially verified shelters for public safety
+        $shelter = $query->where('verification_status', 'VERIFIED')->find($id);
 
         if (!$shelter) {
             return response()->json([
                 'success' => false,
-                'message' => 'Fasilitas shelter tidak ditemukan.',
+                'message' => 'Fasilitas shelter resmi terverifikasi tidak ditemukan.',
             ], 404);
         }
 
