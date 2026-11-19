@@ -244,4 +244,30 @@ class AdminApiTest extends TestCase
             }
         }
     }
+
+    public function test_admin_audit_logs_endpoint_returns_aggregated_logs_and_requires_admin_role(): void
+    {
+        // 1. Unauthenticated gets 401
+        $resGuest = $this->getJson('/api/v1/admin/audit-logs');
+        $resGuest->assertStatus(401);
+
+        // 2. Regular user gets 403 Forbidden
+        $user = User::where('role', 'user')->first();
+        $resUser = $this->actingAs($user)->getJson('/api/v1/admin/audit-logs');
+        $resUser->assertStatus(403);
+
+        // 3. Admin gets 200 OK with proper pagination structure
+        $resAdmin = $this->actingAs($this->admin)->getJson('/api/v1/admin/audit-logs');
+        $resAdmin->assertStatus(200)
+            ->assertJson(['success' => true])
+            ->assertJsonStructure([
+                'data',
+                'meta' => [
+                    'current_page',
+                    'per_page',
+                    'total',
+                    'last_page',
+                ],
+            ]);
+    }
 }

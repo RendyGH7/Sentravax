@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Link, useNavigate } from 'react-router-dom';
+import { Link, useNavigate, useSearchParams } from 'react-router-dom';
 import { PATHS } from '../../app/router/paths';
 import { useAuth } from '../../app/context/useAuth';
 import { userService } from '../../services/user-service';
@@ -15,13 +15,31 @@ import {
   Phone,
   User as UserIcon,
   X,
-  ShieldAlert
+  ShieldAlert,
+  Search,
+  Clock,
+  XCircle,
+  AlertTriangle,
+  MapPin,
+  RefreshCw,
+  FileText
 } from 'lucide-react';
 import { toast } from 'sonner';
 
 export const UserCreateReportPage: React.FC = () => {
   const navigate = useNavigate();
+  const [searchParams, setSearchParams] = useSearchParams();
   const { user, isAuthenticated } = useAuth();
+
+  const [activeTab, setActiveTab] = useState<'create' | 'track'>(
+    searchParams.get('tab') === 'track' ? 'track' : 'create'
+  );
+
+  // Tracking tab states
+  const [trackingQuery, setTrackingQuery] = useState<string>(searchParams.get('code') || '');
+  const [isTracking, setIsTracking] = useState<boolean>(false);
+  const [trackedReport, setTrackedReport] = useState<any>(null);
+  const [trackError, setTrackError] = useState<string | null>(null);
 
   const [hazardTypes, setHazardTypes] = useState<HazardTypeItem[]>([]);
   const [regions, setRegions] = useState<RegionItem[]>([]);
@@ -84,6 +102,35 @@ export const UserCreateReportPage: React.FC = () => {
       isMounted = false;
     };
   }, []);
+
+  const handleTrackReport = async (overrideCode?: string) => {
+    const code = (overrideCode || trackingQuery).trim();
+    if (!code) {
+      toast.error('Masukkan kode pelacakan atau nomor ID laporan.');
+      return;
+    }
+
+    setIsTracking(true);
+    setTrackError(null);
+    try {
+      const res = await publicService.checkReportStatus(code);
+      setTrackedReport(res);
+      setSearchParams({ tab: 'track', code });
+    } catch (err: any) {
+      console.error('Failed to track report:', err);
+      setTrackedReport(null);
+      setTrackError(err.response?.data?.message || 'Laporan dengan kode tersebut tidak ditemukan dalam repositori.');
+    } finally {
+      setIsTracking(false);
+    }
+  };
+
+  useEffect(() => {
+    const codeParam = searchParams.get('code');
+    if (codeParam && activeTab === 'track' && !trackedReport) {
+      handleTrackReport(codeParam);
+    }
+  }, [searchParams, activeTab]);
 
   const handleDetectLocation = () => {
     if (!navigator.geolocation) {
@@ -228,12 +275,180 @@ export const UserCreateReportPage: React.FC = () => {
             )}
           </div>
           <p className="text-xs text-[#6B7280] mt-0.5">
-            Laporan Anda langsung dianalisis oleh AI Clustering Engine dan diteruskan ke posko darurat BPBD.
+            Kirimkan laporan kondisi lapangan atau pantau proses verifikasi laporan secara transparan.
           </p>
         </div>
       </div>
 
-      {submittedReport ? (
+      {/* Mode Navigation Tabs */}
+      <div className="flex items-center gap-2 border-b border-[#E5E7EB] pb-3">
+        <button
+          type="button"
+          onClick={() => {
+            setActiveTab('create');
+            setSearchParams({ tab: 'create' });
+          }}
+          className={`px-4 py-2 rounded-xl text-xs font-bold transition-all flex items-center gap-2 ${
+            activeTab === 'create'
+              ? 'bg-[#047857] text-white shadow-xs'
+              : 'bg-white text-[#4B5563] hover:text-[#111827] border border-[#E5E7EB]'
+          }`}
+        >
+          <FileText className="w-4 h-4" />
+          Kirim Laporan Bencana
+        </button>
+        <button
+          type="button"
+          onClick={() => {
+            setActiveTab('track');
+            setSearchParams({ tab: 'track' });
+          }}
+          className={`px-4 py-2 rounded-xl text-xs font-bold transition-all flex items-center gap-2 ${
+            activeTab === 'track'
+              ? 'bg-[#047857] text-white shadow-xs'
+              : 'bg-white text-[#4B5563] hover:text-[#111827] border border-[#E5E7EB]'
+          }`}
+        >
+          <Search className="w-4 h-4" />
+          Lacak Status Laporan
+        </button>
+      </div>
+
+      {activeTab === 'track' ? (
+        /* TAB 2: TRACK REPORT STATUS */
+        <div className="p-6 sm:p-8 rounded-2xl bg-white border border-[#E5E7EB] shadow-xs space-y-6">
+          <div className="space-y-1">
+            <h2 className="text-base font-bold text-[#111827]">Lacak Status Verifikasi Laporan</h2>
+            <p className="text-xs text-[#6B7280]">
+              Masukkan kode pelacakan alfanumerik (contoh: <strong className="font-mono text-[#047857]">SVX-REP-00001</strong>) atau ID laporan untuk melihat hasil audit tim posko.
+            </p>
+          </div>
+
+          <div className="flex gap-2">
+            <div className="relative flex-1">
+              <Search className="w-4 h-4 text-[#9CA3AF] absolute left-3.5 top-1/2 -translate-y-1/2" />
+              <input
+                type="text"
+                placeholder="Contoh: SVX-REP-00001 atau 1"
+                value={trackingQuery}
+                onChange={(e) => setTrackingQuery(e.target.value)}
+                onKeyDown={(e) => e.key === 'Enter' && handleTrackReport()}
+                className="w-full pl-10 pr-3 py-2.5 rounded-xl border border-[#D1D5DB] text-xs font-mono uppercase focus:ring-2 focus:ring-[#047857] focus:outline-none"
+              />
+            </div>
+            <button
+              type="button"
+              disabled={isTracking}
+              onClick={() => handleTrackReport()}
+              className="px-5 py-2.5 rounded-xl bg-[#047857] hover:bg-[#065F46] text-white text-xs font-bold transition-colors disabled:opacity-50 flex items-center gap-1.5 shadow-xs"
+            >
+              {isTracking ? <RefreshCw className="w-3.5 h-3.5 animate-spin" /> : <Search className="w-3.5 h-3.5" />}
+              <span>Lacak</span>
+            </button>
+          </div>
+
+          {trackError && (
+            <div className="p-4 rounded-xl bg-rose-50 border border-rose-200 text-xs text-rose-800 flex items-center gap-2">
+              <XCircle className="w-4 h-4 shrink-0 text-rose-600" />
+              <span>{trackError}</span>
+            </div>
+          )}
+
+          {trackedReport && (
+            <div className="p-5 rounded-2xl bg-[#F9FAFB] border border-[#E5E7EB] space-y-4">
+              <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2 pb-3 border-b border-[#E5E7EB]">
+                <div>
+                  <span className="text-[10px] font-mono font-bold text-[#047857]">
+                    KODE: {trackedReport.tracking_code || `SVX-REP-${String(trackedReport.id).padStart(5, '0')}`}
+                  </span>
+                  <h3 className="text-base font-bold text-[#111827] mt-0.5">{trackedReport.title}</h3>
+                </div>
+                <div>
+                  {trackedReport.status === 'verified' && (
+                    <span className="inline-flex items-center gap-1 px-3 py-1 rounded-full text-xs font-bold bg-emerald-100 text-emerald-800 border border-emerald-300">
+                      <CheckCircle2 className="w-3.5 h-3.5" />
+                      TERVERIFIKASI RESMI
+                    </span>
+                  )}
+                  {trackedReport.status === 'pending' && (
+                    <span className="inline-flex items-center gap-1 px-3 py-1 rounded-full text-xs font-bold bg-blue-100 text-blue-800 border border-blue-300">
+                      <Clock className="w-3.5 h-3.5" />
+                      MENUNGGU VERIFIKASI
+                    </span>
+                  )}
+                  {trackedReport.status === 'rejected' && (
+                    <span className="inline-flex items-center gap-1 px-3 py-1 rounded-full text-xs font-bold bg-rose-100 text-rose-800 border border-rose-300">
+                      <XCircle className="w-3.5 h-3.5" />
+                      DITOLAK / TIDAK VALID
+                    </span>
+                  )}
+                  {trackedReport.status === 'investigation' && (
+                    <span className="inline-flex items-center gap-1 px-3 py-1 rounded-full text-xs font-bold bg-amber-100 text-amber-800 border border-amber-300">
+                      <AlertTriangle className="w-3.5 h-3.5" />
+                      SEDANG DIINVESTIGASI
+                    </span>
+                  )}
+                </div>
+              </div>
+
+              <div className="space-y-3 text-xs">
+                <div>
+                  <span className="text-[11px] font-semibold text-[#6B7280] block mb-1">Kondisi Lapangan</span>
+                  <p className="p-3 rounded-xl bg-white border border-[#E5E7EB] text-[#374151] leading-relaxed">
+                    {trackedReport.description}
+                  </p>
+                </div>
+
+                {trackedReport.photo_path && (
+                  <div>
+                    <span className="text-[11px] font-semibold text-[#6B7280] block mb-1">Foto Bukti Lapangan</span>
+                    <img
+                      src={`/storage/${trackedReport.photo_path}`}
+                      alt="Bukti lapangan"
+                      className="w-full h-48 object-cover rounded-xl border border-[#E5E7EB]"
+                    />
+                  </div>
+                )}
+
+                {trackedReport.verification && (
+                  <div className="p-3.5 rounded-xl bg-emerald-50 border border-emerald-200 space-y-1">
+                    <span className="font-bold text-emerald-900 block text-xs">Catatan Verifikator Resmi:</span>
+                    <p className="text-emerald-800 text-[11px]">
+                      {trackedReport.verification.notes || 'Laporan terkonfirmasi sesuai dengan indikator lapangan.'}
+                    </p>
+                    <span className="text-[10px] text-emerald-700 block mt-1">
+                      Diverifikasi pada: {new Date(trackedReport.verification.created_at).toLocaleString('id-ID')}
+                    </span>
+                  </div>
+                )}
+
+                <div className="grid grid-cols-2 gap-2 text-[11px] text-[#6B7280] pt-2 border-t border-[#E5E7EB]">
+                  <div className="flex items-center gap-1.5">
+                    <MapPin className="w-3.5 h-3.5 text-[#9CA3AF]" />
+                    <span>
+                      {trackedReport.latitude?.toFixed(4)}, {trackedReport.longitude?.toFixed(4)}
+                    </span>
+                  </div>
+                  <div className="flex items-center gap-1.5">
+                    <Clock className="w-3.5 h-3.5 text-[#9CA3AF]" />
+                    <span>{new Date(trackedReport.created_at).toLocaleString('id-ID')}</span>
+                  </div>
+                </div>
+
+                <div className="pt-2">
+                  <Link
+                    to={`${PATHS.PUBLIC.MAP}?lat=${trackedReport.latitude}&lng=${trackedReport.longitude}`}
+                    className="inline-flex items-center gap-1.5 text-xs font-bold text-[#047857] hover:text-[#065F46]"
+                  >
+                    <MapPin className="w-3.5 h-3.5" />
+                    Lihat Titik Lokasi di Peta Bencana &rarr;
+                  </Link>
+                </div>
+              </div>
+            </div>
+          )}
+        </div>
+      ) : submittedReport ? (
         <div className="p-8 rounded-2xl bg-[#FFFFFF] border border-[#E5E7EB] text-center space-y-5 shadow-xs">
           <div className="w-16 h-16 rounded-full bg-[#ECFDF5] border border-[#A7F3D0] flex items-center justify-center text-[#047857] mx-auto">
             <CheckCircle2 className="w-9 h-9" />
@@ -264,6 +479,18 @@ export const UserCreateReportPage: React.FC = () => {
           )}
 
           <div className="flex flex-wrap items-center justify-center gap-3 pt-3">
+            <button
+              type="button"
+              onClick={() => {
+                const code = submittedReport.tracking_code || String(submittedReport.id);
+                setActiveTab('track');
+                setTrackingQuery(code);
+                handleTrackReport(code);
+              }}
+              className="px-5 py-2.5 rounded-xl bg-[#ECFDF5] border border-[#A7F3D0] text-[#047857] text-xs font-bold hover:bg-[#D1FAE5] transition-colors shadow-xs"
+            >
+              Lacak Status Laporan Ini
+            </button>
             {isAuthenticated ? (
               <Link
                 to={PATHS.USER.REPORTS}

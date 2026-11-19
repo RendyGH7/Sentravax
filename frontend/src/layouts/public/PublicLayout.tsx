@@ -17,7 +17,8 @@ import {
   Compass,
   CheckCircle2,
   LogOut,
-  AlertCircle
+  AlertCircle,
+  Home
 } from 'lucide-react';
 
 const currentYear = new Date().getFullYear();
@@ -33,6 +34,7 @@ export const PublicLayout: React.FC = () => {
     { name: 'Kejadian Bencana', path: PATHS.PUBLIC.DISASTERS, icon: Activity },
     { name: 'Peringatan Dini', path: PATHS.PUBLIC.WARNINGS, icon: AlertTriangle },
     { name: 'Kesiapsiagaan', path: PATHS.PUBLIC.PREPAREDNESS, icon: Compass },
+    { name: 'Shelter', path: PATHS.PUBLIC.SHELTERS, icon: Home },
     { name: 'Edukasi', path: PATHS.PUBLIC.EDUCATION, icon: BookOpen },
     { name: 'Lapor Bencana', path: PATHS.PUBLIC.REPORT, icon: AlertCircle },
     { name: 'Tentang', path: PATHS.PUBLIC.ABOUT, icon: Info },

@@ -197,6 +197,7 @@ Route::prefix('admin')->middleware(['auth:sanctum', 'role:admin'])->group(functi
 
     // System Overview & Data Sources
     Route::get('/overview', [AdminOverviewController::class, 'overview'])->name('api.admin.overview');
+    Route::get('/audit-logs', [AdminOverviewController::class, 'auditLogs'])->name('api.admin.audit-logs');
     Route::get('/data-sources', [AdminOverviewController::class, 'dataSources'])->name('api.admin.data-sources');
     Route::get('/data-sources/{id}', [AdminOverviewController::class, 'showDataSource'])->name('api.admin.data-sources.show');
     Route::put('/data-sources/{id}/toggle', [AdminOverviewController::class, 'toggleDataSource'])->name('api.admin.data-sources.toggle');

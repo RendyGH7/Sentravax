@@ -285,4 +285,331 @@ export const adminService = {
   async deleteShelter(id: number): Promise<void> {
     await apiClient.delete<ApiResponse<null>>(`/admin/shelters/${id}`);
   },
+
+  // ==========================================
+  // USER MANAGEMENT
+  // ==========================================
+
+  /**
+   * Fetch registered users with role and search filter.
+   * Endpoint: GET /api/v1/admin/users
+   */
+  async getUsers(params?: {
+    role?: string;
+    search?: string;
+    page?: number;
+    per_page?: number;
+  }): Promise<{ items: AdminUserItem[]; meta: { current_page: number; last_page: number; total: number } }> {
+    const res = await apiClient.get<ApiResponse<AdminUserItem[]>>('/admin/users', { params });
+    return {
+      items: res.data.data || [],
+      meta: (res.data as any).meta || { current_page: 1, last_page: 1, total: 0 },
+    };
+  },
+
+  /**
+   * Get single user details.
+   * Endpoint: GET /api/v1/admin/users/{id}
+   */
+  async getUser(id: number): Promise<AdminUserDetail> {
+    const res = await apiClient.get<ApiResponse<AdminUserDetail>>(`/admin/users/${id}`);
+    return res.data.data;
+  },
+
+  /**
+   * Register a new user with specific role.
+   * Endpoint: POST /api/v1/admin/users
+   */
+  async createUser(payload: CreateUserPayload): Promise<AdminUserItem> {
+    const res = await apiClient.post<ApiResponse<AdminUserItem>>('/admin/users', payload);
+    return res.data.data;
+  },
+
+  /**
+   * Update user role and profile.
+   * Endpoint: PUT /api/v1/admin/users/{id}/role
+   */
+  async updateUserRole(
+    id: number,
+    payload: { role: 'admin' | 'intelligence' | 'user'; name?: string; phone?: string }
+  ): Promise<AdminUserItem> {
+    const res = await apiClient.put<ApiResponse<AdminUserItem>>(`/admin/users/${id}/role`, payload);
+    return res.data.data;
+  },
+
+  /**
+   * Delete or deactivate user account.
+   * Endpoint: DELETE /api/v1/admin/users/{id}
+   */
+  async deleteUser(id: number): Promise<void> {
+    await apiClient.delete<ApiResponse<null>>(`/admin/users/${id}`);
+  },
+
+  // ==========================================
+  // COMMUNITY REPORT MODERATION
+  // ==========================================
+
+  /**
+   * Fetch community reports for administrative curation.
+   * Endpoint: GET /api/v1/admin/reports
+   */
+  async getReports(params?: {
+    status?: string;
+    hazard_type_id?: number;
+    cluster_id?: string;
+    page?: number;
+    per_page?: number;
+  }): Promise<{ items: AdminReportItem[]; meta: { current_page: number; last_page: number; total: number } }> {
+    const res = await apiClient.get<ApiResponse<AdminReportItem[]>>('/admin/reports', { params });
+    return {
+      items: res.data.data || [],
+      meta: (res.data as any).meta || { current_page: 1, last_page: 1, total: 0 },
+    };
+  },
+
+  /**
+   * Get detail of a specific citizen disaster report with audit trail.
+   * Endpoint: GET /api/v1/admin/reports/{id}
+   */
+  async getReport(id: number): Promise<AdminReportItem> {
+    const res = await apiClient.get<ApiResponse<AdminReportItem>>(`/admin/reports/${id}`);
+    return res.data.data;
+  },
+
+  /**
+   * Verify or reject citizen report with immutable audit log.
+   * Endpoint: POST /api/v1/admin/reports/{id}/verify
+   */
+  async verifyReport(
+    id: number,
+    payload: { status: 'verified' | 'rejected' | 'investigation'; notes?: string }
+  ): Promise<AdminReportItem> {
+    const res = await apiClient.post<ApiResponse<AdminReportItem>>(`/admin/reports/${id}/verify`, payload);
+    return res.data.data;
+  },
+
+  /**
+   * Delete abusive or fraudulent report.
+   * Endpoint: DELETE /api/v1/admin/reports/{id}
+   */
+  async deleteReport(id: number): Promise<void> {
+    await apiClient.delete<ApiResponse<null>>(`/admin/reports/${id}`);
+  },
+
+  // ==========================================
+  // DISASTER EVENTS CRUD
+  // ==========================================
+
+  /**
+   * Fetch official disaster events.
+   * Endpoint: GET /api/v1/admin/events
+   */
+  async getEvents(params?: {
+    hazard_type_id?: number;
+    status?: string;
+    page?: number;
+    per_page?: number;
+  }): Promise<{ items: AdminEventItem[]; meta: { current_page: number; last_page: number; total: number } }> {
+    const res = await apiClient.get<ApiResponse<AdminEventItem[]>>('/admin/events', { params });
+    return {
+      items: res.data.data || [],
+      meta: (res.data as any).meta || { current_page: 1, last_page: 1, total: 0 },
+    };
+  },
+
+  /**
+   * Get single event detail.
+   * Endpoint: GET /api/v1/admin/events/{id}
+   */
+  async getEvent(id: number): Promise<AdminEventItem> {
+    const res = await apiClient.get<ApiResponse<AdminEventItem>>(`/admin/events/${id}`);
+    return res.data.data;
+  },
+
+  /**
+   * Store new official disaster event.
+   * Endpoint: POST /api/v1/admin/events
+   */
+  async createEvent(payload: Partial<AdminEventItem>): Promise<AdminEventItem> {
+    const res = await apiClient.post<ApiResponse<AdminEventItem>>('/admin/events', payload);
+    return res.data.data;
+  },
+
+  /**
+   * Update existing disaster event.
+   * Endpoint: PUT /api/v1/admin/events/{id}
+   */
+  async updateEvent(id: number, payload: Partial<AdminEventItem>): Promise<AdminEventItem> {
+    const res = await apiClient.put<ApiResponse<AdminEventItem>>(`/admin/events/${id}`, payload);
+    return res.data.data;
+  },
+
+  /**
+   * Delete disaster event.
+   * Endpoint: DELETE /api/v1/admin/events/{id}
+   */
+  async deleteEvent(id: number): Promise<void> {
+    await apiClient.delete<ApiResponse<null>>(`/admin/events/${id}`);
+  },
+
+  // ==========================================
+  // CAP ALERTS CRUD
+  // ==========================================
+
+  /**
+   * Fetch official alerts.
+   * Endpoint: GET /api/v1/admin/alerts
+   */
+  async getAlerts(params?: {
+    status?: string;
+    page?: number;
+    per_page?: number;
+  }): Promise<{ items: AdminAlertItem[]; meta: { current_page: number; last_page: number; total: number } }> {
+    const res = await apiClient.get<ApiResponse<AdminAlertItem[]>>('/admin/alerts', { params });
+    return {
+      items: res.data.data || [],
+      meta: (res.data as any).meta || { current_page: 1, last_page: 1, total: 0 },
+    };
+  },
+
+  /**
+   * Create and publish CAP alert.
+   * Endpoint: POST /api/v1/admin/alerts
+   */
+  async createAlert(payload: Partial<AdminAlertItem>): Promise<AdminAlertItem> {
+    const res = await apiClient.post<ApiResponse<AdminAlertItem>>('/admin/alerts', payload);
+    return res.data.data;
+  },
+
+  /**
+   * Update CAP alert.
+   * Endpoint: PUT /api/v1/admin/alerts/{id}
+   */
+  async updateAlert(id: number, payload: Partial<AdminAlertItem>): Promise<AdminAlertItem> {
+    const res = await apiClient.put<ApiResponse<AdminAlertItem>>(`/admin/alerts/${id}`, payload);
+    return res.data.data;
+  },
+
+  /**
+   * Delete CAP alert.
+   * Endpoint: DELETE /api/v1/admin/alerts/{id}
+   */
+  async deleteAlert(id: number): Promise<void> {
+    await apiClient.delete<ApiResponse<null>>(`/admin/alerts/${id}`);
+  },
+
+  // ==========================================
+  // AUDIT LOGS
+  // ==========================================
+
+  /**
+   * Fetch unified system-wide audit logs.
+   * Endpoint: GET /api/v1/admin/audit-logs
+   */
+  async getAuditLogs(params?: {
+    category?: string;
+    search?: string;
+    page?: number;
+    per_page?: number;
+  }): Promise<{ items: AdminAuditLogItem[]; meta: { current_page: number; last_page: number; total: number } }> {
+    const res = await apiClient.get<ApiResponse<AdminAuditLogItem[]>>('/admin/audit-logs', { params });
+    return {
+      items: res.data.data || [],
+      meta: (res.data as any).meta || { current_page: 1, last_page: 1, total: 0 },
+    };
+  },
 };
+
+// Export interfaces for UI consumption
+export interface AdminUserItem {
+  id: number;
+  name: string;
+  email: string;
+  role: 'admin' | 'intelligence' | 'user';
+  phone?: string | null;
+  created_at: string;
+  updated_at?: string;
+}
+
+export interface AdminUserDetail extends AdminUserItem {
+  community_reports_count?: number;
+  saved_regions_count?: number;
+  notifications_count?: number;
+}
+
+export interface CreateUserPayload {
+  name: string;
+  email: string;
+  role: 'admin' | 'intelligence' | 'user';
+  password: string;
+  phone?: string;
+}
+
+export interface AdminReportItem {
+  id: number;
+  user_id?: number | null;
+  hazard_type_id: number;
+  region_id: number;
+  title: string;
+  description: string;
+  photo_path?: string | null;
+  status: 'pending' | 'verified' | 'rejected' | 'investigation';
+  cluster_id?: string | null;
+  verified_by?: number | null;
+  verified_at?: string | null;
+  created_at: string;
+  latitude: number;
+  longitude: number;
+  hazard_type?: { id: number; slug: string; name: string; icon?: string };
+  region?: { id: number; code: string; name: string; level: string };
+  user?: { id: number; name: string };
+  verifier?: { id: number; name: string; role?: string };
+}
+
+export interface AdminEventItem {
+  id: number;
+  title: string;
+  description?: string | null;
+  hazard_type_id: number;
+  region_id?: number | null;
+  severity: string;
+  status: string;
+  latitude: number;
+  longitude: number;
+  radius_km?: number | null;
+  source_type?: string | null;
+  started_at: string;
+  ended_at?: string | null;
+  hazard_type?: { id: number; name: string; slug: string };
+  region?: { id: number; name: string };
+}
+
+export interface AdminAlertItem {
+  id: number;
+  title: string;
+  alert_class: string;
+  severity: string;
+  urgency: string;
+  certainty: string;
+  status: string;
+  scope?: string;
+  sender_name?: string;
+  area_description?: string;
+  instruction?: string;
+  effective_at?: string;
+  expires_at?: string;
+  created_at: string;
+}
+
+export interface AdminAuditLogItem {
+  id: string;
+  category: 'REPORT_VERIFICATION' | 'DATA_SOURCE_SYNC' | 'SHELTER_REGISTRY';
+  actor: {
+    name: string;
+    role: string;
+  };
+  action: string;
+  target: string;
+  notes?: string | null;
+  timestamp: string;
+}

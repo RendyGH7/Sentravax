@@ -503,4 +503,154 @@ class AdminOverviewController extends Controller
             'message' => "Kegagalan background job #{$id} berhasil diabaikan/dihapus.",
         ]);
     }
+
+    /**
+     * Unified system-wide audit trail for administrative inspection.
+     * Aggregates report verifications, data source synchronization runs, and administrative actions.
+     */
+    public function auditLogs(Request $request): JsonResponse
+    {
+        $category = $request->query('category', 'all'); // all, verification, sync, shelter
+        $search = $request->query('search');
+        $perPage = min(100, max(5, $request->integer('per_page', 20)));
+
+        $logs = collect();
+
+        // 1. Report Verifications Audit Trail
+        if ($category === 'all' || $category === 'verification') {
+            $verifications = DB::table('report_verifications')
+                ->join('users', 'report_verifications.verified_by', '=', 'users.id')
+                ->join('community_reports', 'report_verifications.community_report_id', '=', 'community_reports.id')
+                ->select([
+                    'report_verifications.id',
+                    'report_verifications.community_report_id',
+                    'report_verifications.previous_status',
+                    'report_verifications.new_status',
+                    'report_verifications.notes',
+                    'report_verifications.created_at',
+                    'users.name as actor_name',
+                    'users.email as actor_email',
+                    'users.role as actor_role',
+                    'community_reports.title as target_title',
+                ])
+                ->latest('report_verifications.created_at')
+                ->limit(100)
+                ->get()
+                ->map(function ($item) {
+                    return [
+                        'id' => 'verif-' . $item->id,
+                        'category' => 'REPORT_VERIFICATION',
+                        'actor' => [
+                            'name' => $item->actor_name,
+                            'role' => $item->actor_role,
+                        ],
+                        'action' => "Status diubah dari [{$item->previous_status}] ke [{$item->new_status}]",
+                        'target' => "Laporan #{$item->community_report_id}: {$item->target_title}",
+                        'notes' => $item->notes,
+                        'timestamp' => $item->created_at,
+                    ];
+                });
+
+            $logs = $logs->concat($verifications);
+        }
+
+        // 2. Data Source Sync Runs Audit Trail
+        if ($category === 'all' || $category === 'sync') {
+            $syncRuns = DB::table('data_source_sync_runs')
+                ->join('data_sources', 'data_source_sync_runs.data_source_id', '=', 'data_sources.id')
+                ->select([
+                    'data_source_sync_runs.id',
+                    'data_source_sync_runs.data_source_id',
+                    'data_source_sync_runs.status',
+                    'data_source_sync_runs.freshness_state',
+                    'data_source_sync_runs.items_fetched',
+                    'data_source_sync_runs.items_persisted',
+                    'data_source_sync_runs.duration_ms',
+                    'data_source_sync_runs.error_message',
+                    'data_source_sync_runs.synced_at',
+                    'data_sources.name as source_name',
+                    'data_sources.provider as source_provider',
+                ])
+                ->latest('data_source_sync_runs.synced_at')
+                ->limit(100)
+                ->get()
+                ->map(function ($item) {
+                    return [
+                        'id' => 'sync-' . $item->id,
+                        'category' => 'DATA_SOURCE_SYNC',
+                        'actor' => [
+                            'name' => 'DataSyncService (System)',
+                            'role' => 'system',
+                        ],
+                        'action' => "Sinkronisasi {$item->status} ({$item->freshness_state})",
+                        'target' => "Sumber Data: {$item->source_name}" . ($item->source_provider ? " ({$item->source_provider})" : ''),
+                        'notes' => $item->error_message
+                            ? "Error: {$item->error_message}"
+                            : "Fetched: {$item->items_fetched}, Persisted: {$item->items_persisted}, Latensi: {$item->duration_ms}ms",
+                        'timestamp' => $item->synced_at,
+                    ];
+                });
+
+            $logs = $logs->concat($syncRuns);
+        }
+
+        // 3. Shelter Registry Audit Trail (from provenance_metadata)
+        if ($category === 'all' || $category === 'shelter') {
+            $shelters = DB::table('shelters')
+                ->select(['id', 'name', 'provenance_metadata', 'updated_at'])
+                ->whereNotNull('provenance_metadata')
+                ->get();
+
+            foreach ($shelters as $s) {
+                $meta = json_decode($s->provenance_metadata ?? '{}', true);
+                if (isset($meta['audit_history']) && is_array($meta['audit_history'])) {
+                    foreach ($meta['audit_history'] as $idx => $entry) {
+                        $logs->push([
+                            'id' => "shelter-{$s->id}-{$idx}",
+                            'category' => 'SHELTER_REGISTRY',
+                            'actor' => [
+                                'name' => $entry['admin_name'] ?? 'Admin',
+                                'role' => 'admin',
+                            ],
+                            'action' => $entry['action'] ?? 'Pembaruan data shelter',
+                            'target' => "Shelter #{$s->id}: {$s->name}",
+                            'notes' => isset($entry['changes']) ? json_encode($entry['changes']) : ($entry['notes'] ?? null),
+                            'timestamp' => $entry['timestamp'] ?? $s->updated_at,
+                        ]);
+                    }
+                }
+            }
+        }
+
+        // Apply search filter if provided
+        if (!empty($search)) {
+            $searchLower = mb_strtolower($search);
+            $logs = $logs->filter(function ($item) use ($searchLower) {
+                return str_contains(mb_strtolower($item['target']), $searchLower)
+                    || str_contains(mb_strtolower($item['action']), $searchLower)
+                    || str_contains(mb_strtolower($item['actor']['name']), $searchLower)
+                    || str_contains(mb_strtolower($item['notes'] ?? ''), $searchLower);
+            });
+        }
+
+        // Sort descending by timestamp
+        $sorted = $logs->sortByDesc('timestamp')->values();
+
+        // Paginate collection manually
+        $page = $request->integer('page', 1);
+        $total = $sorted->count();
+        $paged = $sorted->slice(($page - 1) * $perPage, $perPage)->values();
+
+        return response()->json([
+            'success' => true,
+            'message' => 'Jejak audit sistem berhasil dimuat.',
+            'data' => $paged,
+            'meta' => [
+                'current_page' => $page,
+                'per_page' => $perPage,
+                'total' => $total,
+                'last_page' => max(1, (int) ceil($total / $perPage)),
+            ],
+        ]);
+    }
 }

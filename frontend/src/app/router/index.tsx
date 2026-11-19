@@ -15,6 +15,7 @@ import { PublicDisasterDetailPage } from '../../pages/public/PublicDisasterDetai
 import { PublicWarningsPage } from '../../pages/public/PublicWarningsPage';
 import { PublicWarningDetailPage } from '../../pages/public/PublicWarningDetailPage';
 import { PublicPreparednessPage } from '../../pages/public/PublicPreparednessPage';
+import { PublicSheltersPage } from '../../pages/public/PublicSheltersPage';
 import { PublicEducationPage } from '../../pages/public/PublicEducationPage';
 import { PublicAboutPage } from '../../pages/public/PublicAboutPage';
 import { LoginPage } from '../../pages/public/LoginPage';
@@ -64,6 +65,7 @@ export const router = createBrowserRouter([
       { path: 'warnings', element: <PublicWarningsPage /> },
       { path: 'warnings/:id', element: <PublicWarningDetailPage /> },
       { path: 'preparedness', element: <PublicPreparednessPage /> },
+      { path: 'shelters', element: <PublicSheltersPage /> },
       { path: 'education', element: <PublicEducationPage /> },
       { path: 'report', element: <UserCreateReportPage /> },
       { path: 'about', element: <PublicAboutPage /> },

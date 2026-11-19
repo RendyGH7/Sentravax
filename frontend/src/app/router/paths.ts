@@ -7,6 +7,7 @@ export const PATHS = {
     WARNINGS: '/warnings',
     WARNING_DETAIL: '/warnings/:id',
     PREPAREDNESS: '/preparedness',
+    SHELTERS: '/shelters',
     EDUCATION: '/education',
     REPORT: '/report',
     ABOUT: '/about',
