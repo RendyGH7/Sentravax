@@ -305,6 +305,166 @@ class BaselineProtectionAndDatabaseSafetyTest extends TestCase
     }
 
     /**
+     * Test query builder truncate() is intercepted and blocked on baseline models.
+     */
+    public function test_query_builder_truncate_blocked_on_baseline_models(): void
+    {
+        // 1. RiskAssessment
+        $caughtRa = false;
+        try {
+            RiskAssessment::truncate();
+        } catch (RuntimeException $e) {
+            $caughtRa = true;
+            $this->assertStringContainsString('truncate menargetkan tabel record baseline RiskAssessment', $e->getMessage());
+        }
+        $this->assertTrue($caughtRa, 'RiskAssessment::truncate() should throw RuntimeException');
+
+        // 2. Shelter
+        $caughtShelter = false;
+        try {
+            Shelter::truncate();
+        } catch (RuntimeException $e) {
+            $caughtShelter = true;
+            $this->assertStringContainsString('truncate menargetkan tabel record baseline Shelter', $e->getMessage());
+        }
+        $this->assertTrue($caughtShelter, 'Shelter::truncate() should throw RuntimeException');
+
+        // 3. AiInsight
+        $caughtAi = false;
+        try {
+            AiInsight::truncate();
+        } catch (RuntimeException $e) {
+            $caughtAi = true;
+            $this->assertStringContainsString('truncate menargetkan tabel record baseline AiInsight', $e->getMessage());
+        }
+        $this->assertTrue($caughtAi, 'AiInsight::truncate() should throw RuntimeException');
+    }
+
+    /**
+     * Test query builder upsert() is intercepted and blocked for baseline records.
+     */
+    public function test_query_builder_upsert_blocked_on_baseline_records(): void
+    {
+        // RiskAssessment upsert
+        $caughtRa = false;
+        try {
+            RiskAssessment::upsert(
+                [['id' => 1, 'risk_score' => 99.9]],
+                ['id'],
+                ['risk_score']
+            );
+        } catch (RuntimeException $e) {
+            $caughtRa = true;
+            $this->assertStringContainsString('upsert menargetkan record baseline RiskAssessment #1', $e->getMessage());
+        }
+        $this->assertTrue($caughtRa, 'RiskAssessment::upsert targeting baseline ID 1 should throw RuntimeException');
+
+        // AiInsight upsert
+        $caughtAi = false;
+        try {
+            AiInsight::upsert(
+                [['id' => 1, 'confidence_score' => 0.123]],
+                ['id'],
+                ['confidence_score']
+            );
+        } catch (RuntimeException $e) {
+            $caughtAi = true;
+            $this->assertStringContainsString('upsert menargetkan record baseline AiInsight #1', $e->getMessage());
+        }
+        $this->assertTrue($caughtAi, 'AiInsight::upsert targeting baseline ID 1 should throw RuntimeException');
+    }
+
+    /**
+     * Test dynamic regional assessment update without uncontrolled duplication.
+     */
+    public function test_dynamic_regional_assessment_update_without_duplication(): void
+    {
+        $service = app(RiskEngineService::class);
+
+        // Run 1 for Region 3 and Hazard 1
+        $eval1 = $service->evaluateAndPersistRegionalRisk(3, 1, 'Dynamic Run 1');
+        $this->assertNotNull($eval1);
+        $this->assertNotEquals(1, $eval1->id);
+        $this->assertEquals(RiskEngineService::METHODOLOGY_VERSION, $eval1->methodology_version);
+        $this->assertNull($eval1->hazard_event_id);
+
+        // Run 2 for Region 3 and Hazard 1
+        $eval2 = $service->evaluateAndPersistRegionalRisk(3, 1, 'Dynamic Run 2');
+        $this->assertEquals($eval1->id, $eval2->id, 'Repeated dynamic evaluations must update existing dynamic assessment, not create duplicates');
+
+        // Verify Baseline #1 is 100% untouched
+        $ra1 = RiskAssessment::find(1);
+        $this->assertEquals('v1.0-rules', $ra1->methodology_version);
+        $this->assertEquals(78.50, (float) $ra1->risk_score);
+        $this->assertEquals('Penilaian Kerentanan Banjir Luapan Jakarta Timur', $ra1->title);
+
+        // Clean up dynamic test assessment
+        $eval2->delete();
+    }
+
+    /**
+     * Test core system accounts are protected from Eloquent deletion.
+     */
+    public function test_core_accounts_protected_from_eloquent_deletion(): void
+    {
+        $coreEmails = [
+            'admin@sentravax.go.id',
+            'intelligence@sentravax.go.id',
+            'user@sentravax.id',
+        ];
+
+        foreach ($coreEmails as $email) {
+            $user = User::where('email', $email)->first();
+            if ($user) {
+                $this->assertTrue($user->isCoreAccount(), "User {$email} must be recognized as core account");
+                $caught = false;
+                try {
+                    $user->delete();
+                } catch (RuntimeException $e) {
+                    $caught = true;
+                    $this->assertStringContainsString('dilindungi dari penghapusan', $e->getMessage());
+                }
+                $this->assertTrue($caught, "Calling delete() on core user {$email} must throw RuntimeException");
+            }
+        }
+
+        // Test normal non-core user can be deleted via Admin API
+        $tempUser = User::create([
+            'name' => 'Temporary User Test',
+            'email' => 'temp.regression.user@sentravax.id',
+            'role' => User::ROLE_USER,
+            'password' => \Illuminate\Support\Facades\Hash::make('Secret123!'),
+        ]);
+
+        $this->assertFalse($tempUser->isCoreAccount());
+        $resDelete = $this->actingAs($this->adminUser)->deleteJson("/api/v1/admin/users/{$tempUser->id}");
+        $resDelete->assertStatus(200)->assertJsonPath('success', true);
+        $this->assertNull(User::find($tempUser->id));
+    }
+
+    /**
+     * Test RiskAssessment and AiInsight relationship integrity.
+     */
+    public function test_risk_assessment_and_ai_insight_relation_integrity(): void
+    {
+        $ra1 = RiskAssessment::find(1);
+        $ai1 = AiInsight::find(1);
+
+        $this->assertNotNull($ra1);
+        $this->assertNotNull($ai1);
+
+        // Forward relationship
+        $insights = $ra1->aiInsights;
+        $this->assertTrue($insights->contains('id', 1));
+
+        // Inverse relationship
+        $parentRa = $ai1->riskAssessment;
+        $this->assertNotNull($parentRa);
+        $this->assertEquals(1, $parentRa->id);
+        $this->assertEquals('Penilaian Kerentanan Banjir Luapan Jakarta Timur', $parentRa->title);
+    }
+
+    /**
      * Test ReportVerification audit trail records are append-only immutable.
      */
     public function test_report_verification_audit_trail_is_append_only_immutable(): void

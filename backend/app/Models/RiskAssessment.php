@@ -3,6 +3,7 @@
 namespace App\Models;
 
 use App\Models\Concerns\ProtectsBaselineRecords;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
@@ -39,6 +40,25 @@ class RiskAssessment extends Model
     use ProtectsBaselineRecords;
 
     public const BASELINE_IDS = [1];
+
+    /**
+     * Scope for dynamic regional multi-hazard assessments produced by the Risk Engine,
+     * cleanly differentiated from curated historical benchmark records.
+     */
+    public function scopeDynamicRegional(Builder $query): Builder
+    {
+        return $query->where('methodology_version', \App\Services\RiskEngine\RiskEngineService::METHODOLOGY_VERSION)
+            ->whereNull('hazard_event_id');
+    }
+
+    /**
+     * Semantic check for benchmark baseline assessment.
+     */
+    public function isSemanticBaselineRecord(): bool
+    {
+        return (string) $this->methodology_version === 'v1.0-rules'
+            && $this->hazard_event_id !== null;
+    }
 
     public function region(): BelongsTo
     {

@@ -46,6 +46,32 @@ class User extends Authenticatable implements MustVerifyEmail, PasskeyUser
         self::ROLE_INTELLIGENCE,
     ];
 
+    public const CORE_ACCOUNT_EMAILS = [
+        'admin@sentravax.go.id',
+        'intelligence@sentravax.go.id',
+        'intel@sentravax.go.id',
+        'user@sentravax.id',
+    ];
+
+    /**
+     * Check if user is a protected core system account.
+     */
+    public function isCoreAccount(): bool
+    {
+        return in_array(strtolower((string) $this->email), self::CORE_ACCOUNT_EMAILS, true);
+    }
+
+    protected static function booted(): void
+    {
+        static::deleting(function (User $user) {
+            if ($user->isCoreAccount()) {
+                throw new \RuntimeException(
+                    "Operasi ditolak: Akun sistem inti {$user->email} dilindungi dari penghapusan."
+                );
+            }
+        });
+    }
+
     /**
      * Check if user has specific role or one of given roles.
      *

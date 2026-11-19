@@ -43,6 +43,22 @@ class SentravaxMasterSeeder extends Seeder
         $this->seedShelters();
         $this->seedSampleUserPreparedness();
         $this->seedBaselineCommunityReports();
+        $this->syncPostgresSequences();
+    }
+
+    /**
+     * Synchronize PostgreSQL auto-increment sequences to max(id) to prevent primary key collision.
+     */
+    private function syncPostgresSequences(): void
+    {
+        $tables = ['ai_insights', 'risk_assessments', 'shelters', 'community_reports', 'data_sources', 'hazard_events'];
+        foreach ($tables as $t) {
+            $seq = DB::selectOne("SELECT pg_get_serial_sequence('{$t}', 'id') as seq_name");
+            if ($seq && $seq->seq_name) {
+                $maxId = DB::table($t)->max('id') ?? 1;
+                DB::statement("SELECT setval('{$seq->seq_name}', {$maxId})");
+            }
+        }
     }
 
     /**
@@ -74,10 +90,10 @@ class SentravaxMasterSeeder extends Seeder
         ];
 
         foreach ($users as $userData) {
-            User::updateOrCreate(
-                ['email' => $userData['email']],
-                array_merge($userData, ['password' => $defaultPassword])
-            );
+            $existing = User::where('email', $userData['email'])->first();
+            if (! $existing) {
+                User::create(array_merge($userData, ['password' => $defaultPassword]));
+            }
         }
     }
 
@@ -135,7 +151,9 @@ class SentravaxMasterSeeder extends Seeder
         ];
 
         foreach ($hazards as $hz) {
-            HazardType::updateOrCreate(['slug' => $hz['slug']], $hz);
+            if (! HazardType::where('slug', $hz['slug'])->exists()) {
+                HazardType::create($hz);
+            }
         }
     }
 
@@ -339,20 +357,21 @@ class SentravaxMasterSeeder extends Seeder
         ];
 
         foreach ($regions as $r) {
-            $reg = Region::updateOrCreate(
-                ['code' => $r['code']],
-                [
+            $reg = Region::where('code', $r['code'])->first();
+            if (! $reg) {
+                $reg = Region::create([
+                    'code' => $r['code'],
                     'name' => $r['name'],
                     'level' => $r['level'],
-                ]
-            );
+                ]);
 
-            // Update PostGIS Point using ST_SetSRID and ST_MakePoint(lon, lat)
-            DB::statement('
-                UPDATE regions 
-                SET center_point = ST_SetSRID(ST_MakePoint(?, ?), 4326)
-                WHERE id = ?
-            ', [$r['lon'], $r['lat'], $reg->id]);
+                // Update PostGIS Point using ST_SetSRID and ST_MakePoint(lon, lat)
+                DB::statement('
+                    UPDATE regions 
+                    SET center_point = ST_SetSRID(ST_MakePoint(?, ?), 4326)
+                    WHERE id = ?
+                ', [$r['lon'], $r['lat'], $reg->id]);
+            }
         }
     }
 
@@ -535,10 +554,9 @@ class SentravaxMasterSeeder extends Seeder
         ];
 
         foreach ($items as $it) {
-            PreparednessChecklistItem::updateOrCreate(
-                ['name' => $it['name']],
-                $it
-            );
+            if (! PreparednessChecklistItem::where('name', $it['name'])->exists()) {
+                PreparednessChecklistItem::create($it);
+            }
         }
     }
 
@@ -551,9 +569,10 @@ class SentravaxMasterSeeder extends Seeder
         $earthquakeType = HazardType::where('slug', 'earthquake')->first();
 
         // Skenario 1: Gempa Bumi
-        $scen1 = EmergencyScenario::updateOrCreate(
-            ['slug' => 'skenario-gempa-rumah'],
-            [
+        $scen1 = EmergencyScenario::where('slug', 'skenario-gempa-rumah')->first();
+        if (! $scen1) {
+            $scen1 = EmergencyScenario::create([
+                'slug' => 'skenario-gempa-rumah',
                 'hazard_type_id' => $earthquakeType?->id,
                 'title' => 'Guncangan Gempa Mendadak Saat Berada di Rumah',
                 'difficulty' => 'pemula',
@@ -561,43 +580,41 @@ class SentravaxMasterSeeder extends Seeder
                 'context_brief' => 'Pukul 14.30 WIB, Anda sedang berada di ruang keluarga rumah lantai 1. Tiba-tiba lampu gantung bergoyang kencang dan dinding berderit kuat. Guncangan awal terasa keras selama 15 detik.',
                 'estimated_minutes' => 5,
                 'is_active' => true,
-            ]
-        );
+            ]);
 
-        $q1 = [
-            [
-                'question' => 'Apa tindakan keselamatan pertama yang paling tepat Anda lakukan pada detik-detik awal guncangan?',
-                'points' => 10,
-                'sort_order' => 1,
-                'options' => [
-                    ['id' => 'A', 'text' => 'Langsung berlari kencang menerobos pintu keluar menuju jalan.', 'is_correct' => false, 'explanation' => 'Berlari saat guncangan aktif berisiko tinggi jatuh atau tertimpa pecahan kaca/genteng dari atap.'],
-                    ['id' => 'B', 'text' => 'Lakukan Drop, Cover, Hold On (Berlutut, Lindungi Kepala di Bawah Meja Kokoh).', 'is_correct' => true, 'explanation' => 'Prinsip standar keselamatan dunia adalah melindungi kepala dan leher di bawah meja kokoh serta memegangi kakinya sampai guncangan reda.'],
-                    ['id' => 'C', 'text' => 'Berdiri di tengah ruangan sambil merekam video menggunakan ponsel.', 'is_correct' => false, 'explanation' => 'Sangat berbahaya dan menunda langkah penyelamatan diri vital.'],
+            $q1 = [
+                [
+                    'question' => 'Apa tindakan keselamatan pertama yang paling tepat Anda lakukan pada detik-detik awal guncangan?',
+                    'points' => 10,
+                    'sort_order' => 1,
+                    'options' => [
+                        ['id' => 'A', 'text' => 'Langsung berlari kencang menerobos pintu keluar menuju jalan.', 'is_correct' => false, 'explanation' => 'Berlari saat guncangan aktif berisiko tinggi jatuh atau tertimpa pecahan kaca/genteng dari atap.'],
+                        ['id' => 'B', 'text' => 'Lakukan Drop, Cover, Hold On (Berlutut, Lindungi Kepala di Bawah Meja Kokoh).', 'is_correct' => true, 'explanation' => 'Prinsip standar keselamatan dunia adalah melindungi kepala dan leher di bawah meja kokoh serta memegangi kakinya sampai guncangan reda.'],
+                        ['id' => 'C', 'text' => 'Berdiri di tengah ruangan sambil merekam video menggunakan ponsel.', 'is_correct' => false, 'explanation' => 'Sangat berbahaya dan menunda langkah penyelamatan diri vital.'],
+                    ],
                 ],
-            ],
-            [
-                'question' => 'Setelah guncangan utama gempa berhenti, apa langkah prioritas Anda berikutnya?',
-                'points' => 10,
-                'sort_order' => 2,
-                'options' => [
-                    ['id' => 'A', 'text' => 'Matikan kompor/gas dan sakelar listrik utama, ambil Tas Siaga, lalu keluar tertib ke ruang terbuka.', 'is_correct' => true, 'explanation' => 'Mencegah potensi kebakaran sekunder akibat kebocoran gas/korsleting listrik dan evakuasi ke titik kumpul aman.'],
-                    ['id' => 'B', 'text' => 'Segera menyalakan korek api untuk memeriksa sudut ruangan yang gelap.', 'is_correct' => false, 'explanation' => 'Menyalakan api sangat berbahaya jika ada kebocoran pipa gas elpiji yang tidak tercium.'],
-                    ['id' => 'C', 'text' => 'Kembali tidur karena merasa bahaya sudah lewat.', 'is_correct' => false, 'explanation' => 'Gempa susulan sering terjadi beberapa menit setelah gempa utama.'],
+                [
+                    'question' => 'Setelah guncangan utama gempa berhenti, apa langkah prioritas Anda berikutnya?',
+                    'points' => 10,
+                    'sort_order' => 2,
+                    'options' => [
+                        ['id' => 'A', 'text' => 'Matikan kompor/gas dan sakelar listrik utama, ambil Tas Siaga, lalu keluar tertib ke ruang terbuka.', 'is_correct' => true, 'explanation' => 'Mencegah potensi kebakaran sekunder akibat kebocoran gas/korsleting listrik dan evakuasi ke titik kumpul aman.'],
+                        ['id' => 'B', 'text' => 'Segera menyalakan korek api untuk memeriksa sudut ruangan yang gelap.', 'is_correct' => false, 'explanation' => 'Menyalakan api sangat berbahaya jika ada kebocoran pipa gas elpiji yang tidak tercium.'],
+                        ['id' => 'C', 'text' => 'Kembali tidur karena merasa bahaya sudah lewat.', 'is_correct' => false, 'explanation' => 'Gempa susulan sering terjadi beberapa menit setelah gempa utama.'],
+                    ],
                 ],
-            ],
-        ];
+            ];
 
-        foreach ($q1 as $qData) {
-            ScenarioQuestion::updateOrCreate(
-                ['scenario_id' => $scen1->id, 'sort_order' => $qData['sort_order']],
-                $qData
-            );
+            foreach ($q1 as $qData) {
+                ScenarioQuestion::create(array_merge($qData, ['scenario_id' => $scen1->id]));
+            }
         }
 
         // Skenario 2: Banjir Luapan
-        $scen2 = EmergencyScenario::updateOrCreate(
-            ['slug' => 'skenario-banjir-luapan-sungai'],
-            [
+        $scen2 = EmergencyScenario::where('slug', 'skenario-banjir-luapan-sungai')->first();
+        if (! $scen2) {
+            $scen2 = EmergencyScenario::create([
+                'slug' => 'skenario-banjir-luapan-sungai',
                 'hazard_type_id' => $floodType?->id,
                 'title' => 'Peringatan Dini Kenaikan Muka Air Sungai Hilir',
                 'difficulty' => 'menengah',
@@ -605,27 +622,24 @@ class SentravaxMasterSeeder extends Seeder
                 'context_brief' => 'Sirine pos pemantau debit air berbunyi tanda Siaga 2. Genangan air mulai masuk ke pekarangan rumah setinggi 20 cm dan terus bertambah.',
                 'estimated_minutes' => 5,
                 'is_active' => true,
-            ]
-        );
+            ]);
 
-        $q2 = [
-            [
-                'question' => 'Sebelum genangan mencapai stopkontak listrik, tindakan preventif apa yang wajib segera diselesaikan?',
-                'points' => 10,
-                'sort_order' => 1,
-                'options' => [
-                    ['id' => 'A', 'text' => 'Putuskan Miniature Circuit Breaker (MCB) di meteran listrik utama rumah.', 'is_correct' => true, 'explanation' => 'Mencegah bahaya sengatan arus listrik fatal yang merambat melalui media air genangan.'],
-                    ['id' => 'B', 'text' => 'Memompa air keluar menggunakan pompa listrik portable tanpa pelindung.', 'is_correct' => false, 'explanation' => 'Mengoperasikan alat listrik di tengah genangan basah tanpa isolasi berisiko tersetrum.'],
-                    ['id' => 'C', 'text' => 'Mengabaikannya karena menganggap air tidak akan naik lebih tinggi.', 'is_correct' => false, 'explanation' => 'Sikap pasif membahayakan seluruh penghuni rumah.'],
+            $q2 = [
+                [
+                    'question' => 'Sebelum genangan mencapai stopkontak listrik, tindakan preventif apa yang wajib segera diselesaikan?',
+                    'points' => 10,
+                    'sort_order' => 1,
+                    'options' => [
+                        ['id' => 'A', 'text' => 'Putuskan Miniature Circuit Breaker (MCB) di meteran listrik utama rumah.', 'is_correct' => true, 'explanation' => 'Mencegah bahaya sengatan arus listrik fatal yang merambat melalui media air genangan.'],
+                        ['id' => 'B', 'text' => 'Memompa air keluar menggunakan pompa listrik portable tanpa pelindung.', 'is_correct' => false, 'explanation' => 'Mengoperasikan alat listrik di tengah genangan basah tanpa isolasi berisiko tersetrum.'],
+                        ['id' => 'C', 'text' => 'Mengabaikannya karena menganggap air tidak akan naik lebih tinggi.', 'is_correct' => false, 'explanation' => 'Sikap pasif membahayakan seluruh penghuni rumah.'],
+                    ],
                 ],
-            ],
-        ];
+            ];
 
-        foreach ($q2 as $qData) {
-            ScenarioQuestion::updateOrCreate(
-                ['scenario_id' => $scen2->id, 'sort_order' => $qData['sort_order']],
-                $qData
-            );
+            foreach ($q2 as $qData) {
+                ScenarioQuestion::create(array_merge($qData, ['scenario_id' => $scen2->id]));
+            }
         }
     }
 
@@ -665,10 +679,9 @@ class SentravaxMasterSeeder extends Seeder
         ];
 
         foreach ($contents as $c) {
-            EducationContent::updateOrCreate(
-                ['slug' => $c['slug']],
-                $c
-            );
+            if (! EducationContent::where('slug', $c['slug'])->exists()) {
+                EducationContent::create($c);
+            }
         }
     }
 
@@ -745,7 +758,7 @@ class SentravaxMasterSeeder extends Seeder
                 ?? RiskAssessment::where('region_id', $regionEast->id)->where('hazard_type_id', $floodType->id)->first();
 
             if (! $riskAssessment) {
-                $riskAssessment = RiskAssessment::create([
+                DB::table('risk_assessments')->insert([
                     'id' => 1,
                     'region_id' => $regionEast->id,
                     'hazard_type_id' => $floodType->id,
@@ -756,20 +769,23 @@ class SentravaxMasterSeeder extends Seeder
                     'methodology_version' => 'v1.0-rules',
                     'impact_radius_meters' => 2500,
                     'affected_population_estimate' => 42150,
-                    'calculation_factors' => [
+                    'calculation_factors' => json_encode([
                         'rainfall_intensity_mm' => 110,
                         'river_water_level_cm' => 210,
                         'slope_vulnerability' => 'low',
                         'population_exposure' => 'dense',
                         'historical_frequency' => 'high',
-                    ],
+                    ]),
                     'assessed_at' => now(),
+                    'created_at' => now(),
+                    'updated_at' => now(),
                 ]);
+                $riskAssessment = RiskAssessment::find(1);
             }
 
             // Seed AI Insight 1 (Baseline)
-            if (! AiInsight::where('id', 1)->exists()) {
-                AiInsight::create([
+            if (! DB::table('ai_insights')->where('id', 1)->exists()) {
+                DB::table('ai_insights')->insert([
                     'id' => 1,
                     'title' => 'Proyeksi Kenaikan Genangan DAS Ciliwung 6 Jam Ke Depan',
                     'risk_assessment_id' => $riskAssessment->id,
@@ -777,17 +793,19 @@ class SentravaxMasterSeeder extends Seeder
                     'hazard_type_id' => $floodType->id,
                     'insight_type' => 'risk_analysis',
                     'summary' => 'Kombinasi curah hujan intensitas 110 mm/hari di kawasan hulu dan kenaikan muka air 210 cm mengindikasikan potensi luapan air mencapai kawasan pemukiman dalam radius 300 meter dari sempadan sungai.',
-                    'recommendations' => [
+                    'recommendations' => json_encode([
                         'Evakuasi mandiri dokumen berharga ke lantai 2 atau tas siaga.',
                         'Simpan nomor kontak posko darurat kelurahan terdekat.',
                         'Lakukan pemadaman sakelar listrik rumah jika genangan memasuki pekarangan.',
-                    ],
+                    ]),
                     'confidence_score' => 0.920,
                     'generation_mode' => 'rule_based',
-                    'evidence' => [
+                    'evidence' => json_encode([
                         'sensor_node' => 'Ciliwung-Hilir-04',
                         'water_level_threshold_exceeded' => true,
-                    ],
+                    ]),
+                    'created_at' => now(),
+                    'updated_at' => now(),
                 ]);
             }
         }
@@ -803,40 +821,57 @@ class SentravaxMasterSeeder extends Seeder
 
         if ($user && $bekasi) {
             // Save preferred region
-            UserSavedRegion::updateOrCreate(
-                ['user_id' => $user->id, 'region_id' => $bekasi->id],
-                ['label' => 'Rumah Tinggal', 'is_primary' => true, 'notify_alerts' => true]
-            );
+            if (! UserSavedRegion::where('user_id', $user->id)->where('region_id', $bekasi->id)->exists()) {
+                UserSavedRegion::create([
+                    'user_id' => $user->id,
+                    'region_id' => $bekasi->id,
+                    'label' => 'Rumah Tinggal',
+                    'is_primary' => true,
+                    'notify_alerts' => true,
+                ]);
+            }
 
             // Preparedness Plan
-            PreparednessPlan::updateOrCreate(
-                ['user_id' => $user->id],
-                [
+            if (! PreparednessPlan::where('user_id', $user->id)->exists()) {
+                PreparednessPlan::create([
+                    'user_id' => $user->id,
                     'title' => 'Rencana Kesiapsiagaan Keluarga Slamet Riyadi',
                     'primary_meeting_point' => 'Balai Warga RW 08 Kelurahan Harapan Baru',
                     'secondary_meeting_point' => 'Halaman Masjid Al-Muhajirin Kompleks',
                     'evacuation_notes' => 'Ibu mertua berusia 68 tahun memerlukan bantuan jalan dan obat tensi rutin. Tas siaga diletakkan di lemari depan.',
                     'custom_provisions' => ['Susu formula anak', 'Dokumen tanah sertifikat asli'],
-                ]
-            );
+                ]);
+            }
 
             // Preparedness Contacts
-            PreparednessContact::updateOrCreate(
-                ['user_id' => $user->id, 'phone_number' => '081298765432'],
-                ['name' => 'Siti Aminah', 'relationship' => 'Istri', 'is_emergency_priority' => true]
-            );
-            PreparednessContact::updateOrCreate(
-                ['user_id' => $user->id, 'phone_number' => '081387654321'],
-                ['name' => 'Bambang Sudibyo (Ketua RT 04)', 'relationship' => 'Pengurus Lingkungan', 'is_emergency_priority' => true]
-            );
+            if (! PreparednessContact::where('user_id', $user->id)->where('phone_number', '081298765432')->exists()) {
+                PreparednessContact::create([
+                    'user_id' => $user->id,
+                    'phone_number' => '081298765432',
+                    'name' => 'Siti Aminah',
+                    'relationship' => 'Istri',
+                    'is_emergency_priority' => true,
+                ]);
+            }
+            if (! PreparednessContact::where('user_id', $user->id)->where('phone_number', '081387654321')->exists()) {
+                PreparednessContact::create([
+                    'user_id' => $user->id,
+                    'phone_number' => '081387654321',
+                    'name' => 'Bambang Sudibyo (Ketua RT 04)',
+                    'relationship' => 'Pengurus Lingkungan',
+                    'is_emergency_priority' => true,
+                ]);
+            }
 
             // Check off a few checklist items
             $docItem = PreparednessChecklistItem::where('category', 'dokumen')->first();
-            if ($docItem) {
-                \App\Models\PreparednessChecklistProgress::updateOrCreate(
-                    ['user_id' => $user->id, 'checklist_item_id' => $docItem->id],
-                    ['is_completed' => true, 'completed_at' => now()]
-                );
+            if ($docItem && ! \App\Models\PreparednessChecklistProgress::where('user_id', $user->id)->where('checklist_item_id', $docItem->id)->exists()) {
+                \App\Models\PreparednessChecklistProgress::create([
+                    'user_id' => $user->id,
+                    'checklist_item_id' => $docItem->id,
+                    'is_completed' => true,
+                    'completed_at' => now(),
+                ]);
             }
         }
     }

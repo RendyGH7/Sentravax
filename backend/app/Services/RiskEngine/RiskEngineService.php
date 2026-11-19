@@ -341,20 +341,20 @@ class RiskEngineService
 
         $eval = $this->evaluateLocationRisk($lat, $lon, $regionId);
 
-        // Protect baseline RiskAssessment #1 from being overwritten or mutated
-        $baselineIds = defined(RiskAssessment::class . '::BASELINE_IDS')
-            ? RiskAssessment::BASELINE_IDS
-            : [1];
-
-        $assessment = RiskAssessment::where('region_id', $regionId)
+        // Identify existing dynamic regional assessment using domain provenance,
+        // cleanly separating dynamic evaluations from curated baseline benchmark records
+        // without depending on hardcoded primary key IDs.
+        $assessment = RiskAssessment::query()
+            ->dynamicRegional()
+            ->where('region_id', $regionId)
             ->where('hazard_type_id', $hazardTypeId)
-            ->whereNotIn('id', $baselineIds)
             ->first();
 
         if (! $assessment) {
             $assessment = new RiskAssessment();
             $assessment->region_id = $regionId;
             $assessment->hazard_type_id = $hazardTypeId;
+            $assessment->hazard_event_id = null;
         }
 
         $assessment->fill([
