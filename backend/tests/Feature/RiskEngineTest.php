@@ -314,5 +314,68 @@ class RiskEngineTest extends TestCase
         $this->assertEquals($recordedTime->timestamp, $bmkgRecheck->last_successful_at->timestamp);
         $this->assertEquals('active', $bmkgRecheck->status);
     }
+
+    /**
+     * Test dynamic regional assessment scope across multiple regions, hazards, and methodology versions.
+     * - Ensures dynamic evaluations can be updated without duplication.
+     * - Ensures historical baseline benchmark (#1) is NEVER overwritten.
+     * - Ensures methodology version cleanly separates records without hardcoded ID dependencies.
+     */
+    public function test_dynamic_regional_scope_across_multiple_regions_hazards_and_methodologies(): void
+    {
+        $engine = app(RiskEngineService::class);
+
+        $regionEast = Region::where('code', 'ID-JK-JT')->first() ?? Region::find(3);
+        $regionNorth = Region::where('code', 'ID-JK-JU')->first() ?? Region::find(2);
+        $regionBogor = Region::where('code', 'ID-JB-BGR')->first() ?? Region::find(4);
+
+        $flood = HazardType::where('slug', 'flood')->first() ?? HazardType::find(1);
+        $landslide = HazardType::where('slug', 'landslide')->first() ?? HazardType::find(2);
+
+        // Baseline assessment #1 snapshot check
+        $baseline1 = RiskAssessment::find(1);
+        $this->assertNotNull($baseline1);
+        $originalBaselineScore = $baseline1->risk_score;
+        $originalBaselineMethodology = $baseline1->methodology_version;
+        $originalBaselineEventId = $baseline1->hazard_event_id;
+
+        // 1. Evaluate Region East + Flood (same region & hazard as baseline #1)
+        $dynamicEast = $engine->evaluateAndPersistRegionalRisk($regionEast->id, $flood->id);
+        $this->assertNotEquals(1, $dynamicEast->id, 'Dynamic assessment must not overwrite baseline ID 1');
+        $this->assertEquals(RiskEngineService::METHODOLOGY_VERSION, $dynamicEast->methodology_version);
+        $this->assertNull($dynamicEast->hazard_event_id);
+
+        // Re-evaluating must update the existing record without creating duplicate
+        $dynamicEastAgain = $engine->evaluateAndPersistRegionalRisk($regionEast->id, $flood->id);
+        $this->assertEquals($dynamicEast->id, $dynamicEastAgain->id);
+
+        // 2. Evaluate Region North + Flood
+        $dynamicNorth = $engine->evaluateAndPersistRegionalRisk($regionNorth->id, $flood->id);
+        $this->assertNotEquals($dynamicEast->id, $dynamicNorth->id);
+        $this->assertEquals($regionNorth->id, $dynamicNorth->region_id);
+
+        $dynamicNorthAgain = $engine->evaluateAndPersistRegionalRisk($regionNorth->id, $flood->id);
+        $this->assertEquals($dynamicNorth->id, $dynamicNorthAgain->id);
+
+        // 3. Evaluate Region Bogor + Landslide
+        $dynamicBogor = $engine->evaluateAndPersistRegionalRisk($regionBogor->id, $landslide->id);
+        $this->assertEquals($regionBogor->id, $dynamicBogor->region_id);
+        $this->assertEquals($landslide->id, $dynamicBogor->hazard_type_id);
+
+        // 4. Verify baseline #1 was NOT modified
+        $baseline1Recheck = RiskAssessment::find(1);
+        $this->assertEquals($originalBaselineScore, $baseline1Recheck->risk_score);
+        $this->assertEquals($originalBaselineMethodology, $baseline1Recheck->methodology_version);
+        $this->assertEquals($originalBaselineEventId, $baseline1Recheck->hazard_event_id);
+
+        // 5. Verify alternative methodology version is isolated
+        $legacyScopeCount = RiskAssessment::where('methodology_version', 'v1.0-rules')->count();
+        $dynamicScopeCount = RiskAssessment::query()->dynamicRegional()->count();
+        $this->assertGreaterThanOrEqual(1, $legacyScopeCount);
+        $this->assertGreaterThanOrEqual(3, $dynamicScopeCount);
+
+        // Clean up created test dynamic assessments so database returns to pristine baseline state
+        RiskAssessment::whereIn('id', [$dynamicEast->id, $dynamicNorth->id, $dynamicBogor->id])->delete();
+    }
 }
 

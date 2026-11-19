@@ -8,6 +8,7 @@ use App\Models\DataSource;
 use App\Models\ReportVerification;
 use App\Models\RiskAssessment;
 use App\Models\Shelter;
+use App\Models\User;
 use App\Services\ExternalData\FreshnessClassifierService;
 use Tests\TestCase;
 
@@ -178,5 +179,57 @@ class DataTrustAndProvenanceTest extends TestCase
                 $this->assertStringContainsString('dilindungi dari penghapusan', $e->getMessage());
             }
         }
+    }
+
+    /**
+     * Test 6: API endpoints return exact 3-dimensional standardized status for PVMBG, InSAR, and Curated Demo.
+     */
+    public function test_api_endpoints_return_standardized_provenance_for_curated_and_simulated_sources(): void
+    {
+        $admin = User::where('role', User::ROLE_ADMIN)->first();
+        $intel = User::where('role', User::ROLE_INTELLIGENCE)->first();
+
+        // 1. Public API
+        $publicRes = $this->getJson('/api/v1/public/data-sources');
+        $publicRes->assertStatus(200);
+        $publicData = collect($publicRes->json('data'));
+
+        $pvmbgPublic = $publicData->firstWhere('id', 4);
+        $this->assertNotNull($pvmbgPublic);
+        $this->assertEquals('STATIC', $pvmbgPublic['connectivity_state']);
+        $this->assertEquals('UNKNOWN', $pvmbgPublic['freshness_state']);
+        $this->assertEquals('CURATED_REFERENCE', $pvmbgPublic['provenance_type']);
+
+        $insarPublic = $publicData->firstWhere('id', 5);
+        $this->assertNotNull($insarPublic);
+        $this->assertEquals('STATIC', $insarPublic['connectivity_state']);
+        $this->assertEquals('UNKNOWN', $insarPublic['freshness_state']);
+        $this->assertEquals('CURATED_REFERENCE', $insarPublic['provenance_type']);
+
+        $demoPublic = $publicData->firstWhere('id', 6);
+        $this->assertNotNull($demoPublic);
+        $this->assertEquals('OFFLINE', $demoPublic['connectivity_state']);
+        $this->assertEquals('UNKNOWN', $demoPublic['freshness_state']);
+        $this->assertEquals('SIMULATED', $demoPublic['provenance_type']);
+
+        // 2. Admin API
+        $adminRes = $this->actingAs($admin, 'sanctum')->getJson('/api/v1/admin/data-sources');
+        $adminRes->assertStatus(200);
+        $adminData = collect($adminRes->json('data'));
+
+        $pvmbgAdmin = $adminData->firstWhere('id', 4);
+        $this->assertEquals('STATIC', $pvmbgAdmin['connectivity_state']);
+        $this->assertEquals('UNKNOWN', $pvmbgAdmin['freshness_state']);
+        $this->assertEquals('CURATED_REFERENCE', $pvmbgAdmin['provenance_type']);
+
+        // 3. Intelligence API
+        $intelRes = $this->actingAs($intel, 'sanctum')->getJson('/api/v1/intel/data-sources');
+        $intelRes->assertStatus(200);
+        $intelData = collect($intelRes->json('data'));
+
+        $insarIntel = $intelData->firstWhere('id', 5);
+        $this->assertEquals('STATIC', $insarIntel['connectivity_state']);
+        $this->assertEquals('UNKNOWN', $insarIntel['freshness_state']);
+        $this->assertEquals('CURATED_REFERENCE', $insarIntel['provenance_type']);
     }
 }

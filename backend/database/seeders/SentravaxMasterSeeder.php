@@ -288,27 +288,8 @@ class SentravaxMasterSeeder extends Seeder
         ];
 
         foreach ($sources as $src) {
-            $existing = DataSource::where('name', $src['name'])->first();
-            if (! $existing) {
+            if (! DataSource::where('name', $src['name'])->exists()) {
                 DataSource::create($src);
-            } else {
-                // Strictly preserve verified sync timestamps and existing active status
-                $updateData = [
-                    'provider' => $src['provider'],
-                    'source_type' => $src['source_type'],
-                    'category' => $src['category'],
-                    'endpoint_url' => $src['endpoint_url'],
-                    'notes' => $src['notes'],
-                    'sync_interval_minutes' => $src['sync_interval_minutes'],
-                    'rate_limit_rpm' => $src['rate_limit_rpm'],
-                    'terms_of_service' => $src['terms_of_service'],
-                    'is_simulated' => $src['is_simulated'],
-                    'metadata' => $src['metadata'],
-                ];
-                if (empty($existing->status)) {
-                    $updateData['status'] = $src['status'];
-                }
-                $existing->update($updateData);
             }
         }
     }
