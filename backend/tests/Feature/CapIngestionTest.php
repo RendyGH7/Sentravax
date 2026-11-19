@@ -47,12 +47,16 @@ class CapIngestionTest extends TestCase
     protected function getSampleCapXml(string $identifier = '2.49.0.1.360.0.2026.TEST.001', string $msgType = 'Alert', ?string $references = null): string
     {
         $refTag = $references ? "<references>{$references}</references>" : '';
+        $sent = now()->subMinutes(15)->toIso8601String();
+        $effective = now()->subMinutes(10)->toIso8601String();
+        $expires = now()->addHours(5)->toIso8601String();
+
         return <<<XML
 <?xml version="1.0" encoding="UTF-8"?>
 <alert xmlns="urn:oasis:names:tc:emergency:cap:1.2">
   <identifier>{$identifier}</identifier>
   <sender>cuaca.ekstrem@bmkg.go.id</sender>
-  <sent>2026-11-18T14:30:00+07:00</sent>
+  <sent>{$sent}</sent>
   <status>Actual</status>
   <msgType>{$msgType}</msgType>
   <scope>Public</scope>
@@ -64,8 +68,8 @@ class CapIngestionTest extends TestCase
     <urgency>Immediate</urgency>
     <severity>Severe</severity>
     <certainty>Observed</certainty>
-    <effective>2026-11-18T14:30:00+07:00</effective>
-    <expires>2026-11-18T19:00:00+07:00</expires>
+    <effective>{$effective}</effective>
+    <expires>{$expires}</expires>
     <senderName>Badan Meteorologi Klimatologi dan Geofisika</senderName>
     <headline>Peringatan Dini Cuaca Ekstrem Provinsi DKI Jakarta</headline>
     <description>Hujan lebat disertai kilat/petir dan angin kencang berpotensi terjadi di wilayah Jakarta Timur dan sekitarnya.</description>
