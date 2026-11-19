@@ -100,11 +100,19 @@ class RiskEngineService
             $weightedVal = round($sevWeight * $recencyMultiplier, 1);
 
             $sourceType = strtolower($ev->dataSource?->source_type ?? '');
-            $isLiveFeed = ($sourceType === 'api' || $sourceType === 'stream');
+            $connectivityState = $ev->dataSource?->connectivity_state ?? 'UNKNOWN';
+            $freshnessState = $ev->dataSource?->freshness_state ?? 'UNKNOWN';
+            $provenanceType = $ev->dataSource?->provenance_type ?? 'CURATED_REFERENCE';
+
+            $isLiveFeed = ($connectivityState === 'LIVE');
             $provenanceStatus = $isLiveFeed ? 'LIVE' : 'STATIC';
-            $provenanceLabel = $isLiveFeed
-                ? (($ev->hazardType?->slug ?? '') === 'earthquake' ? 'LIVE (BMKG TEWS)' : 'LIVE (TELEMETRI)')
-                : 'STATIC (TERKURASI)';
+            $provenanceLabel = match ($provenanceType) {
+                'OFFICIAL' => ($ev->hazardType?->slug ?? '') === 'earthquake' ? 'LIVE (BMKG TEWS)' : 'LIVE (BMKG RESMI)',
+                'OBSERVED' => 'LIVE (OBSERVASI BMKG)',
+                'SIMULATED' => 'OFFLINE (SIMULASI)',
+                'CURATED_REFERENCE' => 'STATIC (REFERENSI TERKURASI)',
+                default => $isLiveFeed ? 'LIVE (TELEMETRI)' : 'STATIC (TERKURASI)',
+            };
 
             $eventScore += $weightedVal;
             $activeThreats[] = [
@@ -118,6 +126,9 @@ class RiskEngineService
                 'data_source_id' => $ev->data_source_id,
                 'source_name' => $ev->dataSource?->name ?? 'Data Observasi Terkurasi SENTRAVAX',
                 'provider_name' => $ev->dataSource?->provider ?? 'SENTRAVAX Local Baseline Observation',
+                'connectivity_state' => $connectivityState,
+                'freshness_state' => $freshnessState,
+                'provenance_type' => $provenanceType,
                 'provenance_status' => $provenanceStatus,
                 'provenance_label' => $provenanceLabel,
             ];
@@ -211,7 +222,7 @@ class RiskEngineService
 
             // Also inspect live feeds associated with nearby events
             foreach ($nearbyEvents as $ev) {
-                if ($ev->dataSource && in_array($ev->dataSource->source_type, ['api', 'stream'])) {
+                if ($ev->dataSource && $ev->dataSource->connectivity_state === 'LIVE') {
                     $evLatestSync = DB::table('data_source_sync_runs')
                         ->where('data_source_id', $ev->dataSource->id)
                         ->latest('synced_at')

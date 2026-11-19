@@ -101,6 +101,9 @@ export interface HazardEventDetail extends HazardEventItem {
     provider: string;
     source_type?: string;
     status: string;
+    connectivity_state?: 'LIVE' | 'STATIC' | 'OFFLINE' | 'UNKNOWN';
+    freshness_state?: 'FRESH' | 'DELAYED' | 'STALE' | 'UNAVAILABLE' | 'UNKNOWN';
+    provenance_type?: 'OFFICIAL' | 'OBSERVED' | 'COMMUNITY_REPORT' | 'SENTRAVAX_INSIGHT' | 'SIMULATED' | 'CURATED_REFERENCE';
     provenance_status?: 'LIVE' | 'STATIC' | 'SIMULATED' | 'STALE' | 'UNAVAILABLE';
     provenance_label?: string;
   } | null;

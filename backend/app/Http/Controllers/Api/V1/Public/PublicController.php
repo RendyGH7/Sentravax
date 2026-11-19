@@ -202,10 +202,17 @@ class PublicController extends Controller
                 'source' => $ev->dataSource?->name ?? 'SENTRAVAX',
                 'source_name' => $ev->dataSource?->name ?? 'SENTRAVAX',
                 'provider_name' => $ev->dataSource?->provider ?? 'SENTRAVAX',
-                'provenance_status' => in_array($ev->dataSource?->source_type, ['api', 'stream']) ? 'LIVE' : 'STATIC',
-                'provenance_label' => in_array($ev->dataSource?->source_type, ['api', 'stream'])
-                    ? ($ev->hazardType?->slug === 'earthquake' ? 'LIVE (BMKG TEWS)' : 'LIVE (TELEMETRI)')
-                    : 'STATIC (TERKURASI)',
+                'connectivity_state' => $ev->dataSource?->connectivity_state ?? 'STATIC',
+                'freshness_state' => $ev->dataSource?->freshness_state ?? 'UNKNOWN',
+                'provenance_type' => $ev->dataSource?->provenance_type ?? 'CURATED_REFERENCE',
+                'provenance_status' => ($ev->dataSource?->connectivity_state === 'LIVE') ? 'LIVE' : 'STATIC',
+                'provenance_label' => match ($ev->dataSource?->provenance_type) {
+                    'OFFICIAL' => $ev->hazardType?->slug === 'earthquake' ? 'LIVE (BMKG TEWS)' : 'LIVE (BMKG RESMI)',
+                    'OBSERVED' => 'LIVE (OBSERVASI BMKG)',
+                    'SIMULATED' => 'OFFLINE (SIMULASI)',
+                    'CURATED_REFERENCE' => 'STATIC (REFERENSI TERKURASI)',
+                    default => ($ev->dataSource?->connectivity_state === 'LIVE') ? 'LIVE (TELEMETRI)' : 'STATIC (TERKURASI)',
+                },
             ];
         });
 
@@ -376,10 +383,17 @@ class PublicController extends Controller
                     'provider' => $ev->dataSource->provider,
                     'source_type' => $ev->dataSource->source_type,
                     'status' => $ev->dataSource->status,
-                    'provenance_status' => in_array($ev->dataSource->source_type, ['api', 'stream']) ? 'LIVE' : 'STATIC',
-                    'provenance_label' => in_array($ev->dataSource->source_type, ['api', 'stream'])
-                        ? ($ev->hazardType?->slug === 'earthquake' ? 'LIVE (BMKG TEWS)' : 'LIVE (TELEMETRI)')
-                        : 'STATIC (TERKURASI)',
+                    'connectivity_state' => $ev->dataSource->connectivity_state,
+                    'freshness_state' => $ev->dataSource->freshness_state,
+                    'provenance_type' => $ev->dataSource->provenance_type,
+                    'provenance_status' => ($ev->dataSource->connectivity_state === 'LIVE') ? 'LIVE' : 'STATIC',
+                    'provenance_label' => match ($ev->dataSource->provenance_type) {
+                        'OFFICIAL' => $ev->hazardType?->slug === 'earthquake' ? 'LIVE (BMKG TEWS)' : 'LIVE (BMKG RESMI)',
+                        'OBSERVED' => 'LIVE (OBSERVASI BMKG)',
+                        'SIMULATED' => 'OFFLINE (SIMULASI)',
+                        'CURATED_REFERENCE' => 'STATIC (REFERENSI TERKURASI)',
+                        default => ($ev->dataSource->connectivity_state === 'LIVE') ? 'LIVE (TELEMETRI)' : 'STATIC (TERKURASI)',
+                    },
                 ] : null,
             ],
         ]);
@@ -807,15 +821,18 @@ class PublicController extends Controller
         }])->get();
 
         $data = $sources->map(function ($ds) {
-            $lastRun = $ds->syncRuns->first();
             return [
                 'id' => $ds->id,
                 'name' => $ds->name,
                 'provider' => $ds->provider,
                 'category' => $ds->category,
                 'status' => $ds->status,
+                'connectivity_state' => $ds->connectivity_state,
+                'freshness_state' => $ds->freshness_state,
+                'provenance_type' => $ds->provenance_type,
                 'last_fetched_at' => $ds->last_fetched_at?->toIso8601String(),
-                'freshness_state' => $lastRun?->freshness_state ?? 'LIVE',
+                'last_observed_at' => $ds->last_observed_at?->toIso8601String(),
+                'freshness_info' => $ds->freshness_info,
                 'notes' => $ds->notes,
             ];
         });

@@ -34,7 +34,9 @@ class DataSyncService
                 str_contains($name, 'firms') || str_contains($name, 'nasa') => $this->nasaFirmsAdapter->sync($dataSource),
                 default => [
                     'status' => 'SUCCESS',
-                    'freshness_state' => $dataSource->is_simulated ? 'SIMULATED' : 'STATIC',
+                    'connectivity_state' => $dataSource->is_simulated ? 'OFFLINE' : 'STATIC',
+                    'freshness_state' => 'UNKNOWN',
+                    'provenance_type' => $dataSource->is_simulated ? 'SIMULATED' : 'CURATED_REFERENCE',
                     'items_fetched' => 0,
                     'items_persisted' => 0,
                     'duration_ms' => 15,
@@ -44,7 +46,9 @@ class DataSyncService
                         'source_type' => $dataSource->source_type,
                         'is_simulated' => (bool) $dataSource->is_simulated,
                         'terms' => $dataSource->terms_of_service,
-                        'note' => 'Synchronized local curated telemetry baseline.',
+                        'note' => $dataSource->is_simulated
+                            ? 'Skenario demonstrasi terkurasi lokal berlabel simulasi permanen.'
+                            : 'Data referensi terkurasi geologi/satelit (baseline statis, bukan streaming sensor live).',
                     ],
                 ],
             };
@@ -56,7 +60,9 @@ class DataSyncService
 
             $res = [
                 'status' => 'FAILED',
+                'connectivity_state' => 'UNKNOWN',
                 'freshness_state' => 'UNAVAILABLE',
+                'provenance_type' => $dataSource->is_simulated ? 'SIMULATED' : 'CURATED_REFERENCE',
                 'items_fetched' => 0,
                 'items_persisted' => 0,
                 'duration_ms' => $durationMs,
@@ -71,26 +77,42 @@ class DataSyncService
         }
 
         $status = $res['status'] ?? 'SUCCESS';
-        $freshnessState = $res['freshness_state'] ?? ($dataSource->is_simulated ? 'SIMULATED' : 'STATIC');
+        $freshnessState = $res['freshness_state'] ?? 'UNKNOWN';
+        $connectivityState = $res['connectivity_state'] ?? $this->freshnessClassifier->resolveConnectivity($dataSource);
+        $provenanceType = $res['provenance_type'] ?? $this->freshnessClassifier->resolveProvenance($dataSource);
         $errorMsg = isset($res['error_message']) ? $this->sanitizeErrorMessage((string) $res['error_message']) : null;
 
-        // Structured provenance payload with temporal attributes
+        // Structured provenance payload with temporal attributes across all 3 dimensions
         $provenance = array_merge([
             'provider_name' => $dataSource->provider,
             'source_type' => $dataSource->source_type,
             'endpoint' => $dataSource->endpoint_url,
+            'connectivity_state' => $connectivityState,
+            'freshness_state' => $freshnessState,
+            'provenance_type' => $provenanceType,
             'fetched_at' => now()->toIso8601String(),
-            'observed_at' => ($res['observed_at'] ?? $dataSource->last_observed_at ?? now())->toIso8601String(),
+            'observed_at' => ($res['observed_at'] ?? $dataSource->last_observed_at)?->toIso8601String(),
             'is_simulated' => (bool) $dataSource->is_simulated,
             'terms_of_service' => $dataSource->terms_of_service,
         ], $res['provenance'] ?? []);
 
         // Update timestamps on data source model
+        // Never claim live observation for curated reference (PVMBG/InSAR) or simulated sources
         $updatePayload = [
             'last_fetched_at' => now(),
         ];
         if ($status === 'SUCCESS') {
-            $updatePayload['last_successful_at'] = now();
+            $nameLower = strtolower($dataSource->name ?? '');
+            $isCuratedReference = in_array($dataSource->id, [4, 5, 6], true)
+                || $dataSource->is_simulated
+                || str_contains($nameLower, 'pvmbg')
+                || str_contains($nameLower, 'insar')
+                || str_contains($nameLower, 'sentinel')
+                || in_array($dataSource->source_type, ['curated', 'satellite'], true);
+
+            if (! $isCuratedReference) {
+                $updatePayload['last_successful_at'] = now();
+            }
             if (isset($res['observed_at'])) {
                 $updatePayload['last_observed_at'] = $res['observed_at'];
             }
@@ -143,22 +165,50 @@ class DataSyncService
         $avgDurationMs = (int) round(DataSourceSyncRun::avg('duration_ms') ?? 0);
         $totalItemsPersisted = (int) DataSourceSyncRun::sum('items_persisted');
 
-        // Freshness distribution across all sources
+        // Distributions across all 3 standardized dimensions
+        $connectivityCounts = [
+            'LIVE' => 0,
+            'STATIC' => 0,
+            'OFFLINE' => 0,
+            'UNKNOWN' => 0,
+        ];
         $freshnessCounts = [
             'FRESH' => 0,
             'DELAYED' => 0,
             'STALE' => 0,
             'UNAVAILABLE' => 0,
-            'SIMULATED' => 0,
             'UNKNOWN' => 0,
+            'SIMULATED' => 0, // legacy backward-compatibility slot
+        ];
+        $provenanceCounts = [
+            'OFFICIAL' => 0,
+            'OBSERVED' => 0,
+            'COMMUNITY_REPORT' => 0,
+            'SENTRAVAX_INSIGHT' => 0,
+            'SIMULATED' => 0,
+            'CURATED_REFERENCE' => 0,
         ];
 
         foreach (DataSource::all() as $src) {
-            $state = $src->freshness_state;
-            if (isset($freshnessCounts[$state])) {
-                $freshnessCounts[$state]++;
+            $fState = $src->freshness_state;
+            if (isset($freshnessCounts[$fState])) {
+                $freshnessCounts[$fState]++;
             } else {
                 $freshnessCounts['UNKNOWN']++;
+            }
+
+            $cState = $src->connectivity_state;
+            if (isset($connectivityCounts[$cState])) {
+                $connectivityCounts[$cState]++;
+            } else {
+                $connectivityCounts['UNKNOWN']++;
+            }
+
+            $pType = $src->provenance_type;
+            if (isset($provenanceCounts[$pType])) {
+                $provenanceCounts[$pType]++;
+            } else {
+                $provenanceCounts['CURATED_REFERENCE']++;
             }
         }
 
@@ -176,7 +226,9 @@ class DataSyncService
                 'avg_duration_ms' => $avgDurationMs,
                 'total_items_persisted' => $totalItemsPersisted,
             ],
+            'connectivity_distribution' => $connectivityCounts,
             'freshness_distribution' => $freshnessCounts,
+            'provenance_distribution' => $provenanceCounts,
         ];
     }
 

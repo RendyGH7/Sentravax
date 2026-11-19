@@ -202,7 +202,9 @@ class IntelligenceCenterController extends Controller
                         'hazard_code' => $ev->hazardType?->code,
                         'region' => $ev->region?->name,
                         'occurred_at' => $ev->occurred_at?->toIso8601String(),
-                        'freshness_state' => 'LIVE',
+                        'connectivity_state' => $ev->dataSource?->connectivity_state ?? 'STATIC',
+                        'freshness_state' => $ev->dataSource?->freshness_state ?? 'UNKNOWN',
+                        'provenance_type' => $ev->dataSource?->provenance_type ?? 'CURATED_REFERENCE',
                     ],
                 ];
             });
@@ -258,7 +260,10 @@ class IntelligenceCenterController extends Controller
                         'hazard_type' => $rep->hazardType?->name,
                         'region' => $rep->region?->name,
                         'created_at' => $rep->created_at?->toIso8601String(),
-                        'freshness_state' => 'VERIFIED',
+                        'verification_status' => $rep->status,
+                        'connectivity_state' => 'LIVE',
+                        'freshness_state' => 'FRESH',
+                        'provenance_type' => 'COMMUNITY_REPORT',
                     ],
                 ];
             });

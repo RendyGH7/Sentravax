@@ -49,6 +49,17 @@ class AiInsight extends Model
         );
     }
 
+    public const BASELINE_IDS = [1];
+
+    protected static function booted(): void
+    {
+        static::deleting(function (AiInsight $model) {
+            if (in_array($model->id, self::BASELINE_IDS, true)) {
+                throw new \RuntimeException("Operasi ditolak: AiInsight baseline #{$model->id} dilindungi dari penghapusan.");
+            }
+        });
+    }
+
     public function region(): BelongsTo
     {
         return $this->belongsTo(Region::class, 'region_id');

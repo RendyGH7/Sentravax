@@ -9,6 +9,17 @@ class DataSource extends Model
 {
     protected $table = 'data_sources';
 
+    public const BASELINE_IDS = [2, 3, 4, 5, 6, 7];
+
+    protected static function booted(): void
+    {
+        static::deleting(function (DataSource $dataSource) {
+            if (in_array($dataSource->id, self::BASELINE_IDS, true)) {
+                throw new \RuntimeException("Operasi ditolak: DataSource baseline #{$dataSource->id} dilindungi dari penghapusan.");
+            }
+        });
+    }
+
     protected $fillable = [
         'name',
         'provider',
@@ -28,7 +39,9 @@ class DataSource extends Model
     ];
 
     protected $appends = [
+        'connectivity_state',
         'freshness_state',
+        'provenance_type',
         'freshness_info',
     ];
 
@@ -50,9 +63,19 @@ class DataSource extends Model
         return app(\App\Services\ExternalData\FreshnessClassifierService::class)->classify($this);
     }
 
+    public function getConnectivityStateAttribute(): string
+    {
+        return $this->freshness_info['connectivity_state'] ?? 'UNKNOWN';
+    }
+
     public function getFreshnessStateAttribute(): string
     {
         return $this->freshness_info['freshness_state'] ?? 'UNKNOWN';
+    }
+
+    public function getProvenanceTypeAttribute(): string
+    {
+        return $this->freshness_info['provenance_type'] ?? 'CURATED_REFERENCE';
     }
 
     public function hazardEvents(): HasMany

@@ -282,14 +282,35 @@ class OperationalMonitoringTest extends TestCase
     {
         $classifier = app(FreshnessClassifierService::class);
 
-        // 1. Curated baseline source is strictly SIMULATED
+        // 1. Curated baseline source is strictly SIMULATED provenance and OFFLINE connectivity
         $curatedSource = DataSource::where('source_type', 'curated')->first();
         $this->assertNotNull($curatedSource);
         $curatedClass = $classifier->classify($curatedSource);
-        $this->assertEquals(FreshnessClassifierService::STATE_SIMULATED, $curatedClass['freshness_state']);
+        $this->assertEquals(FreshnessClassifierService::PROVENANCE_SIMULATED, $curatedClass['provenance_type']);
+        $this->assertEquals(FreshnessClassifierService::CONNECTIVITY_OFFLINE, $curatedClass['connectivity_state']);
+        $this->assertEquals(FreshnessClassifierService::STATE_UNKNOWN, $curatedClass['freshness_state']);
         $this->assertTrue($curatedClass['is_simulated']);
 
-        // 2. Active BMKG TEWS with recent sync (< 30 min) is FRESH
+        // 2. PVMBG & Copernicus/InSAR: strictly STATIC connectivity and CURATED_REFERENCE provenance (never claimed as LIVE)
+        $pvmbgSource = DataSource::where('name', 'like', '%PVMBG%')->first();
+        if ($pvmbgSource) {
+            $pvmbgClass = $classifier->classify($pvmbgSource);
+            $this->assertEquals(FreshnessClassifierService::CONNECTIVITY_STATIC, $pvmbgClass['connectivity_state']);
+            $this->assertEquals(FreshnessClassifierService::PROVENANCE_CURATED_REFERENCE, $pvmbgClass['provenance_type']);
+            $this->assertEquals(FreshnessClassifierService::STATE_UNKNOWN, $pvmbgClass['freshness_state']);
+            $this->assertFalse($pvmbgClass['is_simulated']);
+        }
+
+        $insarSource = DataSource::where('name', 'like', '%InSAR%')->first();
+        if ($insarSource) {
+            $insarClass = $classifier->classify($insarSource);
+            $this->assertEquals(FreshnessClassifierService::CONNECTIVITY_STATIC, $insarClass['connectivity_state']);
+            $this->assertEquals(FreshnessClassifierService::PROVENANCE_CURATED_REFERENCE, $insarClass['provenance_type']);
+            $this->assertEquals(FreshnessClassifierService::STATE_UNKNOWN, $insarClass['freshness_state']);
+            $this->assertFalse($insarClass['is_simulated']);
+        }
+
+        // 3. Active BMKG TEWS with recent sync (< 30 min) is FRESH
         $bmkgTews = DataSource::where('endpoint_url', 'like', '%autogempa%')->first();
         $this->assertNotNull($bmkgTews);
         $bmkgTews->update([
@@ -298,15 +319,17 @@ class OperationalMonitoringTest extends TestCase
         ]);
         $freshClass = $classifier->classify($bmkgTews);
         $this->assertEquals(FreshnessClassifierService::STATE_FRESH, $freshClass['freshness_state']);
+        $this->assertEquals(FreshnessClassifierService::CONNECTIVITY_LIVE, $freshClass['connectivity_state']);
+        $this->assertEquals(FreshnessClassifierService::PROVENANCE_OFFICIAL, $freshClass['provenance_type']);
 
-        // 3. BMKG TEWS with delayed sync (> 30 min, < 120 min) is DELAYED
+        // 4. BMKG TEWS with delayed sync (> 30 min, < 120 min) is DELAYED
         $bmkgTews->update([
             'last_successful_at' => now()->subMinutes(60),
         ]);
         $delayedClass = $classifier->classify($bmkgTews);
         $this->assertEquals(FreshnessClassifierService::STATE_DELAYED, $delayedClass['freshness_state']);
 
-        // 4. BMKG TEWS with stale sync (> 120 min) is STALE
+        // 5. BMKG TEWS with stale sync (> 120 min) is STALE
         $bmkgTews->update([
             'last_successful_at' => now()->subMinutes(200),
         ]);
@@ -416,9 +439,11 @@ class OperationalMonitoringTest extends TestCase
     {
         $classifier = app(FreshnessClassifierService::class);
 
-        // State 1: SIMULATED (curated data)
+        // Dimension C Provenance: SIMULATED (curated data) + Dimension A Connectivity: OFFLINE
         $curated = DataSource::where('source_type', 'curated')->first();
-        $this->assertEquals(FreshnessClassifierService::STATE_SIMULATED, $classifier->classify($curated)['freshness_state']);
+        $this->assertEquals(FreshnessClassifierService::PROVENANCE_SIMULATED, $classifier->classify($curated)['provenance_type']);
+        $this->assertEquals(FreshnessClassifierService::CONNECTIVITY_OFFLINE, $classifier->classify($curated)['connectivity_state']);
+        $this->assertEquals(FreshnessClassifierService::STATE_UNKNOWN, $classifier->classify($curated)['freshness_state']);
 
         // State 2: UNAVAILABLE (inactive source)
         $inactive = DataSource::where('source_type', '!=', 'curated')->where('is_simulated', false)->firstOrFail();

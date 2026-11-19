@@ -57,8 +57,16 @@ class Shelter extends Model
         ];
     }
 
+    public const BASELINE_IDS = [1, 2, 3, 4, 5];
+
     protected static function booted(): void
     {
+        static::deleting(function (Shelter $shelter) {
+            if (in_array($shelter->id, self::BASELINE_IDS, true)) {
+                throw new \RuntimeException("Operasi ditolak: Shelter baseline #{$shelter->id} dilindungi dari penghapusan.");
+            }
+        });
+
         static::saved(function (Shelter $shelter) {
             if ($shelter->latitude !== null && $shelter->longitude !== null) {
                 DB::statement('

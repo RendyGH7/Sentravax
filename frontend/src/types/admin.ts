@@ -1,3 +1,9 @@
+export type ConnectivityState =
+  | 'LIVE'
+  | 'STATIC'
+  | 'OFFLINE'
+  | 'UNKNOWN';
+
 export type FreshnessState =
   | 'FRESH'
   | 'DELAYED'
@@ -6,12 +12,25 @@ export type FreshnessState =
   | 'SIMULATED'
   | 'UNKNOWN';
 
+export type ProvenanceType =
+  | 'OFFICIAL'
+  | 'OBSERVED'
+  | 'COMMUNITY_REPORT'
+  | 'SENTRAVAX_INSIGHT'
+  | 'SIMULATED'
+  | 'CURATED_REFERENCE';
+
 export interface FreshnessInfo {
-  state: FreshnessState;
+  connectivity_state?: ConnectivityState;
+  freshness_state?: FreshnessState;
+  provenance_type?: ProvenanceType;
+  state?: FreshnessState;
+  threshold_fresh_minutes?: number;
   threshold_delayed_minutes?: number;
   threshold_stale_minutes?: number;
   minutes_since_observation?: number | null;
   minutes_since_fetch?: number | null;
+  minutes_since_last_sync?: number | null;
   explanation: string;
 }
 
@@ -48,7 +67,9 @@ export interface DataSourceItem {
   last_fetched_at?: string | null;
   last_observed_at?: string | null;
   last_successful_at?: string | null;
+  connectivity_state?: ConnectivityState;
   freshness_state: FreshnessState;
+  provenance_type?: ProvenanceType;
   freshness_info?: FreshnessInfo;
   created_at?: string;
   updated_at?: string;

@@ -19,7 +19,9 @@ import { toast } from 'sonner';
 import { adminService } from '../../services/admin-service';
 import type {
   DataSourceItem,
+  ConnectivityState,
   FreshnessState,
+  ProvenanceType,
   SystemHealthData,
   FailedJobItem,
 } from '../../types/admin';
@@ -169,45 +171,118 @@ export const AdminDataSourcesPage: React.FC = () => {
     }
   };
 
-  // Helper Freshness Badge
-  const renderFreshnessBadge = (state: FreshnessState, isSimulated?: boolean) => {
-    if (isSimulated || state === 'SIMULATED') {
+  // Dimension A: Connectivity Badge (LIVE, STATIC, OFFLINE, UNKNOWN)
+  const renderConnectivityBadge = (state?: ConnectivityState) => {
+    switch (state) {
+      case 'LIVE':
+        return (
+          <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-md text-[11px] font-mono font-bold bg-emerald-500/15 text-emerald-400 border border-emerald-500/30">
+            <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse" /> LIVE
+          </span>
+        );
+      case 'STATIC':
+        return (
+          <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-md text-[11px] font-mono font-bold bg-sky-500/15 text-sky-400 border border-sky-500/30">
+            STATIC
+          </span>
+        );
+      case 'OFFLINE':
+        return (
+          <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-md text-[11px] font-mono font-bold bg-zinc-800 text-zinc-400 border border-zinc-700">
+            OFFLINE
+          </span>
+        );
+      case 'UNKNOWN':
+      default:
+        return (
+          <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-md text-[11px] font-mono font-bold bg-zinc-900 text-zinc-500 border border-zinc-800">
+            UNKNOWN
+          </span>
+        );
+    }
+  };
+
+  // Dimension C: Provenance Badge (OFFICIAL, OBSERVED, COMMUNITY_REPORT, SENTRAVAX_INSIGHT, SIMULATED, CURATED_REFERENCE)
+  const renderProvenanceBadge = (type?: ProvenanceType, isSimulated?: boolean) => {
+    if (isSimulated || type === 'SIMULATED') {
       return (
-        <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-xs font-mono font-bold bg-purple-500/15 text-purple-400 border border-purple-500/30">
-          <Radio className="w-3 h-3" /> DATA SIMULASI
+        <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-md text-[11px] font-mono font-bold bg-purple-500/15 text-purple-400 border border-purple-500/30">
+          <Radio className="w-3 h-3" /> SIMULATED
         </span>
       );
     }
 
+    switch (type) {
+      case 'OFFICIAL':
+        return (
+          <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-md text-[11px] font-mono font-bold bg-blue-500/15 text-blue-400 border border-blue-500/30">
+            OFFICIAL
+          </span>
+        );
+      case 'OBSERVED':
+        return (
+          <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-md text-[11px] font-mono font-bold bg-cyan-500/15 text-cyan-400 border border-cyan-500/30">
+            OBSERVED
+          </span>
+        );
+      case 'CURATED_REFERENCE':
+        return (
+          <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-md text-[11px] font-mono font-bold bg-amber-500/15 text-amber-400 border border-amber-500/30">
+            CURATED_REFERENCE
+          </span>
+        );
+      case 'COMMUNITY_REPORT':
+        return (
+          <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-md text-[11px] font-mono font-bold bg-teal-500/15 text-teal-400 border border-teal-500/30">
+            COMMUNITY_REPORT
+          </span>
+        );
+      case 'SENTRAVAX_INSIGHT':
+        return (
+          <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-md text-[11px] font-mono font-bold bg-violet-500/15 text-violet-400 border border-violet-500/30">
+            SENTRAVAX_INSIGHT
+          </span>
+        );
+      default:
+        return (
+          <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-md text-[11px] font-mono font-bold bg-zinc-800 text-zinc-400 border border-zinc-700">
+            REFERENCE
+          </span>
+        );
+    }
+  };
+
+  // Dimension B: Freshness Badge (FRESH, DELAYED, STALE, UNAVAILABLE, UNKNOWN)
+  const renderFreshnessBadge = (state?: FreshnessState) => {
     switch (state) {
       case 'FRESH':
         return (
-          <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-xs font-mono font-bold bg-emerald-500/15 text-emerald-400 border border-emerald-500/30">
-            <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse" /> FRESH
+          <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-md text-[11px] font-mono font-bold bg-emerald-500/15 text-emerald-400 border border-emerald-500/30">
+            FRESH
           </span>
         );
       case 'DELAYED':
         return (
-          <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-xs font-mono font-bold bg-amber-500/15 text-amber-400 border border-amber-500/30">
+          <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-md text-[11px] font-mono font-bold bg-amber-500/15 text-amber-400 border border-amber-500/30">
             <AlertTriangle className="w-3 h-3" /> DELAYED
           </span>
         );
       case 'STALE':
         return (
-          <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-xs font-mono font-bold bg-rose-500/15 text-rose-400 border border-rose-500/30">
+          <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-md text-[11px] font-mono font-bold bg-rose-500/15 text-rose-400 border border-rose-500/30">
             <AlertTriangle className="w-3 h-3" /> STALE
           </span>
         );
       case 'UNAVAILABLE':
         return (
-          <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-xs font-mono font-bold bg-red-950 text-red-400 border border-red-800">
+          <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-md text-[11px] font-mono font-bold bg-red-950 text-red-400 border border-red-800">
             <XCircle className="w-3 h-3" /> UNAVAILABLE
           </span>
         );
       case 'UNKNOWN':
       default:
         return (
-          <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-xs font-mono font-bold bg-zinc-800 text-zinc-400 border border-zinc-700">
+          <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-md text-[11px] font-mono font-bold bg-zinc-800 text-zinc-400 border border-zinc-700">
             <Clock className="w-3 h-3" /> UNKNOWN
           </span>
         );
@@ -395,14 +470,18 @@ export const AdminDataSourcesPage: React.FC = () => {
                 >
                   {/* Card Header */}
                   <div className="space-y-2">
-                    <div className="flex items-center justify-between gap-2">
+                    <div className="flex items-center justify-between gap-2 flex-wrap">
                       <div className="flex items-center gap-2">
                         <span className="text-xs font-mono font-bold px-2 py-0.5 rounded-md bg-[#212121] text-[#F59E0B] border border-amber-500/20">
                           {source.category}
                         </span>
                         <span className="text-xs text-[#8A8A8A] font-mono">{source.provider}</span>
                       </div>
-                      {renderFreshnessBadge(source.freshness_state, source.is_simulated)}
+                      <div className="flex items-center gap-1.5 flex-wrap">
+                        {renderConnectivityBadge(source.connectivity_state)}
+                        {renderProvenanceBadge(source.provenance_type, source.is_simulated)}
+                        {renderFreshnessBadge(source.freshness_state)}
+                      </div>
                     </div>
 
                     <h3 className="text-base font-bold text-white tracking-tight">{source.name}</h3>
@@ -755,19 +834,32 @@ export const AdminDataSourcesPage: React.FC = () => {
               </button>
             </div>
 
-            {/* Freshness & Simulation Status */}
-            <div className="p-4 rounded-xl bg-[#0C0C0C] border border-[#212121] space-y-2">
-              <div className="flex items-center justify-between">
-                <span className="text-xs text-[#8A8A8A]">Status Kesegaran Data:</span>
-                {renderFreshnessBadge(selectedSource.freshness_state, selectedSource.is_simulated)}
+            {/* Standardized 3-Dimension Status */}
+            <div className="p-4 rounded-xl bg-[#0C0C0C] border border-[#212121] space-y-3">
+              <h3 className="text-xs font-bold uppercase text-[#8A8A8A] tracking-wider">
+                Status Tiga Dimensi Sumber Data
+              </h3>
+              <div className="grid grid-cols-1 sm:grid-cols-3 gap-2">
+                <div className="p-2.5 rounded-lg bg-[#161616] border border-[#2C2C2C] flex flex-col gap-1">
+                  <span className="text-[10px] text-[#8A8A8A] uppercase font-mono">1. Konektivitas</span>
+                  <div>{renderConnectivityBadge(selectedSource.connectivity_state)}</div>
+                </div>
+                <div className="p-2.5 rounded-lg bg-[#161616] border border-[#2C2C2C] flex flex-col gap-1">
+                  <span className="text-[10px] text-[#8A8A8A] uppercase font-mono">2. Asal Data (Provenance)</span>
+                  <div>{renderProvenanceBadge(selectedSource.provenance_type, selectedSource.is_simulated)}</div>
+                </div>
+                <div className="p-2.5 rounded-lg bg-[#161616] border border-[#2C2C2C] flex flex-col gap-1">
+                  <span className="text-[10px] text-[#8A8A8A] uppercase font-mono">3. Kesegaran (Freshness)</span>
+                  <div>{renderFreshnessBadge(selectedSource.freshness_state)}</div>
+                </div>
               </div>
               {selectedSource.is_simulated && (
                 <div className="text-xs text-purple-400 font-mono bg-purple-950/40 p-2.5 rounded-lg border border-purple-800/50">
-                  PERINGATAN: Sumber ini berlabel DATA SIMULASI. Digunakan untuk pengujian deterministik dan tidak boleh dianggap sebagai observasi langsung instrumen lapangan.
+                  PERINGATAN: Sumber ini berlabel DATA SIMULASI. Digunakan untuk pengujian skenario demonstrasi dan tidak boleh dianggap sebagai observasi langsung instrumen lapangan.
                 </div>
               )}
               {selectedSource.freshness_info && (
-                <p className="text-xs text-[#D4D4D4] italic">
+                <p className="text-xs text-[#D4D4D4] italic bg-[#161616] p-2.5 rounded-lg border border-[#2C2C2C]">
                   {selectedSource.freshness_info.explanation}
                 </p>
               )}

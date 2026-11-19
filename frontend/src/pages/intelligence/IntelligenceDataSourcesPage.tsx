@@ -12,7 +12,7 @@ import {
 } from 'lucide-react';
 import { toast } from 'sonner';
 import { intelligenceService } from '../../services/intelligence-service';
-import type { DataSourceItem, FreshnessState } from '../../types/admin';
+import type { DataSourceItem, ConnectivityState, FreshnessState, ProvenanceType } from '../../types/admin';
 import { PATHS } from '../../app/router/paths';
 
 export const IntelligenceDataSourcesPage: React.FC = () => {
@@ -59,44 +59,115 @@ export const IntelligenceDataSourcesPage: React.FC = () => {
     loadOperationalData();
   }, [loadOperationalData]);
 
-  const renderFreshnessBadge = (state: FreshnessState, isSimulated?: boolean) => {
-    if (isSimulated || state === 'SIMULATED') {
+  const renderConnectivityBadge = (state?: ConnectivityState) => {
+    switch (state) {
+      case 'LIVE':
+        return (
+          <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-md text-[10px] font-mono font-bold bg-emerald-500/15 text-emerald-400 border border-emerald-500/30">
+            <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse" /> LIVE
+          </span>
+        );
+      case 'STATIC':
+        return (
+          <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-md text-[10px] font-mono font-bold bg-sky-500/15 text-sky-400 border border-sky-500/30">
+            STATIC
+          </span>
+        );
+      case 'OFFLINE':
+        return (
+          <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-md text-[10px] font-mono font-bold bg-zinc-800 text-zinc-400 border border-zinc-700">
+            OFFLINE
+          </span>
+        );
+      case 'UNKNOWN':
+      default:
+        return (
+          <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-md text-[10px] font-mono font-bold bg-zinc-900 text-zinc-500 border border-zinc-800">
+            UNKNOWN
+          </span>
+        );
+    }
+  };
+
+  const renderProvenanceBadge = (type?: ProvenanceType, isSimulated?: boolean) => {
+    if (isSimulated || type === 'SIMULATED') {
       return (
-        <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-xs font-mono font-bold bg-purple-500/15 text-purple-400 border border-purple-500/30">
-          <Radio className="w-3 h-3" /> SIMULASI
+        <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-md text-[10px] font-mono font-bold bg-purple-500/15 text-purple-400 border border-purple-500/30">
+          <Radio className="w-3 h-3" /> SIMULATED
         </span>
       );
     }
 
+    switch (type) {
+      case 'OFFICIAL':
+        return (
+          <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-md text-[10px] font-mono font-bold bg-blue-500/15 text-blue-400 border border-blue-500/30">
+            OFFICIAL
+          </span>
+        );
+      case 'OBSERVED':
+        return (
+          <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-md text-[10px] font-mono font-bold bg-cyan-500/15 text-cyan-400 border border-cyan-500/30">
+            OBSERVED
+          </span>
+        );
+      case 'CURATED_REFERENCE':
+        return (
+          <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-md text-[10px] font-mono font-bold bg-amber-500/15 text-amber-400 border border-amber-500/30">
+            CURATED_REFERENCE
+          </span>
+        );
+      case 'COMMUNITY_REPORT':
+        return (
+          <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-md text-[10px] font-mono font-bold bg-teal-500/15 text-teal-400 border border-teal-500/30">
+            COMMUNITY_REPORT
+          </span>
+        );
+      case 'SENTRAVAX_INSIGHT':
+        return (
+          <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-md text-[10px] font-mono font-bold bg-violet-500/15 text-violet-400 border border-violet-500/30">
+            SENTRAVAX_INSIGHT
+          </span>
+        );
+      default:
+        return (
+          <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-md text-[10px] font-mono font-bold bg-zinc-800 text-zinc-400 border border-zinc-700">
+            REFERENCE
+          </span>
+        );
+    }
+  };
+
+  const renderFreshnessBadge = (state?: FreshnessState) => {
     switch (state) {
       case 'FRESH':
         return (
-          <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-xs font-mono font-bold bg-emerald-500/15 text-emerald-400 border border-emerald-500/30">
-            <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse" /> FRESH
+          <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-md text-[10px] font-mono font-bold bg-emerald-500/15 text-emerald-400 border border-emerald-500/30">
+            FRESH
           </span>
         );
       case 'DELAYED':
         return (
-          <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-xs font-mono font-bold bg-amber-500/15 text-amber-400 border border-amber-500/30">
+          <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-md text-[10px] font-mono font-bold bg-amber-500/15 text-amber-400 border border-amber-500/30">
             <AlertTriangle className="w-3 h-3" /> DELAYED
           </span>
         );
       case 'STALE':
         return (
-          <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-xs font-mono font-bold bg-rose-500/15 text-rose-400 border border-rose-500/30">
+          <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-md text-[10px] font-mono font-bold bg-rose-500/15 text-rose-400 border border-rose-500/30">
             <AlertTriangle className="w-3 h-3" /> STALE
           </span>
         );
       case 'UNAVAILABLE':
         return (
-          <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-xs font-mono font-bold bg-red-950 text-red-400 border border-red-800">
+          <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-md text-[10px] font-mono font-bold bg-red-950 text-red-400 border border-red-800">
             <XCircle className="w-3 h-3" /> UNAVAILABLE
           </span>
         );
       case 'UNKNOWN':
       default:
         return (
-          <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-xs font-mono font-bold bg-zinc-800 text-zinc-400 border border-zinc-700">
+          <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-md text-[10px] font-mono font-bold bg-zinc-800 text-zinc-400 border border-zinc-700">
             <Clock className="w-3 h-3" /> UNKNOWN
           </span>
         );
@@ -260,12 +331,16 @@ export const IntelligenceDataSourcesPage: React.FC = () => {
                 className="p-5 flex flex-col md:flex-row md:items-center justify-between gap-4 hover:bg-[#212121] transition-colors"
               >
                 <div className="space-y-1.5 flex-1">
-                  <div className="flex items-center gap-2">
+                  <div className="flex items-center gap-2 flex-wrap">
                     <span className="text-xs font-mono font-bold px-2 py-0.5 rounded-md bg-[#212121] text-[#F59E0B] border border-amber-500/20">
                       {source.category}
                     </span>
                     <span className="text-xs font-mono text-[#8A8A8A]">{source.provider}</span>
-                    {renderFreshnessBadge(source.freshness_state, source.is_simulated)}
+                    <div className="flex items-center gap-1.5 flex-wrap">
+                      {renderConnectivityBadge(source.connectivity_state)}
+                      {renderProvenanceBadge(source.provenance_type, source.is_simulated)}
+                      {renderFreshnessBadge(source.freshness_state)}
+                    </div>
                   </div>
 
                   <h3 className="text-sm font-bold text-white">{source.name}</h3>

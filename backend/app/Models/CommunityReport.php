@@ -32,6 +32,17 @@ class CommunityReport extends Model
         ];
     }
 
+    public const BASELINE_IDS = [1, 9];
+
+    protected static function booted(): void
+    {
+        static::deleting(function (CommunityReport $report) {
+            if (in_array($report->id, self::BASELINE_IDS, true)) {
+                throw new \RuntimeException("Operasi ditolak: CommunityReport baseline #{$report->id} dilindungi dari penghapusan.");
+            }
+        });
+    }
+
     public function verifications(): \Illuminate\Database\Eloquent\Relations\HasMany
     {
         return $this->hasMany(ReportVerification::class, 'community_report_id');
