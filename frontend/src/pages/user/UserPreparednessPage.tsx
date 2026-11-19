@@ -5,7 +5,9 @@ import type {
   EmergencyContactItem, 
   GoBagChecklistItem,
   UpdatePlanPayload,
-  CreateContactPayload
+  CreateContactPayload,
+  SimulationScenarioItem,
+  ScenarioAttemptResult
 } from '../../types';
 import { Card } from '../../components/ui/Card';
 import { Button } from '../../components/ui/Button';
@@ -29,7 +31,14 @@ import {
   Info,
   MapPin,
   Clock,
-  HeartHandshake
+  HeartHandshake,
+  Gamepad2,
+  Award,
+  RotateCcw,
+  Check,
+  XCircle,
+  ArrowLeft,
+  ArrowRight
 } from 'lucide-react';
 import { toast } from 'sonner';
 
@@ -76,6 +85,14 @@ export const UserPreparednessPage: React.FC = () => {
   });
   const [togglingItems, setTogglingItems] = useState<Record<number, boolean>>({});
 
+  // 4. Interactive Simulation Scenarios State
+  const [scenarios, setScenarios] = useState<SimulationScenarioItem[]>([]);
+  const [selectedScenario, setSelectedScenario] = useState<SimulationScenarioItem | null>(null);
+  const [isLoadingScenarioDetail, setIsLoadingScenarioDetail] = useState<boolean>(false);
+  const [selectedAnswers, setSelectedAnswers] = useState<Record<number, string>>({});
+  const [isSubmittingAttempt, setIsSubmittingAttempt] = useState<boolean>(false);
+  const [attemptResult, setAttemptResult] = useState<ScenarioAttemptResult | null>(null);
+
   const titleId = useId();
   const primaryMeetingId = useId();
   const secondaryMeetingId = useId();
@@ -86,9 +103,10 @@ export const UserPreparednessPage: React.FC = () => {
     setIsLoading(true);
     setLoadError(null);
     try {
-      const [planRes, checklistRes] = await Promise.all([
+      const [planRes, checklistRes, scenariosRes] = await Promise.all([
         userService.getFamilyPlan(),
         userService.getChecklist(),
+        userService.getScenarios().catch(() => []),
       ]);
 
       if (planRes?.plan) {
@@ -107,6 +125,8 @@ export const UserPreparednessPage: React.FC = () => {
         setChecklistCategories(checklistRes.categories || {});
         setChecklistStats(checklistRes.stats || { total_items: 0, completed_items: 0, percentage: 0 });
       }
+
+      setScenarios(scenariosRes || []);
     } catch (err: unknown) {
       const msg = err instanceof Error ? err.message : 'Gagal memuat data kesiapsiagaan keluarga.';
       setLoadError(msg);
@@ -285,6 +305,64 @@ export const UserPreparednessPage: React.FC = () => {
     }
   };
 
+  // 4. Scenario Handlers
+  const handleStartScenario = async (scenarioId: number) => {
+    setIsLoadingScenarioDetail(true);
+    setAttemptResult(null);
+    setSelectedAnswers({});
+    try {
+      const detail = await userService.getScenarioDetail(scenarioId);
+      setSelectedScenario(detail);
+    } catch (err) {
+      console.error('Failed to load scenario detail:', err);
+      toast.error('Gagal memuat detail skenario simulasi.');
+    } finally {
+      setIsLoadingScenarioDetail(false);
+    }
+  };
+
+  const handleSelectAnswer = (questionId: number, optionId: string) => {
+    setSelectedAnswers((prev) => ({ ...prev, [questionId]: optionId }));
+  };
+
+  const handleSubmitAttempt = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!selectedScenario || !selectedScenario.questions) return;
+
+    const unanswered = selectedScenario.questions.filter((q) => !selectedAnswers[q.id]);
+    if (unanswered.length > 0) {
+      toast.error('Harap jawab seluruh pertanyaan simulasi sebelum mengirimkan evaluasi.');
+      return;
+    }
+
+    setIsSubmittingAttempt(true);
+    try {
+      const result = await userService.submitScenarioAttempt(selectedScenario.id, selectedAnswers);
+      setAttemptResult(result);
+      if (result.passed) {
+        toast.success(`Selamat! Anda lulus simulasi dengan skor ${result.score_percentage}%.`);
+      } else {
+        toast.warning(`Skor Anda ${result.score_percentage}%. Pelajari rekomendasi keselamatan dan coba lagi.`);
+      }
+    } catch (err: any) {
+      console.error('Failed to submit attempt:', err);
+      toast.error(err.response?.data?.message || 'Gagal mengevaluasi jawaban simulasi.');
+    } finally {
+      setIsSubmittingAttempt(false);
+    }
+  };
+
+  const handleRetakeScenario = () => {
+    setSelectedAnswers({});
+    setAttemptResult(null);
+  };
+
+  const handleBackToScenariosList = () => {
+    setSelectedScenario(null);
+    setAttemptResult(null);
+    setSelectedAnswers({});
+  };
+
   const categoryLabels: Record<string, string> = {
     dokumen: '1. Dokumen & Arsip Penting',
     medis: '2. Medis & Pertolongan Pertama (P3K)',
@@ -435,6 +513,12 @@ export const UserPreparednessPage: React.FC = () => {
             label: 'Tas Siaga Bencana (Go-Bag)', 
             badge: `${checklistStats.percentage}%`, 
             icon: <PackageCheck className="w-4 h-4" /> 
+          },
+          { 
+            id: 'simulation', 
+            label: 'Simulasi Respon Bencana', 
+            badge: scenarios.length > 0 ? `${scenarios.length} Skenario` : undefined, 
+            icon: <Gamepad2 className="w-4 h-4" /> 
           },
         ]}
         activeTab={activeTab}
@@ -761,6 +845,320 @@ export const UserPreparednessPage: React.FC = () => {
             })}
           </div>
         </Card>
+      )}
+
+      {/* ========================================================================= */}
+      {/* TAB 4: SIMULASI RESPON BENCANA INTERAKTIF */}
+      {/* ========================================================================= */}
+      {activeTab === 'simulation' && (
+        <div className="space-y-6">
+          {isLoadingScenarioDetail ? (
+            <Card className="p-8 space-y-4">
+              <Skeleton className="h-6 w-64" />
+              <Skeleton className="h-4 w-96 max-w-full" />
+              <div className="space-y-3 pt-4">
+                <Skeleton className="h-20 rounded-xl" />
+                <Skeleton className="h-20 rounded-xl" />
+              </div>
+            </Card>
+          ) : selectedScenario && attemptResult ? (
+            /* HASIL EVALUASI SIMULASI */
+            <Card className="p-6 sm:p-8 space-y-6">
+              <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-[#E5E7EB] pb-5">
+                <div>
+                  <div className="flex items-center gap-2 mb-1">
+                    <Badge
+                      variant={attemptResult.passed ? 'success' : 'warning'}
+                      className="text-xs font-bold"
+                    >
+                      {attemptResult.passed ? 'LULUS EVALUASI KESELAMATAN' : 'PERLU LATIHAN ULANG'}
+                    </Badge>
+                    <span className="text-xs text-[#6B7280]">
+                      Skor: {attemptResult.earned_score} / {attemptResult.total_possible_score} Poin
+                    </span>
+                  </div>
+                  <h2 className="text-lg sm:text-xl font-extrabold text-[#111827]">
+                    Hasil Simulasi: {attemptResult.scenario_title}
+                  </h2>
+                </div>
+
+                <div className="text-right sm:border-l sm:border-[#E5E7EB] sm:pl-6">
+                  <div className="text-3xl font-black text-[#047857]">
+                    {attemptResult.score_percentage}%
+                  </div>
+                  <span className="text-[11px] text-[#6B7280] uppercase tracking-wider font-semibold">
+                    Akurasi Respon
+                  </span>
+                </div>
+              </div>
+
+              {/* Rincian Jawaban & Penjelasan Edukasi */}
+              <div className="space-y-4">
+                <h3 className="text-xs font-bold uppercase tracking-wider text-[#374151]">
+                  Evaluasi Butir Keputusan Kritis
+                </h3>
+
+                {attemptResult.evaluation_summary.map((item, idx) => (
+                  <div
+                    key={item.question_id || idx}
+                    className={`p-5 rounded-2xl border transition-all ${
+                      item.is_correct
+                        ? 'bg-[#F0FDF4] border-[#BBF7D0]'
+                        : 'bg-[#FEF2F2] border-[#FECACA]'
+                    }`}
+                  >
+                    <div className="flex items-start justify-between gap-3">
+                      <div className="space-y-1">
+                        <span className="text-[11px] font-bold text-[#6B7280] uppercase tracking-wider">
+                          Pertanyaan {idx + 1}
+                        </span>
+                        <h4 className="text-sm font-bold text-[#111827] leading-snug">
+                          {item.question}
+                        </h4>
+                      </div>
+                      <span
+                        className={`inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-xs font-bold shrink-0 ${
+                          item.is_correct
+                            ? 'bg-[#DCFCE7] text-[#15803D]'
+                            : 'bg-[#FEE2E2] text-[#B91C1C]'
+                        }`}
+                      >
+                        {item.is_correct ? (
+                          <>
+                            <Check className="w-3.5 h-3.5" />
+                            Tepat (+10)
+                          </>
+                        ) : (
+                          <>
+                            <XCircle className="w-3.5 h-3.5" />
+                            Kurang Tepat
+                          </>
+                        )}
+                      </span>
+                    </div>
+
+                    <div className="mt-3 pt-3 border-t border-black/5 text-xs space-y-1.5">
+                      <p className="text-[#374151]">
+                        <strong className="text-[#111827]">Rasional Keselamatan Resmi:</strong>{' '}
+                        {item.explanation}
+                      </p>
+                    </div>
+                  </div>
+                ))}
+              </div>
+
+              <div className="flex flex-col sm:flex-row items-center justify-end gap-3 pt-4 border-t border-[#E5E7EB]">
+                <Button
+                  onClick={handleRetakeScenario}
+                  variant="outline"
+                  className="gap-2 w-full sm:w-auto"
+                >
+                  <RotateCcw className="w-4 h-4" />
+                  Ulangi Simulasi Ini
+                </Button>
+                <Button
+                  onClick={handleBackToScenariosList}
+                  variant="primary"
+                  className="gap-2 w-full sm:w-auto"
+                >
+                  <ArrowLeft className="w-4 h-4" />
+                  Pilih Skenario Lain
+                </Button>
+              </div>
+            </Card>
+          ) : selectedScenario ? (
+            /* SOAL SIMULASI AKTIF */
+            <form onSubmit={handleSubmitAttempt} className="space-y-6">
+              <Card className="p-6 space-y-5">
+                <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 border-b border-[#E5E7EB] pb-4">
+                  <div>
+                    <div className="flex items-center gap-2 mb-1">
+                      <Badge variant="neutral" className="capitalize text-xs font-bold">
+                        Tingkat: {selectedScenario.difficulty}
+                      </Badge>
+                      <span className="text-xs text-[#6B7280] flex items-center gap-1 font-semibold">
+                        <Clock className="w-3.5 h-3.5" /> Est. {selectedScenario.estimated_minutes} Menit
+                      </span>
+                    </div>
+                    <h2 className="text-lg font-bold text-[#111827]">
+                      {selectedScenario.title}
+                    </h2>
+                  </div>
+
+                  <Button
+                    type="button"
+                    onClick={handleBackToScenariosList}
+                    variant="outline"
+                    size="sm"
+                    className="gap-1.5 self-start sm:self-auto shrink-0"
+                  >
+                    <ArrowLeft className="w-3.5 h-3.5" />
+                    Daftar Skenario
+                  </Button>
+                </div>
+
+                {/* Skenario Context Brief */}
+                <div className="p-4 rounded-xl bg-[#F0FDF4] border border-[#BBF7D0] text-xs space-y-1">
+                  <div className="flex items-center gap-1.5 font-bold text-[#15803D] uppercase tracking-wider text-[11px]">
+                    <AlertTriangle className="w-3.5 h-3.5" />
+                    Situasi Tanggap Darurat
+                  </div>
+                  <p className="text-[#166534] leading-relaxed">
+                    {selectedScenario.context_brief}
+                  </p>
+                </div>
+
+                {/* Pertanyaan */}
+                <div className="space-y-6 pt-2">
+                  {selectedScenario.questions?.map((q, qIndex) => (
+                    <div key={q.id} className="p-5 rounded-2xl bg-[#F9FAFB] border border-[#E5E7EB] space-y-3">
+                      <div className="flex items-start justify-between gap-3">
+                        <h3 className="text-xs sm:text-sm font-bold text-[#111827] leading-snug">
+                          <span className="text-[#047857] mr-1">Pertanyaan {qIndex + 1}:</span> {q.question}
+                        </h3>
+                        <span className="text-[11px] font-bold px-2 py-0.5 rounded-full bg-white border border-[#D1D5DB] text-[#4B5563] shrink-0">
+                          {q.points} Poin
+                        </span>
+                      </div>
+
+                      <div className="space-y-2 pt-1">
+                        {q.options.map((opt) => {
+                          const isSelected = selectedAnswers[q.id] === opt.id;
+                          return (
+                            <label
+                              key={opt.id}
+                              onClick={() => handleSelectAnswer(q.id, opt.id)}
+                              className={`flex items-start gap-3 p-3.5 rounded-xl border text-xs cursor-pointer transition-all ${
+                                isSelected
+                                  ? 'bg-[#ECFDF5] border-[#047857] text-[#065F46] font-semibold ring-1 ring-[#047857]'
+                                  : 'bg-white border-[#E5E7EB] text-[#374151] hover:bg-neutral-50 hover:border-[#D1D5DB]'
+                              }`}
+                            >
+                              <div className={`w-5 h-5 rounded-full border flex items-center justify-center text-[11px] font-bold shrink-0 mt-0.5 ${
+                                isSelected
+                                  ? 'border-[#047857] bg-[#047857] text-white'
+                                  : 'border-[#D1D5DB] bg-white text-[#6B7280]'
+                              }`}>
+                                {opt.id}
+                              </div>
+                              <span className="flex-1 leading-relaxed">{opt.text}</span>
+                            </label>
+                          );
+                        })}
+                      </div>
+                    </div>
+                  ))}
+                </div>
+
+                <div className="flex items-center justify-between pt-4 border-t border-[#E5E7EB]">
+                  <span className="text-xs text-[#6B7280]">
+                    Jawab seluruh butir di atas untuk menguji ketahanan refleks darurat Anda.
+                  </span>
+                  <Button
+                    type="submit"
+                    variant="primary"
+                    disabled={isSubmittingAttempt}
+                    className="gap-2"
+                  >
+                    {isSubmittingAttempt ? (
+                      <>
+                        <RefreshCw className="w-4 h-4 animate-spin" />
+                        Mengevaluasi...
+                      </>
+                    ) : (
+                      <>
+                        <Award className="w-4 h-4" />
+                        Kirim Jawaban & Evaluasi
+                      </>
+                    )}
+                  </Button>
+                </div>
+              </Card>
+            </form>
+          ) : (
+            /* DAFTAR SKENARIO */
+            <div className="space-y-6">
+              <div className="p-6 rounded-2xl bg-white border border-[#E5E7EB] shadow-xs flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+                <div>
+                  <div className="flex items-center gap-2 mb-1">
+                    <span className="text-xs font-mono uppercase text-[#047857] font-bold">
+                      Uji Kesiapsiagaan Refleks Mandiri
+                    </span>
+                  </div>
+                  <h2 className="text-lg sm:text-xl font-extrabold text-[#111827]">
+                    Katalog Skenario Simulasi Bencana
+                  </h2>
+                  <p className="text-xs text-[#4B5563] mt-1">
+                    Pilih skenario darurat untuk melatih keputusan cepat dalam melindungi diri dan keluarga saat bahaya terjadi.
+                  </p>
+                </div>
+              </div>
+
+              {scenarios.length === 0 ? (
+                <EmptyState
+                  title="Belum Ada Skenario Aktif"
+                  description="Modul simulasi tanggap darurat sedang dipersiapkan oleh analis kebencanaan."
+                  icon={<Gamepad2 className="w-8 h-8 text-[#9CA3AF]" />}
+                />
+              ) : (
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  {scenarios.map((sc) => (
+                    <Card key={sc.id} className="p-6 flex flex-col justify-between hover:border-[#047857] transition-colors">
+                      <div className="space-y-3">
+                        <div className="flex items-center justify-between gap-2">
+                          <Badge
+                            variant={
+                              sc.difficulty === 'pemula'
+                                ? 'success'
+                                : sc.difficulty === 'menengah'
+                                ? 'warning'
+                                : 'danger'
+                            }
+                            className="capitalize text-[11px] font-bold"
+                          >
+                            Tingkat: {sc.difficulty}
+                          </Badge>
+                          <span className="text-xs text-[#6B7280] flex items-center gap-1 font-semibold">
+                            <Clock className="w-3.5 h-3.5" /> {sc.estimated_minutes} Menit
+                          </span>
+                        </div>
+
+                        <div>
+                          <h3 className="text-base font-bold text-[#111827] line-clamp-1">
+                            {sc.title}
+                          </h3>
+                          <p className="text-xs text-[#4B5563] mt-1.5 line-clamp-2 leading-relaxed">
+                            {sc.description}
+                          </p>
+                        </div>
+
+                        <div className="p-3 rounded-xl bg-[#F9FAFB] border border-[#E5E7EB] text-[11px] text-[#4B5563]">
+                          <span className="font-bold text-[#111827] block mb-0.5">Konteks Darurat:</span>
+                          <span className="line-clamp-2 leading-relaxed">{sc.context_brief}</span>
+                        </div>
+                      </div>
+
+                      <div className="pt-4 mt-4 border-t border-[#E5E7EB] flex items-center justify-between">
+                        <span className="text-xs font-semibold text-[#047857]">
+                          Tersedia Soal Pilihan Berganda
+                        </span>
+                        <Button
+                          onClick={() => handleStartScenario(sc.id)}
+                          variant="primary"
+                          size="sm"
+                          className="gap-1.5"
+                        >
+                          <span>Mulai Latihan</span>
+                          <ArrowRight className="w-3.5 h-3.5" />
+                        </Button>
+                      </div>
+                    </Card>
+                  ))}
+                </div>
+              )}
+            </div>
+          )}
+        </div>
       )}
 
       {/* ========================================================================= */}
