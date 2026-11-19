@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Models\Concerns\ProtectsBaselineRecords;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
@@ -32,16 +33,9 @@ class CommunityReport extends Model
         ];
     }
 
-    public const BASELINE_IDS = [1, 9];
+    use ProtectsBaselineRecords;
 
-    protected static function booted(): void
-    {
-        static::deleting(function (CommunityReport $report) {
-            if (in_array($report->id, self::BASELINE_IDS, true)) {
-                throw new \RuntimeException("Operasi ditolak: CommunityReport baseline #{$report->id} dilindungi dari penghapusan.");
-            }
-        });
-    }
+    public const BASELINE_IDS = [1, 9];
 
     public function verifications(): \Illuminate\Database\Eloquent\Relations\HasMany
     {

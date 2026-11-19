@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Models\Concerns\ProtectsBaselineRecords;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
@@ -49,16 +50,9 @@ class AiInsight extends Model
         );
     }
 
-    public const BASELINE_IDS = [1];
+    use ProtectsBaselineRecords;
 
-    protected static function booted(): void
-    {
-        static::deleting(function (AiInsight $model) {
-            if (in_array($model->id, self::BASELINE_IDS, true)) {
-                throw new \RuntimeException("Operasi ditolak: AiInsight baseline #{$model->id} dilindungi dari penghapusan.");
-            }
-        });
-    }
+    public const BASELINE_IDS = [1];
 
     public function region(): BelongsTo
     {

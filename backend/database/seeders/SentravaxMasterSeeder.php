@@ -484,9 +484,10 @@ class SentravaxMasterSeeder extends Seeder
         ];
 
         foreach ($events as $ev) {
-            $event = HazardEvent::updateOrCreate(
-                ['title' => $ev['title']],
-                [
+            $event = HazardEvent::where('title', $ev['title'])->first();
+            if (! $event) {
+                $event = HazardEvent::create([
+                    'title' => $ev['title'],
                     'description' => $ev['description'],
                     'hazard_type_id' => $ev['hazard_type_id'],
                     'data_source_id' => $ev['data_source_id'],
@@ -496,14 +497,14 @@ class SentravaxMasterSeeder extends Seeder
                     'occurred_at' => $ev['occurred_at'],
                     'reported_at' => $ev['reported_at'],
                     'source_metadata' => $ev['source_metadata'],
-                ]
-            );
+                ]);
 
-            DB::statement('
-                UPDATE hazard_events 
-                SET location = ST_SetSRID(ST_MakePoint(?, ?), 4326)
-                WHERE id = ?
-            ', [$ev['lon'], $ev['lat'], $event->id]);
+                DB::statement('
+                    UPDATE hazard_events 
+                    SET location = ST_SetSRID(ST_MakePoint(?, ?), 4326)
+                    WHERE id = ?
+                ', [$ev['lon'], $ev['lat'], $event->id]);
+            }
         }
     }
 
@@ -688,9 +689,9 @@ class SentravaxMasterSeeder extends Seeder
 
         if ($floodType && $regionEast) {
             // Seed Alert 1
-            Alert::updateOrCreate(
-                ['title' => 'Peringatan Siaga 2 Luapan Sungai Ciliwung Hilir'],
-                [
+            if (!Alert::where('title', 'Peringatan Siaga 2 Luapan Sungai Ciliwung Hilir')->exists()) {
+                Alert::create([
+                    'title' => 'Peringatan Siaga 2 Luapan Sungai Ciliwung Hilir',
                     'hazard_event_id' => $floodEvent?->id,
                     'region_id' => $regionEast->id,
                     'hazard_type_id' => $floodType->id,
@@ -701,14 +702,14 @@ class SentravaxMasterSeeder extends Seeder
                     'status' => 'active',
                     'starts_at' => now()->subHours(2),
                     'expires_at' => now()->addDays(7),
-                ]
-            );
+                ]);
+            }
 
-            // Seed Alert 2
+            // Seed Alert 2 & 3
             if ($regionDki) {
-                Alert::updateOrCreate(
-                    ['title' => 'PERINGATAN DINI: Potensi Gelombang Pasang & Banjir Rob Pesisir'],
-                    [
+                if (!Alert::where('title', 'PERINGATAN DINI: Potensi Gelombang Pasang & Banjir Rob Pesisir')->exists()) {
+                    Alert::create([
+                        'title' => 'PERINGATAN DINI: Potensi Gelombang Pasang & Banjir Rob Pesisir',
                         'hazard_event_id' => null,
                         'region_id' => $regionDki->id,
                         'hazard_type_id' => $coastalType?->id,
@@ -719,13 +720,12 @@ class SentravaxMasterSeeder extends Seeder
                         'status' => 'active',
                         'starts_at' => now()->subHours(1),
                         'expires_at' => now()->addDays(7),
-                    ]
-                );
+                    ]);
+                }
 
-                // Seed Alert 3
-                Alert::updateOrCreate(
-                    ['title' => 'DISSEMINASI CAP: Siaga Banjir Luapan DAS Ciliwung Hilir'],
-                    [
+                if (!Alert::where('title', 'DISSEMINASI CAP: Siaga Banjir Luapan DAS Ciliwung Hilir')->exists()) {
+                    Alert::create([
+                        'title' => 'DISSEMINASI CAP: Siaga Banjir Luapan DAS Ciliwung Hilir',
                         'hazard_event_id' => $floodEvent?->id,
                         'region_id' => $regionDki->id,
                         'hazard_type_id' => $floodType->id,
@@ -736,14 +736,19 @@ class SentravaxMasterSeeder extends Seeder
                         'status' => 'active',
                         'starts_at' => now()->subHours(1),
                         'expires_at' => now()->addDays(7),
-                    ]
-                );
+                    ]);
+                }
             }
 
-            // Seed Risk Assessment
-            $riskAssessment = RiskAssessment::updateOrCreate(
-                ['region_id' => $regionEast->id, 'hazard_type_id' => $floodType->id],
-                [
+            // Seed Risk Assessment 1 (Baseline)
+            $riskAssessment = RiskAssessment::where('id', 1)->first()
+                ?? RiskAssessment::where('region_id', $regionEast->id)->where('hazard_type_id', $floodType->id)->first();
+
+            if (! $riskAssessment) {
+                $riskAssessment = RiskAssessment::create([
+                    'id' => 1,
+                    'region_id' => $regionEast->id,
+                    'hazard_type_id' => $floodType->id,
                     'hazard_event_id' => $floodEvent?->id,
                     'title' => 'Penilaian Kerentanan Banjir Luapan Jakarta Timur',
                     'risk_level' => 'high',
@@ -759,13 +764,14 @@ class SentravaxMasterSeeder extends Seeder
                         'historical_frequency' => 'high',
                     ],
                     'assessed_at' => now(),
-                ]
-            );
+                ]);
+            }
 
-            // Seed AI Insight
-            AiInsight::updateOrCreate(
-                ['title' => 'Proyeksi Kenaikan Genangan DAS Ciliwung 6 Jam Ke Depan'],
-                [
+            // Seed AI Insight 1 (Baseline)
+            if (! AiInsight::where('id', 1)->exists()) {
+                AiInsight::create([
+                    'id' => 1,
+                    'title' => 'Proyeksi Kenaikan Genangan DAS Ciliwung 6 Jam Ke Depan',
                     'risk_assessment_id' => $riskAssessment->id,
                     'region_id' => $regionEast->id,
                     'hazard_type_id' => $floodType->id,
@@ -782,8 +788,8 @@ class SentravaxMasterSeeder extends Seeder
                         'sensor_node' => 'Ciliwung-Hilir-04',
                         'water_level_threshold_exceeded' => true,
                     ],
-                ]
-            );
+                ]);
+            }
         }
     }
 
@@ -1021,10 +1027,9 @@ class SentravaxMasterSeeder extends Seeder
         ];
 
         foreach ($shelters as $sData) {
-            Shelter::updateOrCreate(
-                ['name' => $sData['name']],
-                $sData
-            );
+            if (! Shelter::where('name', $sData['name'])->exists()) {
+                Shelter::create($sData);
+            }
         }
     }
 

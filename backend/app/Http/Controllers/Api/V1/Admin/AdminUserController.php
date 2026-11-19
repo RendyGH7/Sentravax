@@ -151,6 +151,13 @@ class AdminUserController extends Controller
             ], 422);
         }
 
+        if (in_array($user->email, ['admin@sentravax.go.id', 'intel@sentravax.go.id', 'user@sentravax.id'], true)) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Operasi ditolak: Akun sistem inti dilindungi dari penghapusan.',
+            ], 403);
+        }
+
         $user->delete();
 
         return response()->json([

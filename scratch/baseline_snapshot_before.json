@@ -1,0 +1,148 @@
+{
+    "risk_assessment_1": {
+        "id": 1,
+        "title": "Penilaian Kerentanan Banjir Luapan Jakarta Timur",
+        "region_id": 3,
+        "hazard_type_id": 1,
+        "risk_score": 78.5,
+        "risk_level": "high",
+        "methodology_version": "v1.0-rules",
+        "created_at": "2026-11-19T07:45:40+00:00",
+        "updated_at": "2026-11-19T08:33:24+00:00"
+    },
+    "ai_insight_1": {
+        "id": 1,
+        "risk_assessment_id": 1,
+        "title": "Proyeksi Kenaikan Genangan DAS Ciliwung 6 Jam Ke Depan",
+        "confidence_score": 0.92,
+        "confidence_level": "HIGH",
+        "generation_mode": "rule_based",
+        "created_at": "2026-11-19T07:45:40+00:00",
+        "updated_at": "2026-11-19T07:45:40+00:00"
+    },
+    "community_report_1": {
+        "id": 1,
+        "title": "Genangan Jalur Rel Kereta",
+        "status": "verified",
+        "created_at": "2026-11-17T05:52:31+00:00",
+        "updated_at": "2026-11-17T05:52:31+00:00"
+    },
+    "community_report_9": {
+        "id": 9,
+        "title": "Banjir Genangan 40cm Menutupi Akses Jalan",
+        "status": "pending",
+        "created_at": "2026-11-17T05:52:57+00:00",
+        "updated_at": "2026-11-17T05:54:12+00:00"
+    },
+    "report_verification_1": {
+        "id": 1,
+        "community_report_id": 1,
+        "previous_status": "pending",
+        "new_status": "verified",
+        "created_at": "2026-11-17T05:52:31+00:00",
+        "updated_at": "2026-11-17T05:52:31+00:00"
+    },
+    "shelters": [
+        {
+            "id": 1,
+            "name": "Gelanggang Remaja Jakarta Timur (GOR Otista)",
+            "verification_status": "VERIFIED",
+            "operational_status": "open",
+            "capacity": 1200,
+            "created_at": "2026-11-18T07:10:47+00:00",
+            "updated_at": "2026-11-19T08:33:24+00:00"
+        },
+        {
+            "id": 2,
+            "name": "RPTRA Rawa Badak Selatan & Lapangan Terbuka",
+            "verification_status": "VERIFIED",
+            "operational_status": "standby",
+            "capacity": 800,
+            "created_at": "2026-11-18T07:10:47+00:00",
+            "updated_at": "2026-11-19T08:33:24+00:00"
+        },
+        {
+            "id": 3,
+            "name": "Stadion Patriot Candrabhaga (Shelter Regional Terpadu)",
+            "verification_status": "VERIFIED",
+            "operational_status": "open",
+            "capacity": 5000,
+            "created_at": "2026-11-18T07:10:47+00:00",
+            "updated_at": "2026-11-19T08:33:24+00:00"
+        },
+        {
+            "id": 4,
+            "name": "Balai Warga RW 07 Kampung Melayu (Titik Kumpul Evakuasi Dini)",
+            "verification_status": "VERIFIED",
+            "operational_status": "open",
+            "capacity": 250,
+            "created_at": "2026-11-18T07:10:47+00:00",
+            "updated_at": "2026-11-19T08:33:24+00:00"
+        },
+        {
+            "id": 5,
+            "name": "Lapangan Terbuka Cipinang Melayu (Dalam Proses Verifikasi Kelayakan)",
+            "verification_status": "PENDING_VERIFICATION",
+            "operational_status": "standby",
+            "capacity": 400,
+            "created_at": "2026-11-18T07:10:47+00:00",
+            "updated_at": "2026-11-19T08:33:24+00:00"
+        }
+    ],
+    "data_sources": [
+        {
+            "id": 2,
+            "name": "BMKG Weather Radar & Observation API",
+            "connectivity_state": "LIVE",
+            "freshness_state": "DELAYED",
+            "provenance_type": "OBSERVED",
+            "status": "active",
+            "created_at": "2026-11-18T07:03:33+00:00"
+        },
+        {
+            "id": 3,
+            "name": "BMKG TEWS Open Data API",
+            "connectivity_state": "LIVE",
+            "freshness_state": "STALE",
+            "provenance_type": "OFFICIAL",
+            "status": "active",
+            "created_at": "2026-11-18T07:03:33+00:00"
+        },
+        {
+            "id": 4,
+            "name": "PVMBG Geological & Volcanic Stream",
+            "connectivity_state": "STATIC",
+            "freshness_state": "UNKNOWN",
+            "provenance_type": "CURATED_REFERENCE",
+            "status": "active",
+            "created_at": "2026-11-18T07:03:33+00:00"
+        },
+        {
+            "id": 5,
+            "name": "InSAR Sentinel-1 Ground Deformation",
+            "connectivity_state": "STATIC",
+            "freshness_state": "UNKNOWN",
+            "provenance_type": "CURATED_REFERENCE",
+            "status": "active",
+            "created_at": "2026-11-18T07:03:33+00:00"
+        },
+        {
+            "id": 6,
+            "name": "Data Observasi Terkurasi SENTRAVAX",
+            "connectivity_state": "OFFLINE",
+            "freshness_state": "UNKNOWN",
+            "provenance_type": "SIMULATED",
+            "status": "active",
+            "created_at": "2026-11-18T07:03:33+00:00"
+        },
+        {
+            "id": 7,
+            "name": "BMKG Common Alerting Protocol (CAP) Inbound Feed",
+            "connectivity_state": "LIVE",
+            "freshness_state": "DELAYED",
+            "provenance_type": "OFFICIAL",
+            "status": "active",
+            "created_at": "2026-11-18T07:03:33+00:00"
+        }
+    ]
+}

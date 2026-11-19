@@ -366,6 +366,13 @@ class AdminShelterController extends Controller
             ], 404);
         }
 
+        if (in_array($shelter->id, Shelter::BASELINE_IDS ?? [1, 2, 3, 4, 5], true)) {
+            return response()->json([
+                'success' => false,
+                'message' => "Operasi ditolak: Shelter baseline #{$shelter->id} merupakan fasilitas evakuasi resmi acuan dan dilindungi dari penghapusan.",
+            ], 403);
+        }
+
         $admin = $request->user();
 
         // Mark inactive and record deletion in provenance before soft delete

@@ -341,19 +341,35 @@ class RiskEngineService
 
         $eval = $this->evaluateLocationRisk($lat, $lon, $regionId);
 
-        return RiskAssessment::updateOrCreate(
-            ['region_id' => $regionId, 'hazard_type_id' => $hazardTypeId],
-            [
-                'title' => $title ?? ('Penilaian Risiko ' . $hazardType->name . ' ' . $region->name),
-                'risk_score' => $eval['risk_score'],
-                'risk_level' => $eval['risk_level'],
-                'methodology_version' => self::METHODOLOGY_VERSION,
-                'impact_radius_meters' => 2000,
-                'affected_population_estimate' => 35000,
-                'calculation_factors' => $eval['factors'],
-                'assessed_at' => now(),
-            ]
-        );
+        // Protect baseline RiskAssessment #1 from being overwritten or mutated
+        $baselineIds = defined(RiskAssessment::class . '::BASELINE_IDS')
+            ? RiskAssessment::BASELINE_IDS
+            : [1];
+
+        $assessment = RiskAssessment::where('region_id', $regionId)
+            ->where('hazard_type_id', $hazardTypeId)
+            ->whereNotIn('id', $baselineIds)
+            ->first();
+
+        if (! $assessment) {
+            $assessment = new RiskAssessment();
+            $assessment->region_id = $regionId;
+            $assessment->hazard_type_id = $hazardTypeId;
+        }
+
+        $assessment->fill([
+            'title' => $title ?? ('Penilaian Risiko ' . $hazardType->name . ' ' . $region->name),
+            'risk_score' => $eval['risk_score'],
+            'risk_level' => $eval['risk_level'],
+            'methodology_version' => self::METHODOLOGY_VERSION,
+            'impact_radius_meters' => 2000,
+            'affected_population_estimate' => 35000,
+            'calculation_factors' => $eval['factors'],
+            'assessed_at' => now(),
+        ]);
+        $assessment->save();
+
+        return $assessment;
     }
 }
 

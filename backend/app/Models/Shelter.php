@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Models\Concerns\ProtectsBaselineRecords;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
@@ -10,7 +11,9 @@ use Illuminate\Support\Facades\DB;
 
 class Shelter extends Model
 {
-    use SoftDeletes;
+    use SoftDeletes, ProtectsBaselineRecords;
+
+    public const BASELINE_IDS = [1, 2, 3, 4, 5];
 
     protected $table = 'shelters';
 
@@ -57,16 +60,8 @@ class Shelter extends Model
         ];
     }
 
-    public const BASELINE_IDS = [1, 2, 3, 4, 5];
-
     protected static function booted(): void
     {
-        static::deleting(function (Shelter $shelter) {
-            if (in_array($shelter->id, self::BASELINE_IDS, true)) {
-                throw new \RuntimeException("Operasi ditolak: Shelter baseline #{$shelter->id} dilindungi dari penghapusan.");
-            }
-        });
-
         static::saved(function (Shelter $shelter) {
             if ($shelter->latitude !== null && $shelter->longitude !== null) {
                 DB::statement('

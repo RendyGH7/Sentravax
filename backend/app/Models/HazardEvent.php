@@ -2,13 +2,18 @@
 
 namespace App\Models;
 
+use App\Models\Concerns\ProtectsBaselineRecords;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 
 class HazardEvent extends Model
 {
+    use ProtectsBaselineRecords;
+
     protected $table = 'hazard_events';
+
+    public const BASELINE_IDS = [1];
 
     protected $fillable = [
         'region_id',

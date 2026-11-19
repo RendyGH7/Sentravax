@@ -182,6 +182,13 @@ class AdminModerationController extends Controller
             ], 404);
         }
 
+        if (in_array($report->id, CommunityReport::BASELINE_IDS ?? [1, 9], true)) {
+            return response()->json([
+                'success' => false,
+                'message' => "Operasi ditolak: Laporan baseline #{$report->id} merupakan data acuan audit dan dilindungi dari penghapusan.",
+            ], 403);
+        }
+
         $report->delete();
 
         return response()->json([

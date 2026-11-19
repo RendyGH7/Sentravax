@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Models\Concerns\ProtectsBaselineRecords;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 
@@ -9,16 +10,9 @@ class DataSource extends Model
 {
     protected $table = 'data_sources';
 
-    public const BASELINE_IDS = [2, 3, 4, 5, 6, 7];
+    use ProtectsBaselineRecords;
 
-    protected static function booted(): void
-    {
-        static::deleting(function (DataSource $dataSource) {
-            if (in_array($dataSource->id, self::BASELINE_IDS, true)) {
-                throw new \RuntimeException("Operasi ditolak: DataSource baseline #{$dataSource->id} dilindungi dari penghapusan.");
-            }
-        });
-    }
+    public const BASELINE_IDS = [2, 3, 4, 5, 6, 7];
 
     protected $fillable = [
         'name',
