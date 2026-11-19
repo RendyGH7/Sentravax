@@ -519,14 +519,28 @@ class PublicController extends Controller
         $transformed = $alerts->through(function ($a) {
             $dataSource = $a->hazardEvent?->dataSource;
 
-            $isVerifiedCap = !empty($a->external_identifier) || !empty($a->sender_name);
+            $raw = is_array($a->raw_provenance) ? $a->raw_provenance : (is_string($a->raw_provenance) ? json_decode($a->raw_provenance, true) : []);
+            $sender = $raw['sender'] ?? null;
+            $hasValidSender = !empty($sender) && (
+                str_ends_with(strtolower($sender), '@bmkg.go.id') ||
+                str_ends_with(strtolower($sender), '@bnpb.go.id') ||
+                in_array(strtolower($sender), ['bmkg', 'bnpb', 'inatews'])
+            );
+            $hasOfficialSource = $dataSource && $dataSource->source_type === 'cap' && in_array($dataSource->provider, [
+                'Badan Meteorologi, Klimatologi, dan Geofisika',
+                'Badan Meteorologi Klimatologi dan Geofisika',
+                'Badan Nasional Penanggulangan Bencana',
+                'BNPB',
+                'BMKG',
+            ]);
+            $isVerifiedCap = $a->alert_class === 'official_warning' && ($hasValidSender || $hasOfficialSource);
             $issuer = [
                 'is_verified' => $isVerifiedCap,
-                'name' => $a->sender_name ?: ($isVerifiedCap ? 'Badan Meteorologi, Klimatologi, dan Geofisika (BMKG)' : 'Penerbit tidak terverifikasi'),
+                'name' => $isVerifiedCap ? ($a->sender_name ?: 'Badan Meteorologi, Klimatologi, dan Geofisika (BMKG)') : 'Penerbit tidak terverifikasi',
                 'provider' => $isVerifiedCap ? ($dataSource?->provider ?? 'Badan Meteorologi, Klimatologi, dan Geofisika') : null,
                 'source_type' => $isVerifiedCap ? 'official_cap' : null,
                 'verification_basis' => $isVerifiedCap
-                    ? 'Peringatan resmi terverifikasi melalui format Common Alerting Protocol (OASIS CAP v1.2).'
+                    ? 'Peringatan resmi terverifikasi melalui format Common Alerting Protocol (OASIS CAP v1.2) dengan identitas penerbit terotorisasi.'
                     : 'Tidak terdapat bukti eksplisit penerbit resmi tersertifikasi pada sistem peringatan dini.',
             ];
 
@@ -599,14 +613,28 @@ class PublicController extends Controller
 
         $dataSource = $alert->hazardEvent?->dataSource;
 
-        $isVerifiedCap = !empty($alert->external_identifier) || !empty($alert->sender_name);
+        $raw = is_array($alert->raw_provenance) ? $alert->raw_provenance : (is_string($alert->raw_provenance) ? json_decode($alert->raw_provenance, true) : []);
+        $sender = $raw['sender'] ?? null;
+        $hasValidSender = !empty($sender) && (
+            str_ends_with(strtolower($sender), '@bmkg.go.id') ||
+            str_ends_with(strtolower($sender), '@bnpb.go.id') ||
+            in_array(strtolower($sender), ['bmkg', 'bnpb', 'inatews'])
+        );
+        $hasOfficialSource = $dataSource && $dataSource->source_type === 'cap' && in_array($dataSource->provider, [
+            'Badan Meteorologi, Klimatologi, dan Geofisika',
+            'Badan Meteorologi Klimatologi dan Geofisika',
+            'Badan Nasional Penanggulangan Bencana',
+            'BNPB',
+            'BMKG',
+        ]);
+        $isVerifiedCap = $alert->alert_class === 'official_warning' && ($hasValidSender || $hasOfficialSource);
         $issuer = [
             'is_verified' => $isVerifiedCap,
-            'name' => $alert->sender_name ?: ($isVerifiedCap ? 'Badan Meteorologi, Klimatologi, dan Geofisika (BMKG)' : 'Penerbit tidak terverifikasi'),
+            'name' => $isVerifiedCap ? ($alert->sender_name ?: 'Badan Meteorologi, Klimatologi, dan Geofisika (BMKG)') : 'Penerbit tidak terverifikasi',
             'provider' => $isVerifiedCap ? ($dataSource?->provider ?? 'Badan Meteorologi, Klimatologi, dan Geofisika') : null,
             'source_type' => $isVerifiedCap ? 'official_cap' : null,
             'verification_basis' => $isVerifiedCap
-                ? 'Peringatan resmi terverifikasi melalui format Common Alerting Protocol (OASIS CAP v1.2).'
+                ? 'Peringatan resmi terverifikasi melalui format Common Alerting Protocol (OASIS CAP v1.2) dengan identitas penerbit terotorisasi.'
                 : 'Tidak terdapat bukti eksplisit penerbit resmi tersertifikasi pada sistem peringatan dini.',
             'external_identifier' => $alert->external_identifier,
         ];

@@ -229,6 +229,29 @@ class IntelligenceApiTest extends TestCase
         }
     }
 
+    /**
+     * Regression Test: Verify AI insight confidence score strictly represents
+     * empirical evidence strength, not a disaster probability percentage.
+     */
+    public function test_ai_insight_evidence_strength_is_not_labeled_as_disaster_probability(): void
+    {
+        $response = $this->actingAs($this->intel)->getJson('/api/v1/intel/insights?limit=1');
+        $response->assertStatus(200);
+
+        $insight = $response->json('data.data.0') ?? $response->json('data.0');
+        if ($insight) {
+            $this->assertArrayHasKey('confidence_score', $insight);
+            $this->assertArrayHasKey('confidence_level', $insight);
+            $this->assertContains($insight['confidence_level'], ['HIGH', 'MEDIUM', 'LOW', 'INSUFFICIENT_DATA']);
+
+            // Verify evidence basis is present and documents multi-source correlation
+            if (isset($insight['evidence']['confidence_basis'])) {
+                $this->assertNotEmpty($insight['evidence']['confidence_basis']);
+                $this->assertStringNotContainsStringIgnoringCase('probabilitas bencana', $insight['evidence']['confidence_basis']);
+            }
+        }
+    }
+
     public function test_admin_and_user_and_guest_are_strictly_forbidden_from_all_intelligence_endpoints(): void
     {
         $endpoints = [
