@@ -1108,8 +1108,16 @@ class PublicController extends Controller
     /**
      * Publicly check status of a submitted report by ID.
      */
-    public function checkReportStatus(int $id): JsonResponse
+    public function checkReportStatus(string $id): JsonResponse
     {
+        $numericId = is_numeric($id) ? (int) $id : (int) preg_replace('/[^0-9]/', '', $id);
+        if ($numericId <= 0) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Laporan bencana dengan ID atau kode pelacakan tersebut tidak ditemukan.',
+            ], 404);
+        }
+
         $report = CommunityReport::query()
             ->select([
                 'id',
@@ -1126,7 +1134,7 @@ class PublicController extends Controller
                 DB::raw('ST_X(location) as longitude'),
             ])
             ->with(['hazardType:id,slug,name,icon', 'region:id,code,name,level'])
-            ->find($id);
+            ->find($numericId);
 
         if (!$report) {
             return response()->json([

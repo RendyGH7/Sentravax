@@ -256,10 +256,10 @@ export const publicService = {
   },
 
   /**
-   * Check status of a submitted report by ID.
+   * Check status of a submitted report by ID or tracking code (e.g. SVX-REP-00001).
    * Endpoint: GET /api/v1/public/reports/{id}
    */
-  async checkReportStatus(id: number): Promise<CommunityReportDetail & { tracking_code: string }> {
+  async checkReportStatus(id: number | string): Promise<CommunityReportDetail & { tracking_code: string }> {
     const res = await apiClient.get<ApiResponse<CommunityReportDetail & { tracking_code: string }>>(`/public/reports/${id}`);
     return res.data.data;
   },

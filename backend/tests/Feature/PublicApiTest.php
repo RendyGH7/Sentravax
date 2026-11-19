@@ -513,4 +513,66 @@ class PublicApiTest extends TestCase
         $resNotFound = $this->getJson('/api/v1/public/alerts/999999');
         $resNotFound->assertStatus(404);
     }
+
+    /**
+     * Test public visitor can submit zero-barrier report and retrieve status via ID and tracking code.
+     */
+    public function test_public_guest_can_submit_zero_barrier_report_and_check_status_via_tracking_code(): void
+    {
+        $hazardType = HazardType::where('slug', 'flood')->first() ?? HazardType::first();
+        $region = Region::where('code', 'ID-JK-JT')->first() ?? Region::first();
+
+        // 1. Submit report as guest
+        $resSubmit = $this->postJson('/api/v1/public/reports', [
+            'hazard_type_id' => $hazardType->id,
+            'region_id' => $region->id,
+            'title' => 'Genangan Air Simulasi Pengujian Demo',
+            'description' => 'Genangan setinggi 20cm di jalan pemukiman.',
+            'latitude' => -6.2188,
+            'longitude' => 106.8656,
+            'reporter_name' => 'Warga Simulasi',
+            'reporter_contact' => '08123456789',
+        ]);
+
+        $resSubmit->assertStatus(201)
+            ->assertJson([
+                'success' => true,
+            ]);
+
+        $reportId = $resSubmit->json('data.id');
+        $trackingCode = $resSubmit->json('data.tracking_code');
+        $this->assertNotEmpty($reportId);
+        $this->assertNotEmpty($trackingCode);
+
+        try {
+            // 2. Check status via numeric ID
+            $resCheckId = $this->getJson("/api/v1/public/reports/{$reportId}");
+            $resCheckId->assertStatus(200)
+                ->assertJson([
+                    'success' => true,
+                    'data' => [
+                        'id' => $reportId,
+                        'status' => 'pending',
+                        'tracking_code' => $trackingCode,
+                    ],
+                ]);
+
+            // 3. Check status via alphanumeric tracking code string
+            $resCheckCode = $this->getJson("/api/v1/public/reports/{$trackingCode}");
+            $resCheckCode->assertStatus(200)
+                ->assertJson([
+                    'success' => true,
+                    'data' => [
+                        'id' => $reportId,
+                        'status' => 'pending',
+                        'tracking_code' => $trackingCode,
+                    ],
+                ]);
+        } finally {
+            // Clean up to protect baseline database integrity
+            if ($reportId && $reportId > 1 && $reportId !== 9) {
+                \App\Models\CommunityReport::where('id', $reportId)->delete();
+            }
+        }
+    }
 }
