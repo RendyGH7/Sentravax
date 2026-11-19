@@ -111,6 +111,10 @@ class AdminDisasterController extends Controller
 
     public function storeEvent(Request $request): JsonResponse
     {
+        if ($request->has('started_at') && ! $request->has('occurred_at')) {
+            $request->merge(['occurred_at' => $request->input('started_at')]);
+        }
+
         $validated = $request->validate([
             'region_id' => ['required', 'integer', 'exists:regions,id'],
             'hazard_type_id' => ['required', 'integer', 'exists:hazard_types,id'],
@@ -268,6 +272,10 @@ class AdminDisasterController extends Controller
 
     public function storeAlert(Request $request): JsonResponse
     {
+        if ($request->has('effective_at') && ! $request->has('starts_at')) {
+            $request->merge(['starts_at' => $request->input('effective_at')]);
+        }
+
         $validated = $request->validate([
             'hazard_type_id' => ['required', 'integer', 'exists:hazard_types,id'],
             'region_id' => ['required', 'integer', 'exists:regions,id'],
@@ -379,6 +387,10 @@ class AdminDisasterController extends Controller
 
     public function storeEducation(Request $request): JsonResponse
     {
+        if ($request->has('content') && ! $request->has('content_body')) {
+            $request->merge(['content_body' => $request->input('content')]);
+        }
+
         $validated = $request->validate([
             'hazard_type_id' => ['nullable', 'integer', 'exists:hazard_types,id'],
             'title' => ['required', 'string', 'max:255'],
@@ -412,6 +424,10 @@ class AdminDisasterController extends Controller
 
     public function updateEducation(Request $request, int $id): JsonResponse
     {
+        if ($request->has('content') && ! $request->has('content_body')) {
+            $request->merge(['content_body' => $request->input('content')]);
+        }
+
         $article = EducationContent::find($id);
 
         if (! $article) {
