@@ -21,6 +21,7 @@ import { PublicAboutPage } from '../../pages/public/PublicAboutPage';
 import { LoginPage } from '../../pages/public/LoginPage';
 import { RegisterPage } from '../../pages/public/RegisterPage';
 import { ForgotPasswordPage } from '../../pages/public/ForgotPasswordPage';
+import { ResetPasswordPage } from '../../pages/public/ResetPasswordPage';
 import { NotFoundPage } from '../../pages/public/NotFoundPage';
 
 // User Portal Pages
@@ -72,6 +73,7 @@ export const router = createBrowserRouter([
       { path: 'login', element: <LoginPage /> },
       { path: 'register', element: <RegisterPage /> },
       { path: 'forgot-password', element: <ForgotPasswordPage /> },
+      { path: 'reset-password', element: <ResetPasswordPage /> },
       { path: '*', element: <NotFoundPage /> },
     ],
   },

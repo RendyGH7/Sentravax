@@ -251,6 +251,7 @@ class AuthController extends Controller
             'token' => ['required', 'string'],
             'email' => ['required', 'string', 'email'],
             'password' => ['required', 'string', Password::min(8), 'confirmed'],
+            'password_confirmation' => ['required', 'string'],
         ], [
             'token.required' => 'Token pemulihan kata sandi tidak valid atau hilang.',
             'email.required' => 'Alamat email wajib diisi.',
@@ -290,6 +291,9 @@ class AuthController extends Controller
             'success' => false,
             'message' => 'Tautan pemulihan kata sandi tidak valid atau telah kedaluwarsa. Silakan ajukan permintaan baru.',
             'error' => 'INVALID_RESET_TOKEN',
+            'errors' => [
+                'token' => ['Tautan pemulihan kata sandi tidak valid atau telah kedaluwarsa.'],
+            ],
         ], Response::HTTP_UNPROCESSABLE_ENTITY);
     }
 }
