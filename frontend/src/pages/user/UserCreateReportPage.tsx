@@ -61,6 +61,8 @@ export const UserCreateReportPage: React.FC = () => {
 
   // Submission outcome states
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [rateLimitRemaining, setRateLimitRemaining] = useState<number>(0);
+  const [rateLimitMessage, setRateLimitMessage] = useState<string | null>(null);
   const [submittedReport, setSubmittedReport] = useState<{
     id: number;
     tracking_code?: string;
@@ -70,6 +72,26 @@ export const UserCreateReportPage: React.FC = () => {
     is_duplicate?: boolean;
     photo_url?: string | null;
   } | null>(null);
+
+  // Active rate-limit countdown effect
+  useEffect(() => {
+    if (rateLimitRemaining <= 0) {
+      return;
+    }
+
+    const timer = setInterval(() => {
+      setRateLimitRemaining((prev) => {
+        if (prev <= 1) {
+          clearInterval(timer);
+          setRateLimitMessage(null);
+          return 0;
+        }
+        return prev - 1;
+      });
+    }, 1000);
+
+    return () => clearInterval(timer);
+  }, [rateLimitRemaining]);
 
   useEffect(() => {
     let isMounted = true;
@@ -193,6 +215,11 @@ export const UserCreateReportPage: React.FC = () => {
       return;
     }
 
+    if (rateLimitRemaining > 0) {
+      toast.warning(`Harap tunggu ${rateLimitRemaining} detik sebelum mengirim laporan baru.`);
+      return;
+    }
+
     setIsSubmitting(true);
     try {
       if (isAuthenticated) {
@@ -244,8 +271,34 @@ export const UserCreateReportPage: React.FC = () => {
       }
     } catch (err: any) {
       console.error('Failed to submit report:', err);
-      const msg = err.response?.data?.message || 'Gagal mengirim laporan bencana.';
-      toast.error(msg);
+
+      if (err.response?.status === 429) {
+        // HTTP 429 Rate Limiting
+        const retryAfterSec = Number(err.response?.data?.retry_after)
+          || parseInt(err.response?.headers?.['retry-after'], 10)
+          || 60;
+        setRateLimitRemaining(retryAfterSec);
+        const customMsg = err.response?.data?.message
+          || `Batas pengiriman laporan tercapai. Demi keandalan sistem, mohon tunggu ${retryAfterSec} detik sebelum mengirim kembali.`;
+        setRateLimitMessage(customMsg);
+        toast.warning(customMsg);
+      } else if (err.response?.status === 422) {
+        // HTTP 422 Validation error
+        const validationErrors = err.response?.data?.errors;
+        if (validationErrors) {
+          const firstKey = Object.keys(validationErrors)[0];
+          const firstMsg = validationErrors[firstKey]?.[0] || 'Validasi formulir laporan gagal.';
+          toast.error(firstMsg);
+        } else {
+          toast.error(err.response?.data?.message || 'Data yang dimasukkan tidak valid.');
+        }
+      } else if (!err.response) {
+        // Network / connectivity issue
+        toast.error('Koneksi terputus atau server tidak merespons. Periksa koneksi internet Anda lalu coba lagi.');
+      } else {
+        const msg = err.response?.data?.message || 'Gagal mengirim laporan bencana.';
+        toast.error(msg);
+      }
     } finally {
       setIsSubmitting(false);
     }
@@ -722,6 +775,19 @@ export const UserCreateReportPage: React.FC = () => {
             </div>
           )}
 
+          {/* Rate limit warning banner */}
+          {rateLimitRemaining > 0 && (
+            <div className="p-3.5 rounded-xl bg-[#FEF3C7] border border-[#FDE68A] text-[#92400E] text-xs flex items-center gap-2.5">
+              <Clock className="w-4 h-4 text-[#D97706] animate-pulse shrink-0" />
+              <div className="flex-1">
+                <span className="font-bold block">Batas Frekuensi Pengiriman Aktif</span>
+                <span className="text-[11px] leading-relaxed">
+                  {rateLimitMessage || `Sistem menerapkan jeda verifikasi pelaporan. Harap tunggu ${rateLimitRemaining} detik sebelum mengirimkan laporan kembali.`}
+                </span>
+              </div>
+            </div>
+          )}
+
           {/* Submit Action */}
           <div className="pt-4 border-t border-[#E5E7EB] flex items-center justify-between">
             <span className="text-[11px] text-[#6B7280]">
@@ -730,11 +796,25 @@ export const UserCreateReportPage: React.FC = () => {
             <div className="flex gap-3">
               <button
                 type="submit"
-                disabled={isSubmitting}
-                className="inline-flex items-center gap-2 px-6 py-2.5 rounded-xl bg-[#047857] hover:bg-[#065F46] text-white text-xs font-bold transition-all shadow-xs disabled:opacity-50"
+                disabled={isSubmitting || rateLimitRemaining > 0}
+                className="inline-flex items-center gap-2 px-6 py-2.5 rounded-xl bg-[#047857] hover:bg-[#065F46] text-white text-xs font-bold transition-all shadow-xs disabled:opacity-50 disabled:cursor-not-allowed"
               >
-                <SendHorizontal className="w-3.5 h-3.5" />
-                <span>{isSubmitting ? 'Mengirim Laporan...' : 'Kirim Laporan Resmi'}</span>
+                {rateLimitRemaining > 0 ? (
+                  <>
+                    <Clock className="w-3.5 h-3.5 animate-spin" />
+                    <span>Tunggu ({rateLimitRemaining}s)</span>
+                  </>
+                ) : isSubmitting ? (
+                  <>
+                    <RefreshCw className="w-3.5 h-3.5 animate-spin" />
+                    <span>Mengirim Laporan...</span>
+                  </>
+                ) : (
+                  <>
+                    <SendHorizontal className="w-3.5 h-3.5" />
+                    <span>Kirim Laporan Resmi</span>
+                  </>
+                )}
               </button>
             </div>
           </div>

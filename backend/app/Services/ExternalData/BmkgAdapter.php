@@ -63,7 +63,9 @@ class BmkgAdapter
 
                     return [
                         'status' => 'SUCCESS',
+                        'connectivity_state' => FreshnessClassifierService::CONNECTIVITY_LIVE,
                         'freshness_state' => 'LIVE',
+                        'provenance_type' => FreshnessClassifierService::PROVENANCE_OFFICIAL,
                         'items_fetched' => 1,
                         'items_persisted' => $itemsPersisted,
                         'duration_ms' => $durationMs,
@@ -91,7 +93,9 @@ class BmkgAdapter
 
         return [
             'status' => 'FAILED',
-            'freshness_state' => 'UNAVAILABLE',
+            'connectivity_state' => FreshnessClassifierService::CONNECTIVITY_OFFLINE,
+            'freshness_state' => FreshnessClassifierService::STATE_UNAVAILABLE,
+            'provenance_type' => FreshnessClassifierService::PROVENANCE_OFFICIAL,
             'items_fetched' => 0,
             'items_persisted' => 0,
             'duration_ms' => $durationMs,

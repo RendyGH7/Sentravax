@@ -34,5 +34,15 @@ class DataSourceSyncRun extends Model
     {
         return $this->belongsTo(DataSource::class);
     }
+
+    public function getConnectivityStateAttribute(): string
+    {
+        return $this->provenance_metadata['connectivity_state'] ?? 'UNKNOWN';
+    }
+
+    public function getProvenanceTypeAttribute(): string
+    {
+        return $this->provenance_metadata['provenance_type'] ?? 'UNKNOWN';
+    }
 }
 

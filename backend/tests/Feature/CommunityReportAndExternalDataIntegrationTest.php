@@ -215,6 +215,8 @@ class CommunityReportAndExternalDataIntegrationTest extends TestCase
         $this->assertEquals('LIVE', $tewsRun->connectivity_state);
         $this->assertEquals('OFFICIAL', $tewsRun->provenance_type);
 
+        $earthquakeCountBefore = HazardEvent::where('hazard_type_id', HazardType::where('slug', 'earthquake')->value('id'))->count();
+
         // Sync Weather Radar: should route to weather adapter, detect 404, report UNAVAILABLE/FAILED, NEVER create earthquake
         $weatherRun = $syncService->syncDataSource($weatherSource);
         $this->assertEquals('FAILED', $weatherRun->status);
@@ -223,5 +225,43 @@ class CommunityReportAndExternalDataIntegrationTest extends TestCase
         $this->assertEquals('OFFICIAL', $weatherRun->provenance_type);
         $this->assertEquals(0, $weatherRun->items_persisted);
         $this->assertStringContainsString('404', $weatherRun->error_message ?? '');
+
+        // Verify that weather sync did NOT generate any earthquake events
+        $earthquakeCountAfter = HazardEvent::where('hazard_type_id', HazardType::where('slug', 'earthquake')->value('id'))->count();
+        $this->assertEquals($earthquakeCountBefore, $earthquakeCountAfter);
+    }
+
+    /**
+     * Test public report rate limit returns structured 429 response with retry_after.
+     */
+    public function test_public_report_rate_limit_returns_structured_429_with_retry_after(): void
+    {
+        $hazardType = HazardType::first();
+        $region = Region::first();
+
+        // Exhaust the 20-request limit
+        for ($i = 0; $i < 20; $i++) {
+            $this->withHeaders(['X-Test-Rate-Limit' => 'true'])
+                ->postJson('/api/v1/public/reports', []);
+        }
+
+        // The 21st request must trigger HTTP 429
+        $response = $this->withHeaders(['X-Test-Rate-Limit' => 'true'])
+            ->postJson('/api/v1/public/reports', [
+                'hazard_type_id' => $hazardType->id,
+                'region_id' => $region->id,
+                'title' => 'Laporan Melebihi Batas',
+                'description' => 'Mencapai batas 20 laporan per menit.',
+                'latitude' => -6.2088,
+                'longitude' => 106.8456,
+            ]);
+
+        $response->assertStatus(429);
+        $this->assertNotEmpty($response->headers->get('Retry-After'));
+        $this->assertFalse($response->json('success'));
+        $this->assertStringContainsString('Batas pengiriman laporan tercapai', $response->json('message'));
+        $this->assertNotNull($response->json('retry_after'));
+
+        RateLimiter::clear(sha1('public-report' . '127.0.0.1'));
     }
 }

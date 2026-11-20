@@ -10,6 +10,7 @@ class DataSyncService
 {
     public function __construct(
         protected BmkgAdapter $bmkgAdapter,
+        protected BmkgWeatherRadarAdapter $bmkgWeatherRadarAdapter,
         protected BnpbAdapter $bnpbAdapter,
         protected NasaFirmsAdapter $nasaFirmsAdapter,
         protected CapAdapter $capAdapter,
@@ -26,12 +27,30 @@ class DataSyncService
         try {
             $name = strtolower($dataSource->name);
             $sourceType = strtolower($dataSource->source_type ?? '');
+            $category = strtolower($dataSource->category ?? '');
+            $endpoint = strtolower($dataSource->endpoint_url ?? '');
 
             $res = match (true) {
-                str_contains($name, 'cap') || $sourceType === 'cap' => $this->capAdapter->sync($dataSource),
-                str_contains($name, 'bmkg') => $this->bmkgAdapter->sync($dataSource),
-                str_contains($name, 'bnpb') => $this->bnpbAdapter->sync($dataSource),
-                str_contains($name, 'firms') || str_contains($name, 'nasa') => $this->nasaFirmsAdapter->sync($dataSource),
+                // 1. CAP Inbound Alert Feed (OASIS CAP)
+                $sourceType === 'cap' || $category === 'warning' || str_contains($name, 'cap')
+                    => $this->capAdapter->sync($dataSource),
+
+                // 2. BMKG Weather Radar & Observation (Meteorology)
+                $category === 'weather' || str_contains($name, 'radar') || str_contains($name, 'weather') || str_contains($name, 'cuaca') || str_contains($endpoint, '/weather')
+                    => $this->bmkgWeatherRadarAdapter->sync($dataSource),
+
+                // 3. BMKG InaTEWS Seismic Feed (Seismology / Earthquake)
+                $category === 'seismology' || str_contains($name, 'tews') || str_contains($name, 'gempa') || str_contains($name, 'inatews') || str_contains($endpoint, 'autogempa')
+                    => $this->bmkgAdapter->sync($dataSource),
+
+                // 4. BNPB DIBI Disaster Database
+                $category === 'historical' || str_contains($name, 'bnpb') || str_contains($name, 'dibi')
+                    => $this->bnpbAdapter->sync($dataSource),
+
+                // 5. NASA FIRMS Active Fire Satellite
+                $category === 'wildfire' || str_contains($name, 'firms') || str_contains($name, 'nasa')
+                    => $this->nasaFirmsAdapter->sync($dataSource),
+
                 default => [
                     'status' => 'SUCCESS',
                     'connectivity_state' => $dataSource->is_simulated ? 'OFFLINE' : 'STATIC',

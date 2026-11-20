@@ -47,10 +47,20 @@ class AppServiceProvider extends ServiceProvider
         });
 
         RateLimiter::for('public-report', function (Request $request) {
-            if (app()->environment('testing')) {
+            if (app()->environment('testing') && ! $request->hasHeader('X-Test-Rate-Limit')) {
                 return Limit::none();
             }
-            return Limit::perMinute(20)->by($request->user()?->id ?: $request->ip());
+            return Limit::perMinute(20)
+                ->by($request->user()?->id ?: $request->ip())
+                ->response(function (Request $request, array $headers) {
+                    $retryAfter = (int) ($headers['Retry-After'] ?? 60);
+
+                    return response()->json([
+                        'success' => false,
+                        'message' => "Batas pengiriman laporan tercapai. Demi keandalan sistem dan verifikasi berjenjang, silakan tunggu {$retryAfter} detik sebelum mengirimkan laporan baru.",
+                        'retry_after' => $retryAfter,
+                    ], 429, $headers);
+                });
         });
     }
 
