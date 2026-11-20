@@ -5,6 +5,30 @@ namespace App\Models\Concerns;
 use Illuminate\Database\Eloquent\Builder;
 use RuntimeException;
 
+/**
+ * ProtectsBaselineRecords Trait
+ *
+ * Provides application-layer protection for immutable benchmark baseline records.
+ *
+ * ARCHITECTURAL PROTECTION BOUNDARIES:
+ * 1. PROTECTED (ORM Layer):
+ *    - Eloquent Model instance deletion ($model->delete())
+ *    - Eloquent Model instance unauthorized updates ($model->update())
+ *    - Eloquent Query Builder mass deletion (Model::where(...)->delete())
+ *    - Eloquent Query Builder force deletion (Model::where(...)->forceDelete())
+ *    - Eloquent Query Builder mass update (Model::where(...)->update([...]))
+ *    - Eloquent Query Builder table truncation (Model::truncate())
+ *    - Eloquent Query Builder upsert operations (Model::upsert([...]))
+ *
+ * 2. UNPROTECTED / BYPASS VECTORS (Database Connection Layer):
+ *    - Direct Database Query Builder (DB::table('...')->delete())
+ *    - Raw SQL executions (DB::statement('DELETE FROM ...'))
+ *    - Direct database management clients (psql, DBeaver, pgAdmin)
+ *    - PostgreSQL foreign key ON DELETE CASCADE triggered by raw SQL
+ *
+ * Note: Absolute database-level protection in production environments requires
+ * PostgreSQL triggers (BEFORE DELETE/UPDATE) and privilege restrictions (REVOKE TRUNCATE).
+ */
 trait ProtectsBaselineRecords
 {
     /**
