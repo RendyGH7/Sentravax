@@ -22,6 +22,7 @@ import {
   ChevronRight
 } from 'lucide-react';
 import { toast } from 'sonner';
+import { DataTrustGroup } from '../../components/shared/DataTrustBadges';
 
 export const IntelligenceOverviewPage: React.FC = () => {
   const [data, setData] = useState<IntelligenceOverviewData | null>(null);
@@ -130,51 +131,6 @@ export const IntelligenceOverviewPage: React.FC = () => {
       });
     } catch {
       return iso;
-    }
-  };
-
-  // Helper to resolve honest effective freshness
-  const getEffectiveFreshness = (source: DataSourceItem): string => {
-    if (source.name.toLowerCase().includes('terkurasi') || source.source_type === 'curated') {
-      return 'STATIC';
-    }
-    const statusStr = String(source.status).toLowerCase();
-    if (statusStr === 'pending' || statusStr === 'offline') {
-      return 'UNAVAILABLE';
-    }
-    return source.freshness_state || 'STATIC';
-  };
-
-  // Helper to render freshness badge
-  const renderFreshnessBadge = (state?: string) => {
-    switch (state) {
-      case 'LIVE':
-        return (
-          <span className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full text-[10px] font-mono font-bold uppercase bg-emerald-950/80 text-[#10B981] border border-emerald-500/40">
-            <span className="w-1.5 h-1.5 rounded-full bg-[#10B981] animate-pulse"></span>
-            LIVE
-          </span>
-        );
-      case 'STATIC':
-        return (
-          <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-[10px] font-mono font-bold uppercase bg-[#212121] text-[#A3A3A3] border border-[#383838]">
-            STATIC
-          </span>
-        );
-      case 'STALE':
-        return (
-          <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-[10px] font-mono font-bold uppercase bg-amber-950/70 text-[#F59E0B] border border-amber-500/40">
-            STALE
-          </span>
-        );
-      case 'UNAVAILABLE':
-      case 'FAILED':
-      default:
-        return (
-          <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-[10px] font-mono font-bold uppercase bg-rose-950/70 text-rose-400 border border-rose-500/40">
-            UNAVAILABLE
-          </span>
-        );
     }
   };
 
@@ -627,7 +583,13 @@ export const IntelligenceOverviewPage: React.FC = () => {
                       <h3 className="text-xs font-bold text-[#FFFFFF]">{source.name}</h3>
                       <p className="text-[11px] text-[#8A8A8A]">{source.provider}</p>
                     </div>
-                    {renderFreshnessBadge(getEffectiveFreshness(source))}
+                    <DataTrustGroup
+                      connectivity={source.connectivity_state}
+                      freshness={source.freshness_state}
+                      provenance={source.provenance_type}
+                      isSimulated={source.is_simulated}
+                      size="xs"
+                    />
                   </div>
 
                   <div className="flex items-center justify-between text-[11px] font-mono text-[#8A8A8A] pt-1 border-t border-[#212121]">

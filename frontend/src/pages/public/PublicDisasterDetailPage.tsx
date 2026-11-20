@@ -37,6 +37,7 @@ import type {
 } from '../../types/disaster';
 import { createMarkerIcon } from '../../components/map/map-icons';
 import { Button } from '../../components/ui/Button';
+import { DataTrustGroup } from '../../components/shared/DataTrustBadges';
 
 // Safe date formatter for Indonesian locale (WIB)
 function formatEventDate(dateStr?: string | null): string {
@@ -362,7 +363,6 @@ export const PublicDisasterDetailPage: React.FC = () => {
   const sev = getSeverityBadge(eventDetail.severity);
   const stat = getStatusBadge(eventDetail.status);
   const provenanceStatus = eventDetail.data_source?.provenance_status || eventDetail.provenance_status;
-  const provenanceLabel = eventDetail.data_source?.provenance_label || eventDetail.provenance_label;
   const isLive = provenanceStatus === 'LIVE';
   const hasCoordinates =
     typeof eventDetail.coordinates?.latitude === 'number' &&
@@ -416,20 +416,13 @@ export const PublicDisasterDetailPage: React.FC = () => {
                     {eventDetail.hazard_type?.name || 'Kejadian Bencana'}
                   </span>
                   <span className="text-gray-300">•</span>
-                  <span
-                    className={`inline-flex items-center gap-1 px-2.5 py-0.5 rounded-md font-bold font-mono text-[11px] ${
-                      isLive
-                        ? 'bg-emerald-50 text-emerald-700 border border-emerald-200'
-                        : 'bg-gray-100 text-gray-700 border border-gray-200'
-                    }`}
-                  >
-                    <span
-                      className={`w-1.5 h-1.5 rounded-full ${
-                        isLive ? 'bg-emerald-500 animate-pulse' : 'bg-gray-400'
-                      }`}
-                    />
-                    {provenanceLabel || (isLive ? 'LIVE (TELEMETRI)' : 'STATIC (TERKURASI)')}
-                  </span>
+                  <DataTrustGroup
+                    connectivity={eventDetail.connectivity_state || eventDetail.data_source?.connectivity_state || (isLive ? 'LIVE' : 'STATIC')}
+                    provenance={eventDetail.provenance_type || eventDetail.data_source?.provenance_type || (eventDetail.is_simulated ? 'SIMULATED' : 'OFFICIAL')}
+                    freshness={eventDetail.freshness_state || eventDetail.data_source?.freshness_state}
+                    isSimulated={eventDetail.is_simulated || eventDetail.data_source?.is_simulated}
+                    size="xs"
+                  />
                 </div>
 
                 <h1 className="text-xl sm:text-2xl lg:text-3xl font-extrabold text-[#111827] tracking-tight leading-snug">
@@ -750,19 +743,15 @@ export const PublicDisasterDetailPage: React.FC = () => {
                     {eventDetail.data_source?.source_type || 'Tidak tercatat'}
                   </span>
                 </div>
-                <div className="flex items-center justify-between pt-1 border-t border-gray-200">
-                  <span className="text-[#6B7280]">Status Data:</span>
-                  <span className="font-bold text-[#111827] flex items-center gap-1.5">
-                    <span
-                      className={`w-1.5 h-1.5 rounded-full ${
-                        isLive ? 'bg-emerald-500 animate-pulse' : 'bg-gray-400'
-                      }`}
-                    />
-                    {eventDetail.data_source?.provenance_label || (isLive ? 'LIVE' : 'STATIC')}
-                    <span className="text-[#6B7280] font-normal">
-                      ({eventDetail.data_source?.status === 'active' ? 'Aktif' : 'Terarsip'})
-                    </span>
-                  </span>
+                <div className="flex items-center justify-between pt-2 border-t border-gray-200">
+                  <span className="text-[#6B7280]">Status Kepercayaan:</span>
+                  <DataTrustGroup
+                    connectivity={eventDetail.connectivity_state || eventDetail.data_source?.connectivity_state || (isLive ? 'LIVE' : 'STATIC')}
+                    provenance={eventDetail.provenance_type || eventDetail.data_source?.provenance_type || (eventDetail.is_simulated ? 'SIMULATED' : 'OFFICIAL')}
+                    freshness={eventDetail.freshness_state || eventDetail.data_source?.freshness_state}
+                    isSimulated={eventDetail.is_simulated || eventDetail.data_source?.is_simulated}
+                    size="xs"
+                  />
                 </div>
               </div>
             </section>

@@ -106,6 +106,7 @@ export interface HazardEventDetail extends HazardEventItem {
     provenance_type?: 'OFFICIAL' | 'OBSERVED' | 'COMMUNITY_REPORT' | 'SENTRAVAX_INSIGHT' | 'SIMULATED' | 'CURATED_REFERENCE';
     provenance_status?: 'LIVE' | 'STATIC' | 'SIMULATED' | 'STALE' | 'UNAVAILABLE';
     provenance_label?: string;
+    is_simulated?: boolean;
   } | null;
 }
 
@@ -235,8 +236,12 @@ export interface HazardEventItem {
   source?: string;
   source_name?: string;
   provider_name?: string;
+  connectivity_state?: 'LIVE' | 'STATIC' | 'OFFLINE' | 'UNKNOWN';
+  freshness_state?: 'FRESH' | 'DELAYED' | 'STALE' | 'UNAVAILABLE' | 'UNKNOWN';
+  provenance_type?: 'OFFICIAL' | 'OBSERVED' | 'COMMUNITY_REPORT' | 'SENTRAVAX_INSIGHT' | 'SIMULATED' | 'CURATED_REFERENCE';
   provenance_status?: 'LIVE' | 'STATIC' | 'SIMULATED' | 'STALE' | 'UNAVAILABLE';
   provenance_label?: string;
+  is_simulated?: boolean;
 }
 
 export interface AlertItem {

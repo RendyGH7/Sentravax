@@ -38,6 +38,7 @@ import type {
 import { Button } from '../../components/ui/Button';
 import { EmptyState } from '../../components/ui/EmptyState';
 import { DisasterMap } from '../../components/map/DisasterMap';
+import { DataTrustGroup } from '../../components/shared/DataTrustBadges';
 
 // Safe date formatter for Indonesian locale (WIB)
 function formatEventDate(dateStr?: string): string {
@@ -800,20 +801,13 @@ export const PublicDisastersPage: React.FC = () => {
                             {ev.source_name || ev.provider_name || 'Sumber data tidak tercatat'}
                           </span>
 
-                          <span
-                            className={`inline-flex items-center gap-1 px-2 py-0.5 rounded-md font-bold font-mono text-[10px] ${
-                              isLive
-                                ? 'bg-emerald-50 text-emerald-700 border border-emerald-200'
-                                : 'bg-gray-100 text-gray-600 border border-gray-200'
-                            }`}
-                          >
-                            <span
-                              className={`w-1.5 h-1.5 rounded-full ${
-                                isLive ? 'bg-emerald-500 animate-pulse' : 'bg-gray-400'
-                              }`}
-                            />
-                            {ev.provenance_label || (isLive ? 'LIVE' : 'STATIC')}
-                          </span>
+                          <DataTrustGroup
+                            connectivity={ev.connectivity_state || (isLive ? 'LIVE' : 'STATIC')}
+                            provenance={ev.provenance_type || (ev.is_simulated ? 'SIMULATED' : 'OFFICIAL')}
+                            freshness={ev.freshness_state}
+                            isSimulated={ev.is_simulated}
+                            size="xs"
+                          />
                         </div>
                       </div>
                     </div>

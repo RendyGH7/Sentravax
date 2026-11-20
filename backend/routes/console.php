@@ -113,6 +113,68 @@ Artisan::command('db:ensure-baseline', function () {
 // ==========================================
 // SENTRAVAX CRON SCHEDULER & PERIODIC TASKS
 // ==========================================
+
+// 1. BMKG Common Alerting Protocol (CAP) Inbound Feed (Every 5 Minutes)
+Artisan::command('sentravax:sync-cap {--direct : Execute synchronously instead of queue}', function () {
+    $sync = app(\App\Services\ExternalData\DataSyncService::class);
+    $this->info('Checking BMKG Common Alerting Protocol (CAP) inbound feed...');
+    $capSource = \App\Models\DataSource::where('source_type', 'cap')
+        ->where('status', 'active')
+        ->first()
+        ?? \App\Models\DataSource::where('name', 'like', '%CAP%')->where('status', 'active')->first();
+
+    if (! $capSource) {
+        $this->warn('No active CAP DataSource found.');
+        return 0;
+    }
+
+    if ($this->option('direct')) {
+        $run = $sync->syncDataSource($capSource);
+        $this->info(sprintf('Synchronous CAP sync completed with status: %s (persisted %d)', $run->status, $run->items_persisted));
+    } else {
+        \App\Jobs\SyncDataSourceJob::dispatch($capSource, 'scheduler-cap-' . uniqid());
+        $this->info(sprintf('Dispatched queued CAP sync job for %s (#%d)', $capSource->name, $capSource->id));
+    }
+
+    return 0;
+})->purpose('Synchronize BMKG Common Alerting Protocol (CAP) feed');
+
+\Illuminate\Support\Facades\Schedule::command('sentravax:sync-cap')
+    ->everyFiveMinutes()
+    ->withoutOverlapping(10)
+    ->name('sentravax-sync-cap');
+
+// 2. BMKG InaTEWS Rapid Earthquake Telemetry (Every 15 Minutes)
+Artisan::command('sentravax:sync-inatews {--direct : Execute synchronously instead of queue}', function () {
+    $sync = app(\App\Services\ExternalData\DataSyncService::class);
+    $this->info('Checking BMKG InaTEWS rapid earthquake telemetry...');
+    $tewsSource = \App\Models\DataSource::where('endpoint_url', 'like', '%autogempa%')
+        ->where('status', 'active')
+        ->first()
+        ?? \App\Models\DataSource::where('category', 'seismology')->where('status', 'active')->first();
+
+    if (! $tewsSource) {
+        $this->warn('No active BMKG InaTEWS DataSource found.');
+        return 0;
+    }
+
+    if ($this->option('direct')) {
+        $run = $sync->syncDataSource($tewsSource);
+        $this->info(sprintf('Synchronous InaTEWS sync completed with status: %s (persisted %d)', $run->status, $run->items_persisted));
+    } else {
+        \App\Jobs\SyncDataSourceJob::dispatch($tewsSource, 'scheduler-inatews-' . uniqid());
+        $this->info(sprintf('Dispatched queued InaTEWS sync job for %s (#%d)', $tewsSource->name, $tewsSource->id));
+    }
+
+    return 0;
+})->purpose('Synchronize BMKG InaTEWS rapid earthquake open data');
+
+\Illuminate\Support\Facades\Schedule::command('sentravax:sync-inatews')
+    ->everyFifteenMinutes()
+    ->withoutOverlapping(10)
+    ->name('sentravax-sync-inatews');
+
+// 3. Periodic Maintenance & Multi-Source Sync
 Artisan::command('sentravax:sync-sources', function (\App\Services\ExternalData\DataSyncService $sync) {
     $this->info('Starting SENTRAVAX external data sources synchronization...');
     $runs = $sync->syncAll();
@@ -120,8 +182,8 @@ Artisan::command('sentravax:sync-sources', function (\App\Services\ExternalData\
 })->purpose('Synchronize all active multi-hazard external data sources');
 
 \Illuminate\Support\Facades\Schedule::command('sentravax:sync-sources')
-    ->everyFifteenMinutes()
-    ->withoutOverlapping()
+    ->everyThirtyMinutes()
+    ->withoutOverlapping(15)
     ->name('sentravax-sync-sources');
 
 \Illuminate\Support\Facades\Schedule::command('queue:prune-failed --hours=168')

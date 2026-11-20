@@ -31,7 +31,7 @@ class CommunityReportAndExternalDataIntegrationTest extends TestCase
     {
         $hazardType = HazardType::first();
         $region = Region::first();
-        $file = UploadedFile::fake()->create('banjir_lapangan.jpg', 500, 'image/jpeg');
+        $file = UploadedFile::fake()->image('banjir_lapangan.jpg', 600, 400);
 
         $response = $this->post('/api/v1/public/reports', [
             'hazard_type_id' => $hazardType->id,
@@ -129,7 +129,7 @@ class CommunityReportAndExternalDataIntegrationTest extends TestCase
         $user = User::where('role', 'user')->first() ?? User::factory()->create(['role' => 'user']);
         $hazardType = HazardType::first();
         $region = Region::first();
-        $file = UploadedFile::fake()->create('bukti_warga.png', 400, 'image/png');
+        $file = UploadedFile::fake()->image('bukti_warga.png', 400, 300);
 
         $response = $this->actingAs($user)->post('/api/v1/user/reports', [
             'hazard_type_id' => $hazardType->id,

@@ -144,6 +144,17 @@ Or run the scheduler worker in a background daemon process:
 php artisan schedule:work
 ```
 
+### 6.3 Registered Automated Synchronization Schedules
+SENTRAVAX automatically manages multi-hazard feed freshness through configured schedule definitions:
+| Schedule Name | Command | Frequency | Protection | Description |
+| :--- | :--- | :--- | :--- | :--- |
+| `sentravax-sync-cap` | `sentravax:sync-cap` | **Every 5 minutes** (`*/5 * * * *`) | `withoutOverlapping(10)`, `ShouldBeUnique` | Polling and ingesting BMKG CAP alert warnings. |
+| `sentravax-sync-inatews` | `sentravax:sync-inatews` | **Every 15 minutes** (`*/15 * * * *`) | `withoutOverlapping(10)`, `ShouldBeUnique` | Polling BMKG InaTEWS rapid earthquake telemetry. |
+| `sentravax-sync-sources` | `sentravax:sync-sources` | **Every 30 minutes** (`*/30 * * * *`) | `withoutOverlapping(15)` | Periodic multi-hazard satellite and telemetry sync. |
+| `sentravax-prune-failed-jobs` | `queue:prune-failed --hours=168` | Daily at 00:00 | Database cleanup | Pruning failed queue jobs older than 7 days. |
+
+Each queued task uses `SyncDataSourceJob` which implements `ShouldBeUnique` locking per `data_source_id` to guarantee that concurrent duplicates are never scheduled or processed simultaneously.
+
 ---
 
 ## 7. Database Backup, Health Check & Rollback Procedures

@@ -12,6 +12,7 @@ use App\Models\HazardType;
 use App\Models\Region;
 use App\Models\Shelter;
 use App\Services\Intelligence\IntelligenceService;
+use App\Services\Media\ImageSanitizerService;
 use App\Services\Preparedness\PreparednessService;
 use Carbon\Carbon;
 use Illuminate\Http\JsonResponse;
@@ -25,7 +26,8 @@ class PublicController extends Controller
 {
     public function __construct(
         protected PreparednessService $preparednessService,
-        protected IntelligenceService $intelligenceService
+        protected IntelligenceService $intelligenceService,
+        protected ImageSanitizerService $imageSanitizer
     ) {}
 
     /**
@@ -1075,7 +1077,7 @@ class PublicController extends Controller
 
         $photoPath = null;
         if ($request->hasFile('photo')) {
-            $photoPath = $request->file('photo')->store('community_reports', 'public');
+            $photoPath = $this->imageSanitizer->sanitizeAndStore($request->file('photo'), 'community_reports', 'public');
         }
 
         // Optional authenticated user, otherwise null for guest

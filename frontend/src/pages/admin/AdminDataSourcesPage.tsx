@@ -5,9 +5,6 @@ import {
   Activity,
   AlertTriangle,
   CheckCircle2,
-  XCircle,
-  Clock,
-  Radio,
   Sliders,
   ChevronRight,
   X,
@@ -25,6 +22,11 @@ import type {
   SystemHealthData,
   FailedJobItem,
 } from '../../types/admin';
+import {
+  ConnectivityBadge,
+  FreshnessBadge,
+  ProvenanceBadge,
+} from '../../components/shared/DataTrustBadges';
 
 export const AdminDataSourcesPage: React.FC = () => {
   const [dataSources, setDataSources] = useState<DataSourceItem[]>([]);
@@ -171,123 +173,12 @@ export const AdminDataSourcesPage: React.FC = () => {
     }
   };
 
-  // Dimension A: Connectivity Badge (LIVE, STATIC, OFFLINE, UNKNOWN)
-  const renderConnectivityBadge = (state?: ConnectivityState) => {
-    switch (state) {
-      case 'LIVE':
-        return (
-          <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-md text-[11px] font-mono font-bold bg-emerald-500/15 text-emerald-400 border border-emerald-500/30">
-            <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse" /> LIVE
-          </span>
-        );
-      case 'STATIC':
-        return (
-          <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-md text-[11px] font-mono font-bold bg-sky-500/15 text-sky-400 border border-sky-500/30">
-            STATIC
-          </span>
-        );
-      case 'OFFLINE':
-        return (
-          <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-md text-[11px] font-mono font-bold bg-zinc-800 text-zinc-400 border border-zinc-700">
-            OFFLINE
-          </span>
-        );
-      case 'UNKNOWN':
-      default:
-        return (
-          <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-md text-[11px] font-mono font-bold bg-zinc-900 text-zinc-500 border border-zinc-800">
-            UNKNOWN
-          </span>
-        );
-    }
-  };
-
-  // Dimension C: Provenance Badge (OFFICIAL, OBSERVED, COMMUNITY_REPORT, SENTRAVAX_INSIGHT, SIMULATED, CURATED_REFERENCE)
-  const renderProvenanceBadge = (type?: ProvenanceType, isSimulated?: boolean) => {
-    if (isSimulated || type === 'SIMULATED') {
-      return (
-        <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-md text-[11px] font-mono font-bold bg-purple-500/15 text-purple-400 border border-purple-500/30">
-          <Radio className="w-3 h-3" /> SIMULATED
-        </span>
-      );
-    }
-
-    switch (type) {
-      case 'OFFICIAL':
-        return (
-          <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-md text-[11px] font-mono font-bold bg-blue-500/15 text-blue-400 border border-blue-500/30">
-            OFFICIAL
-          </span>
-        );
-      case 'OBSERVED':
-        return (
-          <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-md text-[11px] font-mono font-bold bg-cyan-500/15 text-cyan-400 border border-cyan-500/30">
-            OBSERVED
-          </span>
-        );
-      case 'CURATED_REFERENCE':
-        return (
-          <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-md text-[11px] font-mono font-bold bg-amber-500/15 text-amber-400 border border-amber-500/30">
-            CURATED_REFERENCE
-          </span>
-        );
-      case 'COMMUNITY_REPORT':
-        return (
-          <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-md text-[11px] font-mono font-bold bg-teal-500/15 text-teal-400 border border-teal-500/30">
-            COMMUNITY_REPORT
-          </span>
-        );
-      case 'SENTRAVAX_INSIGHT':
-        return (
-          <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-md text-[11px] font-mono font-bold bg-violet-500/15 text-violet-400 border border-violet-500/30">
-            SENTRAVAX_INSIGHT
-          </span>
-        );
-      default:
-        return (
-          <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-md text-[11px] font-mono font-bold bg-zinc-800 text-zinc-400 border border-zinc-700">
-            REFERENCE
-          </span>
-        );
-    }
-  };
-
-  // Dimension B: Freshness Badge (FRESH, DELAYED, STALE, UNAVAILABLE, UNKNOWN)
-  const renderFreshnessBadge = (state?: FreshnessState) => {
-    switch (state) {
-      case 'FRESH':
-        return (
-          <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-md text-[11px] font-mono font-bold bg-emerald-500/15 text-emerald-400 border border-emerald-500/30">
-            FRESH
-          </span>
-        );
-      case 'DELAYED':
-        return (
-          <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-md text-[11px] font-mono font-bold bg-amber-500/15 text-amber-400 border border-amber-500/30">
-            <AlertTriangle className="w-3 h-3" /> DELAYED
-          </span>
-        );
-      case 'STALE':
-        return (
-          <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-md text-[11px] font-mono font-bold bg-rose-500/15 text-rose-400 border border-rose-500/30">
-            <AlertTriangle className="w-3 h-3" /> STALE
-          </span>
-        );
-      case 'UNAVAILABLE':
-        return (
-          <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-md text-[11px] font-mono font-bold bg-red-950 text-red-400 border border-red-800">
-            <XCircle className="w-3 h-3" /> UNAVAILABLE
-          </span>
-        );
-      case 'UNKNOWN':
-      default:
-        return (
-          <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-md text-[11px] font-mono font-bold bg-zinc-800 text-zinc-400 border border-zinc-700">
-            <Clock className="w-3 h-3" /> UNKNOWN
-          </span>
-        );
-    }
-  };
+  // Unified 3-Dimensional Data Trust Badges
+  const renderConnectivityBadge = (state?: ConnectivityState) => <ConnectivityBadge state={state} size="sm" />;
+  const renderProvenanceBadge = (type?: ProvenanceType, isSimulated?: boolean) => (
+    <ProvenanceBadge type={type} isSimulated={isSimulated} size="sm" />
+  );
+  const renderFreshnessBadge = (state?: FreshnessState) => <FreshnessBadge state={state} size="sm" />;
 
   // Aggregated quick stats
   const totalSources = dataSources.length;

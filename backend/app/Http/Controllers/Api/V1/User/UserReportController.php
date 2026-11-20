@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Api\V1\User;
 use App\Http\Controllers\Controller;
 use App\Models\CommunityReport;
 use App\Services\Intelligence\IntelligenceService;
+use App\Services\Media\ImageSanitizerService;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
@@ -14,7 +15,8 @@ use Illuminate\Validation\Rule;
 class UserReportController extends Controller
 {
     public function __construct(
-        protected IntelligenceService $intelligenceService
+        protected IntelligenceService $intelligenceService,
+        protected ImageSanitizerService $imageSanitizer
     ) {}
 
     /**
@@ -133,7 +135,7 @@ class UserReportController extends Controller
 
         $photoPath = null;
         if ($request->hasFile('photo')) {
-            $photoPath = $request->file('photo')->store('community_reports', 'public');
+            $photoPath = $this->imageSanitizer->sanitizeAndStore($request->file('photo'), 'community_reports', 'public');
         }
 
         $user = $request->user();
