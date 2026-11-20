@@ -422,11 +422,11 @@ export const AdminReportsPage: React.FC = () => {
                 </p>
               </div>
 
-              {inspectedReport.photo_path && (
+              {(inspectedReport.photo_url || inspectedReport.photo_path) && (
                 <div>
                   <label className="font-semibold text-[#374151] block mb-1">Foto Bukti Kejadian</label>
                   <img
-                    src={`/storage/${inspectedReport.photo_path}`}
+                    src={inspectedReport.photo_url || `/storage/${inspectedReport.photo_path}`}
                     alt="Foto kejadian"
                     className="w-full h-44 object-cover rounded-xl border border-[#E5E7EB]"
                   />

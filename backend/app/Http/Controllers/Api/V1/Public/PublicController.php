@@ -1068,7 +1068,7 @@ class PublicController extends Controller
             'description' => ['required', 'string', 'max:2000'],
             'latitude' => ['required', 'numeric', 'between:-11.5,6.5'],
             'longitude' => ['required', 'numeric', 'between:95.0,141.5'],
-            'photo' => ['nullable', 'file', 'image', 'max:5120'],
+            'photo' => ['nullable', 'file', 'image', 'mimes:jpeg,png,jpg,webp', 'max:5120'],
             'reporter_name' => ['nullable', 'string', 'max:100'],
             'reporter_contact' => ['nullable', 'string', 'max:100'],
         ]);

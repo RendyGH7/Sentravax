@@ -553,6 +553,7 @@ export interface AdminReportItem {
   title: string;
   description: string;
   photo_path?: string | null;
+  photo_url?: string | null;
   status: 'pending' | 'verified' | 'rejected' | 'investigation';
   cluster_id?: string | null;
   verified_by?: number | null;

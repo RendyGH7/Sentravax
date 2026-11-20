@@ -993,12 +993,24 @@ export const IntelligenceAiInsightsPage: React.FC = () => {
                       </div>
                     </div>
 
-                    <div className="p-3.5 rounded-xl bg-[#212121] border border-[#2C2C2C] space-y-1">
-                      <span className="text-[10px] font-mono uppercase text-[#8A8A8A]">Lampiran Dokumentasi</span>
-                      <div className="flex items-center gap-1.5 font-bold text-[#FFFFFF]">
-                        <Camera className="w-3.5 h-3.5 text-[#F59E0B]" />
-                        <span>{selectedReport.photo_path ? '1 Foto Lapangan Tersedia' : 'Tidak Ada Foto Lapangan'}</span>
+                    <div className="p-3.5 rounded-xl bg-[#212121] border border-[#2C2C2C] space-y-2">
+                      <div className="flex items-center justify-between">
+                        <span className="text-[10px] font-mono uppercase text-[#8A8A8A]">Lampiran Dokumentasi</span>
+                        <div className="flex items-center gap-1.5 font-bold text-xs text-[#FFFFFF]">
+                          <Camera className="w-3.5 h-3.5 text-[#F59E0B]" />
+                          <span>{selectedReport.photo_path || selectedReport.photo_url ? '1 Foto Lapangan' : 'Tidak Ada'}</span>
+                        </div>
                       </div>
+                      {(selectedReport.photo_url || selectedReport.photo_path) && (
+                        <div className="rounded-xl overflow-hidden border border-[#333333] bg-[#000000]">
+                          <img
+                            src={selectedReport.photo_url || `/storage/${selectedReport.photo_path}`}
+                            alt="Bukti Lapangan"
+                            className="w-full h-40 object-cover hover:scale-105 transition-transform duration-200 cursor-pointer"
+                            onClick={() => window.open(selectedReport.photo_url || `/storage/${selectedReport.photo_path}`, '_blank')}
+                          />
+                        </div>
+                      )}
                     </div>
                   </div>
 

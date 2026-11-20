@@ -5,6 +5,7 @@ namespace App\Models;
 use App\Models\Concerns\ProtectsBaselineRecords;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Support\Facades\Storage;
 
 class CommunityReport extends Model
 {
@@ -24,6 +25,22 @@ class CommunityReport extends Model
         'verified_at',
         'moderation_notes',
     ];
+
+    protected $appends = [
+        'photo_url',
+    ];
+
+    /**
+     * Resolves the full public URL for the report documentation photo.
+     */
+    public function getPhotoUrlAttribute(): ?string
+    {
+        if (empty($this->photo_path)) {
+            return null;
+        }
+
+        return Storage::disk('public')->url($this->photo_path);
+    }
 
     protected function casts(): array
     {

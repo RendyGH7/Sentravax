@@ -399,11 +399,11 @@ export const UserCreateReportPage: React.FC = () => {
                   </p>
                 </div>
 
-                {trackedReport.photo_path && (
+                {(trackedReport.photo_url || trackedReport.photo_path) && (
                   <div>
                     <span className="text-[11px] font-semibold text-[#6B7280] block mb-1">Foto Bukti Lapangan</span>
                     <img
-                      src={`/storage/${trackedReport.photo_path}`}
+                      src={trackedReport.photo_url || `/storage/${trackedReport.photo_path}`}
                       alt="Bukti lapangan"
                       className="w-full h-48 object-cover rounded-xl border border-[#E5E7EB]"
                     />

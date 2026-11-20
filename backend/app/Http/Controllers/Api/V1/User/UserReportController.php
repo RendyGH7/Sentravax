@@ -128,7 +128,7 @@ class UserReportController extends Controller
             'description' => ['required', 'string', 'max:2000'],
             'latitude' => ['required', 'numeric', 'between:-11.5,6.5'],
             'longitude' => ['required', 'numeric', 'between:95.0,141.5'],
-            'photo' => ['nullable', 'file', 'image', 'max:5120'], // max 5MB image
+            'photo' => ['nullable', 'file', 'image', 'mimes:jpeg,png,jpg,webp', 'max:5120'], // max 5MB image
         ]);
 
         $photoPath = null;
