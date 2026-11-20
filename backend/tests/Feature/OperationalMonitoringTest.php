@@ -310,28 +310,31 @@ class OperationalMonitoringTest extends TestCase
             $this->assertFalse($insarClass['is_simulated']);
         }
 
-        // 3. Active BMKG TEWS with recent sync (< 30 min) is FRESH
+        // 3. Active BMKG TEWS with recent sync and observation (< 30 min) is FRESH
         $bmkgTews = DataSource::where('endpoint_url', 'like', '%autogempa%')->first();
         $this->assertNotNull($bmkgTews);
         $bmkgTews->update([
             'status' => 'active',
             'last_successful_at' => now()->subMinutes(10),
+            'last_observed_at' => now()->subMinutes(10),
         ]);
         $freshClass = $classifier->classify($bmkgTews);
         $this->assertEquals(FreshnessClassifierService::STATE_FRESH, $freshClass['freshness_state']);
         $this->assertEquals(FreshnessClassifierService::CONNECTIVITY_LIVE, $freshClass['connectivity_state']);
         $this->assertEquals(FreshnessClassifierService::PROVENANCE_OFFICIAL, $freshClass['provenance_type']);
 
-        // 4. BMKG TEWS with delayed sync (> 30 min, < 120 min) is DELAYED
+        // 4. BMKG TEWS with delayed sync/observation (> 30 min, < 120 min) is DELAYED
         $bmkgTews->update([
             'last_successful_at' => now()->subMinutes(60),
+            'last_observed_at' => now()->subMinutes(60),
         ]);
         $delayedClass = $classifier->classify($bmkgTews);
         $this->assertEquals(FreshnessClassifierService::STATE_DELAYED, $delayedClass['freshness_state']);
 
-        // 5. BMKG TEWS with stale sync (> 120 min) is STALE
+        // 5. BMKG TEWS with stale sync/observation (> 120 min) is STALE
         $bmkgTews->update([
             'last_successful_at' => now()->subMinutes(200),
+            'last_observed_at' => now()->subMinutes(200),
         ]);
         $staleClass = $classifier->classify($bmkgTews);
         $this->assertEquals(FreshnessClassifierService::STATE_STALE, $staleClass['freshness_state']);
@@ -464,30 +467,45 @@ class OperationalMonitoringTest extends TestCase
             'last_successful_at' => null,
             'last_fetched_at' => null,
         ]);
-        $this->assertEquals(FreshnessClassifierService::STATE_UNKNOWN, $classifier->classify($unpolled)['freshness_state']);
 
-        // State 4: FRESH (within fresh threshold e.g. 10m ago)
-        $unpolled->update(['last_successful_at' => now()->subMinutes(10)]);
-        $this->assertEquals(FreshnessClassifierService::STATE_FRESH, $classifier->classify($unpolled)['freshness_state']);
+        try {
+            $this->assertEquals(FreshnessClassifierService::STATE_UNKNOWN, $classifier->classify($unpolled)['freshness_state']);
 
-        // State 5: DELAYED (between 60m and 180m)
-        $unpolled->update(['last_successful_at' => now()->subMinutes(100)]);
-        $this->assertEquals(FreshnessClassifierService::STATE_DELAYED, $classifier->classify($unpolled)['freshness_state']);
+            // State 4: FRESH (within fresh threshold e.g. 10m ago)
+            $unpolled->update([
+                'last_successful_at' => now()->subMinutes(10),
+                'last_observed_at' => now()->subMinutes(10),
+            ]);
+            $this->assertEquals(FreshnessClassifierService::STATE_FRESH, $classifier->classify($unpolled)['freshness_state']);
 
-        // State 6: STALE (> 180m ago)
-        $unpolled->update(['last_successful_at' => now()->subMinutes(300)]);
-        $this->assertEquals(FreshnessClassifierService::STATE_STALE, $classifier->classify($unpolled)['freshness_state']);
+            // State 5: DELAYED (between 60m and 180m)
+            $unpolled->update([
+                'last_successful_at' => now()->subMinutes(100),
+                'last_observed_at' => now()->subMinutes(100),
+            ]);
+            $this->assertEquals(FreshnessClassifierService::STATE_DELAYED, $classifier->classify($unpolled)['freshness_state']);
 
-        // Edge case: Acceptable clock skew (+2 minutes future drift)
-        $unpolled->update(['last_successful_at' => now()->addMinutes(2)]);
-        $this->assertEquals(FreshnessClassifierService::STATE_FRESH, $classifier->classify($unpolled)['freshness_state']);
+            // State 6: STALE (> 180m ago)
+            $unpolled->update([
+                'last_successful_at' => now()->subMinutes(300),
+                'last_observed_at' => now()->subMinutes(300),
+            ]);
+            $this->assertEquals(FreshnessClassifierService::STATE_STALE, $classifier->classify($unpolled)['freshness_state']);
 
-        // Edge case: Abnormal future timestamp (> 5 minutes drift) -> UNKNOWN / Anomaly
-        $unpolled->update(['last_successful_at' => now()->addMinutes(30)]);
-        $this->assertEquals(FreshnessClassifierService::STATE_UNKNOWN, $classifier->classify($unpolled)['freshness_state']);
+            // Edge case: Acceptable clock skew (+2 minutes future drift)
+            $unpolled->update([
+                'last_successful_at' => now()->addMinutes(2),
+                'last_observed_at' => now()->addMinutes(2),
+            ]);
+            $this->assertEquals(FreshnessClassifierService::STATE_FRESH, $classifier->classify($unpolled)['freshness_state']);
 
-        // Clean up test feed
-        $unpolled->delete();
+            // Edge case: Abnormal future timestamp (> 5 minutes drift) -> UNKNOWN / Anomaly
+            $unpolled->update(['last_successful_at' => now()->addMinutes(30)]);
+            $this->assertEquals(FreshnessClassifierService::STATE_UNKNOWN, $classifier->classify($unpolled)['freshness_state']);
+        } finally {
+            // Clean up test feed
+            $unpolled->delete();
+        }
     }
 
     public function test_failed_job_retry_and_dismiss_audit_and_rbac(): void

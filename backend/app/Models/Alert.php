@@ -43,6 +43,22 @@ class Alert extends Model
         ];
     }
 
+    public function scopeActive($query)
+    {
+        return $query->where('status', 'active')
+            ->where(function ($q) {
+                $q->whereNull('expires_at')->orWhere('expires_at', '>', now());
+            });
+    }
+
+    public function scopeExpired($query)
+    {
+        return $query->where('status', 'expired')
+            ->orWhere(function ($q) {
+                $q->whereNotNull('expires_at')->where('expires_at', '<=', now());
+            });
+    }
+
     public function region(): BelongsTo
     {
         return $this->belongsTo(Region::class, 'region_id');

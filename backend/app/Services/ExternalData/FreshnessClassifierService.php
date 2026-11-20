@@ -189,13 +189,13 @@ class FreshnessClassifierService
         [$freshMinutes, $delayedMinutes] = $this->resolveThresholds($dataSource);
 
         $now = now();
-        $isFuture = $dataSource->last_successful_at->isAfter($now);
-        $futureSkewMinutes = $isFuture ? (int) $now->diffInMinutes($dataSource->last_successful_at) : 0;
+        $isFutureSync = $dataSource->last_successful_at->isAfter($now);
+        $syncFutureSkewMinutes = $isFutureSync ? (int) $now->diffInMinutes($dataSource->last_successful_at) : 0;
         $provenance = $this->resolveProvenance($dataSource);
         $connectivity = $this->resolveConnectivity($dataSource);
 
-        // Clock-skew policy: Allow maximum 5 minutes clock drift between external server and Sentravax
-        if ($isFuture && $futureSkewMinutes > 5) {
+        // Clock-skew policy for sync timestamp: Allow maximum 5 minutes clock drift
+        if ($isFutureSync && $syncFutureSkewMinutes > 5) {
             return [
                 'connectivity_state' => $connectivity,
                 'freshness_state' => self::STATE_UNKNOWN,
@@ -206,38 +206,77 @@ class FreshnessClassifierService
                 'threshold_fresh_minutes' => $freshMinutes,
                 'threshold_delayed_minutes' => $delayedMinutes,
                 'is_simulated' => false,
-                'minutes_since_last_sync' => -$futureSkewMinutes,
-                'explanation' => sprintf('Timestamp masa depan tidak wajar (+%d menit dari waktu sistem). Dianggap anomali temporal.', $futureSkewMinutes),
+                'minutes_since_last_sync' => -$syncFutureSkewMinutes,
+                'explanation' => sprintf('Timestamp sinkronisasi masa depan tidak wajar (+%d menit dari waktu sistem). Dianggap anomali temporal.', $syncFutureSkewMinutes),
             ];
         }
 
-        $diffMinutes = (int) $dataSource->last_successful_at->diffInMinutes($now);
+        // Observation timestamp validation:
+        // Missing, null, or unverifiable observation timestamp must be classified as UNKNOWN
+        if (! $dataSource->last_observed_at) {
+            return [
+                'connectivity_state' => $connectivity,
+                'freshness_state' => self::STATE_UNKNOWN,
+                'provenance_type' => $provenance,
+                'observed_at' => null,
+                'fetched_at' => $dataSource->last_fetched_at?->toIso8601String(),
+                'created_at' => $dataSource->created_at?->toIso8601String(),
+                'threshold_fresh_minutes' => $freshMinutes,
+                'threshold_delayed_minutes' => $delayedMinutes,
+                'is_simulated' => false,
+                'minutes_since_last_sync' => (int) $dataSource->last_successful_at->diffInMinutes($now),
+                'explanation' => 'Timestamp observasi sumber tidak tersedia atau tidak dapat diverifikasi (status UNKNOWN).',
+            ];
+        }
 
-        if ($isFuture) {
+        // Clock-skew policy for observation timestamp: Allow maximum 5 minutes clock drift
+        $isFutureObs = $dataSource->last_observed_at->isAfter($now);
+        $obsFutureSkewMinutes = $isFutureObs ? (int) $now->diffInMinutes($dataSource->last_observed_at) : 0;
+        if ($isFutureObs && $obsFutureSkewMinutes > 5) {
+            return [
+                'connectivity_state' => $connectivity,
+                'freshness_state' => self::STATE_UNKNOWN,
+                'provenance_type' => $provenance,
+                'observed_at' => $dataSource->last_observed_at->toIso8601String(),
+                'fetched_at' => $dataSource->last_fetched_at?->toIso8601String(),
+                'created_at' => $dataSource->created_at?->toIso8601String(),
+                'threshold_fresh_minutes' => $freshMinutes,
+                'threshold_delayed_minutes' => $delayedMinutes,
+                'is_simulated' => false,
+                'minutes_since_last_sync' => (int) $dataSource->last_successful_at->diffInMinutes($now),
+                'explanation' => sprintf('Timestamp observasi masa depan tidak wajar (+%d menit dari waktu sistem). Dianggap anomali temporal.', $obsFutureSkewMinutes),
+            ];
+        }
+
+        // Determine data age based on observation time and sync time:
+        // Latency HTTP does NOT determine freshness.
+        // Old data remains STALE even if HTTP request succeeded recently.
+        $obsAgeMinutes = $isFutureObs ? 0 : (int) $dataSource->last_observed_at->diffInMinutes($now);
+        $syncAgeMinutes = $isFutureSync ? 0 : (int) $dataSource->last_successful_at->diffInMinutes($now);
+        $effectiveDataAgeMinutes = max($obsAgeMinutes, $syncAgeMinutes);
+
+        if ($effectiveDataAgeMinutes <= $freshMinutes) {
             $state = self::STATE_FRESH;
-            $explanation = sprintf('Data aktif dan segar (sinkron baru saja dengan toleransi clock-skew +%d menit).', $futureSkewMinutes);
-        } elseif ($diffMinutes <= $freshMinutes) {
-            $state = self::STATE_FRESH;
-            $explanation = sprintf('Data aktif dan segar (sinkron %d menit lalu, ambang batas %d menit).', $diffMinutes, $freshMinutes);
-        } elseif ($diffMinutes <= $delayedMinutes) {
+            $explanation = sprintf('Data aktif dan segar (umur efektif observasi %d menit, ambang batas %d menit).', $effectiveDataAgeMinutes, $freshMinutes);
+        } elseif ($effectiveDataAgeMinutes <= $delayedMinutes) {
             $state = self::STATE_DELAYED;
-            $explanation = sprintf('Data mengalami keterlambatan polling (%d menit lalu, ambang toleransi %d menit).', $diffMinutes, $delayedMinutes);
+            $explanation = sprintf('Data mengalami keterlambatan (%d menit lalu, ambang toleransi %d menit).', $effectiveDataAgeMinutes, $delayedMinutes);
         } else {
             $state = self::STATE_STALE;
-            $explanation = sprintf('Data usang (stale) melebihi batas toleransi (%d menit lalu > %d menit).', $diffMinutes, $delayedMinutes);
+            $explanation = sprintf('Data usang (stale) melebihi batas toleransi (%d menit lalu > %d menit).', $effectiveDataAgeMinutes, $delayedMinutes);
         }
 
         return [
             'connectivity_state' => $connectivity,
             'freshness_state' => $state,
             'provenance_type' => $provenance,
-            'observed_at' => ($dataSource->last_observed_at ?? $dataSource->last_successful_at)?->toIso8601String(),
+            'observed_at' => $dataSource->last_observed_at->toIso8601String(),
             'fetched_at' => $dataSource->last_fetched_at?->toIso8601String(),
             'created_at' => $dataSource->created_at?->toIso8601String(),
             'threshold_fresh_minutes' => $freshMinutes,
             'threshold_delayed_minutes' => $delayedMinutes,
             'is_simulated' => false,
-            'minutes_since_last_sync' => $diffMinutes,
+            'minutes_since_last_sync' => $effectiveDataAgeMinutes,
             'explanation' => $explanation,
         ];
     }

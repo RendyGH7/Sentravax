@@ -35,7 +35,7 @@ class AdminOverviewController extends Controller
         $totalCuratedEvents = HazardEvent::count();
         $activeEvents = HazardEvent::where('status', 'active')->count();
         $pendingReports = CommunityReport::where('status', 'pending')->count();
-        $activeAlerts = Alert::where('status', 'active')->count();
+        $activeAlerts = Alert::active()->count();
 
         // Real Database & PostGIS telemetry
         $dbConnected = true;

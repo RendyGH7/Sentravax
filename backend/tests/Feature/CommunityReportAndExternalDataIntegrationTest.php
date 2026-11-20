@@ -178,8 +178,8 @@ class CommunityReportAndExternalDataIntegrationTest extends TestCase
             ?? DataSource::where('endpoint_url', 'https://data.bmkg.go.id/DataMKG/TEWS/autogempa.json')->first();
 
         // 2. BMKG Weather Radar Data Source
-        $weatherSource = DataSource::where('category', 'weather')->first()
-            ?? DataSource::where('name', 'like', '%Weather Radar%')->first();
+        $weatherSource = DataSource::where('name', 'like', '%Weather Radar%')->first()
+            ?? DataSource::where('category', 'weather')->first();
 
         $this->assertNotNull($tewsSource, 'BMKG TEWS DataSource must exist.');
         $this->assertNotNull($weatherSource, 'BMKG Weather Radar DataSource must exist.');

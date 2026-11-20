@@ -166,7 +166,7 @@ class UserReportController extends Controller
                 'id' => $report->id,
                 'title' => $report->title,
                 'status' => $report->status,
-                'photo_url' => $photoPath ? Storage::disk('public')->url($photoPath) : null,
+                'photo_url' => $report->photo_url,
                 'clustering' => $clustering,
                 'created_at' => $report->created_at->toIso8601String(),
             ],

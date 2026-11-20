@@ -37,7 +37,7 @@ class IntelligenceCenterController extends Controller
     {
         $activeThreatsCount = HazardEvent::where('status', 'active')->count();
         $unverifiedReportsCount = CommunityReport::where('status', 'pending')->count();
-        $activeAlertsCount = Alert::where('status', 'active')->count();
+        $activeAlertsCount = Alert::active()->count();
         $insightsCount = AiInsight::count();
 
         // Latest deterministic proactive AI insights

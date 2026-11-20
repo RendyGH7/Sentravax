@@ -37,6 +37,31 @@ class CapAdapter
         $itemsPersisted = 0;
         $latestObservedAt = null;
 
+        // Archive/fallback or simulated CAP sources are strictly isolated and never claimed as LIVE feeds
+        if ($dataSource->is_simulated || $dataSource->source_type === 'curated') {
+            $durationMs = (int) round((microtime(true) - $startTime) * 1000);
+            return [
+                'status' => 'SUCCESS',
+                'connectivity_state' => $dataSource->is_simulated
+                    ? FreshnessClassifierService::CONNECTIVITY_OFFLINE
+                    : FreshnessClassifierService::CONNECTIVITY_STATIC,
+                'freshness_state' => FreshnessClassifierService::STATE_UNKNOWN,
+                'provenance_type' => $dataSource->is_simulated
+                    ? FreshnessClassifierService::PROVENANCE_SIMULATED
+                    : FreshnessClassifierService::PROVENANCE_CURATED_REFERENCE,
+                'items_fetched' => 0,
+                'items_persisted' => 0,
+                'duration_ms' => $durationMs,
+                'observed_at' => $dataSource->last_observed_at?->toIso8601String(),
+                'provenance' => [
+                    'endpoint' => $feedUrl,
+                    'is_simulated' => (bool) $dataSource->is_simulated,
+                    'is_archive' => true,
+                    'note' => 'Dataset arsip terkurasi / simulasi CAP diisolasi secara permanen dan tidak dianggap sebagai feed aktif live.',
+                ],
+            ];
+        }
+
         try {
             // Fetch feed from official BMKG endpoint with 5s timeout
             $response = Http::timeout(5)
@@ -96,18 +121,23 @@ class CapAdapter
                     }
 
                     $durationMs = (int) round((microtime(true) - $startTime) * 1000);
-                    $observedAt = $latestObservedAt ?? now();
+                    $observedAt = $latestObservedAt;
 
-                    $dataSource->update([
+                    $updatePayload = [
                         'status' => 'active',
                         'last_fetched_at' => now(),
                         'last_successful_at' => now(),
-                        'last_observed_at' => $observedAt,
-                    ]);
+                    ];
+                    if ($observedAt) {
+                        $updatePayload['last_observed_at'] = $observedAt;
+                    }
+                    $dataSource->update($updatePayload);
 
                     return [
                         'status' => 'SUCCESS',
+                        'connectivity_state' => FreshnessClassifierService::CONNECTIVITY_LIVE,
                         'freshness_state' => 'LIVE',
+                        'provenance_type' => FreshnessClassifierService::PROVENANCE_OFFICIAL,
                         'items_fetched' => $itemsFetched,
                         'items_persisted' => $itemsPersisted,
                         'duration_ms' => $durationMs,
@@ -323,15 +353,31 @@ class CapAdapter
             'expires_at' => $expiresAt,
         ];
 
+        $isNewAlert = ! $existingAlert;
+        $statusChanged = false;
+        $severityChanged = false;
+
         if ($existingAlert) {
+            $statusChanged = ($existingAlert->status !== $dbStatus);
+            $severityChanged = ($existingAlert->cap_severity !== $severity);
             $existingAlert->update($alertData);
             $alert = $existingAlert->fresh();
         } else {
             $alert = Alert::create($alertData);
         }
 
-        // Trigger notification only if active official warning and not simulated/test
-        if ($alert->status === 'active' && !$isTestOrExercise) {
+        // Notification dispatch guard:
+        // 1. Must be active status (never notify on draft, expired, or cancelled)
+        // 2. Must not be exercise or test alert
+        // 3. Must not be from a curated archive or simulated source (reloading old archives never notifies)
+        // 4. Must be a brand-new alert, or an update with changed status or changed severity
+        $isArchiveOrSimulated = $dataSource && ($dataSource->is_simulated || $dataSource->source_type === 'curated');
+
+        if ($alert->status === 'active'
+            && ! $isTestOrExercise
+            && ! $isArchiveOrSimulated
+            && ($isNewAlert || $statusChanged || $severityChanged)
+        ) {
             try {
                 $this->notificationService->notifyOfficialWarning($alert);
             } catch (\Throwable $notifErr) {
