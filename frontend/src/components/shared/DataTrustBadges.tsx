@@ -31,6 +31,7 @@ export interface FreshnessBadgeProps extends BadgeProps {
 
 export interface ProvenanceBadgeProps extends BadgeProps {
   type?: ProvenanceType | string;
+  provenance?: ProvenanceType | string;
   isSimulated?: boolean;
 }
 
@@ -155,8 +156,8 @@ export const FreshnessBadge: React.FC<FreshnessBadgeProps> = ({ state, size = 's
 /**
  * Dimension C: Provenance Badge (OFFICIAL, OBSERVED, COMMUNITY_REPORT, SENTRAVAX_INSIGHT, SIMULATED, CURATED_REFERENCE)
  */
-export const ProvenanceBadge: React.FC<ProvenanceBadgeProps> = ({ type, isSimulated, size = 'sm', className = '' }) => {
-  const normType = (type || '').toUpperCase();
+export const ProvenanceBadge: React.FC<ProvenanceBadgeProps> = ({ type, provenance, isSimulated, size = 'sm', className = '' }) => {
+  const normType = (provenance || type || '').toUpperCase();
   const sizeClasses = size === 'xs' ? 'px-1.5 py-0.5 text-[9px]' : size === 'md' ? 'px-2.5 py-1 text-xs' : 'px-2 py-0.5 text-[10px] sm:text-[11px]';
   const iconSize = size === 'xs' ? 'w-2.5 h-2.5' : 'w-3 h-3';
 

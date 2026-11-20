@@ -13,6 +13,7 @@ import { Card } from '../../components/ui/Card';
 import { Skeleton } from '../../components/ui/Skeleton';
 import { EmptyState } from '../../components/ui/EmptyState';
 import { DisasterMap } from '../../components/map/DisasterMap';
+import { ProvenanceBadge } from '../../components/shared/DataTrustBadges';
 import { 
   ShieldCheck, 
   MapPin, 
@@ -851,12 +852,11 @@ export const PublicPreparednessPage: React.FC = () => {
                             <span className="text-xs font-bold text-[#111827]">
                               {t.hazard_type}
                             </span>
-                            <Badge 
-                              variant={t.provenance_status === 'LIVE' ? 'success' : 'neutral'} 
-                              size="sm"
-                            >
-                              {t.provenance_label || (t.provenance_status === 'LIVE' ? (t.hazard_slug === 'earthquake' ? 'LIVE (BMKG TEWS)' : 'LIVE (TELEMETRI)') : 'STATIC (TERKURASI)')}
-                            </Badge>
+                            <ProvenanceBadge
+                              provenance={t.provenance_status === 'SIMULATED' ? 'SIMULATED' : (t.provenance_status === 'LIVE' ? 'OFFICIAL' : 'CURATED_REFERENCE')}
+                              isSimulated={t.provenance_status === 'SIMULATED'}
+                              size="xs"
+                            />
                           </div>
                           <div className="flex items-center gap-1.5">
                             <Badge variant={t.severity === 'high' ? 'danger' : 'warning'} size="sm">

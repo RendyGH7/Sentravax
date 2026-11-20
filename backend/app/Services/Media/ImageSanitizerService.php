@@ -75,7 +75,7 @@ class ImageSanitizerService
             throw new ImageSanitizationException('Gagal mendekode citra gambar. Berkas mungkin korup atau bukan gambar yang valid.');
         }
 
-        // 5. Correct Orientation based on EXIF tag (lossless pixel rotation)
+        // 5. Correct Orientation based on EXIF tag (pixel transformation prior to re-encoding)
         try {
             $image = $this->correctOrientation($image, $orientation);
         } catch (\Throwable $e) {

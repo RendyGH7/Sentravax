@@ -113,26 +113,31 @@ class ImageSanitizationAndPrivacyTest extends TestCase
 
     /**
      * Test 2: Pastikan orientasi foto tetap benar setelah sanitasi.
-     * If image has EXIF Orientation tag (e.g. orientation 6 = 90 deg rotation),
-     * the sanitizer rotates the pixel canvas so width and height reflect the corrected visual orientation.
+     * Menguji seluruh orientasi EXIF 1 sampai 8:
+     * - Orientasi 1-4 mempertahankan rasio dimensi landscape (120x60).
+     * - Orientasi 5-8 merotasi kanvas menjadi portrait (60x120).
      */
     public function test_2_image_orientation_is_corrected_and_preserved(): void
     {
-        // Width 100, Height 50 with Orientation 6 (rotated 90 CW)
-        $fileRotated = $this->createJpegWithExifGps(100, 50, 6);
+        for ($orient = 1; $orient <= 8; $orient++) {
+            $fileRotated = $this->createJpegWithExifGps(120, 60, $orient);
 
-        $storedPath = $this->sanitizer->sanitizeAndStore($fileRotated, 'community_reports', 'public');
-        $this->assertNotNull($storedPath);
+            $storedPath = $this->sanitizer->sanitizeAndStore($fileRotated, 'community_reports', 'public');
+            $this->assertNotNull($storedPath);
 
-        $storedFullPath = Storage::disk('public')->path($storedPath);
-        [$width, $height] = getimagesize($storedFullPath);
+            $storedFullPath = Storage::disk('public')->path($storedPath);
+            [$width, $height] = getimagesize($storedFullPath);
 
-        // After 90 degree rotation, width and height swap: width becomes 50, height becomes 100
-        $this->assertEquals(50, $width, 'Width must reflect rotated orientation (50px).');
-        $this->assertEquals(100, $height, 'Height must reflect rotated orientation (100px).');
+            if (in_array($orient, [5, 6, 7, 8], true)) {
+                $this->assertEquals(60, $width, "Orientation {$orient} must result in 60px width.");
+                $this->assertEquals(120, $height, "Orientation {$orient} must result in 120px height.");
+            } else {
+                $this->assertEquals(120, $width, "Orientation {$orient} must maintain 120px width.");
+                $this->assertEquals(60, $height, "Orientation {$orient} must maintain 60px height.");
+            }
 
-        // Clean up
-        Storage::disk('public')->delete($storedPath);
+            Storage::disk('public')->delete($storedPath);
+        }
     }
 
     /**
@@ -156,6 +161,14 @@ class ImageSanitizationAndPrivacyTest extends TestCase
         $storedPng = $this->sanitizer->sanitizeAndStore($pngFile, 'community_reports', 'public');
         $this->assertStringEndsWith('.png', $storedPng);
         Storage::disk('public')->assertExists($storedPng);
+
+        // Verify alpha channel preservation
+        $storedPngPath = Storage::disk('public')->path($storedPng);
+        $imStored = imagecreatefrompng($storedPngPath);
+        $rgba = imagecolorsforindex($imStored, imagecolorat($imStored, 0, 0));
+        $this->assertEquals(127, $rgba['alpha'], 'Alpha channel transparency at corner pixel must be preserved.');
+        imagedestroy($imStored);
+
         Storage::disk('public')->delete($storedPng);
 
         // 2. Test WebP format
@@ -323,5 +336,50 @@ class ImageSanitizationAndPrivacyTest extends TestCase
             }
             DB::table('community_reports')->where('id', $reportId)->delete();
         }
+    }
+
+    /**
+     * Test 8: Bandingkan ukuran berkas, dimensi, dan kualitas visual sebelum dan sesudah sanitasi.
+     */
+    public function test_8_compare_file_size_dimensions_and_quality_before_and_after_sanitization(): void
+    {
+        $file = $this->createJpegWithExifGps(200, 150, 1);
+        $rawPath = $file->getRealPath();
+        $rawSize = filesize($rawPath);
+        [$rawWidth, $rawHeight] = getimagesize($rawPath);
+
+        $storedPath = $this->sanitizer->sanitizeAndStore($file, 'community_reports', 'public');
+        $storedFullPath = Storage::disk('public')->path($storedPath);
+        $sanitizedSize = filesize($storedFullPath);
+        [$sanWidth, $sanHeight] = getimagesize($storedFullPath);
+
+        // 1. Dimensions match original exactly for orientation 1
+        $this->assertEquals($rawWidth, $sanWidth, 'Width must remain identical for normal orientation.');
+        $this->assertEquals($rawHeight, $sanHeight, 'Height must remain identical for normal orientation.');
+
+        // 2. File size is valid and reasonable (re-encoded at quality 90)
+        $this->assertGreaterThan(0, $sanitizedSize);
+        $this->assertLessThan(5 * 1024 * 1024, $sanitizedSize);
+
+        // 3. Metadata check: RAW has GPS, sanitized has NO GPS
+        if (function_exists('exif_read_data')) {
+            $rawExif = @exif_read_data($rawPath, 'GPS');
+            $this->assertNotEmpty($rawExif);
+
+            $sanExif = @exif_read_data($storedFullPath, 'GPS');
+            $hasGps = $sanExif && (!empty($sanExif['GPSLatitude']) || !empty($sanExif['GPSLatitudeRef']));
+            $this->assertFalse($hasGps, 'Sanitized file must be completely free of GPS data.');
+        }
+
+        // 4. Pixel quality check: center pixel color must be preserved closely
+        $im = imagecreatefromjpeg($storedFullPath);
+        $rgb = imagecolorsforindex($im, imagecolorat($im, 100, 75));
+        // Fixture fill was RGB(200, 30, 30)
+        $this->assertEqualsWithDelta(200, $rgb['red'], 10, 'Red channel must closely match original.');
+        $this->assertEqualsWithDelta(30, $rgb['green'], 10, 'Green channel must closely match original.');
+        $this->assertEqualsWithDelta(30, $rgb['blue'], 10, 'Blue channel must closely match original.');
+        imagedestroy($im);
+
+        Storage::disk('public')->delete($storedPath);
     }
 }

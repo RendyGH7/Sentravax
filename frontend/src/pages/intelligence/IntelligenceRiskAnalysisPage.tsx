@@ -23,6 +23,7 @@ import {
   AlertCircle
 } from 'lucide-react';
 import { toast } from 'sonner';
+import { FreshnessBadge, ProvenanceBadge } from '../../components/shared/DataTrustBadges';
 
 export const IntelligenceRiskAnalysisPage: React.FC = () => {
   // Master data
@@ -193,32 +194,6 @@ export const IntelligenceRiskAnalysisPage: React.FC = () => {
           <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-mono font-bold uppercase bg-[#212121] text-[#A3A3A3] border border-[#383838]">
             <AlertCircle className="w-3.5 h-3.5 text-rose-400" />
             Data Tidak Mencukupi
-          </span>
-        );
-    }
-  };
-
-  // Helper for data freshness badge
-  const renderFreshnessBadge = (state?: string) => {
-    switch (state) {
-      case 'FRESH':
-        return (
-          <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-[10px] font-mono font-bold uppercase bg-emerald-950/80 text-[#10B981] border border-emerald-500/40">
-            <span className="w-1.5 h-1.5 rounded-full bg-[#10B981] animate-pulse"></span>
-            FRESH
-          </span>
-        );
-      case 'STALE':
-        return (
-          <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-[10px] font-mono font-bold uppercase bg-amber-950/70 text-[#F59E0B] border border-amber-500/40">
-            STALE
-          </span>
-        );
-      case 'UNAVAILABLE':
-      default:
-        return (
-          <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-[10px] font-mono font-bold uppercase bg-rose-950/70 text-rose-400 border border-rose-500/40">
-            UNAVAILABLE
           </span>
         );
     }
@@ -466,7 +441,7 @@ export const IntelligenceRiskAnalysisPage: React.FC = () => {
               <div className="p-5 rounded-2xl bg-[#212121] border border-[#2C2C2C] space-y-2">
                 <div className="flex items-center justify-between text-xs font-mono uppercase text-[#8A8A8A]">
                   <span>Kesegaran Data</span>
-                  {renderFreshnessBadge(dataQuality?.status)}
+                  <FreshnessBadge state={dataQuality?.status} size="xs" />
                 </div>
                 <div className="text-sm font-bold text-[#FFFFFF] leading-snug">
                   {dataQuality?.status === 'FRESH'
@@ -627,7 +602,14 @@ export const IntelligenceRiskAnalysisPage: React.FC = () => {
                         </div>
                         <div className="text-[11px] text-[#8A8A8A] flex flex-wrap items-center gap-3">
                           <span>Sumber: {threat.source_name}</span>
-                          <span>Provenance: <strong className="text-[#D4D4D4]">{threat.provenance_label || 'STATIC (TERKURASI)'}</strong></span>
+                          <span className="flex items-center gap-1.5">
+                            <span>Asal Data:</span>
+                            <ProvenanceBadge
+                              provenance={threat.provenance_status === 'SIMULATED' ? 'SIMULATED' : (threat.provenance_label?.includes('BMKG') ? 'OFFICIAL' : 'CURATED_REFERENCE')}
+                              isSimulated={threat.provenance_status === 'SIMULATED'}
+                              size="xs"
+                            />
+                          </span>
                         </div>
                       </div>
                       <div className="text-right font-mono shrink-0">

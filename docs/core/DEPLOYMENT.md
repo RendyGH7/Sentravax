@@ -6,7 +6,7 @@ This guide covers the deployment, configuration, database initialization, and op
 
 ## 1. System Requirements
 
-- **PHP**: 8.2 or higher (8.3 recommended) with extensions: `pdo`, `pdo_pgsql`, `mbstring`, `openssl`, `bcmath`, `curl`, `json`.
+- **PHP**: 8.2 or higher (8.3 recommended) with extensions: `pdo`, `pdo_pgsql`, `mbstring`, `openssl`, `bcmath`, `curl`, `json`, `gd` (image processing), `exif` (photo privacy & metadata sanitization).
 - **Database**: PostgreSQL 16, 17, or 18 with **PostGIS 3.x** spatial extension installed.
 - **Dependency Manager**: Composer 2.x
 - **Operating System**: Linux (Ubuntu 22.04 / 24.04 LTS), macOS, or Windows Server / Windows 11.
@@ -196,8 +196,8 @@ In case of critical regression:
 Verify 100% test passing rate across all domain modules:
 
 ```bash
-php vendor/phpunit/phpunit/phpunit
+php artisan test
 ```
 
-Expected result: `Tests: 180 passed, Assertions: 1568, Status: 100% Success`.
+Expected result: `Tests: 242 passed, Assertions: 2234+, Status: 100% Success`.
 

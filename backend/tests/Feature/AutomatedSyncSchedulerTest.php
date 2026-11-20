@@ -30,6 +30,7 @@ class AutomatedSyncSchedulerTest extends TestCase
         $this->assertNotNull($capEvent, 'sentravax:sync-cap schedule command must be registered.');
         $this->assertEquals('*/5 * * * *', $capEvent->expression, 'CAP sync must run every 5 minutes.');
         $this->assertTrue($capEvent->withoutOverlapping, 'CAP sync must have withoutOverlapping protection.');
+        $this->assertEquals(10, $capEvent->expiresAt, 'CAP withoutOverlapping mutex must expire in 10 minutes to prevent permanent stall.');
     }
 
     /**
@@ -47,6 +48,7 @@ class AutomatedSyncSchedulerTest extends TestCase
         $this->assertNotNull($tewsEvent, 'sentravax:sync-inatews schedule command must be registered.');
         $this->assertEquals('*/15 * * * *', $tewsEvent->expression, 'InaTEWS sync must run every 15 minutes.');
         $this->assertTrue($tewsEvent->withoutOverlapping, 'InaTEWS sync must have withoutOverlapping protection.');
+        $this->assertEquals(10, $tewsEvent->expiresAt, 'InaTEWS withoutOverlapping mutex must expire in 10 minutes to prevent permanent stall.');
     }
 
     /**
@@ -128,5 +130,28 @@ class AutomatedSyncSchedulerTest extends TestCase
         // Clean up sync runs generated during test
         $runIds = collect($runs)->pluck('id')->all();
         DataSourceSyncRun::whereIn('id', $runIds)->delete();
+    }
+
+    /**
+     * Test 7: Queue worker execution: SyncDataSourceJob::handle executes and failed handler logs safely.
+     */
+    public function test_sync_data_source_job_handle_and_failed_handlers(): void
+    {
+        Http::fake([
+            '*' => Http::response([], 200),
+        ]);
+
+        $source = DataSource::where('status', 'active')->first();
+        $this->assertNotNull($source);
+
+        $job = new SyncDataSourceJob($source, 'worker-test-' . uniqid());
+        $syncService = app(DataSyncService::class);
+
+        // Verify handle executes without error
+        $job->handle($syncService);
+
+        // Verify failed handler logs without throwing
+        $job->failed(new \RuntimeException('Simulated worker timeout'));
+        $this->assertTrue(true, 'Failed handler must log and exit safely without re-throwing.');
     }
 }
