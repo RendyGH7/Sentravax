@@ -21,6 +21,7 @@ import type {
   SyncChecklistResult,
   SimulationScenarioItem,
   ScenarioAttemptResult,
+  ChangePasswordPayload,
 } from '../types';
 
 export interface UserReportsQueryParams {
@@ -73,6 +74,18 @@ export const userService = {
   async updateProfile(payload: { name: string }): Promise<User> {
     const res = await apiClient.put<ApiResponse<User>>('/user/profile', payload);
     return res.data.data;
+  },
+
+  /**
+   * Change authenticated user's account password.
+   * Endpoint: PUT /api/v1/user/account/password
+   */
+  async changePassword(payload: ChangePasswordPayload): Promise<{ success: boolean; message: string }> {
+    const res = await apiClient.put<ApiResponse<null>>('/user/account/password', payload);
+    return {
+      success: res.data.success,
+      message: res.data.message || 'Kata sandi berhasil diperbarui.',
+    };
   },
 
   // ==========================================

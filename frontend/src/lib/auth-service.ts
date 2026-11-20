@@ -5,6 +5,7 @@ import {
   type LoginCredentials,
   type RegisterData,
   type AuthResponseData,
+  type ResetPasswordPayload,
 } from '../types/auth';
 import { type ApiResponse } from '../types';
 
@@ -93,6 +94,32 @@ export const authService = {
     } catch {
       // Invalidation proceeds even if network error occurs
     }
+  },
+
+  /**
+   * Request password reset instructions via email.
+   * Endpoint: POST /api/v1/auth/forgot-password
+   */
+  async forgotPassword(email: string): Promise<{ success: boolean; message: string }> {
+    await ensureCsrfCookie();
+    const response = await apiClient.post<ApiResponse<null>>('/auth/forgot-password', { email });
+    return {
+      success: response.data.success,
+      message: response.data.message || 'Instruksi pemulihan kata sandi telah dikirimkan.',
+    };
+  },
+
+  /**
+   * Set new password using token received via email.
+   * Endpoint: POST /api/v1/auth/reset-password
+   */
+  async resetPassword(payload: ResetPasswordPayload): Promise<{ success: boolean; message: string }> {
+    await ensureCsrfCookie();
+    const response = await apiClient.post<ApiResponse<null>>('/auth/reset-password', payload);
+    return {
+      success: response.data.success,
+      message: response.data.message || 'Kata sandi berhasil diatur ulang.',
+    };
   },
 };
 

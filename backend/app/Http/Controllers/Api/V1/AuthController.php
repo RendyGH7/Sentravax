@@ -7,7 +7,9 @@ use App\Models\User;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Password as PasswordBroker;
 use Illuminate\Validation\Rules\Password;
 use Illuminate\Validation\ValidationException;
 use Symfony\Component\HttpFoundation\Response;
@@ -204,6 +206,91 @@ class AuthController extends Controller
                 'expires_at' => now()->addDays(30)->toIso8601String(),
             ],
         ]);
+    }
+
+    /**
+     * Request password reset link (anti-enumeration generic response).
+     */
+    public function forgotPassword(Request $request): JsonResponse
+    {
+        $validated = $request->validate([
+            'email' => ['required', 'string', 'email'],
+        ], [
+            'email.required' => 'Alamat email wajib diisi.',
+            'email.email' => 'Format alamat email tidak valid.',
+        ]);
+
+        // Attempt sending password reset link via Laravel Password Broker
+        $status = PasswordBroker::broker()->sendResetLink(
+            ['email' => strtolower(trim($validated['email']))]
+        );
+
+        // Security requirement: If broker indicates throttling (too many requests within 60s), return HTTP 429
+        if ($status === PasswordBroker::RESET_THROTTLED) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Terlalu banyak permintaan pemulihan kata sandi. Silakan tunggu beberapa saat sebelum mencoba kembali.',
+                'error' => 'RESET_THROTTLED',
+            ], Response::HTTP_TOO_MANY_REQUESTS);
+        }
+
+        // ANTI-ENUMERATION GUARANTEE:
+        // Returns the exact same HTTP 200 response whether the email exists or not.
+        return response()->json([
+            'success' => true,
+            'message' => 'Jika alamat email terdaftar di sistem kami, instruksi pemulihan kata sandi telah dikirimkan.',
+        ]);
+    }
+
+    /**
+     * Reset password using validated broker token and revoke all personal access tokens.
+     */
+    public function resetPassword(Request $request): JsonResponse
+    {
+        $validated = $request->validate([
+            'token' => ['required', 'string'],
+            'email' => ['required', 'string', 'email'],
+            'password' => ['required', 'string', Password::min(8), 'confirmed'],
+        ], [
+            'token.required' => 'Token pemulihan kata sandi tidak valid atau hilang.',
+            'email.required' => 'Alamat email wajib diisi.',
+            'email.email' => 'Format alamat email tidak valid.',
+            'password.required' => 'Kata sandi baru wajib diisi.',
+            'password.min' => 'Kata sandi baru minimal harus terdiri dari :min karakter.',
+            'password.confirmed' => 'Konfirmasi kata sandi baru tidak cocok.',
+        ]);
+
+        $credentials = [
+            'token' => $validated['token'],
+            'email' => strtolower(trim($validated['email'])),
+            'password' => $validated['password'],
+            'password_confirmation' => $validated['password_confirmation'],
+        ];
+
+        // Consume reset token and apply transactional update
+        $status = PasswordBroker::broker()->reset($credentials, function (User $user, string $password) {
+            DB::transaction(function () use ($user, $password) {
+                $user->password = Hash::make($password);
+                $user->save();
+
+                // Security Policy: Revoke all Personal Access Tokens for the affected user
+                $user->tokens()->delete();
+            });
+        });
+
+        if ($status === PasswordBroker::PASSWORD_RESET) {
+            return response()->json([
+                'success' => true,
+                'message' => 'Kata sandi akun Anda berhasil diatur ulang. Silakan masuk menggunakan kata sandi baru.',
+            ]);
+        }
+
+        // Safe error response for invalid, expired, or previously consumed token
+        return response()->json([
+            'success' => false,
+            'message' => 'Tautan pemulihan kata sandi tidak valid atau telah kedaluwarsa. Silakan ajukan permintaan baru.',
+            'error' => 'INVALID_RESET_TOKEN',
+        ], Response::HTTP_UNPROCESSABLE_ENTITY);
     }
 }
 

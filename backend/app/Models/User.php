@@ -95,6 +95,16 @@ class User extends Authenticatable implements MustVerifyEmail, PasskeyUser
     }
 
     /**
+     * Send password reset notification formatted for SENTRAVAX frontend SPA.
+     *
+     * @param string $token
+     */
+    public function sendPasswordResetNotification($token): void
+    {
+        $this->notify(new \App\Notifications\ResetPasswordNotification($token));
+    }
+
+    /**
      * Get the attributes that should be cast.
      *
      * @return array<string, string>

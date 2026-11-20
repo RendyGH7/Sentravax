@@ -10,11 +10,15 @@ import {
   ShieldCheck, 
   Bell, 
   Lock, 
+  KeyRound,
+  Eye,
+  EyeOff,
   Save, 
   CheckCircle2, 
   ArrowRight,
   MapPin,
-  HeartHandshake
+  HeartHandshake,
+  Loader2
 } from 'lucide-react';
 import { toast } from 'sonner';
 
@@ -25,6 +29,16 @@ export const UserSettingsPage: React.FC = () => {
   const [role] = useState(user?.role || 'user');
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
+
+  // Change Password state
+  const [currentPassword, setCurrentPassword] = useState('');
+  const [newPassword, setNewPassword] = useState('');
+  const [confirmPassword, setConfirmPassword] = useState('');
+  const [showCurrentPassword, setShowCurrentPassword] = useState(false);
+  const [showNewPassword, setShowNewPassword] = useState(false);
+  const [showConfirmPassword, setShowConfirmPassword] = useState(false);
+  const [isChangingPassword, setIsChangingPassword] = useState(false);
+  const [passwordErrors, setPasswordErrors] = useState<Record<string, string>>({});
 
   useEffect(() => {
     let isMounted = true;
@@ -59,11 +73,88 @@ export const UserSettingsPage: React.FC = () => {
       const updated = await userService.updateProfile({ name: name.trim() });
       setName(updated.name);
       toast.success('Profil berhasil diperbarui.');
-    } catch (err: any) {
+    } catch (err: unknown) {
       console.error('Failed to update profile:', err);
-      toast.error(err.response?.data?.message || 'Gagal memperbarui profil.');
+      const errorMsg = (err as { response?: { data?: { message?: string } } })?.response?.data?.message;
+      toast.error(errorMsg || 'Gagal memperbarui profil.');
     } finally {
       setIsSubmitting(false);
+    }
+  };
+
+  const handleChangePassword = async (e: React.FormEvent) => {
+    e.preventDefault();
+    const errors: Record<string, string> = {};
+
+    if (!currentPassword) {
+      errors.current_password = 'Kata sandi saat ini wajib diisi.';
+    }
+
+    if (!newPassword) {
+      errors.password = 'Kata sandi baru wajib diisi.';
+    } else if (newPassword.length < 8) {
+      errors.password = 'Kata sandi baru minimal harus terdiri dari 8 karakter.';
+    } else if (newPassword === currentPassword) {
+      errors.password = 'Kata sandi baru tidak boleh sama dengan kata sandi saat ini.';
+    }
+
+    if (!confirmPassword) {
+      errors.password_confirmation = 'Konfirmasi kata sandi baru wajib diisi.';
+    } else if (newPassword !== confirmPassword) {
+      errors.password_confirmation = 'Konfirmasi kata sandi baru tidak cocok.';
+    }
+
+    if (Object.keys(errors).length > 0) {
+      setPasswordErrors(errors);
+      return;
+    }
+
+    setPasswordErrors({});
+    setIsChangingPassword(true);
+
+    try {
+      const response = await userService.changePassword({
+        current_password: currentPassword,
+        password: newPassword,
+        password_confirmation: confirmPassword,
+      });
+
+      toast.success(response.message || 'Kata sandi berhasil diperbarui.');
+      // Clear password input values upon successful update
+      setCurrentPassword('');
+      setNewPassword('');
+      setConfirmPassword('');
+      setPasswordErrors({});
+    } catch (err: unknown) {
+      console.error('Failed to change password:', err);
+      const errorObj = err as {
+        response?: {
+          status?: number;
+          data?: {
+            message?: string;
+            errors?: Record<string, string[] | string>;
+          };
+        };
+      };
+
+      if (errorObj.response?.status === 422 && errorObj.response?.data?.errors) {
+        const serverErrors: Record<string, string> = {};
+        Object.entries(errorObj.response.data.errors).forEach(([field, msgs]) => {
+          if (Array.isArray(msgs) && msgs.length > 0) {
+            serverErrors[field] = msgs[0];
+          } else if (typeof msgs === 'string') {
+            serverErrors[field] = msgs;
+          }
+        });
+        setPasswordErrors(serverErrors);
+        toast.error(errorObj.response?.data?.message || 'Validasi kata sandi gagal.');
+      } else if (errorObj.response?.status === 429) {
+        toast.error('Terlalu banyak percobaan ganti kata sandi. Silakan tunggu 1 menit.');
+      } else {
+        toast.error(errorObj.response?.data?.message || 'Gagal memperbarui kata sandi. Pastikan koneksi stabil.');
+      }
+    } finally {
+      setIsChangingPassword(false);
     }
   };
 
@@ -81,8 +172,9 @@ export const UserSettingsPage: React.FC = () => {
       </div>
 
       <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-        {/* Left Column: Profile Form */}
+        {/* Left Column: Profile & Security Forms */}
         <div className="md:col-span-2 space-y-6">
+          {/* Profile Form */}
           <form
             onSubmit={handleUpdateProfile}
             className="p-6 rounded-2xl bg-[#FFFFFF] border border-[#E5E7EB] shadow-xs space-y-5"
@@ -109,7 +201,7 @@ export const UserSettingsPage: React.FC = () => {
                     value={name}
                     onChange={(e) => setName(e.target.value)}
                     required
-                    disabled={isLoading}
+                    disabled={isLoading || isSubmitting}
                     className="w-full pl-9 pr-3.5 py-2.5 rounded-xl bg-[#FFFFFF] border border-[#E5E7EB] text-xs font-medium text-[#111827] focus:outline-none focus:border-[#047857] focus:ring-1 focus:ring-[#047857] disabled:bg-[#F9FAFB]"
                   />
                 </div>
@@ -140,8 +232,180 @@ export const UserSettingsPage: React.FC = () => {
                 disabled={isSubmitting || isLoading}
                 className="inline-flex items-center gap-2 px-5 py-2.5 rounded-xl bg-[#047857] hover:bg-[#065F46] text-white text-xs font-bold transition-all shadow-xs disabled:opacity-50"
               >
-                <Save className="w-3.5 h-3.5" />
-                <span>{isSubmitting ? 'Menyimpan...' : 'Simpan Perubahan'}</span>
+                {isSubmitting ? (
+                  <>
+                    <Loader2 className="w-3.5 h-3.5 animate-spin" />
+                    <span>Menyimpan...</span>
+                  </>
+                ) : (
+                  <>
+                    <Save className="w-3.5 h-3.5" />
+                    <span>Simpan Perubahan</span>
+                  </>
+                )}
+              </button>
+            </div>
+          </form>
+
+          {/* Change Password Form */}
+          <form
+            onSubmit={handleChangePassword}
+            className="p-6 rounded-2xl bg-[#FFFFFF] border border-[#E5E7EB] shadow-xs space-y-5"
+          >
+            <div className="flex items-center justify-between pb-3 border-b border-[#E5E7EB]">
+              <div className="flex items-center gap-2">
+                <KeyRound className="w-4 h-4 text-[#047857]" />
+                <h2 className="text-sm font-bold text-[#111827] uppercase tracking-wider">
+                  Ubah Kata Sandi Akun
+                </h2>
+              </div>
+              <span className="text-[11px] text-[#6B7280]">
+                Minimal 8 karakter
+              </span>
+            </div>
+
+            <div className="space-y-4">
+              {/* Current Password */}
+              <div className="space-y-1.5">
+                <label className="block text-xs font-bold text-[#374151] uppercase tracking-wider">
+                  Kata Sandi Saat Ini
+                </label>
+                <div className="relative">
+                  <Lock className="w-4 h-4 text-[#9CA3AF] absolute left-3 top-3" />
+                  <input
+                    type={showCurrentPassword ? 'text' : 'password'}
+                    value={currentPassword}
+                    onChange={(e) => {
+                      setCurrentPassword(e.target.value);
+                      if (passwordErrors.current_password) {
+                        setPasswordErrors((prev) => ({ ...prev, current_password: '' }));
+                      }
+                    }}
+                    required
+                    disabled={isChangingPassword}
+                    placeholder="Masukkan kata sandi saat ini"
+                    className={`w-full pl-9 pr-10 py-2.5 rounded-xl bg-[#FFFFFF] border text-xs font-medium text-[#111827] focus:outline-none focus:ring-1 transition-all disabled:bg-[#F9FAFB] ${
+                      passwordErrors.current_password
+                        ? 'border-[#EF4444] focus:border-[#EF4444] focus:ring-[#EF4444]'
+                        : 'border-[#E5E7EB] focus:border-[#047857] focus:ring-[#047857]'
+                    }`}
+                  />
+                  <button
+                    type="button"
+                    onClick={() => setShowCurrentPassword(!showCurrentPassword)}
+                    tabIndex={-1}
+                    className="absolute right-3 top-2.5 text-[#9CA3AF] hover:text-[#374151] focus:outline-none"
+                    aria-label={showCurrentPassword ? 'Sembunyikan kata sandi' : 'Tampilkan kata sandi'}
+                  >
+                    {showCurrentPassword ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
+                  </button>
+                </div>
+                {passwordErrors.current_password && (
+                  <p className="text-[11px] font-medium text-[#EF4444]">{passwordErrors.current_password}</p>
+                )}
+              </div>
+
+              {/* New Password */}
+              <div className="space-y-1.5">
+                <label className="block text-xs font-bold text-[#374151] uppercase tracking-wider">
+                  Kata Sandi Baru
+                </label>
+                <div className="relative">
+                  <KeyRound className="w-4 h-4 text-[#9CA3AF] absolute left-3 top-3" />
+                  <input
+                    type={showNewPassword ? 'text' : 'password'}
+                    value={newPassword}
+                    onChange={(e) => {
+                      setNewPassword(e.target.value);
+                      if (passwordErrors.password) {
+                        setPasswordErrors((prev) => ({ ...prev, password: '' }));
+                      }
+                    }}
+                    required
+                    disabled={isChangingPassword}
+                    placeholder="Minimal 8 karakter kombinasi aman"
+                    className={`w-full pl-9 pr-10 py-2.5 rounded-xl bg-[#FFFFFF] border text-xs font-medium text-[#111827] focus:outline-none focus:ring-1 transition-all disabled:bg-[#F9FAFB] ${
+                      passwordErrors.password
+                        ? 'border-[#EF4444] focus:border-[#EF4444] focus:ring-[#EF4444]'
+                        : 'border-[#E5E7EB] focus:border-[#047857] focus:ring-[#047857]'
+                    }`}
+                  />
+                  <button
+                    type="button"
+                    onClick={() => setShowNewPassword(!showNewPassword)}
+                    tabIndex={-1}
+                    className="absolute right-3 top-2.5 text-[#9CA3AF] hover:text-[#374151] focus:outline-none"
+                    aria-label={showNewPassword ? 'Sembunyikan kata sandi baru' : 'Tampilkan kata sandi baru'}
+                  >
+                    {showNewPassword ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
+                  </button>
+                </div>
+                {passwordErrors.password && (
+                  <p className="text-[11px] font-medium text-[#EF4444]">{passwordErrors.password}</p>
+                )}
+              </div>
+
+              {/* Confirm New Password */}
+              <div className="space-y-1.5">
+                <label className="block text-xs font-bold text-[#374151] uppercase tracking-wider">
+                  Konfirmasi Kata Sandi Baru
+                </label>
+                <div className="relative">
+                  <KeyRound className="w-4 h-4 text-[#9CA3AF] absolute left-3 top-3" />
+                  <input
+                    type={showConfirmPassword ? 'text' : 'password'}
+                    value={confirmPassword}
+                    onChange={(e) => {
+                      setConfirmPassword(e.target.value);
+                      if (passwordErrors.password_confirmation) {
+                        setPasswordErrors((prev) => ({ ...prev, password_confirmation: '' }));
+                      }
+                    }}
+                    required
+                    disabled={isChangingPassword}
+                    placeholder="Ulangi kata sandi baru Anda"
+                    className={`w-full pl-9 pr-10 py-2.5 rounded-xl bg-[#FFFFFF] border text-xs font-medium text-[#111827] focus:outline-none focus:ring-1 transition-all disabled:bg-[#F9FAFB] ${
+                      passwordErrors.password_confirmation
+                        ? 'border-[#EF4444] focus:border-[#EF4444] focus:ring-[#EF4444]'
+                        : 'border-[#E5E7EB] focus:border-[#047857] focus:ring-[#047857]'
+                    }`}
+                  />
+                  <button
+                    type="button"
+                    onClick={() => setShowConfirmPassword(!showConfirmPassword)}
+                    tabIndex={-1}
+                    className="absolute right-3 top-2.5 text-[#9CA3AF] hover:text-[#374151] focus:outline-none"
+                    aria-label={showConfirmPassword ? 'Sembunyikan konfirmasi kata sandi' : 'Tampilkan konfirmasi kata sandi'}
+                  >
+                    {showConfirmPassword ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
+                  </button>
+                </div>
+                {passwordErrors.password_confirmation && (
+                  <p className="text-[11px] font-medium text-[#EF4444]">{passwordErrors.password_confirmation}</p>
+                )}
+              </div>
+            </div>
+
+            <div className="pt-4 border-t border-[#E5E7EB] flex items-center justify-between">
+              <span className="text-[11px] text-[#6B7280]">
+                Sesi saat ini akan tetap aktif secara aman.
+              </span>
+              <button
+                type="submit"
+                disabled={isChangingPassword || isLoading}
+                className="inline-flex items-center gap-2 px-5 py-2.5 rounded-xl bg-[#047857] hover:bg-[#065F46] text-white text-xs font-bold transition-all shadow-xs disabled:opacity-50"
+              >
+                {isChangingPassword ? (
+                  <>
+                    <Loader2 className="w-3.5 h-3.5 animate-spin" />
+                    <span>Menyimpan...</span>
+                  </>
+                ) : (
+                  <>
+                    <KeyRound className="w-3.5 h-3.5" />
+                    <span>Perbarui Kata Sandi</span>
+                  </>
+                )}
               </button>
             </div>
           </form>

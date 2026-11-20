@@ -89,6 +89,8 @@ Route::prefix('auth')->middleware(['throttle:auth'])->group(function () {
     Route::post('/login', [AuthController::class, 'login'])->name('api.auth.login');
     Route::post('/register', [AuthController::class, 'register'])->name('api.auth.register');
     Route::post('/token', [AuthController::class, 'issueToken'])->name('api.auth.token');
+    Route::post('/forgot-password', [AuthController::class, 'forgotPassword'])->name('api.auth.forgot-password');
+    Route::post('/reset-password', [AuthController::class, 'resetPassword'])->name('api.auth.reset-password');
 
     Route::middleware('auth:sanctum')->group(function () {
         Route::get('/me', [AuthController::class, 'me'])->name('api.auth.me');
@@ -148,6 +150,7 @@ Route::prefix('user')->middleware(['auth:sanctum', 'role:user,admin,intelligence
     Route::get('/dashboard', [UserPortalController::class, 'dashboard'])->name('api.user.dashboard');
     Route::get('/profile', [UserPortalController::class, 'profile'])->name('api.user.profile');
     Route::put('/profile', [UserPortalController::class, 'updateProfile'])->name('api.user.profile.update');
+    Route::put('/account/password', [UserPortalController::class, 'changePassword'])->middleware('throttle:6,1')->name('api.user.account.password');
 
     // Saved Monitored Regions
     Route::get('/saved-regions', [UserPortalController::class, 'savedRegions'])->name('api.user.saved-regions');

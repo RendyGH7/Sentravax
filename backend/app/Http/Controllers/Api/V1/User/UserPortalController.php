@@ -10,6 +10,9 @@ use App\Models\UserSavedRegion;
 use App\Services\Preparedness\PreparednessService;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Hash;
+use Illuminate\Validation\Rules\Password;
 
 class UserPortalController extends Controller
 {
@@ -86,6 +89,45 @@ class UserPortalController extends Controller
             'success' => true,
             'message' => 'Profil berhasil diperbarui.',
             'data' => $user,
+        ]);
+    }
+
+    /**
+     * Change authenticated user's account password.
+     */
+    public function changePassword(Request $request): JsonResponse
+    {
+        $user = $request->user();
+
+        $validated = $request->validate([
+            'current_password' => ['required', 'string', 'current_password'],
+            'password' => ['required', 'string', Password::min(8), 'confirmed', 'different:current_password'],
+        ], [
+            'current_password.required' => 'Kata sandi saat ini wajib diisi.',
+            'current_password.current_password' => 'Kata sandi saat ini tidak cocok dengan data terdaftar.',
+            'password.required' => 'Kata sandi baru wajib diisi.',
+            'password.min' => 'Kata sandi baru minimal harus terdiri dari :min karakter.',
+            'password.confirmed' => 'Konfirmasi kata sandi baru tidak cocok.',
+            'password.different' => 'Kata sandi baru tidak boleh sama dengan kata sandi saat ini.',
+        ]);
+
+        DB::transaction(function () use ($user, $validated) {
+            $user->update([
+                'password' => Hash::make($validated['password']),
+            ]);
+
+            // Security policy: Revoke all personal access tokens to disallow stale credentials on external devices
+            $user->tokens()->delete();
+        });
+
+        // Sessional safeguard: Regenerate session ID only if request has an active web session
+        if ($request->hasSession()) {
+            $request->session()->regenerate();
+        }
+
+        return response()->json([
+            'success' => true,
+            'message' => 'Kata sandi akun Anda berhasil diperbarui.',
         ]);
     }
 
