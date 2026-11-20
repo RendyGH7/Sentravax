@@ -41,8 +41,11 @@ import {
   ArrowRight
 } from 'lucide-react';
 import { toast } from 'sonner';
+import { useAuth } from '../../app/context/useAuth';
+import { guestPreparednessSyncService } from '../../services/guest-preparedness-sync-service';
 
 export const UserPreparednessPage: React.FC = () => {
+  const { user } = useAuth();
   const [activeTab, setActiveTab] = useState<string>('plan');
   const [isLoading, setIsLoading] = useState<boolean>(true);
   const [loadError, setLoadError] = useState<string | null>(null);
@@ -103,6 +106,10 @@ export const UserPreparednessPage: React.FC = () => {
     setIsLoading(true);
     setLoadError(null);
     try {
+      if (guestPreparednessSyncService.hasGuestChecklistItems()) {
+        await guestPreparednessSyncService.syncGuestChecklistToServer(user, false);
+      }
+
       const [planRes, checklistRes, scenariosRes] = await Promise.all([
         userService.getFamilyPlan(),
         userService.getChecklist(),
@@ -134,7 +141,7 @@ export const UserPreparednessPage: React.FC = () => {
     } finally {
       setIsLoading(false);
     }
-  }, []);
+  }, [user]);
 
   useEffect(() => {
     loadData();

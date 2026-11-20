@@ -14,6 +14,9 @@ import { Skeleton } from '../../components/ui/Skeleton';
 import { EmptyState } from '../../components/ui/EmptyState';
 import { DisasterMap } from '../../components/map/DisasterMap';
 import { ProvenanceBadge } from '../../components/shared/DataTrustBadges';
+import { useAuth } from '../../app/context/useAuth';
+import { userService } from '../../services/user-service';
+import { guestPreparednessSyncService } from '../../services/guest-preparedness-sync-service';
 import { 
   ShieldCheck, 
   MapPin, 
@@ -133,6 +136,9 @@ export const PublicPreparednessPage: React.FC = () => {
   const [geoLoading, setGeoLoading] = useState<boolean>(false);
   const [geoNotice, setGeoNotice] = useState<string | null>(null);
 
+  // Authentication Context
+  const { user, isAuthenticated } = useAuth();
+
   // Analysis State
   const [analysisResult, setAnalysisResult] = useState<LocationCheckResult | null>(null);
   const [analyzing, setAnalyzing] = useState<boolean>(false);
@@ -142,21 +148,62 @@ export const PublicPreparednessPage: React.FC = () => {
   const GOBAG_STORAGE_KEY = 'sentravax_gobag_checklist';
   const [checkedItems, setCheckedItems] = useState<Record<number, boolean>>(() => {
     try {
-      const saved = localStorage.getItem(GOBAG_STORAGE_KEY);
-      return saved ? JSON.parse(saved) : {};
+      const items = guestPreparednessSyncService.getGuestChecklistItems();
+      const initial: Record<number, boolean> = {};
+      items.forEach(id => {
+        initial[id] = true;
+      });
+      return initial;
     } catch {
       return {};
     }
   });
 
-  // Sync checklist changes to browser localStorage without transmitting any personal data
+  // Hydrate checklist from authenticated user account if logged in
   useEffect(() => {
-    try {
-      localStorage.setItem(GOBAG_STORAGE_KEY, JSON.stringify(checkedItems));
-    } catch {
-      // Ignore if localStorage unavailable
+    let isCancelled = false;
+
+    if (isAuthenticated && user?.role === 'user') {
+      const hydrateUserChecklist = async () => {
+        try {
+          if (guestPreparednessSyncService.hasGuestChecklistItems()) {
+            await guestPreparednessSyncService.syncGuestChecklistToServer(user, true);
+          }
+          const res = await userService.getChecklist();
+          if (!isCancelled && res?.categories) {
+            const mapped: Record<number, boolean> = {};
+            Object.values(res.categories).forEach(items => {
+              items.forEach(it => {
+                if (it.is_completed) {
+                  mapped[it.id] = true;
+                }
+              });
+            });
+            setCheckedItems(mapped);
+          }
+        } catch {
+          // Keep local state if server query fails
+        }
+      };
+
+      void hydrateUserChecklist();
     }
-  }, [checkedItems]);
+
+    return () => {
+      isCancelled = true;
+    };
+  }, [isAuthenticated, user]);
+
+  // Sync checklist changes to browser localStorage without transmitting personal data (guest only)
+  useEffect(() => {
+    if (!isAuthenticated) {
+      try {
+        localStorage.setItem(GOBAG_STORAGE_KEY, JSON.stringify(checkedItems));
+      } catch {
+        // Ignore if localStorage unavailable
+      }
+    }
+  }, [checkedItems, isAuthenticated]);
 
   const [checklistFilter, setChecklistFilter] = useState<string>('all');
 
@@ -364,6 +411,9 @@ export const PublicPreparednessPage: React.FC = () => {
       ...prev,
       [id]: !prev[id]
     }));
+    if (isAuthenticated && user?.role === 'user') {
+      void userService.toggleChecklistItem(id);
+    }
   };
 
   const riskLevel = analysisResult?.assessment.risk_level || 'low';
@@ -1087,18 +1137,32 @@ export const PublicPreparednessPage: React.FC = () => {
                     })}
                   </div>
 
-                  {/* Privacy Microcopy */}
-                  <div className="p-2.5 rounded-xl bg-[#F0FDF4] border border-[#DCFCE7] text-[11px] text-[#065F46] flex items-center gap-2">
-                    <ShieldCheck className="w-3.5 h-3.5 text-[#047857] shrink-0" />
-                    <span>Privasi Terjamin: Status checklist tersimpan secara mandiri pada peramban perangkat Anda (localStorage) dan tidak pernah dikirim ke server.</span>
-                  </div>
+                  {/* Status / Privacy Microcopy */}
+                  {isAuthenticated ? (
+                    <div className="p-2.5 rounded-xl bg-[#F0FDF4] border border-[#DCFCE7] text-[11px] text-[#065F46] flex items-center justify-between">
+                      <div className="flex items-center gap-2">
+                        <CheckCircle2 className="w-3.5 h-3.5 text-[#047857] shrink-0" />
+                        <span>Tersinkronisasi dengan Akun Anda ({user?.name}). Progres tersimpan aman di server.</span>
+                      </div>
+                      <Link to={PATHS.USER.PREPAREDNESS} className="font-bold text-[#047857] hover:underline flex items-center gap-1 shrink-0">
+                        Siaga Personal <ArrowRight className="w-3 h-3" />
+                      </Link>
+                    </div>
+                  ) : (
+                    <>
+                      <div className="p-2.5 rounded-xl bg-[#F0FDF4] border border-[#DCFCE7] text-[11px] text-[#065F46] flex items-center gap-2">
+                        <ShieldCheck className="w-3.5 h-3.5 text-[#047857] shrink-0" />
+                        <span>Privasi Terjamin: Status checklist tersimpan secara mandiri pada peramban perangkat Anda (localStorage).</span>
+                      </div>
 
-                  <div className="p-3 rounded-xl bg-[#F9FAFB] border border-[#E5E7EB] text-[11px] text-[#6B7280] flex items-center justify-between">
-                    <span>Ingin menyimpan rencana siaga keluarga secara permanen?</span>
-                    <Link to={PATHS.PUBLIC.REGISTER} className="font-bold text-[#047857] hover:underline flex items-center gap-1">
-                      Daftar Akun Warga <ArrowRight className="w-3 h-3" />
-                    </Link>
-                  </div>
+                      <div className="p-3 rounded-xl bg-[#F9FAFB] border border-[#E5E7EB] text-[11px] text-[#6B7280] flex items-center justify-between">
+                        <span>Ingin menyimpan progres dan rencana siaga keluarga ke akun?</span>
+                        <Link to={PATHS.PUBLIC.REGISTER} className="font-bold text-[#047857] hover:underline flex items-center gap-1">
+                          Daftar Akun Warga <ArrowRight className="w-3 h-3" />
+                        </Link>
+                      </div>
+                    </>
+                  )}
                 </Card>
               </div>
             </div>

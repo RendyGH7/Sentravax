@@ -18,6 +18,7 @@ import type {
   CreateContactPayload,
   ChecklistOverviewData,
   ToggleChecklistResult,
+  SyncChecklistResult,
   SimulationScenarioItem,
   ScenarioAttemptResult,
 } from '../types';
@@ -260,6 +261,19 @@ export const userService = {
   async toggleChecklistItem(itemId: number): Promise<ToggleChecklistResult> {
     const res = await apiClient.post<ApiResponse<ToggleChecklistResult>>(
       `/user/preparedness/checklist/${itemId}/toggle`
+    );
+    return res.data.data;
+  },
+
+  /**
+   * Batch synchronize guest Go-Bag checklist items into user's account.
+   * Strategy: Additive Union (Idempotent Merge).
+   * Endpoint: POST /api/v1/user/preparedness/checklist/sync
+   */
+  async syncChecklist(itemIds: number[]): Promise<SyncChecklistResult> {
+    const res = await apiClient.post<ApiResponse<SyncChecklistResult>>(
+      '/user/preparedness/checklist/sync',
+      { item_ids: itemIds }
     );
     return res.data.data;
   },

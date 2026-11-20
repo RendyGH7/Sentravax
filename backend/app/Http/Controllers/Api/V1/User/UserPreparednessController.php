@@ -196,6 +196,34 @@ class UserPreparednessController extends Controller
     }
 
     /**
+     * Batch sync guest checklist progress into authenticated user's account.
+     * Endpoint: POST /api/v1/user/preparedness/checklist/sync
+     */
+    public function syncChecklist(Request $request): JsonResponse
+    {
+        $validated = $request->validate([
+            'items' => ['nullable'],
+            'item_ids' => ['nullable', 'array'],
+            'item_ids.*' => ['integer'],
+        ]);
+
+        $rawItems = $validated['items'] ?? $validated['item_ids'] ?? [];
+        if (!is_array($rawItems)) {
+            $rawItems = [];
+        }
+
+        $result = $this->preparednessService->syncGuestChecklist($request->user(), $rawItems);
+
+        return response()->json([
+            'success' => true,
+            'message' => $result['synced_count'] > 0
+                ? "Berhasil menyinkronkan {$result['synced_count']} item tas siaga dari perangkat ke akun Anda."
+                : 'Data kesiapsiagaan tas siaga telah mutakhir dengan akun Anda.',
+            'data' => $result,
+        ]);
+    }
+
+    /**
      * List Simulation Scenarios.
      */
     public function scenarios(): JsonResponse

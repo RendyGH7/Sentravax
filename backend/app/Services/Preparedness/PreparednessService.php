@@ -258,5 +258,103 @@ class PreparednessService
             'evaluation_summary' => $evalSummary,
         ];
     }
+
+    /**
+     * Batch synchronize guest Go-Bag checklist items into authenticated user's account.
+     * Strategy: Additive Union (Idempotent Merge).
+     *
+     * - Merges valid completed items into database without unchecking existing completed items.
+     * - Validates item IDs against master preparedness_checklist_items.
+     * - Safely ignores non-existent, invalid, or negative IDs.
+     * - Returns comprehensive summary of changes and current completion stats.
+     *
+     * @param User $user
+     * @param array $guestItems Array of IDs [1, 2, 3] OR map [1 => true, 2 => false]
+     * @return array
+     */
+    public function syncGuestChecklist(User $user, array $guestItems): array
+    {
+        // 1. Normalize input to list of integer IDs that were checked (true)
+        $completedIds = [];
+        if (array_is_list($guestItems)) {
+            // Case A: Simple list format [1, 2, 5] or ["1", "2"]
+            foreach ($guestItems as $val) {
+                if (is_numeric($val) && (int)$val > 0) {
+                    $completedIds[] = (int) $val;
+                }
+            }
+        } else {
+            // Case B: Associative Map format ["1" => true, "2" => false]
+            foreach ($guestItems as $key => $val) {
+                if (is_numeric($key) && (int)$key > 0) {
+                    if (filter_var($val, FILTER_VALIDATE_BOOLEAN)) {
+                        $completedIds[] = (int) $key;
+                    }
+                }
+            }
+        }
+
+        $completedIds = array_values(array_unique($completedIds));
+
+        // 2. Fetch all valid item IDs currently existing in the database
+        $validItemIds = PreparednessChecklistItem::whereIn('id', $completedIds)
+            ->pluck('id')
+            ->toArray();
+
+        $syncedCount = 0;
+        $alreadyCompletedCount = 0;
+
+        DB::transaction(function () use ($user, $validItemIds, &$syncedCount, &$alreadyCompletedCount) {
+            $existingProgress = PreparednessChecklistProgress::where('user_id', $user->id)
+                ->whereIn('checklist_item_id', $validItemIds)
+                ->get()
+                ->keyBy('checklist_item_id');
+
+            foreach ($validItemIds as $itemId) {
+                $rec = $existingProgress->get($itemId);
+
+                if ($rec && $rec->is_completed) {
+                    $alreadyCompletedCount++;
+                    // Already completed, do not alter completed_at or toggle
+                    continue;
+                }
+
+                if ($rec && !$rec->is_completed) {
+                    $rec->update([
+                        'is_completed' => true,
+                        'completed_at' => now(),
+                    ]);
+                    $syncedCount++;
+                } else {
+                    PreparednessChecklistProgress::create([
+                        'user_id' => $user->id,
+                        'checklist_item_id' => $itemId,
+                        'is_completed' => true,
+                        'completed_at' => now(),
+                    ]);
+                    $syncedCount++;
+                }
+            }
+        });
+
+        // 3. Compute overall user stats post-sync
+        $totalItems = PreparednessChecklistItem::count();
+        $allCompletedItemIds = PreparednessChecklistProgress::where('user_id', $user->id)
+            ->where('is_completed', true)
+            ->pluck('checklist_item_id')
+            ->toArray();
+
+        $totalCompleted = count($allCompletedItemIds);
+        $percentage = $totalItems > 0 ? round(($totalCompleted / $totalItems) * 100, 1) : 0;
+
+        return [
+            'synced_count' => $syncedCount,
+            'already_completed_count' => $alreadyCompletedCount,
+            'total_completed' => $totalCompleted,
+            'total_items' => $totalItems,
+            'percentage' => $percentage,
+            'completed_item_ids' => $allCompletedItemIds,
+        ];
+    }
 }
 

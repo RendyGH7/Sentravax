@@ -224,6 +224,15 @@ export interface ToggleChecklistResult {
   percentage: number;
 }
 
+export interface SyncChecklistResult {
+  synced_count: number;
+  already_completed_count: number;
+  total_completed: number;
+  total_items: number;
+  percentage: number;
+  completed_item_ids: number[];
+}
+
 export interface FamilyPlanData {
   plan: PreparednessPlanItem;
   contacts: EmergencyContactItem[];

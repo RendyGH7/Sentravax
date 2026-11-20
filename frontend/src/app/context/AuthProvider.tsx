@@ -2,6 +2,7 @@ import React, { useState, useEffect, useCallback } from 'react';
 import authService from '../../lib/auth-service';
 import { type User, type UserRole, type LoginCredentials, type RegisterData } from '../../types/auth';
 import { AuthContext } from './auth-context';
+import { guestPreparednessSyncService } from '../../services/guest-preparedness-sync-service';
 
 export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   const [user, setUser] = useState<User | null>(null);
@@ -16,6 +17,9 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
         const freshUser = await authService.getCurrentUser();
         if (isMounted) {
           setUser(freshUser);
+          if (freshUser && freshUser.role === 'user') {
+            void guestPreparednessSyncService.syncGuestChecklistToServer(freshUser);
+          }
         }
       } catch {
         if (isMounted) {
@@ -38,18 +42,27 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
   const login = async (credentials: LoginCredentials): Promise<User> => {
     const loggedInUser = await authService.login(credentials);
     setUser(loggedInUser);
+    if (loggedInUser.role === 'user') {
+      void guestPreparednessSyncService.syncGuestChecklistToServer(loggedInUser);
+    }
     return loggedInUser;
   };
 
   const register = async (data: RegisterData): Promise<User> => {
     const registeredUser = await authService.register(data);
     setUser(registeredUser);
+    if (registeredUser.role === 'user') {
+      void guestPreparednessSyncService.syncGuestChecklistToServer(registeredUser);
+    }
     return registeredUser;
   };
 
   const logout = async (): Promise<void> => {
+    // Cancel any in-flight sync to prevent race conditions during session transition
+    guestPreparednessSyncService.cancelInFlightSync();
     await authService.logout();
     setUser(null);
+    // CRITICAL: We do NOT wipe guest localStorage here. Unsynced/pending items are preserved for retry.
   };
 
   const hasRole = useCallback(
