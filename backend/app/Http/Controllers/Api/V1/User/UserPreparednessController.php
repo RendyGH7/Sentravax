@@ -107,9 +107,11 @@ class UserPreparednessController extends Controller
         $validated = $request->validate([
             'name' => ['required', 'string', 'max:100'],
             'relationship' => ['required', 'string', 'max:50'],
-            'phone_number' => ['required', 'string', 'max:30'],
+            'phone_number' => ['required', 'string', 'min:6', 'max:25', 'regex:/^\+?[0-9\s\-\(\)]{6,25}$/'],
             'is_emergency_priority' => ['nullable', 'boolean'],
             'is_primary' => ['nullable', 'boolean'],
+        ], [
+            'phone_number.regex' => 'Format nomor telepon tidak valid. Gunakan angka, spasi, tanda minus, atau kode negara internasional (+).',
         ]);
 
         $contact = PreparednessContact::create([
@@ -125,6 +127,48 @@ class UserPreparednessController extends Controller
             'message' => 'Kontak darurat berhasil ditambahkan.',
             'data' => $contact,
         ], 201);
+    }
+
+    /**
+     * Update Emergency Contact.
+     */
+    public function updateContact(Request $request, int $id): JsonResponse
+    {
+        $contact = PreparednessContact::where('user_id', $request->user()->id)->where('id', $id)->firstOrFail();
+
+        $validated = $request->validate([
+            'name' => ['sometimes', 'required', 'string', 'max:100'],
+            'relationship' => ['sometimes', 'required', 'string', 'max:50'],
+            'phone_number' => ['sometimes', 'required', 'string', 'min:6', 'max:25', 'regex:/^\+?[0-9\s\-\(\)]{6,25}$/'],
+            'is_emergency_priority' => ['nullable', 'boolean'],
+            'is_primary' => ['nullable', 'boolean'],
+        ], [
+            'phone_number.regex' => 'Format nomor telepon tidak valid. Gunakan angka, spasi, tanda minus, atau kode negara internasional (+).',
+        ]);
+
+        $updateData = [];
+        if (array_key_exists('name', $validated)) {
+            $updateData['name'] = $validated['name'];
+        }
+        if (array_key_exists('relationship', $validated)) {
+            $updateData['relationship'] = $validated['relationship'];
+        }
+        if (array_key_exists('phone_number', $validated)) {
+            $updateData['phone_number'] = $validated['phone_number'];
+        }
+        if (array_key_exists('is_emergency_priority', $validated)) {
+            $updateData['is_emergency_priority'] = $validated['is_emergency_priority'];
+        } elseif (array_key_exists('is_primary', $validated)) {
+            $updateData['is_emergency_priority'] = $validated['is_primary'];
+        }
+
+        $contact->update($updateData);
+
+        return response()->json([
+            'success' => true,
+            'message' => 'Kontak darurat berhasil diperbarui.',
+            'data' => $contact->fresh(),
+        ]);
     }
 
     /**

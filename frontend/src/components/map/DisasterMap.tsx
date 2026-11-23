@@ -211,7 +211,7 @@ export const DisasterMap: React.FC<DisasterMapProps> = ({
       minZoom: INDONESIA_MIN_ZOOM,
       maxZoom: INDONESIA_MAX_ZOOM,
       zoomControl: false, // We use accessible, high-contrast custom controls
-      attributionControl: true,
+      attributionControl: false,
     });
 
     // Constrain panning to the Indonesian archipelago

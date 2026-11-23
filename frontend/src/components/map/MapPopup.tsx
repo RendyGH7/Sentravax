@@ -116,75 +116,81 @@ export function createMapPopupHtml(feature: GeoJsonPointFeature, theme: UITheme 
   const provenance = getEventProvenance(feature);
 
   const containerBg = isDark ? '#161616' : '#FFFFFF';
-  const textColor = isDark ? '#F5F5F5' : '#111827';
-  const textMuted = isDark ? '#A3A3A3' : '#6B7280';
-  const borderColor = isDark ? '#2C2C2C' : '#E5E7EB';
-  const headerBg = isDark ? '#212121' : '#F9FAFB';
+  const textColor = isDark ? '#F8FAFC' : '#0F172A';
+  const textMuted = isDark ? '#94A3B8' : '#64748B';
+  const borderColor = isDark ? '#2A2A2A' : '#F1F5F9';
 
   const severityBg = isDark ? severityConfig.darkBgColor : severityConfig.bgColor;
   const severityColor = isDark ? severityConfig.darkColor : severityConfig.color;
   const severityBorder = isDark ? severityConfig.darkBorderColor : severityConfig.borderColor;
 
   return `
-    <div style="background-color: ${containerBg}; color: ${textColor}; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; min-width: 260px; max-width: 320px; font-size: 12px; line-height: 1.4;">
-      <!-- Header with Hazard Type & Severity Badge -->
-      <div style="background-color: ${headerBg}; padding: 10px 14px; border-bottom: 1px solid ${borderColor}; display: flex; align-items: center; justify-content: space-between; gap: 8px;">
-        <span style="font-weight: 700; font-size: 11px; text-transform: uppercase; letter-spacing: 0.04em; color: ${isDark ? '#F59E0B' : '#047857'};">
-          ${safeHazardName}
-        </span>
-        <span style="display: inline-flex; align-items: center; gap: 4px; padding: 2px 8px; border-radius: 9999px; font-size: 10px; font-weight: 700; background-color: ${severityBg}; color: ${severityColor}; border: 1px solid ${severityBorder};">
+    <div style="background-color: ${containerBg}; color: ${textColor}; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; width: 310px; max-width: 90vw; font-size: 12px; line-height: 1.45; border-radius: 16px; overflow: hidden;">
+      <!-- Header: Hazard Category & Severity Badge (44px right-padding ensures zero collision with Leaflet close button) -->
+      <div style="background: ${isDark ? 'linear-gradient(to right, #212121, #1A1A1A)' : 'linear-gradient(to right, #F8FAFC, #F1F5F9)'}; padding: 12px 44px 10px 16px; border-bottom: 1px solid ${borderColor}; display: flex; align-items: center; justify-content: space-between; gap: 8px;">
+        <div style="display: flex; align-items: center; gap: 6px; min-width: 0;">
+          <span style="display: inline-block; width: 6px; height: 6px; border-radius: 9999px; background-color: ${isDark ? '#F59E0B' : '#047857'}; flex-shrink: 0;"></span>
+          <span style="font-weight: 700; font-size: 10.5px; text-transform: uppercase; letter-spacing: 0.05em; color: ${isDark ? '#F59E0B' : '#047857'}; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">
+            ${safeHazardName}
+          </span>
+        </div>
+        <span style="display: inline-flex; align-items: center; gap: 4px; padding: 2.5px 8px; border-radius: 9999px; font-size: 10px; font-weight: 700; background-color: ${severityBg}; color: ${severityColor}; border: 1px solid ${severityBorder}; flex-shrink: 0; box-shadow: 0 1px 2px rgba(0,0,0,0.03);">
           <span style="width: 5px; height: 5px; border-radius: 9999px; background-color: ${severityConfig.dotColor};"></span>
           Tingkat ${severityConfig.label}
         </span>
       </div>
 
       <!-- Body Content -->
-      <div style="padding: 12px 14px; display: flex; flex-direction: column; gap: 8px;">
-        <!-- Title (XSS Protected) -->
-        <h5 style="margin: 0; font-size: 13px; font-weight: 700; color: ${textColor}; line-height: 1.35;">
+      <div style="padding: 14px 16px; display: flex; flex-direction: column; gap: 12px;">
+        <!-- Title -->
+        <h4 style="margin: 0; font-size: 13.5px; font-weight: 700; color: ${textColor}; line-height: 1.35; letter-spacing: -0.015em;">
           ${safeTitle}
-        </h5>
+        </h4>
 
-        <!-- Time, Coordinates & Provenance Info -->
-        <div style="display: flex; flex-direction: column; gap: 4px; padding: 8px; background-color: ${isDark ? '#1C1C1C' : '#F3F4F6'}; border-radius: 8px; border: 1px solid ${borderColor}; font-size: 11px;">
-          <div style="display: flex; justify-content: space-between; align-items: center;">
-            <span style="color: ${textMuted}; font-weight: 500;">Waktu:</span>
-            <span style="color: ${textColor}; font-weight: 600;">${formattedDate}</span>
-          </div>
-          <div style="display: flex; justify-content: space-between; align-items: center;">
-            <span style="color: ${textMuted}; font-weight: 500;">Koordinat:</span>
-            <span style="color: ${textColor}; font-family: monospace; font-size: 10.5px;">${lat.toFixed(4)}°, ${lon.toFixed(4)}°</span>
-          </div>
-          <div style="display: flex; justify-content: space-between; align-items: center;">
-            <span style="color: ${textMuted}; font-weight: 500;">Sumber:</span>
-            <span style="color: ${textColor}; font-weight: 600;">${escapeHtml(provenance.sourceName)}</span>
-          </div>
-          <div style="display: flex; justify-content: space-between; align-items: center;">
-            <span style="color: ${textMuted}; font-weight: 500;">Status Data:</span>
-            <span style="color: ${provenance.dotColor}; font-weight: 700; display: inline-flex; align-items: center; gap: 4px;">
-              <span style="width: 5px; height: 5px; border-radius: 9999px; background-color: ${provenance.dotColor};"></span>
-              ${escapeHtml(provenance.label)}
-            </span>
-          </div>
+        <!-- Telemetry Data Grid (Clean 2-Column, Zero Overlap) -->
+        <div style="display: grid; grid-template-columns: 78px 1fr; gap: 7px 12px; padding: 10px 12px; background-color: ${isDark ? '#1C1C1C' : '#F8FAFC'}; border-radius: 12px; border: 1px solid ${borderColor}; font-size: 11px; align-items: baseline;">
+          <!-- Waktu -->
+          <span style="color: ${textMuted}; font-weight: 500; font-size: 10.5px;">Waktu</span>
+          <span style="color: ${textColor}; font-weight: 600; text-align: right;">${formattedDate}</span>
+
+          <!-- Koordinat -->
+          <span style="color: ${textMuted}; font-weight: 500; font-size: 10.5px;">Koordinat</span>
+          <span style="color: ${textColor}; font-family: ui-monospace, SFMono-Regular, Menlo, monospace; font-size: 10px; font-weight: 600; text-align: right; background-color: ${isDark ? '#262626' : '#FFFFFF'}; border: 1px solid ${borderColor}; padding: 1.5px 6px; border-radius: 6px; justify-self: end;">
+            ${lat.toFixed(4)}°, ${lon.toFixed(4)}°
+          </span>
+
+          <!-- Sumber -->
+          <span style="color: ${textMuted}; font-weight: 500; font-size: 10.5px;">Sumber</span>
+          <span style="color: ${textColor}; font-weight: 600; text-align: right; line-height: 1.3;">${escapeHtml(provenance.sourceName)}</span>
+
+          <!-- Status Data -->
+          <span style="color: ${textMuted}; font-weight: 500; font-size: 10.5px;">Status Data</span>
+          <span style="display: inline-flex; align-items: center; gap: 5px; justify-self: end; font-size: 10px; font-weight: 700; color: ${provenance.dotColor};">
+            <span style="width: 6px; height: 6px; border-radius: 9999px; background-color: ${provenance.dotColor}; box-shadow: 0 0 0 2px ${provenance.dotColor}33;"></span>
+            ${escapeHtml(provenance.label)}
+          </span>
         </div>
 
-        <!-- Footer Action -->
-        <div style="margin-top: 4px; display: flex; flex-direction: column; gap: 4px;">
-          <a 
-            href="/disasters/${safeEventId}" 
-            class="sentravax-popup-detail-link"
-            style="display: block; text-align: center; width: 100%; padding: 6px 10px; border-radius: 8px; font-size: 11px; font-weight: 700; text-decoration: none; border: 1px solid #047857; background-color: #047857; color: #FFFFFF; transition: opacity 150ms;"
-          >
-            Buka Detail Kejadian &rarr;
-          </a>
+        <!-- Dual Actions: Pusatkan Peta & Buka Detail -->
+        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-top: 2px;">
           <button 
             type="button" 
             data-event-id="${safeEventId}" 
             class="sentravax-popup-action-btn"
-            style="width: 100%; padding: 5px 10px; border-radius: 8px; font-size: 10.5px; font-weight: 600; cursor: pointer; border: 1px solid ${isDark ? '#3D3D3D' : '#D1D5DB'}; background-color: ${isDark ? '#2B2B2B' : '#FFFFFF'}; color: ${textColor}; transition: background 150ms;"
+            style="display: inline-flex; align-items: center; justify-content: center; gap: 5px; width: 100%; padding: 8px 10px; border-radius: 10px; font-size: 11px; font-weight: 600; cursor: pointer; border: 1px solid ${isDark ? '#383838' : '#CBD5E1'}; background-color: ${isDark ? '#242424' : '#FFFFFF'}; color: ${textColor}; transition: all 150ms ease; box-shadow: 0 1px 2px rgba(0,0,0,0.03);"
           >
-            Pusatkan Peta ke Lokasi
+            <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><circle cx="12" cy="12" r="2"/><line x1="12" y1="2" x2="12" y2="6"/><line x1="12" y1="18" x2="12" y2="22"/><line x1="2" y1="12" x2="6" y2="12"/><line x1="18" y1="12" x2="22" y2="12"/></svg>
+            <span>Pusatkan Peta</span>
           </button>
+
+          <a
+            href="/disasters/${safeEventId}"
+            class="sentravax-popup-detail-link"
+            style="display: inline-flex; align-items: center; justify-content: center; gap: 5px; width: 100%; padding: 8px 10px; border-radius: 10px; font-size: 11px; font-weight: 700; text-decoration: none; border: 1px solid #047857; background: linear-gradient(to bottom, #059669, #047857); color: #FFFFFF; transition: all 150ms ease; box-shadow: 0 2px 4px rgba(4, 120, 87, 0.25);"
+          >
+            <span>Buka Detail</span>
+            <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
+          </a>
         </div>
       </div>
     </div>

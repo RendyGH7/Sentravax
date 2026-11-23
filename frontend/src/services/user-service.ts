@@ -16,6 +16,7 @@ import type {
   UpdatePlanPayload,
   EmergencyContactItem,
   CreateContactPayload,
+  UpdateContactPayload,
   ChecklistOverviewData,
   ToggleChecklistResult,
   SyncChecklistResult,
@@ -243,6 +244,15 @@ export const userService = {
    */
   async addEmergencyContact(payload: CreateContactPayload): Promise<EmergencyContactItem> {
     const res = await apiClient.post<ApiResponse<EmergencyContactItem>>('/user/preparedness/contacts', payload);
+    return res.data.data;
+  },
+
+  /**
+   * Update an existing emergency contact.
+   * Endpoint: PUT /api/v1/user/preparedness/contacts/{id}
+   */
+  async updateEmergencyContact(id: number, payload: UpdateContactPayload): Promise<EmergencyContactItem> {
+    const res = await apiClient.put<ApiResponse<EmergencyContactItem>>(`/user/preparedness/contacts/${id}`, payload);
     return res.data.data;
   },
 

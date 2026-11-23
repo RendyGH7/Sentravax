@@ -172,6 +172,7 @@ Route::prefix('user')->middleware(['auth:sanctum', 'role:user,admin,intelligence
         Route::put('/plan', [UserPreparednessController::class, 'updatePlan'])->name('api.user.preparedness.plan.update');
         Route::get('/contacts', [UserPreparednessController::class, 'getContacts'])->name('api.user.preparedness.contacts');
         Route::post('/contacts', [UserPreparednessController::class, 'addContact'])->name('api.user.preparedness.contacts.store');
+        Route::put('/contacts/{id}', [UserPreparednessController::class, 'updateContact'])->name('api.user.preparedness.contacts.update');
         Route::delete('/contacts/{id}', [UserPreparednessController::class, 'deleteContact'])->name('api.user.preparedness.contacts.delete');
         Route::get('/checklist', [UserPreparednessController::class, 'getChecklist'])->name('api.user.preparedness.checklist');
         Route::post('/checklist/sync', [UserPreparednessController::class, 'syncChecklist'])->middleware('verified')->name('api.user.preparedness.checklist.sync');

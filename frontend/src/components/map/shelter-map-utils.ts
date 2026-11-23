@@ -110,8 +110,8 @@ export function createShelterPopupHtml(
 
   return `
     <div class="p-3 sm:p-4 text-left font-sans text-xs ${isDark ? 'text-[#F9FAFB]' : 'text-[#111827]'} max-w-[320px]">
-      <!-- Header Badge -->
-      <div class="flex items-center justify-between gap-2 mb-2 pb-2 border-b ${isDark ? 'border-[#374151]' : 'border-[#E5E7EB]'}">
+      <!-- Header Badge (pr-9 ensures zero collision with Leaflet close button) -->
+      <div class="flex items-center justify-between gap-2 mb-2 pb-2 pr-9 border-b ${isDark ? 'border-[#374151]' : 'border-[#E5E7EB]'}">
         <span class="inline-flex items-center px-2 py-0.5 rounded-full text-[10px] font-bold tracking-wide uppercase ${isVerified ? 'bg-[#D1FAE5] text-[#065F46]' : 'bg-[#FEF3C7] text-[#92400E]'}">
           ${isVerified ? '🛡️ RESMI TERVERIFIKASI' : '⚠️ DALAM VERIFIKASI'}
         </span>

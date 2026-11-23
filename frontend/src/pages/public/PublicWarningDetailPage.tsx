@@ -35,6 +35,7 @@ import type {
   AlertClass,
   AlertStatus,
 } from '../../types/disaster';
+import { escapeHtml } from '../../components/map/MapPopup';
 import { Button } from '../../components/ui/Button';
 
 // Safe date formatter for Indonesian locale (WIB)
@@ -186,6 +187,7 @@ const AlertCenterMap: React.FC<{
       maxZoom: 16,
       zoomControl: true,
       scrollWheelZoom: false,
+      attributionControl: false,
     });
 
     const tileConfig = TILE_LAYERS.light;
@@ -205,14 +207,38 @@ const AlertCenterMap: React.FC<{
       fillOpacity: 0.8,
     }).addTo(map);
 
+    const popupHtml = `
+      <div style="font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; width: 280px; max-width: 90vw; padding: 12px 14px; font-size: 12px; line-height: 1.45; border-radius: 14px; box-sizing: border-box;">
+        <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 8px; padding-right: 32px;">
+          <span style="display: inline-flex; align-items: center; gap: 4px; font-size: 10px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.05em; color: #B45309; background: #FEF3C7; border: 1px solid #FDE68A; padding: 2px 8px; border-radius: 9999px;">
+            <span style="width: 5px; height: 5px; border-radius: 50%; background: #D97706;"></span>
+            Zona Peringatan CAP
+          </span>
+        </div>
+        <h4 style="margin: 0 0 10px 0; font-size: 13.5px; font-weight: 700; color: #0F172A; line-height: 1.35; padding-right: 8px; word-break: break-word;">
+          ${escapeHtml(regionName)}
+        </h4>
+        <div style="display: flex; flex-direction: column; gap: 6px; padding: 8px 10px; background: #F8FAFC; border: 1px solid #E2E8F0; border-radius: 8px; font-size: 11px;">
+          <div style="display: flex; justify-content: space-between; align-items: center;">
+            <span style="color: #64748B; font-weight: 500;">Tingkat Cakupan:</span>
+            <span style="color: #B45309; font-weight: 700; font-size: 10.5px; text-transform: uppercase;">${escapeHtml(broadcastLevel)}</span>
+          </div>
+          <div style="display: flex; justify-content: space-between; align-items: center;">
+            <span style="color: #64748B; font-weight: 500;">Koordinat:</span>
+            <span style="color: #0F172A; font-family: ui-monospace, SFMono-Regular, Menlo, monospace; font-weight: 600; font-size: 10.5px; background: #FFFFFF; border: 1px solid #E2E8F0; padding: 1px 6px; border-radius: 4px;">
+              ${latitude.toFixed(4)}°, ${longitude.toFixed(4)}°
+            </span>
+          </div>
+        </div>
+      </div>
+    `;
+
     marker
-      .bindPopup(
-        `<div style="font-family: inherit; font-size: 12px; line-height: 1.4; padding: 4px;">
-          <strong style="color: #111827;">${regionName}</strong><br/>
-          <span style="color: #B45309; font-weight: bold; font-size: 11px;">Cakupan: ${broadcastLevel}</span><br/>
-          <span style="color: #6B7280; font-size: 10px;">Koordinat: ${latitude.toFixed(4)}°, ${longitude.toFixed(4)}°</span>
-        </div>`
-      )
+      .bindPopup(popupHtml, {
+        minWidth: 260,
+        maxWidth: 320,
+        autoPanPadding: [30, 30],
+      })
       .openPopup();
 
     mapRef.current = map;

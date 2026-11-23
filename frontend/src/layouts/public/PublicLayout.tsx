@@ -8,6 +8,7 @@ import {
   Activity, 
   Compass, 
   Home, 
+  Building2,
   AlertCircle, 
   LogIn, 
   LogOut, 
@@ -28,6 +29,7 @@ export const PublicLayout: React.FC = () => {
   const location = useLocation();
   const { user, isAuthenticated, logout } = useAuth();
 
+  const isHomeActive = location.pathname === PATHS.PUBLIC.HOME;
   const isMapActive = location.pathname.startsWith(PATHS.PUBLIC.MAP);
   const isPantauanActive = 
     location.pathname.startsWith(PATHS.PUBLIC.DISASTERS) || 
@@ -58,6 +60,18 @@ export const PublicLayout: React.FC = () => {
 
           {/* Desktop Navigation - Practical, high-utility tools only */}
           <nav className="hidden md:flex items-center gap-1 sm:gap-2">
+            <Link
+              to={PATHS.PUBLIC.HOME}
+              className={`inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-full text-xs font-medium transition-all ${
+                isHomeActive
+                  ? 'bg-[#ECFDF5] text-[#047857] font-bold'
+                  : 'text-[#4B5563] hover:text-[#111827] hover:bg-[#F3F4F6]'
+              }`}
+            >
+              <Home className="w-3.5 h-3.5 text-[#047857]" />
+              <span>Beranda</span>
+            </Link>
+
             <Link
               to={PATHS.PUBLIC.MAP}
               className={`inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-full text-xs font-medium transition-all ${
@@ -102,7 +116,7 @@ export const PublicLayout: React.FC = () => {
                   : 'text-[#4B5563] hover:text-[#111827] hover:bg-[#F3F4F6]'
               }`}
             >
-              <Home className="w-3.5 h-3.5 text-[#0284C7]" />
+              <Building2 className="w-3.5 h-3.5 text-[#0284C7]" />
               <span>Shelter</span>
             </Link>
           </nav>

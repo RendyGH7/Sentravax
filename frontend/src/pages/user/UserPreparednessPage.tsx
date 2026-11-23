@@ -24,6 +24,7 @@ import {
   PackageCheck, 
   Plus, 
   Trash2, 
+  Pencil,
   Save, 
   RefreshCw, 
   AlertTriangle, 
@@ -65,6 +66,7 @@ export const UserPreparednessPage: React.FC = () => {
   const [contacts, setContacts] = useState<EmergencyContactItem[]>([]);
   const [isContactModalOpen, setIsContactModalOpen] = useState<boolean>(false);
   const [isSubmittingContact, setIsSubmittingContact] = useState<boolean>(false);
+  const [contactToEdit, setContactToEdit] = useState<EmergencyContactItem | null>(null);
   const [contactToDelete, setContactToDelete] = useState<EmergencyContactItem | null>(null);
   const [isDeletingContact, setIsDeletingContact] = useState<boolean>(false);
   const [contactForm, setContactForm] = useState<CreateContactPayload>({
@@ -182,8 +184,34 @@ export const UserPreparednessPage: React.FC = () => {
     }
   };
 
-  // Handle Add Contact
-  const handleAddContact = async (e: React.FormEvent) => {
+  // Open Add Contact Modal
+  const handleOpenAddContactModal = () => {
+    setContactToEdit(null);
+    setContactForm({
+      name: '',
+      relationship: '',
+      phone_number: '',
+      is_emergency_priority: true,
+    });
+    setContactErrors({});
+    setIsContactModalOpen(true);
+  };
+
+  // Open Edit Contact Modal
+  const handleOpenEditContactModal = (contact: EmergencyContactItem) => {
+    setContactToEdit(contact);
+    setContactForm({
+      name: contact.name,
+      relationship: contact.relationship,
+      phone_number: contact.phone_number,
+      is_emergency_priority: contact.is_emergency_priority,
+    });
+    setContactErrors({});
+    setIsContactModalOpen(true);
+  };
+
+  // Handle Save Contact (Add or Update)
+  const handleSaveContact = async (e: React.FormEvent) => {
     e.preventDefault();
     const errors: Record<string, string> = {};
 
@@ -195,8 +223,8 @@ export const UserPreparednessPage: React.FC = () => {
     }
     if (!contactForm.phone_number.trim()) {
       errors.phone_number = 'Nomor telepon wajib diisi.';
-    } else if (!/^[0-9+() -]{4,25}$/.test(contactForm.phone_number.trim())) {
-      errors.phone_number = 'Format nomor telepon tidak valid.';
+    } else if (!/^\+?[0-9\s\-()]{6,25}$/.test(contactForm.phone_number.trim())) {
+      errors.phone_number = 'Format nomor telepon tidak valid (contoh: 08123456789 atau +6281234567890).';
     }
 
     if (Object.keys(errors).length > 0) {
@@ -208,25 +236,40 @@ export const UserPreparednessPage: React.FC = () => {
     setIsSubmittingContact(true);
 
     try {
-      const newContact = await userService.addEmergencyContact({
-        name: contactForm.name.trim(),
-        relationship: contactForm.relationship.trim(),
-        phone_number: contactForm.phone_number.trim(),
-        is_emergency_priority: contactForm.is_emergency_priority ?? true,
-      });
+      if (contactToEdit) {
+        const updated = await userService.updateEmergencyContact(contactToEdit.id, {
+          name: contactForm.name.trim(),
+          relationship: contactForm.relationship.trim(),
+          phone_number: contactForm.phone_number.trim(),
+          is_emergency_priority: contactForm.is_emergency_priority ?? true,
+        });
 
-      setContacts((prev) => [newContact, ...prev]);
-      setIsContactModalOpen(false);
+        setContacts((prev) => prev.map((c) => (c.id === contactToEdit.id ? updated : c)));
+        setIsContactModalOpen(false);
+        setContactToEdit(null);
+        toast.success(`Kontak "${updated.name}" berhasil diperbarui.`);
+      } else {
+        const newContact = await userService.addEmergencyContact({
+          name: contactForm.name.trim(),
+          relationship: contactForm.relationship.trim(),
+          phone_number: contactForm.phone_number.trim(),
+          is_emergency_priority: contactForm.is_emergency_priority ?? true,
+        });
+
+        setContacts((prev) => [newContact, ...prev]);
+        setIsContactModalOpen(false);
+        toast.success(`Kontak darurat "${newContact.name}" berhasil ditambahkan.`);
+      }
+
       setContactForm({
         name: '',
         relationship: '',
         phone_number: '',
         is_emergency_priority: true,
       });
-      toast.success(`Kontak darurat "${newContact.name}" berhasil ditambahkan.`);
     } catch (err: unknown) {
-      const msg = err instanceof Error ? err.message : 'Gagal menambahkan kontak darurat.';
-      toast.error('Gagal menambahkan kontak.', { description: msg });
+      const msg = err instanceof Error ? err.message : 'Gagal menyimpan kontak darurat.';
+      toast.error('Gagal menyimpan kontak.', { description: msg });
     } finally {
       setIsSubmittingContact(false);
     }
@@ -234,7 +277,7 @@ export const UserPreparednessPage: React.FC = () => {
 
   // Handle Delete Contact
   const handleDeleteContact = async () => {
-    if (!contactToDelete) return;
+    if (!contactToDelete || isDeletingContact) return;
 
     setIsDeletingContact(true);
     try {
@@ -676,16 +719,7 @@ export const UserPreparednessPage: React.FC = () => {
               </p>
             </div>
             <Button
-              onClick={() => {
-                setContactForm({
-                  name: '',
-                  relationship: '',
-                  phone_number: '',
-                  is_emergency_priority: true,
-                });
-                setContactErrors({});
-                setIsContactModalOpen(true);
-              }}
+              onClick={handleOpenAddContactModal}
               variant="primary"
               size="sm"
               className="gap-1.5 self-start sm:self-auto shrink-0"
@@ -702,16 +736,7 @@ export const UserPreparednessPage: React.FC = () => {
               icon={<Phone className="w-8 h-8 text-[#9CA3AF]" />}
               action={{
                 label: 'Tambah Kontak Pertama',
-                onClick: () => {
-                  setContactForm({
-                    name: '',
-                    relationship: '',
-                    phone_number: '',
-                    is_emergency_priority: true,
-                  });
-                  setContactErrors({});
-                  setIsContactModalOpen(true);
-                },
+                onClick: handleOpenAddContactModal,
               }}
             />
           ) : (
@@ -745,15 +770,28 @@ export const UserPreparednessPage: React.FC = () => {
                     </a>
                   </div>
 
-                  <Button
-                    onClick={() => setContactToDelete(contact)}
-                    variant="ghost"
-                    size="sm"
-                    className="text-[#DC2626] hover:bg-red-50 p-2 shrink-0"
-                    aria-label={`Hapus kontak ${contact.name}`}
-                  >
-                    <Trash2 className="w-4 h-4" />
-                  </Button>
+                  <div className="flex items-center gap-1 shrink-0">
+                    <Button
+                      onClick={() => handleOpenEditContactModal(contact)}
+                      variant="ghost"
+                      size="sm"
+                      className="text-[#047857] hover:bg-emerald-50 p-2"
+                      aria-label={`Ubah kontak ${contact.name}`}
+                      title="Ubah Kontak"
+                    >
+                      <Pencil className="w-4 h-4" />
+                    </Button>
+                    <Button
+                      onClick={() => setContactToDelete(contact)}
+                      variant="ghost"
+                      size="sm"
+                      className="text-[#DC2626] hover:bg-red-50 p-2"
+                      aria-label={`Hapus kontak ${contact.name}`}
+                      title="Hapus Kontak"
+                    >
+                      <Trash2 className="w-4 h-4" />
+                    </Button>
+                  </div>
                 </div>
               ))}
             </div>
@@ -1169,15 +1207,19 @@ export const UserPreparednessPage: React.FC = () => {
       )}
 
       {/* ========================================================================= */}
-      {/* MODAL: TAMBAH KONTAK DARURAT */}
+      {/* MODAL: TAMBAH / UBAH KONTAK DARURAT */}
       {/* ========================================================================= */}
       <Modal
         isOpen={isContactModalOpen}
         onClose={() => !isSubmittingContact && setIsContactModalOpen(false)}
-        title="Tambah Kontak Darurat Baru"
-        description="Pastikan nomor dapat dihubungi dan pemilik nomor mengetahui perannya dalam kondisi darurat."
+        title={contactToEdit ? 'Ubah Informasi Kontak Darurat' : 'Tambah Kontak Darurat Baru'}
+        description={
+          contactToEdit
+            ? 'Perbarui informasi kontak, nomor telepon, atau status prioritas darurat.'
+            : 'Pastikan nomor dapat dihubungi dan pemilik nomor mengetahui perannya dalam kondisi darurat.'
+        }
       >
-        <form onSubmit={handleAddContact} className="space-y-4">
+        <form onSubmit={handleSaveContact} className="space-y-4">
           <div>
             <Label required>Nama Lengkap / Instansi</Label>
             <Input
@@ -1210,7 +1252,7 @@ export const UserPreparednessPage: React.FC = () => {
               type="tel"
               value={contactForm.phone_number}
               onChange={(e) => setContactForm((prev) => ({ ...prev, phone_number: e.target.value }))}
-              placeholder="Contoh: 081234567890"
+              placeholder="Contoh: 081234567890 atau +6281234567890"
               maxLength={30}
               required
             />
@@ -1244,10 +1286,10 @@ export const UserPreparednessPage: React.FC = () => {
               {isSubmittingContact ? (
                 <>
                   <RefreshCw className="w-4 h-4 animate-spin" />
-                  Menyimpan...
+                  {contactToEdit ? 'Menyimpan...' : 'Menyimpan...'}
                 </>
               ) : (
-                'Simpan Kontak'
+                contactToEdit ? 'Simpan Perubahan' : 'Simpan Kontak'
               )}
             </Button>
           </div>
@@ -1266,9 +1308,23 @@ export const UserPreparednessPage: React.FC = () => {
       >
         <div className="space-y-4">
           {contactToDelete && (
-            <div className="p-3.5 rounded-xl bg-[#F9FAFB] border border-[#E5E7EB] text-xs space-y-1">
-              <span className="font-bold text-[#111827]">{contactToDelete.name}</span>
-              <p className="text-[#4B5563]">{contactToDelete.relationship} — {contactToDelete.phone_number}</p>
+            <div className="p-3.5 rounded-xl bg-[#F9FAFB] border border-[#E5E7EB] space-y-2">
+              <div className="flex items-center justify-between gap-2">
+                <span className="font-bold text-sm text-[#111827] truncate">{contactToDelete.name}</span>
+                {contactToDelete.is_emergency_priority && (
+                  <Badge variant="success" size="sm">
+                    Prioritas
+                  </Badge>
+                )}
+              </div>
+              <p className="text-xs text-[#047857] font-medium flex items-center gap-1">
+                <HeartHandshake className="w-3.5 h-3.5 shrink-0" />
+                {contactToDelete.relationship}
+              </p>
+              <div className="text-xs font-mono font-semibold text-[#4B5563] flex items-center gap-1.5">
+                <Phone className="w-3 h-3 text-[#6B7280]" />
+                {contactToDelete.phone_number}
+              </div>
             </div>
           )}
 

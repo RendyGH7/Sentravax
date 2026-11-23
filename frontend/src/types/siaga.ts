@@ -253,6 +253,13 @@ export interface CreateContactPayload {
   is_emergency_priority?: boolean;
 }
 
+export interface UpdateContactPayload {
+  name?: string;
+  relationship?: string;
+  phone_number?: string;
+  is_emergency_priority?: boolean;
+}
+
 export interface CreateReportPayload {
   hazard_type_id: number;
   region_id: number;

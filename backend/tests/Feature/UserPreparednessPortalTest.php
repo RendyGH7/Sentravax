@@ -26,6 +26,10 @@ class UserPreparednessPortalTest extends TestCase
 
     protected function tearDown(): void
     {
+        if (isset($this->user)) {
+            PreparednessContact::where('user_id', $this->user->id)->delete();
+        }
+
         if ($this->otherUser) {
             PreparednessContact::where('user_id', $this->otherUser->id)->delete();
             PreparednessPlan::where('user_id', $this->otherUser->id)->delete();
@@ -215,6 +219,136 @@ class UserPreparednessPortalTest extends TestCase
 
         // Cleanup
         $contact->delete();
+    }
+
+    public function test_authenticated_user_can_update_emergency_contact(): void
+    {
+        $contact = PreparednessContact::create([
+            'user_id' => $this->user->id,
+            'name' => 'Kontak Awal',
+            'relationship' => 'Tetangga',
+            'phone_number' => '081234567890',
+            'is_emergency_priority' => false,
+        ]);
+
+        $payload = [
+            'name' => 'Kontak Diperbarui',
+            'relationship' => 'Ketua RT',
+            'phone_number' => '+62 812-9876-5432',
+            'is_emergency_priority' => true,
+        ];
+
+        $response = $this->actingAs($this->user)->putJson("/api/v1/user/preparedness/contacts/{$contact->id}", $payload);
+
+        $response->assertStatus(200)
+            ->assertJson([
+                'success' => true,
+                'data' => [
+                    'id' => $contact->id,
+                    'user_id' => $this->user->id,
+                    'name' => 'Kontak Diperbarui',
+                    'relationship' => 'Ketua RT',
+                    'phone_number' => '+62 812-9876-5432',
+                    'is_emergency_priority' => true,
+                ],
+            ]);
+
+        $this->assertDatabaseHas('preparedness_contacts', [
+            'id' => $contact->id,
+            'name' => 'Kontak Diperbarui',
+            'phone_number' => '+62 812-9876-5432',
+            'is_emergency_priority' => true,
+        ]);
+
+        $contact->delete();
+    }
+
+    public function test_add_contact_rejects_invalid_phone_number(): void
+    {
+        $response = $this->actingAs($this->user)->postJson('/api/v1/user/preparedness/contacts', [
+            'name' => 'Test Invalid',
+            'relationship' => 'Teman',
+            'phone_number' => 'bukan-nomor-telepon-1234',
+            'is_emergency_priority' => true,
+        ]);
+
+        $response->assertStatus(422)
+            ->assertJsonValidationErrors(['phone_number']);
+    }
+
+    public function test_update_contact_rejects_invalid_phone_number(): void
+    {
+        $contact = PreparednessContact::create([
+            'user_id' => $this->user->id,
+            'name' => 'Kontak Valid',
+            'relationship' => 'Teman',
+            'phone_number' => '081234567890',
+            'is_emergency_priority' => false,
+        ]);
+
+        $response = $this->actingAs($this->user)->putJson("/api/v1/user/preparedness/contacts/{$contact->id}", [
+            'name' => 'Kontak Valid',
+            'relationship' => 'Teman',
+            'phone_number' => '12#invalid*tel',
+            'is_emergency_priority' => false,
+        ]);
+
+        $response->assertStatus(422)
+            ->assertJsonValidationErrors(['phone_number']);
+
+        $contact->delete();
+    }
+
+    public function test_prevents_cross_user_contact_update_idor(): void
+    {
+        $other = $this->getOrCreateOtherUser();
+
+        // User A creates contact
+        $contact = PreparednessContact::create([
+            'user_id' => $this->user->id,
+            'name' => 'Kontak Pribadi User A',
+            'relationship' => 'Keluarga',
+            'phone_number' => '081233344455',
+            'is_emergency_priority' => true,
+        ]);
+
+        // User B attempts to modify User A's contact
+        $response = $this->actingAs($other)->putJson("/api/v1/user/preparedness/contacts/{$contact->id}", [
+            'name' => 'Dibajak Oleh User B',
+            'relationship' => 'Hacker',
+            'phone_number' => '089999999999',
+            'is_emergency_priority' => false,
+        ]);
+
+        // Must return 404 ModelNotFoundException because query isolates user_id
+        $response->assertStatus(404);
+
+        // Contact in DB must remain unchanged
+        $this->assertDatabaseHas('preparedness_contacts', [
+            'id' => $contact->id,
+            'name' => 'Kontak Pribadi User A',
+            'relationship' => 'Keluarga',
+            'phone_number' => '081233344455',
+            'is_emergency_priority' => true,
+        ]);
+
+        $contact->delete();
+    }
+
+    public function test_unauthenticated_user_cannot_access_or_modify_contacts(): void
+    {
+        $this->getJson('/api/v1/user/preparedness/contacts')->assertStatus(401);
+        $this->postJson('/api/v1/user/preparedness/contacts', [
+            'name' => 'Anonim',
+            'relationship' => 'Anonim',
+            'phone_number' => '081234567890',
+        ])->assertStatus(401);
+        $this->putJson('/api/v1/user/preparedness/contacts/1', [
+            'name' => 'Anonim',
+            'relationship' => 'Anonim',
+            'phone_number' => '081234567890',
+        ])->assertStatus(401);
+        $this->deleteJson('/api/v1/user/preparedness/contacts/1')->assertStatus(401);
     }
 
     public function test_authenticated_user_can_retrieve_checklist(): void
