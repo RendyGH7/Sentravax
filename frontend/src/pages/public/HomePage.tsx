@@ -27,11 +27,6 @@ import {
   Clock,
   AlertTriangle,
   Send,
-  HeartHandshake,
-  ChevronLeft,
-  ChevronRight,
-  Play,
-  Pause,
   Quote,
   MapPin,
   ShieldCheck
@@ -276,14 +271,7 @@ export const HomePage: React.FC = () => {
 
   // Reviews Carousel state
   const scrollContainerRef = useRef<HTMLDivElement>(null);
-  const [isAutoPlay, setIsAutoPlay] = useState<boolean>(true);
   const [isHovered, setIsHovered] = useState<boolean>(false);
-
-  const scrollLeft = () => {
-    if (scrollContainerRef.current) {
-      scrollContainerRef.current.scrollBy({ left: -380, behavior: 'smooth' });
-    }
-  };
 
   const scrollRight = () => {
     if (scrollContainerRef.current) {
@@ -297,12 +285,12 @@ export const HomePage: React.FC = () => {
   };
 
   useEffect(() => {
-    if (!isAutoPlay || isHovered) return;
+    if (isHovered) return;
     const interval = setInterval(() => {
       scrollRight();
     }, 3800);
     return () => clearInterval(interval);
-  }, [isAutoPlay, isHovered]);
+  }, [isHovered]);
 
   // Reviews data for carousel
   const filteredReviews = CITIZEN_REVIEWS;
@@ -431,46 +419,41 @@ export const HomePage: React.FC = () => {
   const activeSheltersCount = shelters.length > 0 ? shelters.length : FALLBACK_SHELTERS.length;
 
   return (
-    <div className="space-y-16 py-6 px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto">
+    <div className="w-full">
       {/* ========================================================================= */}
-      {/* 1. HERO: Cinematic Photographic Background & Clean Editorial Elegance      */}
+      {/* 1. HERO: Full-Bleed Edge-to-Edge Cinematic Experience                      */}
       {/* ========================================================================= */}
-      <section className="relative overflow-hidden rounded-3xl sm:rounded-[2.5rem] min-h-[460px] sm:min-h-[500px] flex flex-col justify-center items-center text-center px-6 sm:px-12 py-16 sm:py-20 shadow-xl border border-emerald-950/20">
-        {/* Background photographic image */}
+      <section className="relative w-full min-h-[80vh] sm:min-h-[85vh] lg:min-h-[88vh] flex flex-col justify-center items-center text-center px-4 sm:px-6 lg:px-8 overflow-hidden bg-slate-950 text-white">
+        {/* Full-bleed background image */}
         <img
-          src="https://images.unsplash.com/photo-1451187580459-43490279c0fa?auto=format&fit=crop&q=80&w=2000"
-          alt="Geospatial Telemetry"
+          src="https://images.unsplash.com/photo-1446776811953-b23d57bd21aa?auto=format&fit=crop&q=85&w=2560"
+          alt="Atmospheric Earth Observation & Early Warning Telemetry"
           className="absolute inset-0 w-full h-full object-cover object-center scale-105"
           loading="eager"
         />
-        {/* Deep dark emerald & slate overlay for readability & elegance */}
-        <div className="absolute inset-0 bg-gradient-to-b from-[#031c13]/90 via-[#062c1e]/85 to-[#02130c]/95" />
+
+        {/* Sophisticated dark cinematic gradient overlay */}
+        <div className="absolute inset-0 bg-gradient-to-b from-slate-950/80 via-slate-950/50 to-slate-950/90" />
         <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_center,_var(--tw-gradient-stops))] from-emerald-500/10 via-transparent to-transparent pointer-events-none" />
 
         {/* Foreground Content */}
-        <div className="relative z-10 max-w-3xl mx-auto space-y-6">
-          {/* Live Sensor Network Pill */}
-          <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-white/10 border border-white/15 backdrop-blur-md text-[11px] font-mono tracking-wider text-emerald-300 shadow-xs">
-            <span className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse" />
-            <span>TELEMETRI SPASIAL &bull; BMKG &bull; BNPB &bull; PVMBG</span>
-          </div>
-
+        <div className="relative z-10 max-w-4xl mx-auto space-y-6 sm:space-y-8 py-20 px-4">
           {/* Heading */}
-          <h1 className="text-3xl sm:text-5xl lg:text-6xl font-extrabold tracking-tight text-white leading-[1.12]">
+          <h1 className="text-3xl sm:text-5xl lg:text-6xl font-extrabold tracking-tight text-white leading-[1.12] drop-shadow-md">
             Lindungi Keluarga Anda.
-            <span className="block text-emerald-400 mt-1 sm:mt-2">Siaga Nyata Sebelum Bencana.</span>
+            <span className="block text-emerald-400 mt-2 drop-shadow-sm">Siaga Nyata Sebelum Bencana.</span>
           </h1>
 
           {/* Concise, non-slop subtitle */}
-          <p className="text-sm sm:text-base text-emerald-100/90 leading-relaxed max-w-xl mx-auto font-normal">
+          <p className="text-sm sm:text-base text-gray-200 leading-relaxed max-w-xl mx-auto font-normal drop-shadow-sm">
             Pantau potensi risiko di koordinat Anda dan temukan jalur evakuasi resmi dalam hitungan detik.
           </p>
 
           {/* Action CTAs */}
-          <div className="flex flex-wrap items-center justify-center gap-3 pt-3">
+          <div className="flex flex-wrap items-center justify-center gap-3.5 pt-3">
             <a
               href="#fitur-peta"
-              className="inline-flex items-center gap-2 px-6 py-3.5 rounded-2xl bg-emerald-500 hover:bg-emerald-400 text-gray-950 font-bold text-sm transition-all shadow-lg hover:shadow-emerald-500/25 hover:-translate-y-0.5"
+              className="inline-flex items-center gap-2 px-7 py-3.5 rounded-2xl bg-emerald-500 hover:bg-emerald-400 text-gray-950 font-bold text-sm transition-all shadow-xl hover:shadow-emerald-500/30 hover:-translate-y-0.5"
             >
               <Map className="w-4 h-4 text-gray-950" />
               <span>Buka Peta Radar</span>
@@ -478,14 +461,20 @@ export const HomePage: React.FC = () => {
 
             <a
               href="#fitur-cek-risiko"
-              className="inline-flex items-center gap-2 px-6 py-3.5 rounded-2xl bg-white/10 hover:bg-white/20 border border-white/20 text-white backdrop-blur-md font-semibold text-sm transition-all hover:-translate-y-0.5"
+              className="inline-flex items-center gap-2 px-7 py-3.5 rounded-2xl bg-white/10 hover:bg-white/20 border border-white/25 text-white backdrop-blur-md font-semibold text-sm transition-all hover:-translate-y-0.5 shadow-lg"
             >
               <Compass className="w-4 h-4 text-emerald-300" />
               <span>Cek Risiko Wilayah</span>
             </a>
           </div>
         </div>
+
+        {/* Bottom soft gradient fade into the page body */}
+        <div className="absolute bottom-0 inset-x-0 h-20 bg-gradient-to-t from-white via-white/40 to-transparent pointer-events-none" />
       </section>
+
+      {/* Main Content Sections Container */}
+      <div className="space-y-16 py-8 px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto">
 
       {/* ========================================================================= */}
       {/* 3. INTEGRASI OTORITAS & STATUS SISTEM NASIONAL (Editorial & Elegan)        */}
@@ -548,17 +537,10 @@ export const HomePage: React.FC = () => {
       {/* ========================================================================= */}
       <section id="fitur-peta" className="space-y-4 pt-6 border-t border-[#E5E7EB]">
         <div className="flex flex-col md:flex-row md:items-end justify-between gap-4">
-          <div className="space-y-1.5">
-            <div className="inline-flex items-center gap-1.5 text-xs font-bold text-[#047857] uppercase tracking-wider font-mono">
-              <Map className="w-3.5 h-3.5" />
-              <span>FITUR UTAMA 1 DARI 2</span>
-            </div>
+          <div>
             <h2 className="text-2xl sm:text-3xl font-extrabold text-[#111827]">
               Peta Situasi Bencana &amp; Shelter Terkini
             </h2>
-            <p className="text-xs sm:text-sm text-gray-600 max-w-2xl">
-              Perhatikan persebaran gempa, pantauan cuaca ekstrem, dan titik pengungsian aman terdekat dari tempat tinggal Anda langsung pada peta interaktif di bawah ini.
-            </p>
           </div>
 
           <div className="flex items-center gap-2 shrink-0">
@@ -631,10 +613,6 @@ export const HomePage: React.FC = () => {
         <div className="rounded-3xl bg-linear-to-br from-emerald-50/60 via-white to-teal-50/40 border border-[#A7F3D0] p-6 sm:p-8 space-y-6 shadow-xs">
           <div className="flex flex-col md:flex-row md:items-end justify-between gap-4">
             <div className="space-y-1.5">
-              <div className="inline-flex items-center gap-1.5 text-xs font-bold text-[#047857] uppercase tracking-wider font-mono">
-                <Compass className="w-3.5 h-3.5" />
-                <span>FITUR UTAMA 2 DARI 2</span>
-              </div>
               <h2 className="text-2xl sm:text-3xl font-extrabold text-[#111827]">
                 Pengecekan Cepat Zona Risiko Wilayah Anda
               </h2>
@@ -1016,78 +994,23 @@ export const HomePage: React.FC = () => {
       {/* ========================================================================= */}
       <section id="ulasan-warga" className="space-y-6 pt-6 border-t border-[#E5E7EB]">
         <div className="flex flex-col md:flex-row md:items-end justify-between gap-4">
-          <div className="space-y-1.5">
-            <div className="inline-flex items-center gap-1.5 text-xs font-bold text-[#047857] uppercase tracking-wider font-mono">
-              <HeartHandshake className="w-3.5 h-3.5" />
-              <span>TESTIMONI &amp; KEPERCAYAAN PUBLIK</span>
-            </div>
+          <div>
             <h2 className="text-2xl sm:text-3xl font-extrabold text-[#111827]">
               Suara Nyata dari Puluhan Ribu Pengguna
             </h2>
-            <p className="text-xs sm:text-sm text-gray-600 max-w-2xl">
-              Ulasan terverifikasi dari warga, komunitas relawan, tenaga medis, dan perwakilan internasional di berbagai daerah.
-            </p>
           </div>
 
-          {/* Overall Rating & Controls */}
-          <div className="flex flex-wrap items-center gap-2.5">
-            {/* Rating pill */}
-            <div className="p-2 sm:p-2.5 rounded-2xl bg-white border border-[#A7F3D0] shadow-2xs flex items-center gap-2.5">
-              <div className="text-center pl-1">
-                <div className="text-xl font-extrabold text-gray-900 leading-none">4.9</div>
-                <div className="text-[9px] text-gray-400">skala 5.0</div>
-              </div>
-              <div className="space-y-0.5">
-                <div className="flex items-center gap-0.5 text-amber-500">
-                  {[1, 2, 3, 4, 5].map((i) => (
-                    <Star key={i} className="w-3 h-3 fill-amber-500" />
-                  ))}
-                </div>
-                <div className="text-[10px] font-bold text-gray-700">32.400+ Ulasan</div>
-              </div>
+          {/* Overall Trust Rating */}
+          <div className="inline-flex items-center gap-3 px-4 py-2 rounded-2xl bg-gray-50 border border-gray-200 shadow-2xs shrink-0">
+            <div className="flex items-center gap-1.5">
+              <Star className="w-4 h-4 fill-amber-400 text-amber-400 shrink-0" />
+              <span className="font-extrabold text-gray-900 text-sm tracking-tight">4.9</span>
+              <span className="text-[11px] text-gray-400 font-medium">/ 5.0</span>
             </div>
-
-            {/* Slider Navigation Buttons */}
-            <div className="flex items-center gap-1 p-1 bg-white rounded-2xl border border-gray-200 shadow-2xs">
-              <button
-                type="button"
-                onClick={() => setIsAutoPlay((prev) => !prev)}
-                className={`p-2 rounded-xl text-xs font-semibold transition-all flex items-center gap-1.5 cursor-pointer ${
-                  isAutoPlay
-                    ? 'bg-emerald-50 text-[#047857] hover:bg-emerald-100'
-                    : 'text-gray-500 hover:text-gray-900 hover:bg-gray-100'
-                }`}
-                title={isAutoPlay ? 'Jeda gulir otomatis' : 'Mulai gulir otomatis'}
-                aria-label={isAutoPlay ? 'Jeda gulir otomatis' : 'Mulai gulir otomatis'}
-              >
-                {isAutoPlay ? <Pause className="w-3.5 h-3.5" /> : <Play className="w-3.5 h-3.5" />}
-                <span className="text-[11px] font-mono hidden sm:inline">
-                  {isAutoPlay ? 'Auto' : 'Pause'}
-                </span>
-              </button>
-
-              <div className="w-[1px] h-4 bg-gray-200 mx-0.5" />
-
-              <button
-                type="button"
-                onClick={scrollLeft}
-                className="p-2 rounded-xl text-gray-600 hover:text-gray-950 hover:bg-gray-100 transition-colors cursor-pointer"
-                title="Geser ke kiri"
-                aria-label="Geser ke kiri"
-              >
-                <ChevronLeft className="w-4 h-4" />
-              </button>
-
-              <button
-                type="button"
-                onClick={scrollRight}
-                className="p-2 rounded-xl text-gray-600 hover:text-gray-950 hover:bg-gray-100 transition-colors cursor-pointer"
-                title="Geser ke kanan"
-                aria-label="Geser ke kanan"
-              >
-                <ChevronRight className="w-4 h-4" />
-              </button>
-            </div>
+            <div className="w-[1px] h-3.5 bg-gray-200" />
+            <span className="text-xs text-gray-600 font-medium">
+              32.400+ Ulasan Warga
+            </span>
           </div>
         </div>
 
@@ -1184,16 +1107,9 @@ export const HomePage: React.FC = () => {
         </div>
 
         <div className="text-center max-w-2xl mx-auto space-y-2">
-          <div className="inline-flex items-center gap-1.5 text-xs font-bold text-[#047857] uppercase tracking-wider font-mono">
-            <Mail className="w-3.5 h-3.5" />
-            <span>PUSAT HUBUNGAN MASYARAKAT</span>
-          </div>
           <h2 className="text-2xl sm:text-3xl font-extrabold text-[#111827]">
             Hubungi Kami &amp; Layanan Publik
           </h2>
-          <p className="text-xs sm:text-sm text-gray-600">
-            Punya pertanyaan, usulan lokasi shelter baru, atau butuh bantuan koordinasi bencana? Tim SENTRAVAX siap melayani Anda.
-          </p>
         </div>
 
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
@@ -1376,6 +1292,7 @@ export const HomePage: React.FC = () => {
           </Link>
         </div>
       </section>
+      </div>
     </div>
   );
 };
