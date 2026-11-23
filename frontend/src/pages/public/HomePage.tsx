@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useCallback, Suspense, lazy } from 'react';
+import React, { useState, useEffect, useCallback, useRef, Suspense, lazy } from 'react';
 import { Link } from 'react-router-dom';
 import { PATHS } from '../../app/router/paths';
 import { publicService } from '../../services/public-service';
@@ -24,11 +24,17 @@ import {
   Users,
   Building2,
   ArrowRight,
-  Sparkles,
   Clock,
   AlertTriangle,
   Send,
-  HeartHandshake
+  HeartHandshake,
+  ChevronLeft,
+  ChevronRight,
+  Play,
+  Pause,
+  Quote,
+  MapPin,
+  ShieldCheck
 } from 'lucide-react';
 import { toast } from 'sonner';
 
@@ -82,14 +88,46 @@ interface Testimonial {
   name: string;
   role: string;
   city: string;
+  avatarUrl: string;
   avatarText: string;
   avatarBg: string;
   rating: number;
-  category: 'warga' | 'relawan' | 'medis' | 'pemerintah';
+  language: 'id' | 'en';
+  category: 'warga' | 'relawan' | 'medis' | 'pemerintah' | 'international';
   quote: string;
   date: string;
   verifiedBadge: string;
 }
+
+// Reusable Reviewer Avatar with graceful image error fallback
+const ReviewerAvatar: React.FC<{
+  src: string;
+  name: string;
+  fallbackText: string;
+  bg: string;
+}> = ({ src, name, fallbackText, bg }) => {
+  const [imgError, setImgError] = useState(false);
+
+  if (imgError || !src) {
+    return (
+      <div
+        className={`w-11 h-11 rounded-full ${bg} text-white font-bold flex items-center justify-center text-xs shrink-0 ring-2 ring-emerald-500/20 shadow-xs`}
+      >
+        {fallbackText}
+      </div>
+    );
+  }
+
+  return (
+    <img
+      src={src}
+      alt={name}
+      loading="lazy"
+      onError={() => setImgError(true)}
+      className="w-11 h-11 rounded-full object-cover shrink-0 ring-2 ring-emerald-500/20 shadow-xs"
+    />
+  );
+};
 
 const CITIZEN_REVIEWS: Testimonial[] = [
   {
@@ -97,9 +135,11 @@ const CITIZEN_REVIEWS: Testimonial[] = [
     name: 'Ibu Ratna Dewi',
     role: 'Ibu Rumah Tangga (Keluarga 4 Jiwa)',
     city: 'Cianjur, Jawa Barat',
+    avatarUrl: 'https://images.unsplash.com/photo-1544005313-94ddf0286df2?auto=format&fit=crop&q=80&w=160&h=160',
     avatarText: 'RD',
     avatarBg: 'bg-emerald-600',
     rating: 5,
+    language: 'id',
     category: 'warga',
     quote:
       'Waktu gempa susulan tempo hari, notifikasi SENTRAVAX langsung berbunyi sebelum kami sempat panik. Kami langsung tahu arah titik kumpul terdekat untuk mengevakuasi anak-anak dan ibu saya yang berusia 71 tahun. Sangat menenangkan dan tidak bikin bingung!',
@@ -108,12 +148,30 @@ const CITIZEN_REVIEWS: Testimonial[] = [
   },
   {
     id: '2',
+    name: 'Sarah Jenkins',
+    role: 'Humanitarian Relief Liaison (UN / INGO)',
+    city: 'Sydney & Jakarta',
+    avatarUrl: 'https://images.unsplash.com/photo-1580489944761-15a19d654956?auto=format&fit=crop&q=80&w=160&h=160',
+    avatarText: 'SJ',
+    avatarBg: 'bg-indigo-600',
+    rating: 5,
+    language: 'en',
+    category: 'international',
+    quote:
+      'The real-time geospatial alerts and bilingual shelter registry are extraordinarily accurate. During extreme storm warnings, SENTRAVAX gave our humanitarian field teams critical lead time to coordinate safe evacuation paths.',
+    date: '08 Nov 2026',
+    verifiedBadge: 'Humanitarian Partner',
+  },
+  {
+    id: '3',
     name: 'Bripka Hendra Kurniawan',
     role: 'Koordinator Lapangan Relawan SAR & BPBD',
     city: 'Semarang, Jawa Tengah',
+    avatarUrl: 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?auto=format&fit=crop&q=80&w=160&h=160',
     avatarText: 'HK',
     avatarBg: 'bg-blue-600',
     rating: 5,
+    language: 'id',
     category: 'relawan',
     quote:
       'Peta geospasial dan status keterisian shelter di SENTRAVAX sangat presisi. Selama banjir rob tahun ini, tim relawan terbantu mengarahkan warga ke lokasi yang benar-benar siap dan ramah lansia. Zero hoaks, data langsung dari BMKG & BNPB.',
@@ -121,41 +179,63 @@ const CITIZEN_REVIEWS: Testimonial[] = [
     verifiedBadge: 'Relawan BPBD',
   },
   {
-    id: '3',
-    name: 'Dimas Pratama',
-    role: 'Mahasiswa Perantau (Gen Z)',
-    city: 'Malang, Jawa Timur',
-    avatarText: 'DP',
-    avatarBg: 'bg-amber-600',
+    id: '4',
+    name: 'Alexander Weber',
+    role: 'Expat Resident & Systems Architect',
+    city: 'Canggu, Bali',
+    avatarUrl: 'https://images.unsplash.com/photo-1522075469751-3a6694fb2f61?auto=format&fit=crop&q=80&w=160&h=160',
+    avatarText: 'AW',
+    avatarBg: 'bg-slate-700',
     rating: 5,
-    category: 'warga',
+    language: 'en',
+    category: 'international',
     quote:
-      'Tampilannya bersih, elegan, dan nggak bikin pusing. Buat anak muda perantau yang ngekos sendirian dan jauh dari keluarga, aplikasi ini memberi rasa aman karena bisa cek status wilayah hanya dalam 1 detik.',
-    date: '28 Okt 2026',
-    verifiedBadge: 'Warga Terverifikasi',
+      'Living in an active seismic belt, reliable warning systems are everything. SENTRAVAX delivers instantaneous CAP push alerts directly synced with national sensors without any misleading social media noise. Exceptional engineering.',
+    date: '29 Okt 2026',
+    verifiedBadge: 'Verified Resident',
   },
   {
-    id: '4',
+    id: '5',
     name: 'dr. Siti Nurhaliza',
     role: 'Dokter Umum & Penanggung Jawab Puskesmas',
     city: 'Padang, Sumatera Barat',
+    avatarUrl: 'https://images.unsplash.com/photo-1559839734-2b71ea197ec2?auto=format&fit=crop&q=80&w=160&h=160',
     avatarText: 'SN',
     avatarBg: 'bg-rose-600',
     rating: 5,
+    language: 'id',
     category: 'medis',
     quote:
-      'Kami menggunakan panduan kesiapsiagaan SENTRAVAX untuk sosialisasi ke posyandu dan warga lansia. Penjelasannya manusiawi, praktis, dan langsung pada tindakan darurat yang menyelamatkan nyawa.',
+      'Kami menggunakan panduan kesiapsiagaan 72 jam SENTRAVAX untuk sosialisasi ke posyandu dan warga lansia. Penjelasannya manusiawi, praktis, dan langsung pada tindakan darurat yang menyelamatkan nyawa.',
     date: '19 Okt 2026',
     verifiedBadge: 'Tenaga Medis',
   },
   {
-    id: '5',
+    id: '6',
+    name: 'Emily Zhang',
+    role: 'International Health Volunteer & Researcher',
+    city: 'Yogyakarta',
+    avatarUrl: 'https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?auto=format&fit=crop&q=80&w=160&h=160',
+    avatarText: 'EZ',
+    avatarBg: 'bg-purple-600',
+    rating: 5,
+    language: 'en',
+    category: 'international',
+    quote:
+      'The offline emergency readiness guides and accessibility-focused shelter maps are world-class. It is exceptionally comforting to know there is a transparent, ad-free disaster defense system protecting every community.',
+    date: '12 Okt 2026',
+    verifiedBadge: 'Medical Volunteer',
+  },
+  {
+    id: '7',
     name: 'Pak Joko Suwarno',
     role: 'Ketua RW & Forum Kesiapsiagaan Bencana',
     city: 'Sleman, D.I. Yogyakarta',
+    avatarUrl: 'https://images.unsplash.com/photo-1500648767791-00dcc994a43e?auto=format&fit=crop&q=80&w=160&h=160',
     avatarText: 'JS',
     avatarBg: 'bg-teal-700',
     rating: 5,
+    language: 'id',
     category: 'pemerintah',
     quote:
       'Di lereng Merapi, waktu adalah nyawa. SENTRAVAX sangat cocok untuk semua kalangan—bahkan warga sepuh kami pun bisa membaca petanya dengan nyaman karena hurufnya jelas dan warna kontrasnya pas.',
@@ -163,17 +243,19 @@ const CITIZEN_REVIEWS: Testimonial[] = [
     verifiedBadge: 'Pengurus Lingkungan',
   },
   {
-    id: '6',
-    name: 'Nadia Salsabila',
-    role: 'Pekerja Kantoran & Komuter Harian',
-    city: 'Jakarta Selatan',
-    avatarText: 'NS',
-    avatarBg: 'bg-purple-600',
+    id: '8',
+    name: 'Dimas Pratama',
+    role: 'Mahasiswa Perantau (Gen Z)',
+    city: 'Malang, Jawa Timur',
+    avatarUrl: 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&q=80&w=160&h=160',
+    avatarText: 'DP',
+    avatarBg: 'bg-amber-600',
     rating: 5,
+    language: 'id',
     category: 'warga',
     quote:
-      'Fitur deteksi lokasi GPS-nya luar biasa cepat! Begitu hujan ekstrem dan banjir di Jakarta, saya langsung cek rute aman dan status peringatan dini CAP tanpa harus menunggu berita televisi.',
-    date: '21 Sep 2026',
+      'Tampilannya bersih, elegan, dan nggak bikin pusing. Buat anak muda perantau yang ngekos sendirian dan jauh dari keluarga, aplikasi ini memberi rasa aman karena bisa cek status wilayah hanya dalam 1 detik.',
+    date: '28 Sep 2026',
     verifiedBadge: 'Warga Terverifikasi',
   },
 ];
@@ -192,8 +274,41 @@ export const HomePage: React.FC = () => {
   const [isQuickChecking, setIsQuickChecking] = useState<boolean>(false);
   const [quickCheckResult, setQuickCheckResult] = useState<LocationCheckResult | null>(null);
 
-  // Reviews Filter state
-  const [selectedReviewCategory, setSelectedReviewCategory] = useState<string>('all');
+  // Reviews Carousel state
+  const scrollContainerRef = useRef<HTMLDivElement>(null);
+  const [selectedLanguage, setSelectedLanguage] = useState<'all' | 'id' | 'en'>('all');
+  const [isAutoPlay, setIsAutoPlay] = useState<boolean>(true);
+  const [isHovered, setIsHovered] = useState<boolean>(false);
+
+  const scrollLeft = () => {
+    if (scrollContainerRef.current) {
+      scrollContainerRef.current.scrollBy({ left: -380, behavior: 'smooth' });
+    }
+  };
+
+  const scrollRight = () => {
+    if (scrollContainerRef.current) {
+      const container = scrollContainerRef.current;
+      if (container.scrollLeft + container.clientWidth >= container.scrollWidth - 30) {
+        container.scrollTo({ left: 0, behavior: 'smooth' });
+      } else {
+        container.scrollBy({ left: 380, behavior: 'smooth' });
+      }
+    }
+  };
+
+  useEffect(() => {
+    if (!isAutoPlay || isHovered) return;
+    const interval = setInterval(() => {
+      scrollRight();
+    }, 3800);
+    return () => clearInterval(interval);
+  }, [isAutoPlay, isHovered]);
+
+  // Filtered reviews by language
+  const filteredReviews = CITIZEN_REVIEWS.filter(
+    (rev) => selectedLanguage === 'all' || rev.language === selectedLanguage
+  );
 
   // Contact Form state
   const [contactName, setContactName] = useState<string>('');
@@ -316,11 +431,6 @@ export const HomePage: React.FC = () => {
     }, 900);
   };
 
-  // Filtered reviews
-  const filteredReviews = CITIZEN_REVIEWS.filter(
-    (rev) => selectedReviewCategory === 'all' || rev.category === selectedReviewCategory
-  );
-
   const activeSheltersCount = shelters.length > 0 ? shelters.length : FALLBACK_SHELTERS.length;
 
   return (
@@ -357,104 +467,112 @@ export const HomePage: React.FC = () => {
       </section>
 
       {/* ========================================================================= */}
-      {/* 2. HERO: Sambutan Hangat, Berwibawa & Menarik untuk Seluruh Kalangan       */}
+      {/* 2. HERO: Cinematic Photographic Background & Clean Editorial Elegance      */}
       {/* ========================================================================= */}
-      <section className="relative pt-4 sm:pt-8 text-center max-w-4xl mx-auto space-y-6">
-        <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-[#ECFDF5] border border-[#A7F3D0] text-[#047857] text-xs font-semibold shadow-2xs">
-          <Sparkles className="w-3.5 h-3.5 text-[#059669]" />
-          <span>Platform Kesiapsiagaan Bencana Resmi untuk Seluruh Rakyat Indonesia</span>
-        </div>
+      <section className="relative overflow-hidden rounded-3xl sm:rounded-[2.5rem] min-h-[460px] sm:min-h-[500px] flex flex-col justify-center items-center text-center px-6 sm:px-12 py-16 sm:py-20 shadow-xl border border-emerald-950/20">
+        {/* Background photographic image */}
+        <img
+          src="https://images.unsplash.com/photo-1451187580459-43490279c0fa?auto=format&fit=crop&q=80&w=2000"
+          alt="Geospatial Telemetry"
+          className="absolute inset-0 w-full h-full object-cover object-center scale-105"
+          loading="eager"
+        />
+        {/* Deep dark emerald & slate overlay for readability & elegance */}
+        <div className="absolute inset-0 bg-gradient-to-b from-[#031c13]/90 via-[#062c1e]/85 to-[#02130c]/95" />
+        <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_center,_var(--tw-gradient-stops))] from-emerald-500/10 via-transparent to-transparent pointer-events-none" />
 
-        <div className="space-y-4">
-          <h1 className="text-3xl sm:text-5xl lg:text-6xl font-extrabold tracking-tight text-[#111827] leading-[1.15]">
+        {/* Foreground Content */}
+        <div className="relative z-10 max-w-3xl mx-auto space-y-6">
+          {/* Live Sensor Network Pill */}
+          <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-white/10 border border-white/15 backdrop-blur-md text-[11px] font-mono tracking-wider text-emerald-300 shadow-xs">
+            <span className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse" />
+            <span>TELEMETRI SPASIAL &bull; BMKG &bull; BNPB &bull; PVMBG</span>
+          </div>
+
+          {/* Heading */}
+          <h1 className="text-3xl sm:text-5xl lg:text-6xl font-extrabold tracking-tight text-white leading-[1.12]">
             Lindungi Keluarga Anda.
-            <span className="block text-[#047857] mt-1">Siaga Nyata Sebelum Bencana Tiba.</span>
+            <span className="block text-emerald-400 mt-1 sm:mt-2">Siaga Nyata Sebelum Bencana.</span>
           </h1>
-          <p className="text-sm sm:text-base text-gray-600 leading-relaxed max-w-2xl mx-auto font-normal">
-            SENTRAVAX menghubungkan sensor resmi BMKG, BNPB, dan PVMBG menjadi informasi ramah, praktis, dan dapat diandalkan oleh siapa saja—dari orang tua, anak muda, hingga relawan di garis depan.
+
+          {/* Concise, non-slop subtitle */}
+          <p className="text-sm sm:text-base text-emerald-100/90 leading-relaxed max-w-xl mx-auto font-normal">
+            Pantau potensi risiko di koordinat Anda dan temukan jalur evakuasi resmi dalam hitungan detik.
           </p>
-        </div>
 
-        {/* CTA Buttons */}
-        <div className="flex flex-wrap items-center justify-center gap-3 pt-2">
-          <a
-            href="#fitur-peta"
-            className="inline-flex items-center gap-2 px-6 py-3.5 rounded-2xl bg-[#047857] hover:bg-[#065F46] text-white text-sm font-bold transition-all shadow-md hover:shadow-lg hover:-translate-y-0.5"
-          >
-            <Map className="w-4 h-4" />
-            <span>Lihat Peta Radar Siaga</span>
-          </a>
+          {/* Action CTAs */}
+          <div className="flex flex-wrap items-center justify-center gap-3 pt-3">
+            <a
+              href="#fitur-peta"
+              className="inline-flex items-center gap-2 px-6 py-3.5 rounded-2xl bg-emerald-500 hover:bg-emerald-400 text-gray-950 font-bold text-sm transition-all shadow-lg hover:shadow-emerald-500/25 hover:-translate-y-0.5"
+            >
+              <Map className="w-4 h-4 text-gray-950" />
+              <span>Buka Peta Radar</span>
+            </a>
 
-          <a
-            href="#fitur-cek-risiko"
-            className="inline-flex items-center gap-2 px-6 py-3.5 rounded-2xl bg-white border border-[#A7F3D0] hover:bg-emerald-50 text-[#047857] text-sm font-bold transition-all shadow-xs"
-          >
-            <Compass className="w-4 h-4" />
-            <span>Cek Risiko Wilayah Saya</span>
-          </a>
-
-          <a
-            href="#tentang-sentravax"
-            className="inline-flex items-center gap-2 px-5 py-3.5 rounded-2xl bg-gray-100 hover:bg-gray-200 text-gray-800 text-sm font-medium transition-all"
-          >
-            <span>Tentang Aplikasi</span>
-            <ArrowRight className="w-4 h-4 text-gray-500" />
-          </a>
-        </div>
-
-        {/* Trust Badges */}
-        <div className="pt-6 flex flex-wrap items-center justify-center gap-6 text-xs text-gray-500 border-t border-gray-100">
-          <div className="flex items-center gap-1.5">
-            <CheckCircle2 className="w-4 h-4 text-[#047857]" />
-            <span>100% Layanan Publik Tanpa Iklan</span>
-          </div>
-          <div className="flex items-center gap-1.5">
-            <CheckCircle2 className="w-4 h-4 text-[#047857]" />
-            <span>Data Terverifikasi BMKG &amp; BNPB</span>
-          </div>
-          <div className="flex items-center gap-1.5">
-            <CheckCircle2 className="w-4 h-4 text-[#047857]" />
-            <span>Ramah Lansia &amp; Difabel</span>
+            <a
+              href="#fitur-cek-risiko"
+              className="inline-flex items-center gap-2 px-6 py-3.5 rounded-2xl bg-white/10 hover:bg-white/20 border border-white/20 text-white backdrop-blur-md font-semibold text-sm transition-all hover:-translate-y-0.5"
+            >
+              <Compass className="w-4 h-4 text-emerald-300" />
+              <span>Cek Risiko Wilayah</span>
+            </a>
           </div>
         </div>
       </section>
 
       {/* ========================================================================= */}
-      {/* 3. SOSIAL PROOF & STATISTIK INTEGRITAS (Kesan & Kepercayaan Publik)        */}
+      {/* 3. INTEGRASI OTORITAS & STATUS SISTEM NASIONAL (Editorial & Elegan)        */}
       {/* ========================================================================= */}
-      <section className="rounded-3xl bg-linear-to-b from-gray-50 to-white border border-[#E5E7EB] p-6 sm:p-8 shadow-xs">
-        <div className="grid grid-cols-2 lg:grid-cols-4 gap-6 text-center divide-y lg:divide-y-0 lg:divide-x divide-gray-200/80">
-          <div className="pt-4 lg:pt-0 space-y-1">
-            <div className="text-3xl sm:text-4xl font-extrabold text-[#047857] tracking-tight">
-              52.800+
+      <section className="border-y border-gray-200/80 py-8 my-2">
+        <div className="grid grid-cols-2 lg:grid-cols-4 gap-6 lg:gap-8">
+          <div className="space-y-1.5">
+            <div className="text-[10px] font-mono font-bold tracking-widest uppercase text-gray-600">
+              SUMBER DATA OTORITATIF
             </div>
-            <div className="text-xs sm:text-sm font-bold text-gray-900">Warga Terlindungi</div>
-            <p className="text-[11px] text-gray-500">Tersebar di 34 Provinsi di Indonesia</p>
+            <div className="text-base sm:text-lg font-extrabold text-gray-900 tracking-tight">
+              BMKG &bull; BNPB &bull; PVMBG
+            </div>
+            <p className="text-xs text-gray-600 leading-relaxed">
+              Integrasi langsung telemetri seismik, cuaca maritim, dan aktivitas vulkanik nasional.
+            </p>
           </div>
 
-          <div className="pt-4 lg:pt-0 space-y-1">
-            <div className="text-3xl sm:text-4xl font-extrabold text-[#047857] tracking-tight">
-              &lt; 10 Detik
+          <div className="space-y-1.5">
+            <div className="text-[10px] font-mono font-bold tracking-widest uppercase text-gray-600">
+              STANDAR PERINGATAN DINI
             </div>
-            <div className="text-xs sm:text-sm font-bold text-gray-900">Kecepatan Diseminasi</div>
-            <p className="text-[11px] text-gray-500">Notifikasi resmi langsung ke peramban</p>
+            <div className="text-base sm:text-lg font-extrabold text-gray-900 tracking-tight flex items-center gap-2">
+              <span>Protokol CAP v1.2</span>
+              <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse" />
+            </div>
+            <p className="text-xs text-gray-600 leading-relaxed">
+              Diseminasi notifikasi peringatan berstandar internasional dalam hitungan detik.
+            </p>
           </div>
 
-          <div className="pt-4 lg:pt-0 space-y-1">
-            <div className="text-3xl sm:text-4xl font-extrabold text-[#047857] tracking-tight">
-              {activeSheltersCount > 0 ? `${activeSheltersCount}+ Titik` : '500+ Titik'}
+          <div className="space-y-1.5">
+            <div className="text-[10px] font-mono font-bold tracking-widest uppercase text-gray-600">
+              CAKUPAN WILAYAH KERJA
             </div>
-            <div className="text-xs sm:text-sm font-bold text-gray-900">Shelter Terverifikasi</div>
-            <p className="text-[11px] text-gray-500">Dilengkapi navigasi &amp; info ramah lansia</p>
+            <div className="text-base sm:text-lg font-extrabold text-gray-900 tracking-tight">
+              34 Provinsi Indonesia
+            </div>
+            <p className="text-xs text-gray-600 leading-relaxed">
+              Pemetaan geospasial risiko multi-ancaman berbasis koordinat PostGIS presisi.
+            </p>
           </div>
 
-          <div className="pt-4 lg:pt-0 space-y-1">
-            <div className="text-3xl sm:text-4xl font-extrabold text-[#047857] tracking-tight flex items-center justify-center gap-1">
-              <span>4.9</span>
-              <Star className="w-5 h-5 text-amber-500 fill-amber-500" />
+          <div className="space-y-1.5">
+            <div className="text-[10px] font-mono font-bold tracking-widest uppercase text-gray-600">
+              LAYANAN PUBLIK TERBUKA
             </div>
-            <div className="text-xs sm:text-sm font-bold text-gray-900">Kepuasan Publik</div>
-            <p className="text-[11px] text-gray-500">Dari 32.400+ ulasan komunitas warga</p>
+            <div className="text-base sm:text-lg font-extrabold text-[#047857] tracking-tight">
+              Bebas Biaya &bull; Nirlaba
+            </div>
+            <p className="text-xs text-gray-600 leading-relaxed">
+              Disediakan untuk keselamatan masyarakat luas tanpa iklan dan tanpa monetisasi data.
+            </p>
           </div>
         </div>
       </section>
@@ -752,145 +870,341 @@ export const HomePage: React.FC = () => {
           </div>
         </div>
 
-        {/* Alur Kerja 3 Langkah Sederhana */}
-        <div className="p-8 rounded-3xl bg-gray-50 border border-gray-200 space-y-6">
-          <div className="text-center space-y-1">
-            <span className="text-[11px] font-mono font-bold text-[#047857] uppercase tracking-wider">
-              CARA KERJA SEDERHANA
+        {/* Alur Kerja 3 Langkah Interaktif & Menarik */}
+        <div className="relative rounded-3xl bg-gradient-to-br from-gray-50 via-white to-emerald-50/40 border border-[#E5E7EB] p-6 sm:p-10 space-y-8 shadow-xs overflow-hidden">
+          {/* Subtle decorative glow */}
+          <div className="absolute -top-24 -right-24 w-80 h-80 bg-emerald-100/40 rounded-full blur-3xl pointer-events-none" />
+
+          <div className="text-center max-w-2xl mx-auto space-y-2 relative z-10">
+            <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-mono font-bold text-[#047857] bg-emerald-50 border border-emerald-200">
+              <ShieldCheck className="w-3.5 h-3.5 text-[#059669]" />
+              ALUR KESIAPSIAGAAN TERSTRUKTUR
             </span>
-            <h3 className="text-xl font-extrabold text-gray-900">
-              Tiga Langkah Mudah Menjaga Keselamatan Keluarga
+            <h3 className="text-2xl sm:text-3xl font-extrabold text-[#111827] tracking-tight">
+              Tiga Langkah Menjaga Keselamatan Keluarga Anda
             </h3>
+            <p className="text-xs sm:text-sm text-gray-600 leading-relaxed font-normal">
+              Dari deteksi risiko awal, persiapan ransum mandiri di rumah, hingga jalur evakuasi aman saat sirine berbunyi.
+            </p>
           </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-            <div className="p-5 rounded-2xl bg-white border border-gray-200 space-y-2">
-              <div className="text-xs font-mono font-bold text-[#047857] bg-emerald-50 w-7 h-7 rounded-lg flex items-center justify-center">
-                1
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-6 relative z-10">
+            {/* Step 1 */}
+            <div className="p-6 rounded-3xl bg-white border border-gray-200 hover:border-emerald-400 hover:shadow-lg transition-all duration-300 flex flex-col justify-between space-y-5 group hover:-translate-y-1">
+              <div className="space-y-4">
+                <div className="flex items-center justify-between">
+                  <div className="w-12 h-12 rounded-2xl bg-emerald-50 border border-emerald-200 text-[#047857] flex items-center justify-center font-bold shadow-2xs group-hover:scale-105 transition-transform">
+                    <Compass className="w-6 h-6" />
+                  </div>
+                  <span className="text-xs font-mono font-extrabold text-[#047857] bg-emerald-50 px-2.5 py-1 rounded-full border border-emerald-200">
+                    LANGKAH 01
+                  </span>
+                </div>
+
+                <div className="space-y-1.5">
+                  <h4 className="text-base font-extrabold text-gray-900 group-hover:text-[#047857] transition-colors">
+                    Deteksi Cepat Zona Bahaya
+                  </h4>
+                  <p className="text-xs sm:text-sm text-gray-600 leading-relaxed">
+                    Ketahui status risiko gempa bumi, banjir, dan cuaca ekstrem di koordinat tempat tinggal Anda dalam satu sentuhan GPS tanpa registrasi rumit.
+                  </p>
+                </div>
+
+                {/* Micro-preview Widget */}
+                <div className="p-3.5 rounded-2xl bg-gray-50 border border-gray-200 text-xs space-y-2 font-mono">
+                  <div className="flex items-center justify-between text-gray-500 text-[11px]">
+                    <span className="flex items-center gap-1 font-sans">
+                      <MapPin className="w-3.5 h-3.5 text-[#047857]" /> GPS Sensor
+                    </span>
+                    <span className="text-emerald-700 bg-emerald-100/70 px-1.5 py-0.2 rounded font-bold text-[10px]">
+                      AKTIF 24/7
+                    </span>
+                  </div>
+                  <div className="flex items-center justify-between text-gray-900 font-sans font-bold">
+                    <span>Status Wilayah:</span>
+                    <span className="text-[#047857] flex items-center gap-1 font-extrabold">
+                      <CheckCircle2 className="w-3.5 h-3.5" /> Aman Terkendali
+                    </span>
+                  </div>
+                </div>
               </div>
-              <h4 className="text-sm font-bold text-gray-900">Buka &amp; Cek Lokasi</h4>
-              <p className="text-xs text-gray-600 leading-relaxed">
-                Ketahui status bahaya di wilayah Anda dalam satu klik tanpa perlu instalasi aplikasi rumit.
-              </p>
+
+              <div className="pt-2 border-t border-gray-100">
+                <a
+                  href="#fitur-cek-risiko"
+                  className="inline-flex items-center gap-1.5 text-xs font-bold text-[#047857] hover:text-[#065F46] transition-colors group-hover:translate-x-0.5"
+                >
+                  <span>Coba Cek Wilayah Anda</span>
+                  <ArrowRight className="w-3.5 h-3.5" />
+                </a>
+              </div>
             </div>
 
-            <div className="p-5 rounded-2xl bg-white border border-gray-200 space-y-2">
-              <div className="text-xs font-mono font-bold text-[#047857] bg-emerald-50 w-7 h-7 rounded-lg flex items-center justify-center">
-                2
+            {/* Step 2 */}
+            <div className="p-6 rounded-3xl bg-white border border-gray-200 hover:border-blue-400 hover:shadow-lg transition-all duration-300 flex flex-col justify-between space-y-5 group hover:-translate-y-1">
+              <div className="space-y-4">
+                <div className="flex items-center justify-between">
+                  <div className="w-12 h-12 rounded-2xl bg-blue-50 border border-blue-200 text-blue-700 flex items-center justify-center font-bold shadow-2xs group-hover:scale-105 transition-transform">
+                    <ShieldCheck className="w-6 h-6" />
+                  </div>
+                  <span className="text-xs font-mono font-extrabold text-blue-700 bg-blue-50 px-2.5 py-1 rounded-full border border-blue-200">
+                    LANGKAH 02
+                  </span>
+                </div>
+
+                <div className="space-y-1.5">
+                  <h4 className="text-base font-extrabold text-gray-900 group-hover:text-blue-700 transition-colors">
+                    Ransum &amp; Tas Siaga 72 Jam
+                  </h4>
+                  <p className="text-xs sm:text-sm text-gray-600 leading-relaxed">
+                    Hitung otomatis ransum air bersih minimal 3L/hari, stok pangan kalori, dan obat rutin keluarga agar mandiri sebelum bantuan darurat tiba.
+                  </p>
+                </div>
+
+                {/* Micro-preview Widget */}
+                <div className="p-3.5 rounded-2xl bg-blue-50/60 border border-blue-100 text-xs space-y-2 font-mono">
+                  <div className="flex items-center justify-between text-gray-500 text-[11px]">
+                    <span className="flex items-center gap-1 font-sans text-blue-900 font-bold">
+                      <ShieldCheck className="w-3.5 h-3.5 text-blue-600" /> Logistik Mandiri
+                    </span>
+                    <span className="text-blue-700 bg-blue-100 px-1.5 py-0.2 rounded font-bold text-[10px]">
+                      Standar BNPB
+                    </span>
+                  </div>
+                  <div className="flex items-center justify-between text-gray-900 font-sans font-bold">
+                    <span>Kesiapan Ransum:</span>
+                    <span className="text-blue-700 font-extrabold">
+                      Air 9L • P3K • Dokumen
+                    </span>
+                  </div>
+                </div>
               </div>
-              <h4 className="text-sm font-bold text-gray-900">Siapkan Tas 72 Jam</h4>
-              <p className="text-xs text-gray-600 leading-relaxed">
-                Gunakan panduan kebutuhan logistik air, obat keluarga, dan dokumen penting agar siap mandiri.
-              </p>
+
+              <div className="pt-2 border-t border-gray-100">
+                <Link
+                  to={PATHS.PUBLIC.PREPAREDNESS}
+                  className="inline-flex items-center gap-1.5 text-xs font-bold text-blue-700 hover:text-blue-900 transition-colors group-hover:translate-x-0.5"
+                >
+                  <span>Buka Panduan Tas Siaga</span>
+                  <ArrowRight className="w-3.5 h-3.5" />
+                </Link>
+              </div>
             </div>
 
-            <div className="p-5 rounded-2xl bg-white border border-gray-200 space-y-2">
-              <div className="text-xs font-mono font-bold text-[#047857] bg-emerald-50 w-7 h-7 rounded-lg flex items-center justify-center">
-                3
+            {/* Step 3 */}
+            <div className="p-6 rounded-3xl bg-white border border-gray-200 hover:border-amber-400 hover:shadow-lg transition-all duration-300 flex flex-col justify-between space-y-5 group hover:-translate-y-1">
+              <div className="space-y-4">
+                <div className="flex items-center justify-between">
+                  <div className="w-12 h-12 rounded-2xl bg-amber-50 border border-amber-200 text-amber-800 flex items-center justify-center font-bold shadow-2xs group-hover:scale-105 transition-transform">
+                    <Navigation className="w-6 h-6" />
+                  </div>
+                  <span className="text-xs font-mono font-extrabold text-amber-800 bg-amber-50 px-2.5 py-1 rounded-full border border-amber-200">
+                    LANGKAH 03
+                  </span>
+                </div>
+
+                <div className="space-y-1.5">
+                  <h4 className="text-base font-extrabold text-gray-900 group-hover:text-amber-800 transition-colors">
+                    Evakuasi Terarah ke Shelter
+                  </h4>
+                  <p className="text-xs sm:text-sm text-gray-600 leading-relaxed">
+                    Saat evakuasi diperlukan, arahkan keluarga ke shelter dan posko terbuka resmi yang memiliki fasilitas sanitasi dan akses ramah difabel/lansia.
+                  </p>
+                </div>
+
+                {/* Micro-preview Widget */}
+                <div className="p-3.5 rounded-2xl bg-amber-50/60 border border-amber-100 text-xs space-y-2 font-mono">
+                  <div className="flex items-center justify-between text-gray-500 text-[11px]">
+                    <span className="flex items-center gap-1 font-sans text-amber-900 font-bold">
+                      <Building2 className="w-3.5 h-3.5 text-amber-700" /> Posko Terverifikasi
+                    </span>
+                    <span className="text-amber-800 bg-amber-100 px-1.5 py-0.2 rounded font-bold text-[10px]">
+                      RAMAH DIFABEL
+                    </span>
+                  </div>
+                  <div className="flex items-center justify-between text-gray-900 font-sans font-bold">
+                    <span>Titik Shelter:</span>
+                    <span className="text-amber-800 font-extrabold">
+                      Navigasi Peta Rute Langsung
+                    </span>
+                  </div>
+                </div>
               </div>
-              <h4 className="text-sm font-bold text-gray-900">Evakuasi Terarah</h4>
-              <p className="text-xs text-gray-600 leading-relaxed">
-                Saat bahaya melanda, temukan shelter resmi terdekat dengan navigasi rute aman bebas hambatan.
-              </p>
+
+              <div className="pt-2 border-t border-gray-100">
+                <Link
+                  to={PATHS.PUBLIC.SHELTERS}
+                  className="inline-flex items-center gap-1.5 text-xs font-bold text-amber-800 hover:text-amber-950 transition-colors group-hover:translate-x-0.5"
+                >
+                  <span>Cari Titik Shelter Terdekat</span>
+                  <ArrowRight className="w-3.5 h-3.5" />
+                </Link>
+              </div>
             </div>
           </div>
         </div>
       </section>
 
       {/* ========================================================================= */}
-      {/* 7. ULASAN & PENGALAMAN WARGA (Review dari Ribuan Warga Pengguna)           */}
+      {/* 7. ULASAN & PENGALAMAN WARGA (Interactive Horizontal Auto-Scroll Carousel)*/}
       {/* ========================================================================= */}
-      <section id="ulasan-warga" className="space-y-8 pt-6 border-t border-[#E5E7EB]">
+      <section id="ulasan-warga" className="space-y-6 pt-6 border-t border-[#E5E7EB]">
         <div className="flex flex-col md:flex-row md:items-end justify-between gap-4">
           <div className="space-y-1.5">
             <div className="inline-flex items-center gap-1.5 text-xs font-bold text-[#047857] uppercase tracking-wider font-mono">
               <HeartHandshake className="w-3.5 h-3.5" />
-              <span>TESTIMONI &amp; KEPERCAYAAN MASYARAKAT</span>
+              <span>TESTIMONI &amp; KEPERCAYAAN PUBLIK</span>
             </div>
             <h2 className="text-2xl sm:text-3xl font-extrabold text-[#111827]">
               Suara Nyata dari Puluhan Ribu Pengguna
             </h2>
             <p className="text-xs sm:text-sm text-gray-600 max-w-2xl">
-              Simak bagaimana SENTRAVAX mendampingi para ibu rumah tangga, komunitas relawan SAR, dokter puskesmas, dan pemuda di berbagai penjuru nusantara.
+              Ulasan terverifikasi dari warga, komunitas relawan, tenaga medis, dan perwakilan internasional di berbagai daerah.
             </p>
           </div>
 
-          {/* Overall Rating Pill */}
-          <div className="p-3 rounded-2xl bg-white border border-[#A7F3D0] shadow-2xs flex items-center gap-3">
-            <div className="text-center pl-2">
-              <div className="text-2xl font-extrabold text-gray-900 leading-none">4.9</div>
-              <div className="text-[10px] text-gray-400">skala 5.0</div>
-            </div>
-            <div className="space-y-1">
-              <div className="flex items-center gap-0.5 text-amber-500">
-                {[1, 2, 3, 4, 5].map((i) => (
-                  <Star key={i} className="w-3.5 h-3.5 fill-amber-500" />
-                ))}
+          {/* Overall Rating & Controls */}
+          <div className="flex flex-wrap items-center gap-2.5">
+            {/* Rating pill */}
+            <div className="p-2 sm:p-2.5 rounded-2xl bg-white border border-[#A7F3D0] shadow-2xs flex items-center gap-2.5">
+              <div className="text-center pl-1">
+                <div className="text-xl font-extrabold text-gray-900 leading-none">4.9</div>
+                <div className="text-[9px] text-gray-400">skala 5.0</div>
               </div>
-              <div className="text-[11px] font-bold text-gray-700">32.400+ Ulasan Terverifikasi</div>
+              <div className="space-y-0.5">
+                <div className="flex items-center gap-0.5 text-amber-500">
+                  {[1, 2, 3, 4, 5].map((i) => (
+                    <Star key={i} className="w-3 h-3 fill-amber-500" />
+                  ))}
+                </div>
+                <div className="text-[10px] font-bold text-gray-700">32.400+ Ulasan</div>
+              </div>
+            </div>
+
+            {/* Slider Navigation Buttons */}
+            <div className="flex items-center gap-1 p-1 bg-white rounded-2xl border border-gray-200 shadow-2xs">
+              <button
+                type="button"
+                onClick={() => setIsAutoPlay((prev) => !prev)}
+                className={`p-2 rounded-xl text-xs font-semibold transition-all flex items-center gap-1.5 cursor-pointer ${
+                  isAutoPlay
+                    ? 'bg-emerald-50 text-[#047857] hover:bg-emerald-100'
+                    : 'text-gray-500 hover:text-gray-900 hover:bg-gray-100'
+                }`}
+                title={isAutoPlay ? 'Jeda gulir otomatis' : 'Mulai gulir otomatis'}
+                aria-label={isAutoPlay ? 'Jeda gulir otomatis' : 'Mulai gulir otomatis'}
+              >
+                {isAutoPlay ? <Pause className="w-3.5 h-3.5" /> : <Play className="w-3.5 h-3.5" />}
+                <span className="text-[11px] font-mono hidden sm:inline">
+                  {isAutoPlay ? 'Auto' : 'Pause'}
+                </span>
+              </button>
+
+              <div className="w-[1px] h-4 bg-gray-200 mx-0.5" />
+
+              <button
+                type="button"
+                onClick={scrollLeft}
+                className="p-2 rounded-xl text-gray-600 hover:text-gray-950 hover:bg-gray-100 transition-colors cursor-pointer"
+                title="Geser ke kiri"
+                aria-label="Geser ke kiri"
+              >
+                <ChevronLeft className="w-4 h-4" />
+              </button>
+
+              <button
+                type="button"
+                onClick={scrollRight}
+                className="p-2 rounded-xl text-gray-600 hover:text-gray-950 hover:bg-gray-100 transition-colors cursor-pointer"
+                title="Geser ke kanan"
+                aria-label="Geser ke kanan"
+              >
+                <ChevronRight className="w-4 h-4" />
+              </button>
             </div>
           </div>
         </div>
 
-        {/* Filter Category Tabs */}
-        <div className="flex flex-wrap items-center gap-1.5">
-          {[
-            { id: 'all', label: 'Semua Ulasan (32.400+)' },
-            { id: 'warga', label: 'Warga & Keluarga' },
-            { id: 'relawan', label: 'Relawan & SAR' },
-            { id: 'medis', label: 'Tenaga Medis' },
-            { id: 'pemerintah', label: 'Pengurus Lingkungan & RW' },
-          ].map((tab) => (
-            <button
-              key={tab.id}
-              type="button"
-              onClick={() => setSelectedReviewCategory(tab.id)}
-              className={`px-3.5 py-1.5 rounded-xl text-xs font-semibold transition-all ${
-                selectedReviewCategory === tab.id
-                  ? 'bg-[#047857] text-white shadow-2xs'
-                  : 'bg-white border border-gray-200 text-gray-600 hover:bg-gray-100 hover:text-gray-900'
-              }`}
-            >
-              {tab.label}
-            </button>
-          ))}
+        {/* Language Filter Tabs */}
+        <div className="flex items-center justify-between gap-3">
+          <div className="flex flex-wrap items-center gap-1.5">
+            {[
+              { id: 'all' as const, label: 'Semua Bahasa (All Reviews)' },
+              { id: 'id' as const, label: '🇮🇩 Bahasa Indonesia' },
+              { id: 'en' as const, label: '🇬🇧 English (International)' },
+            ].map((tab) => (
+              <button
+                key={tab.id}
+                type="button"
+                onClick={() => setSelectedLanguage(tab.id)}
+                className={`px-3.5 py-1.5 rounded-xl text-xs font-semibold transition-all cursor-pointer ${
+                  selectedLanguage === tab.id
+                    ? 'bg-[#047857] text-white shadow-2xs'
+                    : 'bg-white border border-gray-200 text-gray-600 hover:bg-gray-100 hover:text-gray-900'
+                }`}
+              >
+                {tab.label}
+              </button>
+            ))}
+          </div>
+
+          <span className="text-[11px] text-gray-400 hidden sm:block">
+            * Geser ke samping atau arahkan kursor untuk menjeda
+          </span>
         </div>
 
-        {/* Testimonials Grid */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+        {/* Horizontal Smooth Scroll Track */}
+        <div
+          ref={scrollContainerRef}
+          onMouseEnter={() => setIsHovered(true)}
+          onMouseLeave={() => setIsHovered(false)}
+          className="flex gap-4 overflow-x-auto pb-4 pt-1 snap-x scroll-smooth cursor-grab active:cursor-grabbing [scrollbar-width:none] [-ms-overflow-style:none] [&::-webkit-scrollbar]:hidden"
+        >
           {filteredReviews.map((rev) => (
             <div
               key={rev.id}
-              className="p-6 rounded-3xl bg-white border border-gray-200 hover:border-[#A7F3D0] transition-all shadow-xs flex flex-col justify-between space-y-4"
+              className="w-[320px] sm:w-[380px] shrink-0 snap-start p-5 rounded-3xl bg-white border border-gray-200 hover:border-emerald-300 transition-all shadow-xs hover:shadow-md flex flex-col justify-between space-y-4 group relative"
             >
               <div className="space-y-3">
-                {/* Star rating + verified badge */}
-                <div className="flex items-center justify-between">
+                {/* Header: Star rating + language pill + verified badge */}
+                <div className="flex items-center justify-between gap-2">
                   <div className="flex items-center gap-0.5 text-amber-500">
                     {Array.from({ length: rev.rating }).map((_, i) => (
                       <Star key={i} className="w-3.5 h-3.5 fill-amber-500" />
                     ))}
                   </div>
-                  <span className="text-[10px] font-bold uppercase tracking-wider px-2 py-0.5 rounded-full bg-emerald-50 text-[#047857] border border-emerald-200">
-                    {rev.verifiedBadge}
-                  </span>
+
+                  <div className="flex items-center gap-1.5">
+                    <span className="text-[10px] font-bold uppercase px-2 py-0.5 rounded-full bg-gray-100 text-gray-600 border border-gray-200">
+                      {rev.language === 'id' ? '🇮🇩 ID' : '🇬🇧 EN'}
+                    </span>
+                    <span className="text-[10px] font-bold uppercase tracking-wider px-2 py-0.5 rounded-full bg-emerald-50 text-[#047857] border border-emerald-200">
+                      {rev.verifiedBadge}
+                    </span>
+                  </div>
                 </div>
 
-                {/* Quote text */}
-                <p className="text-xs sm:text-sm text-gray-700 leading-relaxed italic">
-                  &ldquo;{rev.quote}&rdquo;
-                </p>
+                {/* Quote content */}
+                <div className="relative">
+                  <Quote className="w-5 h-5 text-emerald-200/60 absolute -top-1 -left-1 -z-0" />
+                  <p className="text-xs sm:text-[13px] text-gray-700 leading-relaxed italic relative z-10 line-clamp-4">
+                    &ldquo;{rev.quote}&rdquo;
+                  </p>
+                </div>
               </div>
 
-              {/* Author footer */}
+              {/* Reviewer Profile Footer with Real Photo */}
               <div className="pt-3 border-t border-gray-100 flex items-center gap-3">
-                <div
-                  className={`w-9 h-9 rounded-full ${rev.avatarBg} text-white font-bold flex items-center justify-center text-xs shrink-0`}
-                >
-                  {rev.avatarText}
-                </div>
+                <ReviewerAvatar
+                  src={rev.avatarUrl}
+                  name={rev.name}
+                  fallbackText={rev.avatarText}
+                  bg={rev.avatarBg}
+                />
                 <div className="min-w-0">
-                  <div className="text-xs font-bold text-gray-900 truncate">{rev.name}</div>
+                  <div className="text-xs font-bold text-gray-900 truncate group-hover:text-[#047857] transition-colors">
+                    {rev.name}
+                  </div>
                   <div className="text-[11px] text-gray-500 truncate">{rev.role}</div>
                   <div className="text-[10px] text-gray-400">{rev.city} • {rev.date}</div>
                 </div>

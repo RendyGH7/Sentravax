@@ -8,7 +8,7 @@ import {
   Database,
   Radio,
   ShieldCheck,
-  Sparkles,
+  Cpu,
   Users,
   Wifi,
   WifiOff,
@@ -206,7 +206,7 @@ export const ProvenanceBadge: React.FC<ProvenanceBadgeProps> = ({ type, provenan
           title="Dimensi C: Asal-Usul SENTRAVAX_INSIGHT (Hasil sintesis analisis AI & Risk Engine SENTRAVAX)"
           className={`inline-flex items-center gap-1 font-mono font-bold rounded-md bg-violet-500/15 text-violet-400 border border-violet-500/30 ${sizeClasses} ${className}`}
         >
-          <Sparkles className={iconSize} /> SENTRAVAX_INSIGHT
+          <Cpu className={iconSize} /> SENTRAVAX_INSIGHT
         </span>
       );
     case 'CURATED_REFERENCE':

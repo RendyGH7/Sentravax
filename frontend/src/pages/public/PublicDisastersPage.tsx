@@ -22,7 +22,7 @@ import {
   AlertCircle,
   RefreshCw,
   Layers,
-  Sparkles,
+  Filter,
 } from 'lucide-react';
 
 import { publicService } from '../../services/public-service';
@@ -660,7 +660,7 @@ export const PublicDisastersPage: React.FC = () => {
             </div>
             {hasActiveFilters && (
               <span className="text-xs text-[#047857] font-semibold flex items-center gap-1">
-                <Sparkles className="w-3.5 h-3.5" /> Filter aktif
+                <Filter className="w-3.5 h-3.5" /> Filter aktif
               </span>
             )}
           </div>

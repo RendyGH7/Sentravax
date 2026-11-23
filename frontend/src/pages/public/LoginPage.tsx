@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { Link, useNavigate, useLocation } from 'react-router-dom';
 import { PATHS } from '../../app/router/paths';
 import { useAuth } from '../../app/context/useAuth';
-import { Shield, Lock, Mail, ArrowRight, Sparkles } from 'lucide-react';
+import { Shield, Lock, Mail, ArrowRight, KeyRound } from 'lucide-react';
 import { toast } from 'sonner';
 import { getApiErrorMessage } from '../../lib/api-error';
 import { ErrorMessage } from '../../components/shared/ErrorMessage';
@@ -85,7 +85,7 @@ export const LoginPage: React.FC = () => {
         <div className="p-3.5 rounded-xl bg-[#F9FAFB] border border-[#E5E7EB] space-y-2">
           <div className="flex items-center justify-between text-[11px] font-mono text-[#6B7280]">
             <span className="flex items-center gap-1 font-bold text-[#111827]">
-              <Sparkles className="w-3.5 h-3.5 text-[#D97706]" /> Akun Pengujian Development:
+              <KeyRound className="w-3.5 h-3.5 text-[#D97706]" /> Akun Pengujian Development:
             </span>
           </div>
           <div className="grid grid-cols-3 gap-1.5 text-[11px]">

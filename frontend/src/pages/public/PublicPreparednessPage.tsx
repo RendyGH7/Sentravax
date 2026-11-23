@@ -32,7 +32,7 @@ import {
   ArrowRight,
   Crosshair,
   Radio,
-  Sparkles,
+  BarChart3,
   PhoneCall
 } from 'lucide-react';
 
@@ -944,7 +944,7 @@ export const PublicPreparednessPage: React.FC = () => {
               <Card padding="md" className="space-y-4">
                 <div className="flex items-center justify-between border-b border-[#F3F4F6] pb-2.5">
                   <h3 className="text-sm font-bold text-[#111827] flex items-center gap-2">
-                    <Sparkles className="w-4 h-4 text-[#047857]" />
+                    <BarChart3 className="w-4 h-4 text-[#047857]" />
                     Faktor Komponen Pembentuk Risiko
                   </h3>
                   <span className="text-xs text-[#6B7280]">Bobot Analisis</span>

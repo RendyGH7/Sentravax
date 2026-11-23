@@ -101,15 +101,9 @@ export const PublicLayout: React.FC = () => {
               <Shield className="w-5 h-5" />
             </div>
             <div className="flex flex-col">
-              <div className="flex items-center gap-1.5">
-                <span className="text-[15px] font-extrabold tracking-tight text-[#111827]">
-                  SENTRAVAX
-                </span>
-                <span className="inline-flex items-center gap-1 px-1.5 py-0.2 rounded-full bg-[#ECFDF5] border border-[#A7F3D0] text-[9px] font-mono font-bold text-[#047857]">
-                  <span className="w-1.5 h-1.5 rounded-full bg-[#059669] animate-pulse" />
-                  LIVE
-                </span>
-              </div>
+              <span className="text-[15px] font-extrabold tracking-tight text-[#111827]">
+                SENTRAVAX
+              </span>
               <span className="text-[10px] text-gray-500 font-medium tracking-tight -mt-0.5 hidden sm:block">
                 Kesiapsiagaan Bencana Nasional
               </span>
@@ -133,22 +127,8 @@ export const PublicLayout: React.FC = () => {
             ))}
           </nav>
 
-          {/* Right Action Tools: Download App, Lapor, Auth */}
+          {/* Right Action Tools: Lapor & Auth */}
           <div className="flex items-center gap-2 shrink-0">
-            {/* Download Mobile App Button (Play Store & App Store Modal Trigger) */}
-            <button
-              type="button"
-              onClick={() => setDownloadModalOpen(true)}
-              className="hidden sm:inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-semibold text-gray-700 bg-gray-50 hover:bg-gray-100 hover:text-gray-950 border border-gray-200/90 transition-all shadow-2xs group cursor-pointer"
-              title="Unduh Aplikasi SENTRAVAX di Play Store & App Store"
-            >
-              <Smartphone className="w-3.5 h-3.5 text-[#047857] group-hover:scale-110 transition-transform" />
-              <span>Unduh Aplikasi</span>
-              <span className="hidden xl:inline-block text-[10px] font-mono font-bold text-[#047857] bg-emerald-100/70 px-1.5 py-0.2 rounded">
-                App
-              </span>
-            </button>
-
             {/* Quick Report Tool */}
             <Link
               to={PATHS.PUBLIC.REPORT}
@@ -231,6 +211,14 @@ export const PublicLayout: React.FC = () => {
                     <Info className="w-3.5 h-3.5 text-[#047857]" />
                     <span>Tentang Platform</span>
                   </Link>
+                  <button
+                    type="button"
+                    onClick={() => setDownloadModalOpen(true)}
+                    className="w-full flex items-center gap-2.5 px-3 py-2 rounded-xl text-xs font-medium text-gray-700 hover:bg-[#F9FAFB] hover:text-[#047857] transition-colors text-left cursor-pointer"
+                  >
+                    <Smartphone className="w-3.5 h-3.5 text-[#047857]" />
+                    <span>Unduh Aplikasi Mobile</span>
+                  </button>
 
                   <div className="pt-1 my-1 border-t border-gray-100" />
                   <div className="text-[10px] font-bold text-gray-400 uppercase tracking-wider px-3 py-1">
