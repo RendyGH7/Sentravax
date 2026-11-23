@@ -268,16 +268,34 @@ class AuthController extends Controller
             'password_confirmation' => $validated['password_confirmation'],
         ];
 
-        // Consume reset token and apply transactional update
-        $status = PasswordBroker::broker()->reset($credentials, function (User $user, string $password) {
-            DB::transaction(function () use ($user, $password) {
-                $user->password = Hash::make($password);
-                $user->save();
+        // Consume reset token and apply atomic transactional update
+        try {
+            $status = DB::transaction(function () use ($credentials) {
+                // Lock reset token record for this email to serialize concurrent requests and enforce atomicity
+                $tokenRecord = DB::table('password_reset_tokens')
+                    ->where('email', $credentials['email'])
+                    ->lockForUpdate()
+                    ->first();
 
-                // Security Policy: Revoke all Personal Access Tokens for the affected user
-                $user->tokens()->delete();
+                if (! $tokenRecord) {
+                    return PasswordBroker::INVALID_TOKEN;
+                }
+
+                return PasswordBroker::broker()->reset($credentials, function (User $user, string $password) {
+                    $user->password = Hash::make($password);
+                    $user->save();
+
+                    // Security Policy: Revoke all Personal Access Tokens for the affected user
+                    $user->tokens()->delete();
+                });
             });
-        });
+        } catch (\Throwable $e) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Gagal memproses pemulihan kata sandi karena kendala transaksi sistem. Silakan coba beberapa saat lagi.',
+                'error' => 'RESET_TRANSACTION_FAILED',
+            ], Response::HTTP_INTERNAL_SERVER_ERROR);
+        }
 
         if ($status === PasswordBroker::PASSWORD_RESET) {
             return response()->json([

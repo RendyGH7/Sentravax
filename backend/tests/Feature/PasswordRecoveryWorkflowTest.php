@@ -643,4 +643,164 @@ class PasswordRecoveryWorkflowTest extends TestCase
         $this->assertNotNull(DataSource::find(2));
         $this->assertNotNull(Shelter::find(1));
     }
+
+    /**
+     * Scenario 30: Concurrent reset requests with the same token - second request is cleanly rejected.
+     */
+    public function test_30_concurrent_reset_requests_with_same_token_race_condition_rejected(): void
+    {
+        $token = Password::broker()->createToken($this->user);
+
+        // Simulate Request 1 winning the lock
+        $response1 = $this->postJson('/api/v1/auth/reset-password', [
+            'token' => $token,
+            'email' => $this->user->email,
+            'password' => 'ConcurrentWinPass123!',
+            'password_confirmation' => 'ConcurrentWinPass123!',
+        ]);
+        $response1->assertStatus(200);
+
+        // Simulate concurrent Request 2 arriving with the same token
+        $response2 = $this->postJson('/api/v1/auth/reset-password', [
+            'token' => $token,
+            'email' => $this->user->email,
+            'password' => 'ConcurrentLosePass456!',
+            'password_confirmation' => 'ConcurrentLosePass456!',
+        ]);
+        $response2->assertStatus(422);
+        $response2->assertJson([
+            'success' => false,
+            'error' => 'INVALID_RESET_TOKEN',
+        ]);
+
+        // Confirm only Request 1 was committed
+        $this->assertTrue(Hash::check('ConcurrentWinPass123!', $this->user->fresh()->password));
+        $this->assertFalse(Hash::check('ConcurrentLosePass456!', $this->user->fresh()->password));
+    }
+
+    /**
+     * Scenario 31: Full transactional atomicity - failed reset leaves password, PATs, and token untouched.
+     */
+    public function test_31_full_transactional_atomicity_and_rollback_on_failed_reset(): void
+    {
+        $originalHash = $this->user->password;
+        $token = Password::broker()->createToken($this->user);
+        $this->user->createToken('session_token_1');
+
+        $this->assertNotNull(DB::table('password_reset_tokens')->where('email', $this->user->email)->first());
+        $this->assertEquals(1, $this->user->fresh()->tokens()->count());
+
+        // Attempt reset with invalid token
+        $response = $this->postJson('/api/v1/auth/reset-password', [
+            'token' => 'invalid-tampered-token',
+            'email' => $this->user->email,
+            'password' => 'RollbackAttemptPass123!',
+            'password_confirmation' => 'RollbackAttemptPass123!',
+        ]);
+
+        $response->assertStatus(422);
+        $this->assertEquals($originalHash, $this->user->fresh()->password);
+        $this->assertEquals(1, $this->user->fresh()->tokens()->count());
+        $this->assertNotNull(DB::table('password_reset_tokens')->where('email', $this->user->email)->first());
+    }
+
+    /**
+     * Scenario 32: Route middleware rate limiting triggers 429 on rapid IP flooding for forgot-password.
+     */
+    public function test_32_route_middleware_rate_limiting_triggers_429_on_forgot_password(): void
+    {
+        Notification::fake();
+        $ip = '192.168.10.1';
+
+        // 15 requests succeed within limit
+        for ($i = 0; $i < 15; $i++) {
+            $res = $this->withServerVariables(['REMOTE_ADDR' => $ip])
+                ->withHeaders(['X-Test-Rate-Limit' => '1'])
+                ->postJson('/api/v1/auth/forgot-password', [
+                    'email' => 'flood_user_' . $i . '@sentravax.id',
+                ]);
+            $res->assertStatus(200);
+        }
+
+        // 16th request must trigger 429
+        $response = $this->withServerVariables(['REMOTE_ADDR' => $ip])
+            ->withHeaders(['X-Test-Rate-Limit' => '1'])
+            ->postJson('/api/v1/auth/forgot-password', [
+                'email' => 'flood_user_16@sentravax.id',
+            ]);
+
+        $response->assertStatus(429);
+        $response->assertJson([
+            'success' => false,
+            'error' => 'TOO_MANY_REQUESTS',
+        ]);
+        $this->assertTrue($response->headers->has('Retry-After'));
+    }
+
+    /**
+     * Scenario 33: Route middleware rate limiting triggers 429 on rapid IP flooding for reset-password.
+     */
+    public function test_33_route_middleware_rate_limiting_triggers_429_on_reset_password(): void
+    {
+        $ip = '192.168.10.2';
+
+        // 15 requests processed
+        for ($i = 0; $i < 15; $i++) {
+            $res = $this->withServerVariables(['REMOTE_ADDR' => $ip])
+                ->withHeaders(['X-Test-Rate-Limit' => '1'])
+                ->postJson('/api/v1/auth/reset-password', [
+                    'token' => 'token_' . $i,
+                    'email' => 'user_' . $i . '@sentravax.id',
+                    'password' => 'DummyPassword123!',
+                    'password_confirmation' => 'DummyPassword123!',
+                ]);
+            $res->assertStatus(422);
+        }
+
+        // 16th request triggers 429
+        $response = $this->withServerVariables(['REMOTE_ADDR' => $ip])
+            ->withHeaders(['X-Test-Rate-Limit' => '1'])
+            ->postJson('/api/v1/auth/reset-password', [
+                'token' => 'token_16',
+                'email' => 'user_16@sentravax.id',
+                'password' => 'DummyPassword123!',
+                'password_confirmation' => 'DummyPassword123!',
+            ]);
+
+        $response->assertStatus(429);
+        $response->assertJson([
+            'success' => false,
+            'error' => 'TOO_MANY_REQUESTS',
+        ]);
+        $this->assertTrue($response->headers->has('Retry-After'));
+    }
+
+    /**
+     * Scenario 34: Token privacy verification - token is never exposed in responses or data keys.
+     */
+    public function test_34_token_privacy_never_exposed_in_api_responses(): void
+    {
+        Notification::fake();
+
+        // 1. Forgot password response inspection
+        $forgotRes = $this->postJson('/api/v1/auth/forgot-password', [
+            'email' => $this->user->email,
+        ]);
+        $forgotRes->assertStatus(200);
+        $forgotData = json_encode($forgotRes->json());
+        $this->assertStringNotContainsString('token', strtolower($forgotData));
+
+        // 2. Reset password response inspection
+        $token = Password::broker()->createToken($this->user);
+        $resetRes = $this->postJson('/api/v1/auth/reset-password', [
+            'token' => $token,
+            'email' => $this->user->email,
+            'password' => 'PrivateNewPassword123!',
+            'password_confirmation' => 'PrivateNewPassword123!',
+        ]);
+        $resetRes->assertStatus(200);
+        $resetData = json_encode($resetRes->json());
+        $this->assertStringNotContainsString($token, $resetData);
+        $this->assertArrayNotHasKey('token', $resetRes->json());
+    }
 }

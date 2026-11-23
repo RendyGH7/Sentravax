@@ -69,10 +69,21 @@ class AppServiceProvider extends ServiceProvider
         });
 
         RateLimiter::for('auth', function (Request $request) {
-            if (app()->environment('testing')) {
+            if (app()->environment('testing') && ! $request->hasHeader('X-Test-Rate-Limit')) {
                 return Limit::none();
             }
-            return Limit::perMinute(15)->by($request->ip());
+            return Limit::perMinute(15)
+                ->by($request->ip())
+                ->response(function (Request $request, array $headers) {
+                    $retryAfter = (int) ($headers['Retry-After'] ?? 60);
+
+                    return response()->json([
+                        'success' => false,
+                        'message' => 'Terlalu banyak percobaan autentikasi. Silakan tunggu beberapa saat.',
+                        'error' => 'TOO_MANY_REQUESTS',
+                        'retry_after' => $retryAfter,
+                    ], 429, $headers);
+                });
         });
 
         RateLimiter::for('public-report', function (Request $request) {
