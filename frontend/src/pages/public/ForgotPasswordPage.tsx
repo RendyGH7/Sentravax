@@ -44,119 +44,140 @@ export const ForgotPasswordPage: React.FC = () => {
   };
 
   return (
-    <div className="min-h-[85vh] flex items-center justify-center py-12 px-4 sm:px-6 lg:px-8 bg-[#F9FAFB]">
-      <div className="max-w-md w-full space-y-6 bg-[#FFFFFF] p-8 rounded-3xl border border-[#E5E7EB] shadow-md">
-        {isSubmitted ? (
-          <div className="text-center space-y-4">
-            <div className="w-14 h-14 rounded-2xl bg-[#ECFDF5] border border-[#A7F3D0] flex items-center justify-center mx-auto text-[#047857] shadow-xs">
-              <CheckCircle2 className="w-8 h-8" />
-            </div>
+    <div className="min-h-screen relative flex items-center justify-center p-4 sm:p-6 lg:p-12 overflow-hidden bg-black text-white">
+      {/* Background Cinematic Atmosphere */}
+      <img
+        src="https://images.unsplash.com/photo-1451187580459-43490279c0fa?auto=format&fit=crop&q=85&w=2560"
+        alt="Atmospheric Satellite Earth & Sensor Telemetry Network"
+        className="absolute inset-0 w-full h-full object-cover object-center opacity-25 scale-105 pointer-events-none select-none"
+        loading="eager"
+      />
 
-            <h1 className="text-2xl font-extrabold text-[#111827] tracking-tight">
-              Instruksi Pemulihan Terkirim
-            </h1>
+      {/* Multi-layered dark cinematic gradient overlays */}
+      <div className="absolute inset-0 bg-gradient-to-b from-black/95 via-black/85 to-black pointer-events-none" />
+      <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_center,_var(--tw-gradient-stops))] from-emerald-950/30 via-black/90 to-black pointer-events-none" />
 
-            <p className="text-sm text-[#4B5563] leading-relaxed">
-              Jika alamat email <strong className="text-[#111827]">{email}</strong> terdaftar di sistem kami,
-              tautan pemulihan kata sandi telah dikirimkan ke kotak masuk Anda.
-            </p>
+      {/* Subtle ambient glowing spots */}
+      <div className="absolute -top-32 -left-32 w-96 h-96 bg-emerald-500/10 rounded-full blur-3xl pointer-events-none" />
+      <div className="absolute -bottom-32 -right-32 w-96 h-96 bg-teal-500/10 rounded-full blur-3xl pointer-events-none" />
 
-            <div className="p-4 rounded-2xl bg-[#F0FDF4] border border-[#BBF7D0] text-xs text-[#166534] text-left leading-relaxed flex items-start gap-2.5">
-              <Shield className="w-4 h-4 text-[#16A34A] shrink-0 mt-0.5" />
-              <span>
-                Demi keamanan akun Anda, tautan pemulihan berlaku selama <strong>60 menit</strong>.
-                Periksa juga folder <em>Spam</em> atau <em>Junk</em> jika tidak menemukannya di kotak masuk utama.
-              </span>
-            </div>
+      <div className="max-w-md w-full relative z-10">
+        <div className="bg-gradient-to-b from-[#0e2218]/95 via-[#081710]/95 to-[#040c08] border-2 border-emerald-500/50 rounded-3xl p-6 sm:p-8 shadow-[0_0_60px_rgba(0,0,0,0.9),0_0_30px_rgba(16,185,129,0.25)] backdrop-blur-2xl space-y-6 relative overflow-hidden">
+          {/* Top radiant edge */}
+          <div className="absolute top-0 inset-x-8 h-[2px] bg-gradient-to-r from-transparent via-emerald-400 to-transparent" />
 
-            <div className="pt-2 flex flex-col gap-2.5">
-              <button
-                type="button"
-                onClick={() => {
-                  setIsSubmitted(false);
-                  setEmail('');
-                  setErrorMessage(null);
-                }}
-                className="w-full py-2.5 px-4 rounded-xl border border-[#D1D5DB] hover:bg-[#F3F4F6] text-[#374151] font-semibold text-xs transition-all"
-              >
-                Kirim Ulang atau Gunakan Email Lain
-              </button>
-
-              <Link
-                to={PATHS.PUBLIC.LOGIN}
-                className="w-full py-2.5 px-4 rounded-xl bg-[#047857] hover:bg-[#065F46] text-white font-bold text-xs text-center transition-all shadow-xs flex items-center justify-center gap-1.5"
-              >
-                <ArrowLeft className="w-4 h-4" />
-                Kembali ke Halaman Masuk
-              </Link>
-            </div>
-          </div>
-        ) : (
-          <>
-            <div className="text-center">
-              <div className="w-12 h-12 rounded-2xl bg-[#047857] flex items-center justify-center mx-auto mb-3 text-white shadow-sm">
-                <Shield className="w-6 h-6" />
+          {isSubmitted ? (
+            <div className="text-center space-y-4">
+              <div className="w-14 h-14 rounded-2xl bg-emerald-950 border border-emerald-500/40 flex items-center justify-center mx-auto text-emerald-400 shadow-[0_0_20px_rgba(16,185,129,0.3)]">
+                <CheckCircle2 className="w-8 h-8 text-emerald-400" />
               </div>
-              <h1 className="text-2xl font-extrabold text-[#111827] tracking-tight">Lupa Kata Sandi</h1>
-              <p className="text-xs text-[#4B5563] mt-1.5 leading-relaxed">
-                Masukkan email akun SENTRAVAX Anda untuk menerima tautan instruksi pemulihan kata sandi.
+
+              <h1 className="text-2xl font-black text-white tracking-tight">
+                Instruksi Pemulihan Terkirim
+              </h1>
+
+              <p className="text-xs text-neutral-300 leading-relaxed">
+                Jika alamat email <strong className="text-emerald-400">{email}</strong> terdaftar di sistem kami,
+                tautan pemulihan kata sandi telah dikirimkan ke kotak masuk Anda.
               </p>
-            </div>
 
-            {errorMessage && (
-              <div className="p-3.5 rounded-xl bg-[#FEF2F2] border border-[#FCA5A5] text-xs text-[#991B1B] flex items-start gap-2 leading-relaxed">
-                <AlertCircle className="w-4 h-4 shrink-0 mt-0.5 text-[#DC2626]" />
-                <span>{errorMessage}</span>
+              <div className="p-4 rounded-2xl bg-[#06160e] border border-emerald-500/30 text-xs text-emerald-300 text-left leading-relaxed flex items-start gap-2.5">
+                <Shield className="w-4 h-4 text-emerald-400 shrink-0 mt-0.5" />
+                <span>
+                  Demi keamanan akun Anda, tautan pemulihan berlaku selama <strong>60 menit</strong>.
+                  Periksa juga folder <em>Spam</em> atau <em>Junk</em> jika tidak menemukannya di kotak masuk utama.
+                </span>
               </div>
-            )}
 
-            <form className="space-y-4" onSubmit={handleSubmit}>
-              <div>
-                <label htmlFor="email" className="block text-xs font-bold text-[#111827] mb-1">
-                  Alamat Email Terdaftar
-                </label>
-                <div className="relative">
-                  <Mail className="w-4 h-4 text-[#6B7280] absolute left-3 top-3" />
-                  <input
-                    id="email"
-                    type="email"
-                    value={email}
-                    onChange={(e) => {
-                      setEmail(e.target.value);
-                      if (errorMessage) setErrorMessage(null);
-                    }}
-                    placeholder="nama@email.com"
-                    autoComplete="email"
-                    disabled={isSubmitting}
-                    className="w-full pl-10 pr-4 py-2.5 rounded-xl bg-[#FFFFFF] border border-[#D1D5DB] text-[#111827] placeholder-[#9CA3AF] text-sm focus:outline-none focus:ring-2 focus:ring-[#047857]/20 focus:border-[#047857] disabled:bg-[#F3F4F6] disabled:cursor-not-allowed"
-                  />
+              <div className="pt-2 flex flex-col gap-2.5">
+                <button
+                  type="button"
+                  onClick={() => {
+                    setIsSubmitted(false);
+                    setEmail('');
+                    setErrorMessage(null);
+                  }}
+                  className="w-full py-2.5 px-4 rounded-xl border-2 border-emerald-500/40 hover:bg-[#0c2e1c] text-neutral-200 font-bold text-xs transition-all cursor-pointer"
+                >
+                  Kirim Ulang atau Gunakan Email Lain
+                </button>
+
+                <Link
+                  to={PATHS.PUBLIC.LOGIN}
+                  className="w-full py-2.5 px-4 rounded-xl bg-gradient-to-r from-emerald-500 to-teal-400 hover:from-emerald-400 hover:to-teal-300 text-black font-black text-xs text-center transition-all shadow-[0_0_15px_rgba(16,185,129,0.4)] flex items-center justify-center gap-1.5"
+                >
+                  <ArrowLeft className="w-4 h-4 text-black" />
+                  Kembali ke Halaman Masuk
+                </Link>
+              </div>
+            </div>
+          ) : (
+            <>
+              <div className="text-center">
+                <div className="w-12 h-12 rounded-2xl bg-gradient-to-br from-emerald-500 to-teal-700 flex items-center justify-center mx-auto mb-3 text-black shadow-[0_0_20px_rgba(16,185,129,0.5)] ring-2 ring-emerald-400/40">
+                  <Shield className="w-6 h-6 text-black" />
                 </div>
+                <h1 className="text-2xl font-black text-white tracking-tight">Lupa Kata Sandi</h1>
+                <p className="text-xs text-neutral-300 mt-1.5 leading-relaxed">
+                  Masukkan email akun SENTRAVAX Anda untuk menerima tautan instruksi pemulihan kata sandi.
+                </p>
               </div>
 
-              <button
-                type="submit"
-                disabled={isSubmitting}
-                className="w-full py-3 px-4 rounded-xl bg-[#047857] hover:bg-[#065F46] disabled:bg-[#9CA3AF] text-white font-bold text-sm transition-all shadow-xs flex items-center justify-center gap-2"
-              >
-                {isSubmitting ? (
-                  <>
-                    <Loader2 className="w-4 h-4 animate-spin" />
-                    <span>Memproses...</span>
-                  </>
-                ) : (
-                  <span>Kirim Tautan Pemulihan</span>
-                )}
-              </button>
-            </form>
+              {errorMessage && (
+                <div className="p-3.5 rounded-xl bg-red-950/80 border border-red-500/40 text-xs text-red-300 flex items-start gap-2 leading-relaxed">
+                  <AlertCircle className="w-4 h-4 shrink-0 mt-0.5 text-red-400" />
+                  <span>{errorMessage}</span>
+                </div>
+              )}
 
-            <div className="text-center text-xs text-[#4B5563] pt-2 border-t border-[#E5E7EB]">
-              <Link to={PATHS.PUBLIC.LOGIN} className="inline-flex items-center gap-1.5 text-[#047857] hover:text-[#065F46] font-bold">
-                <ArrowLeft className="w-3.5 h-3.5" />
-                Kembali ke Halaman Masuk
-              </Link>
-            </div>
-          </>
-        )}
+              <form className="space-y-4" onSubmit={handleSubmit}>
+                <div className="space-y-1.5">
+                  <label htmlFor="email" className="block text-xs font-bold text-neutral-200">
+                    Alamat Email Terdaftar
+                  </label>
+                  <div className="relative">
+                    <Mail className="w-4 h-4 text-emerald-400 absolute left-3.5 top-3" />
+                    <input
+                      id="email"
+                      type="email"
+                      value={email}
+                      onChange={(e) => {
+                        setEmail(e.target.value);
+                        if (errorMessage) setErrorMessage(null);
+                      }}
+                      placeholder="nama@email.com"
+                      autoComplete="email"
+                      disabled={isSubmitting}
+                      className="w-full pl-10 pr-4 py-2.5 rounded-xl bg-[#06120b] border-2 border-emerald-500/35 text-white placeholder-neutral-500 text-xs sm:text-sm focus:outline-none focus:border-emerald-400 focus:ring-2 focus:ring-emerald-400/30 disabled:opacity-50 transition-all font-medium"
+                    />
+                  </div>
+                </div>
+
+                <button
+                  type="submit"
+                  disabled={isSubmitting}
+                  className="w-full py-3.5 px-4 rounded-xl bg-gradient-to-r from-emerald-500 via-emerald-400 to-teal-400 hover:from-emerald-400 hover:to-teal-300 text-black font-black text-xs sm:text-sm transition-all shadow-[0_0_25px_rgba(16,185,129,0.5)] hover:shadow-[0_0_35px_rgba(16,185,129,0.7)] disabled:opacity-50 flex items-center justify-center gap-2 cursor-pointer"
+                >
+                  {isSubmitting ? (
+                    <>
+                      <Loader2 className="w-4 h-4 animate-spin text-black" />
+                      <span>Memproses...</span>
+                    </>
+                  ) : (
+                    <span>Kirim Tautan Pemulihan</span>
+                  )}
+                </button>
+              </form>
+
+              <div className="text-center text-xs text-neutral-300 pt-3 border-t border-emerald-500/30">
+                <Link to={PATHS.PUBLIC.LOGIN} className="inline-flex items-center gap-1.5 text-emerald-400 hover:text-emerald-300 font-black hover:underline transition-colors">
+                  <ArrowLeft className="w-3.5 h-3.5" />
+                  Kembali ke Halaman Masuk
+                </Link>
+              </div>
+            </>
+          )}
+        </div>
       </div>
     </div>
   );

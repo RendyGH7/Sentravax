@@ -272,25 +272,63 @@ export const HomePage: React.FC = () => {
 
   // Reviews infinite smooth auto-scroll state
   const scrollContainerRef = useRef<HTMLDivElement>(null);
-  const [isHovered, setIsHovered] = useState<boolean>(false);
+  const isHoveredRef = useRef<boolean>(false);
   const isInteractingRef = useRef<boolean>(false);
-  const resumeTimeoutRef = useRef<number | null>(null);
+  const scrollPosRef = useRef<number>(0);
+  const resumeTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
-  const handleUserInteractionStart = useCallback(() => {
+  // Mark user interaction with automatic resume timeout
+  const markInteraction = useCallback((durationMs: number = 800) => {
     isInteractingRef.current = true;
-    if (resumeTimeoutRef.current) {
-      clearTimeout(resumeTimeoutRef.current);
+    if (resumeTimerRef.current) {
+      clearTimeout(resumeTimerRef.current);
+    }
+    resumeTimerRef.current = setTimeout(() => {
+      isInteractingRef.current = false;
+      if (scrollContainerRef.current) {
+        scrollPosRef.current = scrollContainerRef.current.scrollLeft;
+      }
+    }, durationMs);
+  }, []);
+
+  const handlePointerEnter = useCallback(() => {
+    isHoveredRef.current = true;
+  }, []);
+
+  const handlePointerLeave = useCallback(() => {
+    isHoveredRef.current = false;
+    isInteractingRef.current = false;
+    if (resumeTimerRef.current) {
+      clearTimeout(resumeTimerRef.current);
+    }
+    if (scrollContainerRef.current) {
+      scrollPosRef.current = scrollContainerRef.current.scrollLeft;
     }
   }, []);
 
-  const handleUserInteractionEnd = useCallback(() => {
-    if (resumeTimeoutRef.current) {
-      clearTimeout(resumeTimeoutRef.current);
+  const handleTouchStart = useCallback(() => {
+    isInteractingRef.current = true;
+    if (resumeTimerRef.current) {
+      clearTimeout(resumeTimerRef.current);
     }
-    resumeTimeoutRef.current = window.setTimeout(() => {
-      isInteractingRef.current = false;
-    }, 1200);
   }, []);
+
+  const handleTouchEnd = useCallback(() => {
+    markInteraction(800);
+  }, [markInteraction]);
+
+  const handleWheel = useCallback(() => {
+    markInteraction(900);
+  }, [markInteraction]);
+
+  const handleScroll = useCallback(() => {
+    if (isHoveredRef.current || isInteractingRef.current) {
+      if (scrollContainerRef.current) {
+        scrollPosRef.current = scrollContainerRef.current.scrollLeft;
+      }
+      markInteraction(900);
+    }
+  }, [markInteraction]);
 
   // Triple review items for seamless infinite loop
   const infiniteReviews = useMemo(() => [
@@ -304,23 +342,33 @@ export const HomePage: React.FC = () => {
     if (!container) return;
 
     let animationFrameId: number;
-    const speed = 0.65; // gentle, steady, slow pace
+    const speed = 0.8; // steady, natural reading speed
 
-    // Start in the middle segment once content is measured
-    if (container.scrollLeft === 0 && container.scrollWidth > 0) {
-      container.scrollLeft = container.scrollWidth / 3;
-    }
+    // Initialize position at 1/3 (middle set) so wrap works smoothly in both directions
+    const initTimer = setTimeout(() => {
+      if (container && container.scrollWidth > 0 && container.scrollLeft === 0) {
+        const singleSetWidth = container.scrollWidth / 3;
+        container.scrollLeft = singleSetWidth;
+        scrollPosRef.current = singleSetWidth;
+      }
+    }, 150);
 
     const step = () => {
-      if (!isHovered && !isInteractingRef.current && container) {
-        container.scrollLeft += speed;
-        const singleSetWidth = container.scrollWidth / 3;
-        if (singleSetWidth > 0) {
-          if (container.scrollLeft >= singleSetWidth * 2) {
-            container.scrollLeft -= singleSetWidth;
-          } else if (container.scrollLeft <= 0) {
-            container.scrollLeft += singleSetWidth;
+      if (container) {
+        if (!isHoveredRef.current && !isInteractingRef.current) {
+          scrollPosRef.current += speed;
+          const singleSetWidth = container.scrollWidth / 3;
+          if (singleSetWidth > 0) {
+            if (scrollPosRef.current >= singleSetWidth * 2) {
+              scrollPosRef.current -= singleSetWidth;
+            } else if (scrollPosRef.current <= 0) {
+              scrollPosRef.current += singleSetWidth;
+            }
           }
+          container.scrollLeft = scrollPosRef.current;
+        } else {
+          // While paused by hover/interaction, keep float accumulator synced with manual scroll
+          scrollPosRef.current = container.scrollLeft;
         }
       }
       animationFrameId = requestAnimationFrame(step);
@@ -330,11 +378,12 @@ export const HomePage: React.FC = () => {
 
     return () => {
       cancelAnimationFrame(animationFrameId);
-      if (resumeTimeoutRef.current) {
-        clearTimeout(resumeTimeoutRef.current);
+      clearTimeout(initTimer);
+      if (resumeTimerRef.current) {
+        clearTimeout(resumeTimerRef.current);
       }
     };
-  }, [isHovered]);
+  }, []);
 
   // Contact Form state
   const [contactName, setContactName] = useState<string>('');
@@ -1075,14 +1124,12 @@ export const HomePage: React.FC = () => {
         {/* Horizontal Infinite Smooth Scroll Track */}
         <div
           ref={scrollContainerRef}
-          onMouseEnter={() => setIsHovered(true)}
-          onMouseLeave={() => setIsHovered(false)}
-          onTouchStart={handleUserInteractionStart}
-          onTouchEnd={handleUserInteractionEnd}
-          onWheel={() => {
-            handleUserInteractionStart();
-            handleUserInteractionEnd();
-          }}
+          onMouseEnter={handlePointerEnter}
+          onMouseLeave={handlePointerLeave}
+          onTouchStart={handleTouchStart}
+          onTouchEnd={handleTouchEnd}
+          onWheel={handleWheel}
+          onScroll={handleScroll}
           className="flex gap-4 overflow-x-auto py-2 [scrollbar-width:none] [-ms-overflow-style:none] [&::-webkit-scrollbar]:hidden cursor-grab active:cursor-grabbing touch-pan-x"
         >
           {infiniteReviews.map((rev, index) => (
