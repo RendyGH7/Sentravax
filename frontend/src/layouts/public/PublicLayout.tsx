@@ -89,22 +89,22 @@ export const PublicLayout: React.FC = () => {
   ];
 
   return (
-    <div className="min-h-screen flex flex-col bg-[#F9FAFB] text-[#111827] selection:bg-[#D1FAE5] selection:text-[#065F46]">
+    <div className="min-h-screen flex flex-col bg-black text-neutral-100 selection:bg-emerald-500/30 selection:text-emerald-300">
       {/* ========================================================================= */}
-      {/* 1. PROFESSIONAL & ELEGANT UNIFIED NAVBAR                                   */}
+      {/* 1. PROFESSIONAL & ELEGANT FLOATING GLASSMORPHIC NAVBAR                    */}
       {/* ========================================================================= */}
-      <header className="sticky top-0 z-40 bg-white/95 backdrop-blur-md border-b border-[#E5E7EB] shadow-2xs transition-all">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between gap-3">
+      <header className="fixed top-0 inset-x-0 z-50 pt-3 sm:pt-4 px-3 sm:px-6 lg:px-8 pointer-events-none transition-all duration-300">
+        <div className="pointer-events-auto max-w-7xl mx-auto h-16 px-4 sm:px-6 rounded-2xl bg-white/[0.08] hover:bg-white/[0.12] backdrop-blur-2xl backdrop-saturate-150 border border-white/25 shadow-[inset_0_1px_1px_0_rgba(255,255,255,0.4),0_12px_36px_rgba(0,0,0,0.5)] flex items-center justify-between gap-3 transition-all">
           {/* Brand Logo & Platform Title */}
           <Link to={PATHS.PUBLIC.HOME} className="flex items-center gap-2.5 shrink-0 group">
-            <div className="w-9 h-9 rounded-xl bg-gradient-to-br from-[#047857] to-[#065F46] flex items-center justify-center text-white shadow-xs transition-transform group-hover:scale-105 ring-1 ring-emerald-600/20">
-              <Shield className="w-5 h-5" />
+            <div className="w-9 h-9 rounded-xl bg-gradient-to-br from-emerald-600 to-emerald-800 flex items-center justify-center text-white shadow-xs transition-transform group-hover:scale-105 ring-1 ring-white/30">
+              <Shield className="w-5 h-5 text-white" />
             </div>
             <div className="flex flex-col">
-              <span className="text-[15px] font-extrabold tracking-tight text-[#111827]">
+              <span className="text-[15px] font-extrabold tracking-tight text-white drop-shadow-sm">
                 SENTRAVAX
               </span>
-              <span className="text-[10px] text-gray-500 font-medium tracking-tight -mt-0.5 hidden sm:block">
+              <span className="text-[10px] text-neutral-300 font-medium tracking-tight -mt-0.5 hidden sm:block drop-shadow-xs">
                 Kesiapsiagaan Bencana Nasional
               </span>
             </div>
@@ -118,8 +118,8 @@ export const PublicLayout: React.FC = () => {
                 to={item.to}
                 className={`px-3.5 py-1.5 rounded-xl text-[13px] transition-all ${
                   item.active
-                    ? 'text-[#047857] bg-[#ECFDF5] font-bold shadow-2xs'
-                    : 'text-[#4B5563] hover:text-[#111827] hover:bg-[#F3F4F6] font-medium'
+                    ? 'text-emerald-300 bg-white/[0.18] border border-white/30 font-bold shadow-xs backdrop-blur-xs'
+                    : 'text-neutral-200 hover:text-white hover:bg-white/[0.12] font-medium'
                 }`}
               >
                 {item.label}
@@ -132,9 +132,9 @@ export const PublicLayout: React.FC = () => {
             {/* Quick Report Tool */}
             <Link
               to={PATHS.PUBLIC.REPORT}
-              className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-bold bg-[#FEF2F2] hover:bg-[#FEE2E2] text-[#B91C1C] border border-[#FECACA] transition-colors shadow-2xs"
+              className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-bold bg-rose-500/20 hover:bg-rose-500/30 text-rose-100 border border-rose-400/40 transition-colors shadow-xs backdrop-blur-xs"
             >
-              <AlertCircle className="w-3.5 h-3.5 text-[#DC2626]" />
+              <AlertCircle className="w-3.5 h-3.5 text-rose-300" />
               <span>Lapor</span>
             </Link>
 
@@ -149,15 +149,15 @@ export const PublicLayout: React.FC = () => {
                       ? PATHS.INTELLIGENCE.OVERVIEW
                       : PATHS.USER.DASHBOARD
                   }
-                  className="inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-xl text-xs font-semibold bg-[#ECFDF5] hover:bg-[#D1FAE5] text-[#047857] border border-[#A7F3D0]/60 transition-colors"
+                  className="inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-xl text-xs font-semibold bg-emerald-500/20 hover:bg-emerald-500/30 text-emerald-200 border border-emerald-400/30 transition-colors backdrop-blur-xs"
                 >
-                  <User className="w-3.5 h-3.5 text-[#047857]" />
+                  <User className="w-3.5 h-3.5 text-emerald-300" />
                   <span>{user.name.split(' ')[0]}</span>
                 </Link>
                 <button
                   type="button"
                   onClick={logout}
-                  className="p-1.5 rounded-xl text-[#9CA3AF] hover:text-[#DC2626] hover:bg-[#FEF2F2] transition-colors cursor-pointer"
+                  className="p-1.5 rounded-xl text-neutral-300 hover:text-rose-300 hover:bg-white/[0.12] transition-colors cursor-pointer"
                   title="Keluar sesi"
                   aria-label="Keluar sesi"
                 >
@@ -167,7 +167,7 @@ export const PublicLayout: React.FC = () => {
             ) : (
               <Link
                 to={PATHS.PUBLIC.LOGIN}
-                className="inline-flex items-center gap-1.5 px-4 py-1.5 rounded-xl text-xs font-semibold bg-[#047857] hover:bg-[#065F46] text-white shadow-xs transition-all hover:shadow-sm"
+                className="inline-flex items-center gap-1.5 px-4 py-1.5 rounded-xl text-xs font-bold bg-emerald-500 hover:bg-emerald-400 text-black shadow-md shadow-emerald-950/40 transition-all hover:shadow-lg"
               >
                 <LogIn className="w-3.5 h-3.5" />
                 <span>Masuk</span>
@@ -178,7 +178,7 @@ export const PublicLayout: React.FC = () => {
             <div className="relative group hidden sm:block">
               <button
                 type="button"
-                className="p-2 rounded-xl text-[#6B7280] hover:text-[#111827] hover:bg-[#F3F4F6] transition-colors cursor-pointer"
+                className="p-2 rounded-xl text-neutral-300 hover:text-white hover:bg-white/[0.12] transition-colors cursor-pointer"
                 title="Menu Portal & Otoritas"
                 aria-label="Menu Portal & Otoritas"
               >
@@ -186,63 +186,63 @@ export const PublicLayout: React.FC = () => {
               </button>
 
               <div className="absolute top-full right-0 pt-2 hidden group-hover:block group-focus-within:block z-50">
-                <div className="w-56 rounded-2xl bg-white border border-[#E5E7EB] shadow-xl p-2 space-y-1">
-                  <div className="text-[10px] font-bold text-gray-400 uppercase tracking-wider px-3 py-1">
+                <div className="w-56 rounded-2xl bg-[#121212]/95 backdrop-blur-2xl border border-[#2a2a2a] shadow-[inset_0_1px_1px_rgba(255,255,255,0.2),0_16px_40px_rgba(0,0,0,0.7)] p-2 space-y-1 text-neutral-200">
+                  <div className="text-[10px] font-bold text-neutral-400 uppercase tracking-wider px-3 py-1">
                     Informasi &amp; Edukasi
                   </div>
                   <Link
                     to={PATHS.PUBLIC.WARNINGS}
-                    className="flex items-center gap-2.5 px-3 py-2 rounded-xl text-xs font-medium text-gray-700 hover:bg-[#F9FAFB] hover:text-[#047857] transition-colors"
+                    className="flex items-center gap-2.5 px-3 py-2 rounded-xl text-xs font-medium text-neutral-300 hover:bg-white/10 hover:text-white transition-colors"
                   >
-                    <AlertTriangle className="w-3.5 h-3.5 text-[#D97706]" />
+                    <AlertTriangle className="w-3.5 h-3.5 text-amber-400" />
                     <span>Peringatan Dini CAP</span>
                   </Link>
                   <Link
                     to={PATHS.PUBLIC.EDUCATION}
-                    className="flex items-center gap-2.5 px-3 py-2 rounded-xl text-xs font-medium text-gray-700 hover:bg-[#F9FAFB] hover:text-[#047857] transition-colors"
+                    className="flex items-center gap-2.5 px-3 py-2 rounded-xl text-xs font-medium text-neutral-300 hover:bg-white/10 hover:text-white transition-colors"
                   >
-                    <BookOpen className="w-3.5 h-3.5 text-[#7C3AED]" />
+                    <BookOpen className="w-3.5 h-3.5 text-purple-400" />
                     <span>Pusat Edukasi</span>
                   </Link>
                   <Link
                     to={PATHS.PUBLIC.ABOUT}
-                    className="flex items-center gap-2.5 px-3 py-2 rounded-xl text-xs font-medium text-gray-700 hover:bg-[#F9FAFB] hover:text-[#047857] transition-colors"
+                    className="flex items-center gap-2.5 px-3 py-2 rounded-xl text-xs font-medium text-neutral-300 hover:bg-white/10 hover:text-white transition-colors"
                   >
-                    <Info className="w-3.5 h-3.5 text-[#047857]" />
+                    <Info className="w-3.5 h-3.5 text-emerald-400" />
                     <span>Tentang Platform</span>
                   </Link>
                   <button
                     type="button"
                     onClick={() => setDownloadModalOpen(true)}
-                    className="w-full flex items-center gap-2.5 px-3 py-2 rounded-xl text-xs font-medium text-gray-700 hover:bg-[#F9FAFB] hover:text-[#047857] transition-colors text-left cursor-pointer"
+                    className="w-full flex items-center gap-2.5 px-3 py-2 rounded-xl text-xs font-medium text-neutral-300 hover:bg-white/10 hover:text-white transition-colors text-left cursor-pointer"
                   >
-                    <Smartphone className="w-3.5 h-3.5 text-[#047857]" />
+                    <Smartphone className="w-3.5 h-3.5 text-emerald-400" />
                     <span>Unduh Aplikasi Mobile</span>
                   </button>
 
-                  <div className="pt-1 my-1 border-t border-gray-100" />
-                  <div className="text-[10px] font-bold text-gray-400 uppercase tracking-wider px-3 py-1">
+                  <div className="pt-1 my-1 border-t border-[#262626]" />
+                  <div className="text-[10px] font-bold text-neutral-400 uppercase tracking-wider px-3 py-1">
                     Area Portal Terintegrasi
                   </div>
                   <Link
                     to={PATHS.USER.DASHBOARD}
-                    className="flex items-center gap-2.5 px-3 py-2 rounded-xl text-xs font-medium text-gray-700 hover:bg-[#F9FAFB] hover:text-[#0284C7] transition-colors"
+                    className="flex items-center gap-2.5 px-3 py-2 rounded-xl text-xs font-medium text-neutral-300 hover:bg-white/10 hover:text-sky-400 transition-colors"
                   >
-                    <User className="w-3.5 h-3.5 text-[#0284C7]" />
+                    <User className="w-3.5 h-3.5 text-sky-400" />
                     <span>Area Warga</span>
                   </Link>
                   <Link
                     to={PATHS.ADMIN.DASHBOARD}
-                    className="flex items-center gap-2.5 px-3 py-2 rounded-xl text-xs font-medium text-gray-700 hover:bg-[#F9FAFB] hover:text-[#F59E0B] transition-colors"
+                    className="flex items-center gap-2.5 px-3 py-2 rounded-xl text-xs font-medium text-neutral-300 hover:bg-white/10 hover:text-amber-400 transition-colors"
                   >
-                    <Shield className="w-3.5 h-3.5 text-[#F59E0B]" />
+                    <Shield className="w-3.5 h-3.5 text-amber-400" />
                     <span>Portal Admin</span>
                   </Link>
                   <Link
                     to={PATHS.INTELLIGENCE.OVERVIEW}
-                    className="flex items-center gap-2.5 px-3 py-2 rounded-xl text-xs font-medium text-gray-700 hover:bg-[#F9FAFB] hover:text-[#10B981] transition-colors"
+                    className="flex items-center gap-2.5 px-3 py-2 rounded-xl text-xs font-medium text-neutral-300 hover:bg-white/10 hover:text-emerald-400 transition-colors"
                   >
-                    <Radio className="w-3.5 h-3.5 text-[#10B981]" />
+                    <Radio className="w-3.5 h-3.5 text-emerald-400" />
                     <span>Intelligence Center</span>
                   </Link>
                 </div>
@@ -252,7 +252,7 @@ export const PublicLayout: React.FC = () => {
             {/* Mobile menu hamburger button */}
             <button
               onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-              className="lg:hidden p-2 text-[#4B5563] hover:text-[#111827] rounded-xl hover:bg-[#F3F4F6] min-w-[38px] min-h-[38px] flex items-center justify-center transition-colors cursor-pointer"
+              className="lg:hidden p-2 text-neutral-300 hover:text-white rounded-xl hover:bg-white/[0.12] min-w-[38px] min-h-[38px] flex items-center justify-center transition-colors cursor-pointer"
               aria-label="Buka menu navigasi"
             >
               {mobileMenuOpen ? <X className="w-5 h-5" /> : <Menu className="w-5 h-5" />}
@@ -262,10 +262,10 @@ export const PublicLayout: React.FC = () => {
 
         {/* Mobile menu drawer */}
         {mobileMenuOpen && (
-          <div className="lg:hidden bg-white border-b border-[#E5E7EB] px-4 pt-3 pb-6 space-y-4 shadow-lg animate-in slide-in-from-top-2 duration-200">
+          <div className="lg:hidden pointer-events-auto max-w-7xl mx-auto mt-2 rounded-2xl bg-[#121212]/95 backdrop-blur-2xl border border-[#2a2a2a] px-4 pt-3 pb-6 space-y-4 shadow-[inset_0_1px_1px_rgba(255,255,255,0.2),0_16px_40px_rgba(0,0,0,0.7)] animate-in slide-in-from-top-2 duration-200 max-h-[calc(100vh-5.5rem)] overflow-y-auto text-neutral-200">
             {/* Core Tools */}
             <div className="space-y-1">
-              <div className="text-[10px] font-bold text-[#9CA3AF] uppercase tracking-wider px-3 py-1">
+              <div className="text-[10px] font-bold text-neutral-400 uppercase tracking-wider px-3 py-1">
                 Navigasi Utama
               </div>
               {navLinks.map((item) => (
@@ -275,25 +275,25 @@ export const PublicLayout: React.FC = () => {
                   onClick={() => setMobileMenuOpen(false)}
                   className={`flex items-center justify-between px-3.5 py-2.5 rounded-xl text-sm font-medium transition-colors ${
                     item.active
-                      ? 'bg-[#ECFDF5] text-[#047857] font-bold'
-                      : 'text-[#4B5563] hover:bg-[#F3F4F6] hover:text-[#111827]'
+                      ? 'bg-emerald-500/15 text-emerald-400 border border-emerald-500/20 font-bold'
+                      : 'text-neutral-300 hover:bg-white/5 hover:text-white'
                   }`}
                 >
                   <span>{item.label}</span>
-                  {item.active && <span className="w-1.5 h-1.5 rounded-full bg-[#047857]" />}
+                  {item.active && <span className="w-1.5 h-1.5 rounded-full bg-emerald-400" />}
                 </Link>
               ))}
             </div>
 
             {/* Mobile Download App Banner Card */}
-            <div className="p-4 rounded-2xl bg-gradient-to-br from-emerald-50 via-teal-50/50 to-white border border-[#A7F3D0] space-y-3">
+            <div className="p-4 rounded-2xl bg-[#181818] border border-emerald-500/20 space-y-3">
               <div className="flex items-center gap-2">
-                <div className="w-7 h-7 rounded-lg bg-[#047857] text-white flex items-center justify-center">
+                <div className="w-7 h-7 rounded-lg bg-emerald-600 text-white flex items-center justify-center">
                   <Smartphone className="w-4 h-4" />
                 </div>
                 <div>
-                  <h4 className="text-xs font-bold text-gray-900">Aplikasi SENTRAVAX Siaga</h4>
-                  <p className="text-[10px] text-gray-500">Tersedia di Play Store &amp; App Store</p>
+                  <h4 className="text-xs font-bold text-white">Aplikasi SENTRAVAX Siaga</h4>
+                  <p className="text-[10px] text-neutral-400">Tersedia di Play Store &amp; App Store</p>
                 </div>
               </div>
               <div className="grid grid-cols-2 gap-2">
@@ -303,19 +303,19 @@ export const PublicLayout: React.FC = () => {
             </div>
 
             {/* Quick Actions & Portals */}
-            <div className="pt-2 border-t border-[#F3F4F6] flex flex-col gap-2">
+            <div className="pt-2 border-t border-[#262626] flex flex-col gap-2">
               <Link
                 to={PATHS.PUBLIC.REPORT}
                 onClick={() => setMobileMenuOpen(false)}
-                className="w-full py-2.5 px-4 rounded-xl text-center text-xs font-bold text-red-700 bg-red-50 hover:bg-red-100 border border-red-200 transition-colors flex items-center justify-center gap-2"
+                className="w-full py-2.5 px-4 rounded-xl text-center text-xs font-bold text-rose-300 bg-rose-950/40 hover:bg-rose-900/60 border border-rose-500/30 transition-colors flex items-center justify-center gap-2"
               >
-                <AlertCircle className="w-4 h-4 text-red-600" />
+                <AlertCircle className="w-4 h-4 text-rose-400" />
                 <span>Lapor Bencana</span>
               </Link>
               <Link
                 to={PATHS.USER.DASHBOARD}
                 onClick={() => setMobileMenuOpen(false)}
-                className="w-full py-2.5 px-4 rounded-xl text-center text-xs font-semibold text-[#374151] bg-[#F9FAFB] hover:bg-[#F3F4F6] border border-[#E5E7EB] transition-colors"
+                className="w-full py-2.5 px-4 rounded-xl text-center text-xs font-semibold text-neutral-200 bg-[#1e1e1e] hover:bg-[#252525] border border-[#333333] transition-colors"
               >
                 Portal Warga
               </Link>
@@ -323,7 +323,7 @@ export const PublicLayout: React.FC = () => {
                 <Link
                   to={PATHS.PUBLIC.LOGIN}
                   onClick={() => setMobileMenuOpen(false)}
-                  className="w-full py-2.5 px-4 rounded-xl text-center text-xs font-bold text-white bg-[#047857] hover:bg-[#065F46] shadow-xs transition-colors"
+                  className="w-full py-2.5 px-4 rounded-xl text-center text-xs font-bold text-white bg-emerald-600 hover:bg-emerald-500 shadow-xs transition-colors"
                 >
                   Masuk ke Akun
                 </Link>
@@ -338,11 +338,11 @@ export const PublicLayout: React.FC = () => {
       {/* ========================================================================= */}
       {downloadModalOpen && (
         <div
-          className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-xs animate-in fade-in duration-200"
+          className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/70 backdrop-blur-xs animate-in fade-in duration-200"
           onClick={() => setDownloadModalOpen(false)}
         >
           <div
-            className="bg-white rounded-3xl max-w-lg w-full p-6 sm:p-8 shadow-2xl border border-gray-100 relative space-y-6"
+            className="bg-[#141414] rounded-3xl max-w-lg w-full p-6 sm:p-8 shadow-2xl border border-[#2a2a2a] text-neutral-100 relative space-y-6"
             role="dialog"
             aria-modal="true"
             aria-labelledby="modal-download-title"
@@ -351,7 +351,7 @@ export const PublicLayout: React.FC = () => {
             <button
               type="button"
               onClick={() => setDownloadModalOpen(false)}
-              className="absolute top-5 right-5 p-2 rounded-full text-gray-400 hover:text-gray-700 hover:bg-gray-100 transition-colors cursor-pointer"
+              className="absolute top-5 right-5 p-2 rounded-full text-neutral-400 hover:text-white hover:bg-[#222222] transition-colors cursor-pointer"
               aria-label="Tutup jendela unduh aplikasi"
             >
               <X className="w-5 h-5" />
@@ -359,13 +359,13 @@ export const PublicLayout: React.FC = () => {
 
             {/* Modal Heading */}
             <div className="text-center space-y-2">
-              <div className="w-12 h-12 rounded-2xl bg-emerald-50 text-[#047857] flex items-center justify-center mx-auto shadow-xs border border-emerald-100">
+              <div className="w-12 h-12 rounded-2xl bg-emerald-950/60 text-emerald-400 flex items-center justify-center mx-auto shadow-xs border border-emerald-500/20">
                 <Smartphone className="w-6 h-6" />
               </div>
-              <h3 id="modal-download-title" className="text-xl font-extrabold text-gray-900 tracking-tight">
+              <h3 id="modal-download-title" className="text-xl font-extrabold text-white tracking-tight">
                 Unduh Aplikasi SENTRAVAX Siaga
               </h3>
-              <p className="text-xs text-gray-500 max-w-sm mx-auto leading-relaxed">
+              <p className="text-xs text-neutral-400 max-w-sm mx-auto leading-relaxed">
                 Peringatan dini gempa dan cuaca BMKG lebih cepat, peta evakuasi offline, serta tombol bantuan darurat langsung di genggaman Anda.
               </p>
             </div>
@@ -377,37 +377,37 @@ export const PublicLayout: React.FC = () => {
             </div>
 
             {/* QR Code Quick Scan Box */}
-            <div className="p-4 rounded-2xl bg-gray-50 border border-gray-200/80 flex items-center gap-4">
+            <div className="p-4 rounded-2xl bg-[#0a0a0a] border border-[#262626] flex items-center gap-4">
               <div className="p-2 bg-white rounded-xl border border-gray-200 shadow-2xs shrink-0">
                 <QrCode className="w-14 h-14 text-gray-900" />
               </div>
               <div className="space-y-1 text-xs">
-                <span className="font-bold text-gray-900 block">Pindai Kode QR</span>
-                <p className="text-[11px] text-gray-500 leading-relaxed">
+                <span className="font-bold text-white block">Pindai Kode QR</span>
+                <p className="text-[11px] text-neutral-400 leading-relaxed">
                   Arahkan kamera ponsel Anda ke kode QR untuk mengunduh aplikasi secara langsung di Google Play atau App Store.
                 </p>
-                <span className="text-[10px] font-mono text-[#047857] font-semibold flex items-center gap-1">
-                  <CheckCircle2 className="w-3.5 h-3.5 text-[#047857]" /> Kompatibel Android 8.0+ &amp; iOS 15.0+
+                <span className="text-[10px] font-mono text-emerald-400 font-semibold flex items-center gap-1">
+                  <CheckCircle2 className="w-3.5 h-3.5 text-emerald-400" /> Kompatibel Android 8.0+ &amp; iOS 15.0+
                 </span>
               </div>
             </div>
 
             {/* Key Advantages */}
-            <div className="grid grid-cols-2 gap-2 text-[11px] text-gray-600 border-t border-gray-100 pt-3">
+            <div className="grid grid-cols-2 gap-2 text-[11px] text-neutral-300 border-t border-[#262626] pt-3">
               <div className="flex items-center gap-1.5">
-                <CheckCircle2 className="w-3.5 h-3.5 text-[#047857] shrink-0" />
+                <CheckCircle2 className="w-3.5 h-3.5 text-emerald-400 shrink-0" />
                 <span>Notifikasi Cepat &lt;5 Detik</span>
               </div>
               <div className="flex items-center gap-1.5">
-                <CheckCircle2 className="w-3.5 h-3.5 text-[#047857] shrink-0" />
+                <CheckCircle2 className="w-3.5 h-3.5 text-emerald-400 shrink-0" />
                 <span>Peta Offline &amp; Shelter</span>
               </div>
               <div className="flex items-center gap-1.5">
-                <CheckCircle2 className="w-3.5 h-3.5 text-[#047857] shrink-0" />
+                <CheckCircle2 className="w-3.5 h-3.5 text-emerald-400 shrink-0" />
                 <span>1-Tap Telepon Darurat 112</span>
               </div>
               <div className="flex items-center gap-1.5">
-                <CheckCircle2 className="w-3.5 h-3.5 text-[#047857] shrink-0" />
+                <CheckCircle2 className="w-3.5 h-3.5 text-emerald-400 shrink-0" />
                 <span>100% Gratis &amp; Tanpa Iklan</span>
               </div>
             </div>
@@ -416,28 +416,28 @@ export const PublicLayout: React.FC = () => {
       )}
 
       {/* Main Page Area */}
-      <main className="flex-1">
+      <main className={`flex-1 ${isHomeActive ? '' : 'pt-24 sm:pt-28'}`}>
         <Outlet />
       </main>
 
       {/* ========================================================================= */}
       {/* 3. PUBLIC FOOTER WITH APP STORE & PLAY STORE DOWNLOAD BADGES              */}
       {/* ========================================================================= */}
-      <footer className="bg-white border-t border-[#E5E7EB] text-[#4B5563] py-12 px-4 sm:px-6 lg:px-8 text-xs">
+      <footer className="bg-black border-t border-[#222222] text-neutral-400 py-12 px-4 sm:px-6 lg:px-8 text-xs">
         <div className="max-w-7xl mx-auto grid grid-cols-1 md:grid-cols-4 gap-8 mb-8">
           {/* Brand & Mobile App Info */}
           <div className="space-y-3">
             <div className="flex items-center gap-2">
-              <div className="w-7 h-7 rounded-lg bg-[#047857] flex items-center justify-center text-white">
+              <div className="w-7 h-7 rounded-lg bg-emerald-600 flex items-center justify-center text-white">
                 <Shield className="w-4 h-4" />
               </div>
-              <span className="font-extrabold text-[#111827] tracking-tight text-sm">SENTRAVAX</span>
+              <span className="font-extrabold text-white tracking-tight text-sm">SENTRAVAX</span>
             </div>
-            <p className="text-[#4B5563] leading-relaxed">
+            <p className="text-neutral-400 leading-relaxed">
               Platform Intelijen Geospasial &amp; Kesiapsiagaan Bencana Multi-Hazard berbasis sains data terbuka nasional.
             </p>
             <div className="pt-1 space-y-2">
-              <span className="text-[11px] font-bold text-gray-900 block">Unduh Aplikasi Mobile:</span>
+              <span className="text-[11px] font-bold text-neutral-200 block">Unduh Aplikasi Mobile:</span>
               <div className="flex flex-col sm:flex-row gap-2">
                 <GooglePlayBadge className="py-1 px-2.5" />
                 <AppStoreBadge className="py-1 px-2.5" />
@@ -446,33 +446,33 @@ export const PublicLayout: React.FC = () => {
           </div>
 
           <div>
-            <h4 className="text-[#111827] font-bold mb-3 text-xs uppercase tracking-wider">Akses Publik</h4>
+            <h4 className="text-white font-bold mb-3 text-xs uppercase tracking-wider">Akses Publik</h4>
             <ul className="space-y-2">
-              <li><Link to={PATHS.PUBLIC.HOME} className="hover:text-[#047857] transition-colors">Beranda Utama</Link></li>
-              <li><Link to={PATHS.PUBLIC.MAP} className="hover:text-[#047857] transition-colors">Peta Risiko Interaktif</Link></li>
-              <li><Link to={PATHS.PUBLIC.DISASTERS} className="hover:text-[#047857] transition-colors">Katalog Bencana Terkini</Link></li>
-              <li><Link to={PATHS.PUBLIC.WARNINGS} className="hover:text-[#047857] transition-colors">Peringatan Dini Resmi</Link></li>
-              <li><Link to={PATHS.PUBLIC.PREPAREDNESS} className="hover:text-[#047857] transition-colors">Panduan Tanggap Darurat</Link></li>
-              <li><Link to={PATHS.PUBLIC.SHELTERS} className="hover:text-[#047857] transition-colors">Direktori Shelter</Link></li>
+              <li><Link to={PATHS.PUBLIC.HOME} className="hover:text-emerald-400 transition-colors">Beranda Utama</Link></li>
+              <li><Link to={PATHS.PUBLIC.MAP} className="hover:text-emerald-400 transition-colors">Peta Risiko Interaktif</Link></li>
+              <li><Link to={PATHS.PUBLIC.DISASTERS} className="hover:text-emerald-400 transition-colors">Katalog Bencana Terkini</Link></li>
+              <li><Link to={PATHS.PUBLIC.WARNINGS} className="hover:text-emerald-400 transition-colors">Peringatan Dini Resmi</Link></li>
+              <li><Link to={PATHS.PUBLIC.PREPAREDNESS} className="hover:text-emerald-400 transition-colors">Panduan Tanggap Darurat</Link></li>
+              <li><Link to={PATHS.PUBLIC.SHELTERS} className="hover:text-emerald-400 transition-colors">Direktori Shelter</Link></li>
             </ul>
           </div>
 
           <div>
-            <h4 className="text-[#111827] font-bold mb-3 text-xs uppercase tracking-wider">Area Operasional</h4>
+            <h4 className="text-white font-bold mb-3 text-xs uppercase tracking-wider">Area Operasional</h4>
             <ul className="space-y-2">
-              <li><Link to={PATHS.USER.DASHBOARD} className="hover:text-[#047857] transition-colors">Portal Warga Terdaftar</Link></li>
-              <li><Link to={PATHS.ADMIN.DASHBOARD} className="hover:text-[#047857] transition-colors">Konsol Administrator</Link></li>
-              <li><Link to={PATHS.INTELLIGENCE.OVERVIEW} className="hover:text-[#047857] transition-colors">Disaster Intelligence Center</Link></li>
-              <li><Link to={PATHS.PUBLIC.ABOUT} className="hover:text-[#047857] transition-colors">Tentang Proyek SENTRAVAX</Link></li>
+              <li><Link to={PATHS.USER.DASHBOARD} className="hover:text-emerald-400 transition-colors">Portal Warga Terdaftar</Link></li>
+              <li><Link to={PATHS.ADMIN.DASHBOARD} className="hover:text-emerald-400 transition-colors">Konsol Administrator</Link></li>
+              <li><Link to={PATHS.INTELLIGENCE.OVERVIEW} className="hover:text-emerald-400 transition-colors">Disaster Intelligence Center</Link></li>
+              <li><Link to={PATHS.PUBLIC.ABOUT} className="hover:text-emerald-400 transition-colors">Tentang Proyek SENTRAVAX</Link></li>
             </ul>
           </div>
 
           <div>
-            <h4 className="text-[#111827] font-bold mb-3 text-xs uppercase tracking-wider">Sumber Data Otoritatif</h4>
-            <p className="text-[#6B7280] leading-relaxed mb-2">
+            <h4 className="text-white font-bold mb-3 text-xs uppercase tracking-wider">Sumber Data Otoritatif</h4>
+            <p className="text-neutral-400 leading-relaxed mb-2">
               Data terintegrasi dari BMKG, BNPB, PVMBG, OpenStreetMap, dan pelaporan masyarakat terverifikasi.
             </p>
-            <p className="text-[#6B7280] text-[11px]">
+            <p className="text-neutral-500 text-[11px]">
               &copy; {currentYear} SENTRAVAX Project. Seluruh hak cipta dilindungi.
             </p>
           </div>
