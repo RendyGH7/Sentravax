@@ -30,6 +30,7 @@ import {
 
 import { publicService } from '../../services/public-service';
 import { PATHS } from '../../app/router/paths';
+import { TILE_LAYERS } from '../../components/map/map-config';
 import type {
   HazardEventDetail,
   GeoJsonPointFeature,
@@ -168,11 +169,12 @@ const EventMiniMap: React.FC<{
       scrollWheelZoom: false,
     });
 
-    L.tileLayer('https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png', {
-      attribution:
-        '&copy; <a href="https://www.openstreetmap.org/copyright" target="_blank" rel="noopener noreferrer">OpenStreetMap</a> contributors &copy; CARTO',
-      maxZoom: 19,
-      subdomains: 'abcd',
+    const tileConfig = TILE_LAYERS.light;
+    L.tileLayer(tileConfig.url, {
+      attribution: tileConfig.attribution,
+      maxZoom: tileConfig.maxZoom,
+      maxNativeZoom: tileConfig.maxNativeZoom || tileConfig.maxZoom,
+      subdomains: tileConfig.subdomains || 'abc',
     }).addTo(map);
 
     const pointFeature: GeoJsonPointFeature = {

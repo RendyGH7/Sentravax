@@ -17,26 +17,48 @@ export interface TileLayerConfig {
   url: string;
   attribution: string;
   maxZoom: number;
+  maxNativeZoom?: number;
   subdomains?: string;
 }
 
+const cartoApiKey = (import.meta.env.VITE_CARTO_API_KEY as string | undefined)?.trim();
+
 export const TILE_LAYERS: Record<UITheme, TileLayerConfig> = {
-  // Family 1 (Light): CartoDB Positron - Clean, muted, high contrast for emergency layers
-  light: {
-    url: 'https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png',
-    attribution:
-      '&copy; <a href="https://www.openstreetmap.org/copyright" target="_blank" rel="noopener noreferrer">OpenStreetMap</a> contributors &copy; <a href="https://carto.com/attributions" target="_blank" rel="noopener noreferrer">CARTO</a>',
-    maxZoom: 19,
-    subdomains: 'abcd',
-  },
-  // Family 2 (Dark): CartoDB Dark Matter - Pure charcoal, zero neon, tactical intelligence look
-  dark: {
-    url: 'https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png',
-    attribution:
-      '&copy; <a href="https://www.openstreetmap.org/copyright" target="_blank" rel="noopener noreferrer">OpenStreetMap</a> contributors &copy; <a href="https://carto.com/attributions" target="_blank" rel="noopener noreferrer">CARTO</a>',
-    maxZoom: 19,
-    subdomains: 'abcd',
-  },
+  // Family 1 (Light): If a CARTO API key is provided, use CARTO Positron.
+  // Otherwise, default to standard OpenStreetMap tiles (100% free, zero watermark).
+  light: cartoApiKey
+    ? {
+        url: `https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png?key=${cartoApiKey}`,
+        attribution:
+          '&copy; <a href="https://www.openstreetmap.org/copyright" target="_blank" rel="noopener noreferrer">OpenStreetMap</a> contributors &copy; <a href="https://carto.com/attributions" target="_blank" rel="noopener noreferrer">CARTO</a>',
+        maxZoom: 19,
+        subdomains: 'abcd',
+      }
+    : {
+        url: 'https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',
+        attribution:
+          '&copy; <a href="https://www.openstreetmap.org/copyright" target="_blank" rel="noopener noreferrer">OpenStreetMap</a> contributors',
+        maxZoom: 19,
+        subdomains: 'abc',
+      },
+
+  // Family 2 (Dark): If a CARTO API key is provided, use CARTO Dark Matter.
+  // Otherwise, use Esri World Dark Gray Canvas (neutral, tactical GIS dark basemap, zero watermark).
+  dark: cartoApiKey
+    ? {
+        url: `https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png?key=${cartoApiKey}`,
+        attribution:
+          '&copy; <a href="https://www.openstreetmap.org/copyright" target="_blank" rel="noopener noreferrer">OpenStreetMap</a> contributors &copy; <a href="https://carto.com/attributions" target="_blank" rel="noopener noreferrer">CARTO</a>',
+        maxZoom: 19,
+        subdomains: 'abcd',
+      }
+    : {
+        url: 'https://server.arcgisonline.com/ArcGIS/rest/services/Canvas/World_Dark_Gray_Base/MapServer/tile/{z}/{y}/{x}',
+        attribution:
+          'Tiles &copy; Esri &mdash; Esri, DeLorme, NAVTEQ',
+        maxZoom: 19,
+        maxNativeZoom: 16,
+      },
 };
 
 // Fallback Standard OpenStreetMap Tile Layer

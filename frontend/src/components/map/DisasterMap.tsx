@@ -225,6 +225,7 @@ export const DisasterMap: React.FC<DisasterMapProps> = ({
     const tileLayer = L.tileLayer(tileConfig.url, {
       attribution: tileConfig.attribution,
       maxZoom: tileConfig.maxZoom,
+      maxNativeZoom: tileConfig.maxNativeZoom || tileConfig.maxZoom,
       subdomains: tileConfig.subdomains || 'abc',
     });
 
@@ -333,9 +334,31 @@ export const DisasterMap: React.FC<DisasterMapProps> = ({
 
   // Theme switch effect for tile layer
   useEffect(() => {
-    if (!mapInstanceRef.current || !tileLayerRef.current) return;
+    const map = mapInstanceRef.current;
+    if (!map) return;
     const tileConfig = TILE_LAYERS[theme] || TILE_LAYERS.light;
-    tileLayerRef.current.setUrl(tileConfig.url);
+
+    if (tileLayerRef.current) {
+      map.removeLayer(tileLayerRef.current);
+    }
+
+    const newTileLayer = L.tileLayer(tileConfig.url, {
+      attribution: tileConfig.attribution,
+      maxZoom: tileConfig.maxZoom,
+      maxNativeZoom: tileConfig.maxNativeZoom || tileConfig.maxZoom,
+      subdomains: tileConfig.subdomains || 'abc',
+    });
+
+    newTileLayer.on('tileerror', () => {
+      if (!hasFallenBackRef.current && mapInstanceRef.current) {
+        hasFallenBackRef.current = true;
+        console.warn('Primary tile provider error detected. Falling back to OpenStreetMap tiles.');
+        newTileLayer.setUrl(OSM_FALLBACK_TILE_LAYER.url);
+      }
+    });
+
+    newTileLayer.addTo(map);
+    tileLayerRef.current = newTileLayer;
   }, [theme]);
 
   // =========================================================================
