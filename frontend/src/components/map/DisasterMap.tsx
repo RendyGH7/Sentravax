@@ -20,6 +20,8 @@ import {
   TILE_LAYERS,
   OSM_FALLBACK_TILE_LAYER,
   SEVERITY_CONFIGS,
+  BASEMAP_STYLES,
+  type BasemapStyle,
 } from './map-config';
 import { AlertCircle, RefreshCw, Layers, ChevronRight, MapPin, Shield } from 'lucide-react';
 import type { ShelterItem } from '../../types/shelter';
@@ -96,6 +98,16 @@ export const DisasterMap: React.FC<DisasterMapProps> = ({
   // UI Overlays State
   const [isLegendOpen, setIsLegendOpen] = useState<boolean>(false);
   const [isListOpen, setIsListOpen] = useState<boolean>(false);
+  const [currentBasemap, setCurrentBasemap] = useState<BasemapStyle>('osm');
+  const [isBasemapMenuOpen, setIsBasemapMenuOpen] = useState<boolean>(false);
+
+  const handleSelectBasemap = (style: BasemapStyle) => {
+    setCurrentBasemap(style);
+    if (tileLayerRef.current) {
+      const config = BASEMAP_STYLES[style];
+      tileLayerRef.current.setUrl(config.url);
+    }
+  };
 
   // =========================================================================
   // 1. DATA FETCHING (REAL BACKEND API INTEGRATION)
@@ -653,6 +665,10 @@ export const DisasterMap: React.FC<DisasterMapProps> = ({
             hasListToggle={showEventList && features.length > 0}
             onToggleShelters={() => setShowShelters((prev) => !prev)}
             isSheltersOpen={showShelters}
+            currentBasemap={currentBasemap}
+            onSelectBasemap={handleSelectBasemap}
+            isBasemapMenuOpen={isBasemapMenuOpen}
+            onToggleBasemapMenu={() => setIsBasemapMenuOpen((prev) => !prev)}
             theme={theme}
           />
         </div>

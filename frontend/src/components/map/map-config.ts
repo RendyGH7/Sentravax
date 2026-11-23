@@ -21,44 +21,70 @@ export interface TileLayerConfig {
   subdomains?: string;
 }
 
-const cartoApiKey = (import.meta.env.VITE_CARTO_API_KEY as string | undefined)?.trim();
+export type BasemapStyle = 'osm' | 'voyager' | 'satellite' | 'topo' | 'dark';
 
+export interface BasemapConfig extends TileLayerConfig {
+  id: BasemapStyle;
+  name: string;
+  badge?: string;
+}
+
+export const BASEMAP_STYLES: Record<BasemapStyle, BasemapConfig> = {
+  osm: {
+    id: 'osm',
+    name: 'Peta Berwarna Standar',
+    url: 'https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',
+    attribution:
+      '&copy; <a href="https://www.openstreetmap.org/copyright" target="_blank" rel="noopener noreferrer">OpenStreetMap</a> contributors',
+    maxZoom: 19,
+    subdomains: 'abc',
+    badge: 'Penuh Warna',
+  },
+  voyager: {
+    id: 'voyager',
+    name: 'CARTO Voyager',
+    url: 'https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png',
+    attribution:
+      '&copy; <a href="https://www.openstreetmap.org/copyright" target="_blank" rel="noopener noreferrer">OpenStreetMap</a> contributors &copy; <a href="https://carto.com/attributions" target="_blank" rel="noopener noreferrer">CARTO</a>',
+    maxZoom: 19,
+    subdomains: 'abcd',
+    badge: 'Modern',
+  },
+  satellite: {
+    id: 'satellite',
+    name: 'Citra Satelit Berwarna',
+    url: 'https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}',
+    attribution:
+      'Tiles &copy; Esri &mdash; Source: Esri, Maxar, Earthstar Geographics, and GIS Community',
+    maxZoom: 19,
+    maxNativeZoom: 18,
+    badge: 'Satelit Asli',
+  },
+  topo: {
+    id: 'topo',
+    name: 'Topografi & Alam',
+    url: 'https://server.arcgisonline.com/ArcGIS/rest/services/World_Topo_Map/MapServer/tile/{z}/{y}/{x}',
+    attribution:
+      'Tiles &copy; Esri &mdash; Sources: GEBCO, NOAA, CHS, National Geographic, and Esri',
+    maxZoom: 19,
+    maxNativeZoom: 18,
+    badge: 'Kontur',
+  },
+  dark: {
+    id: 'dark',
+    name: 'Gelap Taktis',
+    url: 'https://server.arcgisonline.com/ArcGIS/rest/services/Canvas/World_Dark_Gray_Base/MapServer/tile/{z}/{y}/{x}',
+    attribution: 'Tiles &copy; Esri &mdash; Esri, DeLorme, NAVTEQ',
+    maxZoom: 19,
+    maxNativeZoom: 16,
+    badge: 'Monokrom',
+  },
+};
+
+// Default tile layer mappings: Default is ALWAYS full vibrant color
 export const TILE_LAYERS: Record<UITheme, TileLayerConfig> = {
-  // Family 1 (Light): If a CARTO API key is provided, use CARTO Positron.
-  // Otherwise, default to standard OpenStreetMap tiles (100% free, zero watermark).
-  light: cartoApiKey
-    ? {
-        url: `https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png?key=${cartoApiKey}`,
-        attribution:
-          '&copy; <a href="https://www.openstreetmap.org/copyright" target="_blank" rel="noopener noreferrer">OpenStreetMap</a> contributors &copy; <a href="https://carto.com/attributions" target="_blank" rel="noopener noreferrer">CARTO</a>',
-        maxZoom: 19,
-        subdomains: 'abcd',
-      }
-    : {
-        url: 'https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',
-        attribution:
-          '&copy; <a href="https://www.openstreetmap.org/copyright" target="_blank" rel="noopener noreferrer">OpenStreetMap</a> contributors',
-        maxZoom: 19,
-        subdomains: 'abc',
-      },
-
-  // Family 2 (Dark): If a CARTO API key is provided, use CARTO Dark Matter.
-  // Otherwise, use Esri World Dark Gray Canvas (neutral, tactical GIS dark basemap, zero watermark).
-  dark: cartoApiKey
-    ? {
-        url: `https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png?key=${cartoApiKey}`,
-        attribution:
-          '&copy; <a href="https://www.openstreetmap.org/copyright" target="_blank" rel="noopener noreferrer">OpenStreetMap</a> contributors &copy; <a href="https://carto.com/attributions" target="_blank" rel="noopener noreferrer">CARTO</a>',
-        maxZoom: 19,
-        subdomains: 'abcd',
-      }
-    : {
-        url: 'https://server.arcgisonline.com/ArcGIS/rest/services/Canvas/World_Dark_Gray_Base/MapServer/tile/{z}/{y}/{x}',
-        attribution:
-          'Tiles &copy; Esri &mdash; Esri, DeLorme, NAVTEQ',
-        maxZoom: 19,
-        maxNativeZoom: 16,
-      },
+  light: BASEMAP_STYLES.osm,
+  dark: BASEMAP_STYLES.osm,
 };
 
 // Fallback Standard OpenStreetMap Tile Layer
