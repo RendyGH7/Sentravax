@@ -276,7 +276,6 @@ export const HomePage: React.FC = () => {
 
   // Reviews Carousel state
   const scrollContainerRef = useRef<HTMLDivElement>(null);
-  const [selectedLanguage, setSelectedLanguage] = useState<'all' | 'id' | 'en'>('all');
   const [isAutoPlay, setIsAutoPlay] = useState<boolean>(true);
   const [isHovered, setIsHovered] = useState<boolean>(false);
 
@@ -305,10 +304,8 @@ export const HomePage: React.FC = () => {
     return () => clearInterval(interval);
   }, [isAutoPlay, isHovered]);
 
-  // Filtered reviews by language
-  const filteredReviews = CITIZEN_REVIEWS.filter(
-    (rev) => selectedLanguage === 'all' || rev.language === selectedLanguage
-  );
+  // Reviews data for carousel
+  const filteredReviews = CITIZEN_REVIEWS;
 
   // Contact Form state
   const [contactName, setContactName] = useState<string>('');
@@ -436,38 +433,7 @@ export const HomePage: React.FC = () => {
   return (
     <div className="space-y-16 py-6 px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto">
       {/* ========================================================================= */}
-      {/* 1. TOP EMERGENCY HOTLINE STRIP (1-Tap Dial)                               */}
-      {/* ========================================================================= */}
-      <section aria-label="Hotline Darurat Nasional">
-        <div className="p-3.5 sm:p-4 rounded-2xl bg-[#FEF2F2] border border-[#FECACA] flex flex-wrap items-center justify-between gap-3 text-xs shadow-2xs">
-          <div className="flex items-center gap-2 text-[#991B1B] font-bold">
-            <PhoneCall className="w-4 h-4 text-[#DC2626] animate-bounce" />
-            <span>Hotline Darurat Nasional (Bebas Pulsa):</span>
-          </div>
-          <div className="flex flex-wrap items-center gap-2">
-            {[
-              { num: '112', label: 'Panggilan Darurat Terpadu' },
-              { num: '117', label: 'BNPB Bencana' },
-              { num: '115', label: 'Basarnas SAR' },
-              { num: '119', label: 'Ambulans Medis' },
-              { num: '113', label: 'Damkar' },
-            ].map((h) => (
-              <a
-                key={h.num}
-                href={`tel:${h.num}`}
-                className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-white border border-[#FCA5A5] hover:bg-[#FEE2E2] text-[#991B1B] font-bold text-xs transition-colors shadow-2xs"
-                title={`Hubungi ${h.label} di nomor ${h.num}`}
-              >
-                <span>{h.num}</span>
-                <span className="hidden sm:inline font-normal text-gray-600">({h.label})</span>
-              </a>
-            ))}
-          </div>
-        </div>
-      </section>
-
-      {/* ========================================================================= */}
-      {/* 2. HERO: Cinematic Photographic Background & Clean Editorial Elegance      */}
+      {/* 1. HERO: Cinematic Photographic Background & Clean Editorial Elegance      */}
       {/* ========================================================================= */}
       <section className="relative overflow-hidden rounded-3xl sm:rounded-[2.5rem] min-h-[460px] sm:min-h-[500px] flex flex-col justify-center items-center text-center px-6 sm:px-12 py-16 sm:py-20 shadow-xl border border-emerald-950/20">
         {/* Background photographic image */}
@@ -1125,34 +1091,6 @@ export const HomePage: React.FC = () => {
           </div>
         </div>
 
-        {/* Language Filter Tabs */}
-        <div className="flex items-center justify-between gap-3">
-          <div className="flex flex-wrap items-center gap-1.5">
-            {[
-              { id: 'all' as const, label: 'Semua Bahasa (All Reviews)' },
-              { id: 'id' as const, label: '🇮🇩 Bahasa Indonesia' },
-              { id: 'en' as const, label: '🇬🇧 English (International)' },
-            ].map((tab) => (
-              <button
-                key={tab.id}
-                type="button"
-                onClick={() => setSelectedLanguage(tab.id)}
-                className={`px-3.5 py-1.5 rounded-xl text-xs font-semibold transition-all cursor-pointer ${
-                  selectedLanguage === tab.id
-                    ? 'bg-[#047857] text-white shadow-2xs'
-                    : 'bg-white border border-gray-200 text-gray-600 hover:bg-gray-100 hover:text-gray-900'
-                }`}
-              >
-                {tab.label}
-              </button>
-            ))}
-          </div>
-
-          <span className="text-[11px] text-gray-400 hidden sm:block">
-            * Geser ke samping atau arahkan kursor untuk menjeda
-          </span>
-        </div>
-
         {/* Horizontal Smooth Scroll Track */}
         <div
           ref={scrollContainerRef}
@@ -1215,9 +1153,36 @@ export const HomePage: React.FC = () => {
       </section>
 
       {/* ========================================================================= */}
-      {/* 8. KONTAK & PUSAT BANTUAN RESMI (Layanan Terpadu & Formulir Aspirasi)     */}
+      {/* 7. KONTAK & PUSAT BANTUAN RESMI (Layanan Terpadu & Saluran Darurat)        */}
       {/* ========================================================================= */}
       <section id="kontak-resmi" className="space-y-8 pt-6 border-t border-[#E5E7EB]">
+        {/* Hotline Darurat Nasional (Bebas Pulsa 1-Tap Dial) */}
+        <div className="p-3.5 sm:p-4 rounded-2xl bg-[#FEF2F2] border border-[#FECACA] flex flex-wrap items-center justify-between gap-3 text-xs shadow-2xs">
+          <div className="flex items-center gap-2 text-[#991B1B] font-bold">
+            <PhoneCall className="w-4 h-4 text-[#DC2626] animate-bounce" />
+            <span>Hotline Darurat Nasional (Bebas Pulsa):</span>
+          </div>
+          <div className="flex flex-wrap items-center gap-2">
+            {[
+              { num: '112', label: 'Panggilan Darurat Terpadu' },
+              { num: '117', label: 'BNPB Bencana' },
+              { num: '115', label: 'Basarnas SAR' },
+              { num: '119', label: 'Ambulans Medis' },
+              { num: '113', label: 'Damkar' },
+            ].map((h) => (
+              <a
+                key={h.num}
+                href={`tel:${h.num}`}
+                className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-white border border-[#FCA5A5] hover:bg-[#FEE2E2] text-[#991B1B] font-bold text-xs transition-colors shadow-2xs"
+                title={`Hubungi ${h.label} di nomor ${h.num}`}
+              >
+                <span>{h.num}</span>
+                <span className="hidden sm:inline font-normal text-gray-600">({h.label})</span>
+              </a>
+            ))}
+          </div>
+        </div>
+
         <div className="text-center max-w-2xl mx-auto space-y-2">
           <div className="inline-flex items-center gap-1.5 text-xs font-bold text-[#047857] uppercase tracking-wider font-mono">
             <Mail className="w-3.5 h-3.5" />
