@@ -15,7 +15,6 @@ import {
   Radio, 
   User, 
   Compass,
-  CheckCircle2,
   LogOut,
   AlertCircle,
   Home
@@ -43,34 +42,37 @@ export const PublicLayout: React.FC = () => {
   return (
     <div className="min-h-screen flex flex-col bg-[#F9FAFB] text-[#111827] selection:bg-[#D1FAE5] selection:text-[#065F46]">
       {/* Top Telemetry Ticker / System Status */}
-      <div className="bg-[#FFFFFF] border-b border-[#E5E7EB] py-2 px-4 text-xs font-mono text-[#4B5563]">
+      <div className="bg-[#FAFAFA] border-b border-[#F0F0F0] py-1.5 px-4 text-[11px] text-[#6B7280]">
         <div className="max-w-7xl mx-auto flex items-center justify-between">
           <div className="flex items-center gap-2.5">
-            <span className="inline-flex items-center gap-1.5 text-[#047857] font-bold text-[11px] bg-[#ECFDF5] border border-[#A7F3D0] px-2.5 py-0.5 rounded-full">
-              <CheckCircle2 className="w-3.5 h-3.5" />
-              STATUS SISTEM: AKTIF
+            <span className="inline-flex items-center gap-1.5 font-medium text-[#047857]">
+              <span className="relative flex h-2 w-2">
+                <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-[#10B981] opacity-75"></span>
+                <span className="relative inline-flex rounded-full h-2 w-2 bg-[#059669]"></span>
+              </span>
+              Sistem Aktif
             </span>
-            <span className="hidden md:inline text-[#D1D5DB]">|</span>
-            <span className="hidden md:inline text-[#4B5563]">
-              Integrasi Terhubung: BMKG, BNPB, PVMBG, Copernicus
+            <span className="hidden sm:inline text-[#E5E7EB]">•</span>
+            <span className="hidden sm:inline text-[#6B7280]">
+              Data Terpadu: BMKG, BNPB, PVMBG, Copernicus
             </span>
           </div>
-          <div className="flex items-center gap-4 text-[11px]">
+          <div className="flex items-center gap-4">
             <Link 
               to={PATHS.USER.DASHBOARD} 
-              className="text-[#047857] hover:text-[#065F46] font-bold transition-colors"
+              className="hover:text-[#111827] transition-colors"
             >
               Area Warga
             </Link>
             <Link 
               to={PATHS.ADMIN.DASHBOARD} 
-              className="text-[#4B5563] hover:text-[#111827] font-semibold transition-colors"
+              className="hover:text-[#111827] transition-colors"
             >
               Portal Admin
             </Link>
             <Link 
               to={PATHS.INTELLIGENCE.OVERVIEW} 
-              className="text-[#D97706] hover:text-[#B45309] flex items-center gap-1 font-bold transition-colors"
+              className="text-[#B45309] hover:text-[#92400E] flex items-center gap-1 font-medium transition-colors"
             >
               <Radio className="w-3 h-3 text-[#D97706]" />
               Intelligence Center
@@ -80,25 +82,24 @@ export const PublicLayout: React.FC = () => {
       </div>
 
       {/* Main Header */}
-      <header className="sticky top-0 z-40 bg-[#FFFFFF]/95 backdrop-blur-md border-b border-[#E5E7EB] shadow-xs">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
+      <header className="sticky top-0 z-40 bg-[#FFFFFF]/90 backdrop-blur-md border-b border-[#F3F4F6] transition-all">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between gap-4">
           {/* Brand Logo */}
-          <Link to={PATHS.PUBLIC.HOME} className="flex items-center gap-3 group">
-            <div className="w-9 h-9 rounded-xl bg-[#047857] flex items-center justify-center text-white shadow-xs transition-transform group-hover:scale-105">
-              <Shield className="w-5 h-5" />
+          <Link to={PATHS.PUBLIC.HOME} className="flex items-center gap-2.5 shrink-0 group">
+            <div className="w-8 h-8 rounded-lg bg-[#047857] flex items-center justify-center text-white shadow-xs transition-transform group-hover:scale-105">
+              <Shield className="w-4.5 h-4.5" />
             </div>
-            <div>
-              <span className="text-base font-extrabold tracking-tight text-[#111827]">SENTRAVAX</span>
-              <span className="hidden sm:block text-[10px] tracking-wider text-[#047857] font-mono uppercase font-bold -mt-0.5">
+            <div className="flex flex-col">
+              <span className="text-[15px] font-extrabold tracking-tight text-[#111827] leading-tight">SENTRAVAX</span>
+              <span className="text-[9.5px] tracking-wider text-[#047857] uppercase font-semibold leading-none">
                 Kesiapsiagaan Bencana
               </span>
             </div>
           </Link>
 
-          {/* Desktop Navigation */}
+          {/* Desktop Navigation - Minimalist, text-first, breathing space */}
           <nav className="hidden lg:flex items-center gap-1">
             {navLinks.map((link) => {
-              const Icon = link.icon;
               const isActive =
                 location.pathname === link.path ||
                 (link.path !== '/' && location.pathname.startsWith(link.path + '/'));
@@ -106,13 +107,12 @@ export const PublicLayout: React.FC = () => {
                 <Link
                   key={link.path}
                   to={link.path}
-                  className={`flex items-center gap-1.5 px-3.5 py-2 rounded-lg text-xs font-medium transition-all ${
+                  className={`px-3 py-1.5 rounded-full text-xs transition-all ${
                     isActive
-                      ? 'bg-[#ECFDF5] text-[#047857] font-bold border border-[#A7F3D0]'
-                      : 'text-[#4B5563] hover:text-[#111827] hover:bg-[#F3F4F6]'
+                      ? 'bg-[#ECFDF5] text-[#047857] font-semibold'
+                      : 'text-[#4B5563] hover:text-[#111827] hover:bg-[#F3F4F6]/80'
                   }`}
                 >
-                  <Icon className="w-3.5 h-3.5" />
                   {link.name}
                 </Link>
               );
@@ -120,9 +120,9 @@ export const PublicLayout: React.FC = () => {
           </nav>
 
           {/* Quick Actions / Auth */}
-          <div className="flex items-center gap-2.5">
+          <div className="flex items-center gap-2 shrink-0">
             {isAuthenticated && user ? (
-              <>
+              <div className="flex items-center gap-2">
                 <Link
                   to={
                     user.role === 'admin'
@@ -131,44 +131,43 @@ export const PublicLayout: React.FC = () => {
                       ? PATHS.INTELLIGENCE.OVERVIEW
                       : PATHS.USER.DASHBOARD
                   }
-                  className="inline-flex items-center gap-1.5 px-3.5 py-2 rounded-xl text-xs font-bold bg-[#ECFDF5] hover:bg-[#D1FAE5] text-[#047857] border border-[#A7F3D0] transition-colors"
+                  className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-semibold bg-[#ECFDF5] hover:bg-[#D1FAE5] text-[#047857] border border-[#A7F3D0]/60 transition-colors"
                 >
                   <User className="w-3.5 h-3.5 text-[#047857]" />
-                  <span>{user.name.split(' ')[0]} ({user.role})</span>
+                  <span>{user.name.split(' ')[0]}</span>
                 </Link>
                 <button
                   type="button"
                   onClick={logout}
-                  className="inline-flex items-center gap-1.5 px-3 py-2 rounded-xl text-xs font-semibold text-[#DC2626] hover:bg-[#FEF2F2] transition-colors"
+                  className="p-1.5 rounded-full text-[#9CA3AF] hover:text-[#DC2626] hover:bg-[#FEF2F2] transition-colors"
+                  title="Keluar sesi"
                   aria-label="Keluar sesi"
                 >
-                  <LogOut className="w-3.5 h-3.5" />
-                  <span className="hidden sm:inline">Keluar</span>
+                  <LogOut className="w-4 h-4" />
                 </button>
-              </>
+              </div>
             ) : (
-              <>
+              <div className="flex items-center gap-1.5">
                 <Link
                   to={PATHS.USER.DASHBOARD}
-                  className="hidden sm:inline-flex items-center gap-1.5 px-3.5 py-2 rounded-xl text-xs font-bold bg-[#FFFFFF] hover:bg-[#F3F4F6] text-[#111827] border border-[#D1D5DB] transition-colors"
+                  className="hidden sm:inline-flex items-center px-3 py-1.5 rounded-full text-xs font-medium text-[#4B5563] hover:text-[#111827] hover:bg-[#F3F4F6] transition-colors"
                 >
-                  <User className="w-3.5 h-3.5 text-[#047857]" />
                   Portal Warga
                 </Link>
                 <Link
                   to={PATHS.PUBLIC.LOGIN}
-                  className="inline-flex items-center gap-1.5 px-4 py-2 rounded-xl text-xs font-bold bg-[#047857] hover:bg-[#065F46] text-white shadow-xs transition-all"
+                  className="inline-flex items-center gap-1.5 px-4 py-1.5 rounded-full text-xs font-semibold bg-[#047857] hover:bg-[#065F46] text-white shadow-xs transition-all hover:shadow-sm"
                 >
                   <LogIn className="w-3.5 h-3.5" />
-                  Masuk
+                  <span>Masuk</span>
                 </Link>
-              </>
+              </div>
             )}
 
             {/* Mobile menu button */}
             <button
               onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-              className="lg:hidden p-2 text-[#4B5563] hover:text-[#111827] rounded-lg hover:bg-[#F3F4F6] min-w-[44px] min-h-[44px] flex items-center justify-center"
+              className="lg:hidden p-2 text-[#4B5563] hover:text-[#111827] rounded-lg hover:bg-[#F3F4F6] min-w-[40px] min-h-[40px] flex items-center justify-center transition-colors"
               aria-label="Buka menu navigasi"
             >
               {mobileMenuOpen ? <X className="w-5 h-5" /> : <Menu className="w-5 h-5" />}
@@ -178,7 +177,10 @@ export const PublicLayout: React.FC = () => {
 
         {/* Mobile dropdown */}
         {mobileMenuOpen && (
-          <div className="lg:hidden bg-[#FFFFFF] border-b border-[#E5E7EB] px-4 pt-2 pb-4 space-y-1">
+          <div className="lg:hidden bg-[#FFFFFF] border-b border-[#E5E7EB] px-4 pt-3 pb-5 space-y-1 shadow-lg">
+            <div className="text-[10px] font-bold text-[#9CA3AF] uppercase tracking-wider px-3 py-1">
+              Navigasi Publik
+            </div>
             {navLinks.map((link) => {
               const Icon = link.icon;
               const isActive =
@@ -189,34 +191,34 @@ export const PublicLayout: React.FC = () => {
                   key={link.path}
                   to={link.path}
                   onClick={() => setMobileMenuOpen(false)}
-                  className={`flex items-center gap-2.5 px-3 py-2.5 rounded-lg text-sm font-medium ${
+                  className={`flex items-center gap-2.5 px-3 py-2 rounded-xl text-sm font-medium transition-colors ${
                     isActive
-                      ? 'bg-[#ECFDF5] text-[#047857] font-bold border border-[#A7F3D0]'
+                      ? 'bg-[#ECFDF5] text-[#047857] font-bold'
                       : 'text-[#4B5563] hover:bg-[#F3F4F6] hover:text-[#111827]'
                   }`}
                 >
-                  <Icon className="w-4 h-4" />
-                  {link.name}
+                  <Icon className="w-4 h-4 text-[#047857]" />
+                  <span>{link.name}</span>
                 </Link>
               );
             })}
-            <div className="pt-2 border-t border-[#E5E7EB] grid grid-cols-2 gap-2">
+            <div className="pt-3 mt-2 border-t border-[#F3F4F6] flex flex-col gap-2">
               <Link
                 to={PATHS.USER.DASHBOARD}
                 onClick={() => setMobileMenuOpen(false)}
-                className="flex items-center justify-center gap-1.5 px-3 py-2.5 rounded-lg text-xs font-bold bg-[#F9FAFB] text-[#111827] border border-[#D1D5DB]"
+                className="w-full py-2.5 px-4 rounded-xl text-center text-xs font-semibold text-[#374151] bg-[#F9FAFB] hover:bg-[#F3F4F6] border border-[#E5E7EB] transition-colors"
               >
-                <User className="w-3.5 h-3.5 text-[#047857]" />
                 Portal Warga
               </Link>
-              <Link
-                to={PATHS.INTELLIGENCE.OVERVIEW}
-                onClick={() => setMobileMenuOpen(false)}
-                className="flex items-center justify-center gap-1.5 px-3 py-2.5 rounded-lg text-xs font-bold bg-[#161616] text-white"
-              >
-                <Radio className="w-3.5 h-3.5 text-[#F59E0B]" />
-                Intelligence
-              </Link>
+              {!isAuthenticated && (
+                <Link
+                  to={PATHS.PUBLIC.LOGIN}
+                  onClick={() => setMobileMenuOpen(false)}
+                  className="w-full py-2.5 px-4 rounded-xl text-center text-xs font-bold text-white bg-[#047857] hover:bg-[#065F46] shadow-xs transition-colors"
+                >
+                  Masuk ke Akun
+                </Link>
+              )}
             </div>
           </div>
         )}

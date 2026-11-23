@@ -645,9 +645,9 @@ class PasswordRecoveryWorkflowTest extends TestCase
     }
 
     /**
-     * Scenario 30: Concurrent reset requests with the same token - second request is cleanly rejected.
+     * Scenario 30: Sequential token replay simulation - second sequential request with same token is cleanly rejected.
      */
-    public function test_30_concurrent_reset_requests_with_same_token_race_condition_rejected(): void
+    public function test_30_sequential_token_replay_simulation_is_rejected(): void
     {
         $token = Password::broker()->createToken($this->user);
 
@@ -802,5 +802,58 @@ class PasswordRecoveryWorkflowTest extends TestCase
         $resetData = json_encode($resetRes->json());
         $this->assertStringNotContainsString($token, $resetData);
         $this->assertArrayNotHasKey('token', $resetRes->json());
+    }
+
+    /**
+     * Scenario 35: Isolated PostgreSQL two-connection concurrent lock verification.
+     * Proves row-level locking on password_reset_tokens blocks concurrent transactions (code 55P03).
+     */
+    public function test_35_postgresql_two_connection_concurrent_lock_isolation_verified(): void
+    {
+        $dbConfig = config('database.connections.pgsql');
+        $dsn = "pgsql:host={$dbConfig['host']};port={$dbConfig['port']};dbname={$dbConfig['database']}";
+        $pdo1 = new \PDO($dsn, $dbConfig['username'], $dbConfig['password'], [\PDO::ATTR_ERRMODE => \PDO::ERRMODE_EXCEPTION]);
+        $pdo2 = new \PDO($dsn, $dbConfig['username'], $dbConfig['password'], [\PDO::ATTR_ERRMODE => \PDO::ERRMODE_EXCEPTION]);
+
+        $this->assertEquals('pgsql', $pdo1->getAttribute(\PDO::ATTR_DRIVER_NAME));
+        $this->assertEquals('pgsql', $pdo2->getAttribute(\PDO::ATTR_DRIVER_NAME));
+
+        // Insert reset token directly through PDO1 so it is committed to PostgreSQL and visible across distinct connections
+        $stmtInsert = $pdo1->prepare("INSERT INTO password_reset_tokens (email, token, created_at) VALUES (:email, :token, NOW()) ON CONFLICT (email) DO UPDATE SET token = :token, created_at = NOW()");
+        $stmtInsert->execute(['email' => $this->user->email, 'token' => 'dummy_hash_' . uniqid()]);
+
+        // Connection 1 locks the reset token row
+        $pdo1->beginTransaction();
+        $stmt1 = $pdo1->prepare("SELECT email FROM password_reset_tokens WHERE email = :email FOR UPDATE");
+        $stmt1->execute(['email' => $this->user->email]);
+        $this->assertNotEmpty($stmt1->fetch(\PDO::FETCH_ASSOC));
+
+        // Connection 2 attempts to lock the exact same row concurrently with NOWAIT
+        $lockBlocked = false;
+        try {
+            $pdo2->beginTransaction();
+            $stmt2 = $pdo2->prepare("SELECT email FROM password_reset_tokens WHERE email = :email FOR UPDATE NOWAIT");
+            $stmt2->execute(['email' => $this->user->email]);
+            $stmt2->fetch(\PDO::FETCH_ASSOC);
+        } catch (\PDOException $e) {
+            $lockBlocked = true;
+            // 55P03 is PostgreSQL SQLSTATE code for lock_not_available
+            $this->assertEquals('55P03', $e->getCode());
+            $pdo2->rollBack();
+        }
+
+        $this->assertTrue($lockBlocked, 'PostgreSQL must block concurrent transactions attempting to lock the same reset token row.');
+
+        // Connection 1 simulates successful reset: deletes token and commits
+        $delStmt = $pdo1->prepare("DELETE FROM password_reset_tokens WHERE email = :email");
+        $delStmt->execute(['email' => $this->user->email]);
+        $pdo1->commit();
+
+        // Connection 2 unblocks, queries the row, and finds it deleted
+        $pdo2->beginTransaction();
+        $stmt2Retry = $pdo2->prepare("SELECT email FROM password_reset_tokens WHERE email = :email FOR UPDATE");
+        $stmt2Retry->execute(['email' => $this->user->email]);
+        $this->assertFalse($stmt2Retry->fetch(\PDO::FETCH_ASSOC));
+        $pdo2->commit();
     }
 }
