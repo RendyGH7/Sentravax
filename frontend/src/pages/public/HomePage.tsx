@@ -2,6 +2,7 @@ import React, { useState, useEffect, useCallback, useRef, useMemo, Suspense, laz
 import { Link } from 'react-router-dom';
 import { PATHS } from '../../app/router/paths';
 import { publicService } from '../../services/public-service';
+import { AnimatedCounter } from '../../components/shared/AnimatedCounter';
 import type {
   PublicOverviewData,
   HazardEventItem,
@@ -529,13 +530,13 @@ export const HomePage: React.FC = () => {
         {/* Foreground Content */}
         <div className="relative z-10 max-w-4xl mx-auto space-y-6 sm:space-y-8 pt-28 sm:pt-36 pb-20 px-4">
           {/* Heading */}
-          <h1 className="text-3xl sm:text-5xl lg:text-6xl font-black tracking-tight text-white leading-[1.12] drop-shadow-md">
+          <h1 className="text-3xl sm:text-5xl lg:text-6xl font-black tracking-tight text-white leading-[1.12]">
             Lindungi Keluarga Anda.
-            <span className="block mt-2 bg-gradient-to-r from-emerald-400 via-teal-300 to-emerald-400 bg-clip-text text-transparent drop-shadow-[0_0_35px_rgba(16,185,129,0.6)]">Siaga Nyata Sebelum Bencana.</span>
+            <span className="block mt-2 text-emerald-400">Siaga Nyata Sebelum Bencana.</span>
           </h1>
 
           {/* Concise, non-slop subtitle */}
-          <p className="text-sm sm:text-base text-neutral-200 leading-relaxed max-w-xl mx-auto font-normal drop-shadow-sm">
+          <p className="text-sm sm:text-base text-neutral-200 leading-relaxed max-w-xl mx-auto font-normal">
             Pantau potensi risiko di koordinat Anda dan temukan jalur evakuasi resmi dalam hitungan detik.
           </p>
 
@@ -543,15 +544,15 @@ export const HomePage: React.FC = () => {
           <div className="flex flex-wrap items-center justify-center gap-3.5 pt-3">
             <a
               href="#fitur-peta"
-              className="inline-flex items-center gap-2 px-7 py-3.5 rounded-2xl bg-gradient-to-r from-emerald-500 via-emerald-400 to-teal-400 hover:from-emerald-400 hover:to-teal-300 text-black font-black text-sm transition-all shadow-[0_0_25px_rgba(16,185,129,0.5)] hover:shadow-[0_0_35px_rgba(16,185,129,0.7)] hover:-translate-y-0.5 cursor-pointer"
+              className="inline-flex items-center gap-2 px-7 py-3.5 rounded-2xl bg-emerald-700 hover:bg-emerald-600 text-white font-bold text-sm transition-colors shadow-sm cursor-pointer"
             >
-              <Map className="w-4 h-4 text-black" />
+              <Map className="w-4 h-4 text-white" />
               <span>Buka Peta Radar</span>
             </a>
 
             <a
               href="#fitur-cek-risiko"
-              className="inline-flex items-center gap-2 px-7 py-3.5 rounded-2xl bg-emerald-950/50 hover:bg-emerald-900/60 border-2 border-emerald-500/60 text-emerald-200 backdrop-blur-md font-bold text-sm transition-all shadow-[0_0_20px_rgba(16,185,129,0.25)] hover:border-emerald-400 hover:-translate-y-0.5 cursor-pointer"
+              className="inline-flex items-center gap-2 px-7 py-3.5 rounded-2xl bg-neutral-900/90 hover:bg-neutral-800 border border-neutral-700 text-neutral-100 font-bold text-sm transition-colors cursor-pointer"
             >
               <Compass className="w-4 h-4 text-emerald-400" />
               <span>Cek Risiko Wilayah</span>
@@ -564,61 +565,93 @@ export const HomePage: React.FC = () => {
       <div className="space-y-16 py-8 px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto text-neutral-100">
 
       {/* ========================================================================= */}
-      {/* 3. INTEGRASI OTORITAS & STATUS SISTEM NASIONAL (Editorial & Elegan)        */}
+      {/* 3. INTEGRASI OTORITAS & STATUS SISTEM NASIONAL (Data Angka & Counter)     */}
       {/* ========================================================================= */}
-      <section className="border-y border-emerald-950/60 bg-gradient-to-r from-emerald-950/20 via-black to-emerald-950/20 py-8 my-2">
+      <section className="rounded-3xl border border-neutral-800 bg-[#111513] p-6 sm:p-8">
         <div className="grid grid-cols-2 lg:grid-cols-4 gap-6 lg:gap-8">
+          {/* Kolom 1: Cakupan Wilayah Nasional */}
           <div className="space-y-1.5">
             <div className="text-[10px] font-mono font-black tracking-widest uppercase text-sky-400 flex items-center gap-1.5">
               <span className="w-1.5 h-1.5 rounded-full bg-sky-400" />
-              SUMBER DATA OTORITATIF
+              CAKUPAN WILAYAH
             </div>
-            <div className="text-base sm:text-lg font-black text-white tracking-tight">
-              BMKG &bull; BNPB &bull; PVMBG
+            <div className="pt-1">
+              <AnimatedCounter
+                end={514}
+                duration={1600}
+                className="text-3xl sm:text-4xl lg:text-5xl font-mono font-black text-white tracking-tight"
+              />
             </div>
-            <p className="text-xs text-neutral-300 leading-relaxed">
-              Integrasi langsung telemetri seismik, cuaca maritim, dan aktivitas vulkanik nasional.
-            </p>
+            <div className="text-sm sm:text-base font-black text-neutral-100 tracking-tight">
+              Kabupaten &amp; Kota
+            </div>
+            <div className="text-xs text-sky-400 font-bold">
+              38 Provinsi Indonesia
+            </div>
           </div>
 
-          <div className="space-y-1.5">
-            <div className="text-[10px] font-mono font-black tracking-widest uppercase text-amber-400 flex items-center gap-1.5">
-              <span className="w-1.5 h-1.5 rounded-full bg-amber-400 animate-pulse" />
-              STANDAR PERINGATAN DINI
-            </div>
-            <div className="text-base sm:text-lg font-black text-white tracking-tight flex items-center gap-2">
-              <span>Protokol CAP v1.2</span>
-              <span className="w-2 h-2 rounded-full bg-amber-400 animate-pulse" />
-            </div>
-            <p className="text-xs text-neutral-300 leading-relaxed">
-              Diseminasi notifikasi peringatan berstandar internasional dalam hitungan detik.
-            </p>
-          </div>
-
+          {/* Kolom 2: Teritorial Kepulauan */}
           <div className="space-y-1.5">
             <div className="text-[10px] font-mono font-black tracking-widest uppercase text-indigo-400 flex items-center gap-1.5">
               <span className="w-1.5 h-1.5 rounded-full bg-indigo-400" />
-              CAKUPAN WILAYAH KERJA
+              TERITORIAL KEPULAUAN
             </div>
-            <div className="text-base sm:text-lg font-black text-white tracking-tight">
-              34 Provinsi Indonesia
+            <div className="pt-1">
+              <AnimatedCounter
+                end={17508}
+                duration={1800}
+                className="text-3xl sm:text-4xl lg:text-5xl font-mono font-black text-white tracking-tight"
+              />
             </div>
-            <p className="text-xs text-neutral-300 leading-relaxed">
-              Pemetaan geospasial risiko multi-ancaman berbasis koordinat PostGIS presisi.
-            </p>
+            <div className="text-sm sm:text-base font-black text-neutral-100 tracking-tight">
+              Pulau Nusantara
+            </div>
+            <div className="text-xs text-indigo-400 font-bold">
+              Zona Maritim &amp; Pesisir
+            </div>
           </div>
 
+          {/* Kolom 3: Pemetaan Risiko Kecamatan */}
+          <div className="space-y-1.5">
+            <div className="text-[10px] font-mono font-black tracking-widest uppercase text-amber-400 flex items-center gap-1.5">
+              <span className="w-1.5 h-1.5 rounded-full bg-amber-400" />
+              PEMETAAN RISIKO
+            </div>
+            <div className="pt-1">
+              <AnimatedCounter
+                end={7288}
+                duration={1800}
+                className="text-3xl sm:text-4xl lg:text-5xl font-mono font-black text-amber-400 tracking-tight"
+              />
+            </div>
+            <div className="text-sm sm:text-base font-black text-neutral-100 tracking-tight">
+              Kecamatan Terdata
+            </div>
+            <div className="text-xs text-amber-400 font-bold">
+              Multi-Ancaman Geospasial
+            </div>
+          </div>
+
+          {/* Kolom 4: Populasi Terlindungi */}
           <div className="space-y-1.5">
             <div className="text-[10px] font-mono font-black tracking-widest uppercase text-emerald-400 flex items-center gap-1.5">
-              <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse" />
-              LAYANAN PUBLIK TERBUKA
+              <span className="w-1.5 h-1.5 rounded-full bg-emerald-400" />
+              POPULASI TERLINDUNGI
             </div>
-            <div className="text-base sm:text-lg font-black text-emerald-400 tracking-tight drop-shadow-[0_0_12px_rgba(16,185,129,0.5)]">
-              Bebas Biaya &bull; Nirlaba
+            <div className="pt-1">
+              <AnimatedCounter
+                end={278}
+                suffix=" Jt+"
+                duration={1600}
+                className="text-3xl sm:text-4xl lg:text-5xl font-mono font-black text-emerald-400 tracking-tight"
+              />
             </div>
-            <p className="text-xs text-neutral-300 leading-relaxed">
-              Disediakan untuk keselamatan masyarakat luas tanpa iklan dan tanpa monetisasi data.
-            </p>
+            <div className="text-sm sm:text-base font-black text-neutral-100 tracking-tight">
+              Jiwa Penduduk
+            </div>
+            <div className="text-xs text-emerald-300 font-bold">
+              Akses Publik 24/7 Nirlaba
+            </div>
           </div>
         </div>
       </section>
@@ -626,7 +659,7 @@ export const HomePage: React.FC = () => {
       {/* ========================================================================= */}
       {/* 4. FITUR UTAMA 1: PETA SITUASI & SHELTER INTERAKTIF (Live Map)            */}
       {/* ========================================================================= */}
-      <section id="fitur-peta" className="space-y-4 pt-6 border-t border-emerald-950/60">
+      <section id="fitur-peta" className="space-y-4">
         <div className="flex flex-col md:flex-row md:items-end justify-between gap-4">
           <div>
             <h2 className="text-2xl sm:text-3xl font-black text-white tracking-tight">
@@ -637,7 +670,7 @@ export const HomePage: React.FC = () => {
           <div className="flex items-center gap-2 shrink-0">
             <Link
               to={PATHS.PUBLIC.MAP}
-              className="inline-flex items-center gap-1.5 px-4 py-2.5 rounded-xl bg-[#0c2217] border-2 border-emerald-500/40 hover:bg-[#123121] text-emerald-200 hover:text-white text-xs font-bold transition-all shadow-[0_0_15px_rgba(16,185,129,0.2)] cursor-pointer"
+              className="inline-flex items-center gap-1.5 px-4 py-2.5 rounded-xl bg-neutral-900 hover:bg-neutral-800 border border-neutral-700 text-neutral-200 hover:text-white text-xs font-bold transition-colors cursor-pointer"
             >
               <span>Buka Peta Layar Penuh</span>
               <ExternalLink className="w-3.5 h-3.5 text-emerald-400" />
@@ -646,7 +679,7 @@ export const HomePage: React.FC = () => {
         </div>
 
         {/* Embedded Leaflet Map */}
-        <div className="rounded-3xl border-2 border-emerald-500/40 overflow-hidden shadow-[0_0_50px_rgba(16,185,129,0.18)] bg-black">
+        <div className="rounded-3xl border border-neutral-800 overflow-hidden bg-black">
           <Suspense
             fallback={
               <div className="h-[520px] w-full flex flex-col items-center justify-center gap-3 bg-[#0a1410] text-xs text-emerald-300">
@@ -669,39 +702,39 @@ export const HomePage: React.FC = () => {
 
         {/* Telemetry Summary Ticker */}
         <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 text-xs pt-1">
-          <div className="p-4 rounded-2xl bg-gradient-to-br from-[#290913] via-[#1a050c] to-[#0d0206] border-2 border-rose-500/70 shadow-[0_0_25px_rgba(244,63,94,0.25)] flex items-center justify-between">
-            <span className="text-rose-200 font-bold flex items-center gap-1.5">
+          <div className="p-3.5 rounded-2xl bg-[#161113] border border-neutral-800 flex items-center justify-between">
+            <span className="text-neutral-300 font-bold flex items-center gap-1.5">
               <AlertCircle className="w-3.5 h-3.5 text-rose-400 shrink-0" />
               Bencana Aktif:
             </span>
-            <span className="font-black text-rose-400 text-sm tracking-tight">
+            <span className="font-bold text-rose-400 text-sm tracking-tight">
               {overviewLoading ? '...' : (overview?.active_hazard_events ?? events.length)} Titik
             </span>
           </div>
-          <div className="p-4 rounded-2xl bg-gradient-to-br from-[#2c1703] via-[#1c0e02] to-[#100801] border-2 border-amber-500/70 shadow-[0_0_25px_rgba(245,158,11,0.25)] flex items-center justify-between">
-            <span className="text-amber-200 font-bold flex items-center gap-1.5">
+          <div className="p-3.5 rounded-2xl bg-[#171410] border border-neutral-800 flex items-center justify-between">
+            <span className="text-neutral-300 font-bold flex items-center gap-1.5">
               <AlertTriangle className="w-3.5 h-3.5 text-amber-400 shrink-0" />
               Peringatan CAP:
             </span>
-            <span className="font-black text-amber-400 text-sm tracking-tight">
+            <span className="font-bold text-amber-400 text-sm tracking-tight">
               {overviewLoading ? '...' : (overview?.active_alerts ?? alerts.length)} Peringatan
             </span>
           </div>
-          <div className="p-4 rounded-2xl bg-gradient-to-br from-[#062c1b] via-[#041a10] to-[#02100a] border-2 border-emerald-500/70 shadow-[0_0_25px_rgba(16,185,129,0.25)] flex items-center justify-between">
-            <span className="text-emerald-200 font-bold flex items-center gap-1.5">
+          <div className="p-3.5 rounded-2xl bg-[#111714] border border-neutral-800 flex items-center justify-between">
+            <span className="text-neutral-300 font-bold flex items-center gap-1.5">
               <Shield className="w-3.5 h-3.5 text-emerald-400 shrink-0" />
               Shelter Terbuka:
             </span>
-            <span className="font-black text-emerald-400 text-sm tracking-tight">
+            <span className="font-bold text-emerald-400 text-sm tracking-tight">
               {activeSheltersCount} Lokasi
             </span>
           </div>
-          <div className="p-4 rounded-2xl bg-gradient-to-br from-[#062638] via-[#041722] to-[#020e15] border-2 border-cyan-500/70 shadow-[0_0_25px_rgba(6,182,212,0.25)] flex items-center justify-between">
-            <span className="text-cyan-200 font-bold flex items-center gap-1.5">
+          <div className="p-3.5 rounded-2xl bg-[#101618] border border-neutral-800 flex items-center justify-between">
+            <span className="text-neutral-300 font-bold flex items-center gap-1.5">
               <Radio className="w-3.5 h-3.5 text-cyan-400 shrink-0" />
               Status Jaringan:
             </span>
-            <span className="font-black text-cyan-400 text-sm flex items-center gap-1.5">
+            <span className="font-bold text-cyan-400 text-sm flex items-center gap-1.5">
               <span className="w-2.5 h-2.5 rounded-full bg-cyan-400 animate-pulse" />
               Aktif 24 Jam
             </span>
@@ -712,8 +745,8 @@ export const HomePage: React.FC = () => {
       {/* ========================================================================= */}
       {/* 5. FITUR UTAMA 2: CEK CEPAT ZONA RISIKO LOKASI & REKOMENDASI (1-Tap)       */}
       {/* ========================================================================= */}
-      <section id="fitur-cek-risiko" className="space-y-6 pt-6 border-t border-emerald-950/60">
-        <div className="rounded-3xl bg-gradient-to-br from-[#0a2016] via-[#06140e] to-[#020805] border-2 border-emerald-500/50 p-6 sm:p-8 space-y-6 shadow-[0_0_60px_rgba(16,185,129,0.2)]">
+      <section id="fitur-cek-risiko" className="space-y-6 pt-6 border-t border-neutral-800">
+        <div className="rounded-3xl bg-[#111513] border border-neutral-800 p-6 sm:p-8 space-y-6">
           <div className="flex flex-col md:flex-row md:items-end justify-between gap-4">
             <div className="space-y-1.5">
               <h2 className="text-2xl sm:text-3xl font-black text-white tracking-tight">
@@ -727,18 +760,18 @@ export const HomePage: React.FC = () => {
             <div className="flex items-center gap-2">
               <Link
                 to={PATHS.PUBLIC.PREPAREDNESS}
-                className="inline-flex items-center gap-1.5 px-4 py-2.5 rounded-xl bg-gradient-to-r from-emerald-500 to-teal-500 hover:from-emerald-400 hover:to-teal-400 text-black text-xs font-black transition-all shadow-[0_0_20px_rgba(16,185,129,0.4)] hover:shadow-[0_0_25px_rgba(16,185,129,0.6)] shrink-0 cursor-pointer"
+                className="inline-flex items-center gap-1.5 px-4 py-2.5 rounded-xl bg-neutral-900 hover:bg-neutral-800 border border-neutral-700 text-white text-xs font-bold transition-colors shrink-0 cursor-pointer"
               >
                 <span>Buka Rencana Siaga Lengkap</span>
-                <ArrowRight className="w-3.5 h-3.5" />
+                <ArrowRight className="w-3.5 h-3.5 text-emerald-400" />
               </Link>
             </div>
           </div>
 
           {/* Interactive Check Control Box */}
           <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 items-start">
-            <div className="lg:col-span-5 bg-[#0c2217] p-5 rounded-2xl border-2 border-emerald-500/40 shadow-inner space-y-4">
-              <span className="text-xs font-black text-emerald-300 block tracking-wide uppercase">
+            <div className="lg:col-span-5 bg-[#161a18] p-5 rounded-2xl border border-neutral-800 space-y-4">
+              <span className="text-xs font-bold text-neutral-300 block tracking-wide uppercase">
                 Pilih Metode Pengecekan Lokasi:
               </span>
 
@@ -747,15 +780,15 @@ export const HomePage: React.FC = () => {
                   type="button"
                   onClick={handleGpsCheck}
                   disabled={isQuickChecking}
-                  className="w-full inline-flex items-center justify-center gap-2 px-4 py-3.5 rounded-xl bg-gradient-to-r from-emerald-500 via-emerald-400 to-teal-400 hover:from-emerald-400 hover:to-teal-300 text-black text-xs font-black transition-all disabled:opacity-50 shadow-[0_0_25px_rgba(16,185,129,0.45)] hover:shadow-[0_0_35px_rgba(16,185,129,0.6)] cursor-pointer tracking-wide"
+                  className="w-full inline-flex items-center justify-center gap-2 px-4 py-3.5 rounded-xl bg-emerald-700 hover:bg-emerald-600 text-white text-xs font-bold transition-colors disabled:opacity-50 cursor-pointer tracking-wide shadow-xs"
                 >
-                  <Navigation className="w-4 h-4 text-black shrink-0" />
+                  <Navigation className="w-4 h-4 text-white shrink-0" />
                   <span>{isQuickChecking ? 'Sedang Mendeteksi Posisi Anda...' : 'Deteksi Lokasi Saya Sekarang (GPS)'}</span>
                 </button>
 
                 <div className="relative flex items-center justify-center">
-                  <div className="border-t border-emerald-500/30 w-full" />
-                  <span className="bg-[#0c2217] px-2 text-[11px] text-emerald-400/80 font-bold">atau pilih kota/wilayah</span>
+                  <div className="border-t border-neutral-800 w-full" />
+                  <span className="bg-[#161a18] px-2 text-[11px] text-neutral-400 font-medium">atau pilih kota/wilayah</span>
                 </div>
 
                 <div>
@@ -767,11 +800,11 @@ export const HomePage: React.FC = () => {
                     value={selectedQuickRegion}
                     onChange={handleRegionSelectCheck}
                     disabled={isQuickChecking}
-                    className="w-full px-3.5 py-2.5 rounded-xl border-2 border-emerald-500/40 bg-[#06150e] text-xs text-white font-semibold outline-none focus:border-emerald-400 focus:ring-2 focus:ring-emerald-400/30"
+                    className="w-full px-3.5 py-2.5 rounded-xl border border-neutral-700 bg-[#0d100f] text-xs text-white font-semibold outline-none focus:border-emerald-600 focus:ring-1 focus:ring-emerald-600"
                   >
-                    <option value="" className="bg-[#06150e] text-white">-- Pilih Wilayah / Kota Anda --</option>
+                    <option value="" className="bg-[#0d100f] text-white">-- Pilih Wilayah / Kota Anda --</option>
                     {regions.map((r) => (
-                      <option key={r.id} value={r.id} className="bg-[#06150e] text-white">
+                      <option key={r.id} value={r.id} className="bg-[#0d100f] text-white">
                         {r.name}
                       </option>
                     ))}
@@ -787,16 +820,16 @@ export const HomePage: React.FC = () => {
             {/* Verdict Display */}
             <div className="lg:col-span-7">
               {quickCheckResult ? (
-                <div className="p-6 rounded-2xl bg-[#0c2217] border-2 border-emerald-500/50 shadow-[0_0_30px_rgba(16,185,129,0.2)] space-y-4">
-                  <div className="flex items-center justify-between border-b border-emerald-500/30 pb-3">
+                <div className="p-6 rounded-2xl bg-[#161a18] border border-neutral-800 space-y-4">
+                  <div className="flex items-center justify-between border-b border-neutral-800 pb-3">
                     <div>
-                      <span className="text-xs text-emerald-300/80 font-bold block uppercase tracking-wider">Hasil Analisis Wilayah:</span>
+                      <span className="text-xs text-neutral-400 font-bold block uppercase tracking-wider">Hasil Analisis Wilayah:</span>
                       <h4 className="text-lg font-black text-white">
                         {quickCheckResult.location?.region?.name || 'Lokasi Terdeteksi GPS'}
                       </h4>
                     </div>
                     <div className="text-right">
-                      <span className="inline-flex items-center gap-1 px-3 py-1.5 rounded-full text-xs font-black uppercase bg-emerald-950 border-2 border-emerald-400 text-emerald-300 shadow-[0_0_15px_rgba(16,185,129,0.3)]">
+                      <span className="inline-flex items-center gap-1 px-3 py-1.5 rounded-full text-xs font-bold uppercase bg-neutral-900 border border-emerald-800/80 text-emerald-300">
                         <CheckCircle2 className="w-3.5 h-3.5 text-emerald-400" />
                         {quickCheckResult.assessment?.risk_label || quickCheckResult.assessment?.risk_level || 'AMAN TERKENDALI'}
                       </span>
@@ -806,12 +839,12 @@ export const HomePage: React.FC = () => {
                   <div className="space-y-2 text-xs text-neutral-200">
                     <p className="font-bold text-white">Rekomendasi Langkah Kesiapsiagaan:</p>
                     {quickCheckResult.recommendations?.action_steps && quickCheckResult.recommendations.action_steps.length > 0 ? (
-                      <div className="p-3.5 rounded-xl bg-[#06150e] border-2 border-emerald-500/30 text-xs text-neutral-100 flex items-start gap-2.5">
+                      <div className="p-3.5 rounded-xl bg-[#0d100f] border border-neutral-800 text-xs text-neutral-100 flex items-start gap-2.5">
                         <CheckCircle2 className="w-4 h-4 text-emerald-400 shrink-0 mt-0.5" />
                         <span>{quickCheckResult.recommendations.action_steps[0]}</span>
                       </div>
                     ) : (
-                      <div className="p-3.5 rounded-xl bg-[#06150e] border-2 border-emerald-500/30 text-xs text-neutral-100 flex items-start gap-2.5">
+                      <div className="p-3.5 rounded-xl bg-[#0d100f] border border-neutral-800 text-xs text-neutral-100 flex items-start gap-2.5">
                         <CheckCircle2 className="w-4 h-4 text-emerald-400 shrink-0 mt-0.5" />
                         <span>Kondisi aman. Siapkan tas siaga keluarga berdurasi 72 jam dan kenali titik kumpul terdekat.</span>
                       </div>
@@ -821,22 +854,22 @@ export const HomePage: React.FC = () => {
                   <div className="pt-2 flex flex-wrap items-center gap-3">
                     <Link
                       to={`${PATHS.PUBLIC.PREPAREDNESS}?region_id=${quickCheckResult.location?.region?.id || ''}&lat=${quickCheckResult.location?.latitude || ''}&lon=${quickCheckResult.location?.longitude || ''}`}
-                      className="px-4 py-2.5 rounded-xl bg-gradient-to-r from-emerald-500 to-teal-400 text-black text-xs font-black transition-all shadow-[0_0_15px_rgba(16,185,129,0.4)] hover:shadow-[0_0_20px_rgba(16,185,129,0.6)] cursor-pointer"
+                      className="px-4 py-2.5 rounded-xl bg-emerald-700 hover:bg-emerald-600 text-white text-xs font-bold transition-colors cursor-pointer shadow-xs"
                     >
                       Buka Rencana Kesiapsiagaan Personal &rarr;
                     </Link>
                     <Link
                       to={PATHS.PUBLIC.SHELTERS}
-                      className="px-4 py-2.5 rounded-xl bg-[#081a11] hover:bg-[#0c2619] border-2 border-emerald-500/40 text-emerald-200 text-xs font-bold transition-colors cursor-pointer"
+                      className="px-4 py-2.5 rounded-xl bg-neutral-900 hover:bg-neutral-800 border border-neutral-700 text-neutral-200 text-xs font-bold transition-colors cursor-pointer"
                     >
                       Lihat Daftar Shelter Terdekat
                     </Link>
                   </div>
                 </div>
               ) : (
-                <div className="p-8 rounded-2xl bg-[#091a12]/80 border-2 border-dashed border-emerald-500/40 text-center space-y-3">
-                  <div className="w-14 h-14 rounded-2xl bg-emerald-950 border-2 border-emerald-500/50 text-emerald-400 flex items-center justify-center mx-auto shadow-[0_0_20px_rgba(16,185,129,0.25)]">
-                    <Compass className="w-7 h-7" />
+                <div className="p-8 rounded-2xl bg-[#161a18] border border-neutral-800 text-center space-y-3">
+                  <div className="w-14 h-14 rounded-2xl bg-neutral-900 border border-neutral-800 text-neutral-300 flex items-center justify-center mx-auto">
+                    <Compass className="w-7 h-7 text-emerald-400" />
                   </div>
                   <h4 className="text-base font-black text-white">Belum ada wilayah yang diperiksa</h4>
                   <p className="text-xs text-neutral-300 max-w-md mx-auto leading-relaxed">
@@ -852,9 +885,9 @@ export const HomePage: React.FC = () => {
       {/* ========================================================================= */}
       {/* 6. TENTANG APLIKASI SENTRAVAX (Membuat Pengguna Terkesan & Tertarik)       */}
       {/* ========================================================================= */}
-      <section id="tentang-sentravax" className="space-y-10 pt-6 border-t border-emerald-950/60">
+      <section id="tentang-sentravax" className="space-y-10 pt-6 border-t border-neutral-800">
         <div className="text-center max-w-3xl mx-auto space-y-3">
-          <div className="inline-flex items-center gap-1.5 px-3.5 py-1 rounded-full text-xs font-mono font-black text-emerald-300 bg-emerald-950/90 border-2 border-emerald-500/60 uppercase tracking-wider shadow-[0_0_15px_rgba(16,185,129,0.3)]">
+          <div className="inline-flex items-center gap-1.5 px-3.5 py-1 rounded-full text-xs font-mono font-bold text-emerald-400 bg-neutral-900 border border-neutral-700 uppercase tracking-wider">
             <Shield className="w-3.5 h-3.5 text-emerald-400" />
             <span>MENGENAL SENTRAVAX LEBIH DEKAT</span>
           </div>
@@ -868,9 +901,9 @@ export const HomePage: React.FC = () => {
 
         {/* 3 Pilar Utama Nilai Aplikasi */}
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-          <div className="p-6 rounded-3xl bg-gradient-to-b from-[#09261a] to-[#04120c] border-2 border-emerald-500/60 hover:border-emerald-400 transition-all shadow-[0_0_30px_rgba(16,185,129,0.2)] hover:shadow-[0_0_40px_rgba(16,185,129,0.35)] space-y-4 hover:-translate-y-1">
-            <div className="w-14 h-14 rounded-2xl bg-emerald-950 border-2 border-emerald-500/60 text-emerald-400 flex items-center justify-center font-bold shadow-[0_0_20px_rgba(16,185,129,0.35)]">
-              <Shield className="w-7 h-7" />
+          <div className="p-6 rounded-3xl bg-[#121614] border border-neutral-800 hover:border-emerald-800/60 transition-all space-y-4 hover:-translate-y-1">
+            <div className="w-12 h-12 rounded-2xl bg-emerald-950/70 border border-emerald-800/60 text-emerald-400 flex items-center justify-center font-bold">
+              <Shield className="w-6 h-6" />
             </div>
             <h3 className="text-base font-black text-white">
               1. Data Terpadu &amp; Bebas Hoaks
@@ -878,15 +911,15 @@ export const HomePage: React.FC = () => {
             <p className="text-xs sm:text-sm text-neutral-300 leading-relaxed">
               Semua peringatan dini dan gempa bumi disinkronkan langsung dari BMKG, BNPB, dan PVMBG. Tidak ada kabar palsu atau kepanikan massal tanpa dasar ilmiah.
             </p>
-            <div className="pt-2 text-xs font-black text-emerald-400 flex items-center gap-1.5">
+            <div className="pt-2 text-xs font-bold text-emerald-400 flex items-center gap-1.5">
               <span>Sensor Terverifikasi 24/7</span>
               <CheckCircle2 className="w-3.5 h-3.5 text-emerald-400" />
             </div>
           </div>
 
-          <div className="p-6 rounded-3xl bg-gradient-to-b from-[#091b38] to-[#040d1c] border-2 border-blue-500/60 hover:border-blue-400 transition-all shadow-[0_0_30px_rgba(59,130,246,0.2)] hover:shadow-[0_0_40px_rgba(59,130,246,0.35)] space-y-4 hover:-translate-y-1">
-            <div className="w-14 h-14 rounded-2xl bg-blue-950 border-2 border-blue-500/60 text-blue-400 flex items-center justify-center font-bold shadow-[0_0_20px_rgba(59,130,246,0.35)]">
-              <Users className="w-7 h-7" />
+          <div className="p-6 rounded-3xl bg-[#12151b] border border-neutral-800 hover:border-blue-800/60 transition-all space-y-4 hover:-translate-y-1">
+            <div className="w-12 h-12 rounded-2xl bg-blue-950/70 border border-blue-800/60 text-blue-400 flex items-center justify-center font-bold">
+              <Users className="w-6 h-6" />
             </div>
             <h3 className="text-base font-black text-white">
               2. Dirancang Ramah untuk Semua Usia
@@ -894,15 +927,15 @@ export const HomePage: React.FC = () => {
             <p className="text-xs sm:text-sm text-neutral-300 leading-relaxed">
               Tampilan dirancang bersih dan kontras tinggi. Kalimat yang digunakan ramah dan langsung, sehingga mudah dipahami orang tua, penyandang disabilitas, maupun anak muda.
             </p>
-            <div className="pt-2 text-xs font-black text-blue-400 flex items-center gap-1.5">
+            <div className="pt-2 text-xs font-bold text-blue-400 flex items-center gap-1.5">
               <span>Aksesibilitas Standar Nasional</span>
               <CheckCircle2 className="w-3.5 h-3.5 text-blue-400" />
             </div>
           </div>
 
-          <div className="p-6 rounded-3xl bg-gradient-to-b from-[#2b1704] to-[#140b02] border-2 border-amber-500/60 hover:border-amber-400 transition-all shadow-[0_0_30px_rgba(245,158,11,0.2)] hover:shadow-[0_0_40px_rgba(245,158,11,0.35)] space-y-4 hover:-translate-y-1">
-            <div className="w-14 h-14 rounded-2xl bg-amber-950 border-2 border-amber-500/60 text-amber-400 flex items-center justify-center font-bold shadow-[0_0_20px_rgba(245,158,11,0.35)]">
-              <Building2 className="w-7 h-7" />
+          <div className="p-6 rounded-3xl bg-[#181510] border border-neutral-800 hover:border-amber-800/60 transition-all space-y-4 hover:-translate-y-1">
+            <div className="w-12 h-12 rounded-2xl bg-amber-950/70 border border-amber-800/60 text-amber-400 flex items-center justify-center font-bold">
+              <Building2 className="w-6 h-6" />
             </div>
             <h3 className="text-base font-black text-white">
               3. Navigasi Evakuasi Menyelamatkan Jiwa
@@ -910,7 +943,7 @@ export const HomePage: React.FC = () => {
             <p className="text-xs sm:text-sm text-neutral-300 leading-relaxed">
               Bukan sekadar peta biasa, SENTRAVAX mengarahkan Anda ke titik evakuasi dan shelter resmi yang masih memiliki kapasitas serta menyediakan fasilitas sanitasi dan medis.
             </p>
-            <div className="pt-2 text-xs font-black text-amber-400 flex items-center gap-1.5">
+            <div className="pt-2 text-xs font-bold text-amber-400 flex items-center gap-1.5">
               <span>Petunjuk Rute Seketika</span>
               <CheckCircle2 className="w-3.5 h-3.5 text-amber-400" />
             </div>
@@ -918,12 +951,9 @@ export const HomePage: React.FC = () => {
         </div>
 
         {/* Alur Kerja 3 Langkah Interaktif & Menarik */}
-        <div className="relative rounded-3xl bg-gradient-to-b from-[#0a2016] via-[#06140e] to-[#020805] border-2 border-emerald-500/50 p-6 sm:p-10 space-y-8 shadow-[0_0_60px_rgba(16,185,129,0.25)] overflow-hidden">
-          {/* Subtle decorative glow */}
-          <div className="absolute -top-24 -right-24 w-80 h-80 bg-emerald-500/15 rounded-full blur-3xl pointer-events-none" />
-
+        <div className="relative rounded-3xl bg-[#111413] border border-neutral-800 p-6 sm:p-10 space-y-8 overflow-hidden">
           <div className="text-center max-w-2xl mx-auto space-y-2 relative z-10">
-            <span className="inline-flex items-center gap-1.5 px-3.5 py-1 rounded-full text-xs font-mono font-black text-emerald-300 bg-emerald-950/90 border-2 border-emerald-500/60 uppercase shadow-[0_0_15px_rgba(16,185,129,0.3)]">
+            <span className="inline-flex items-center gap-1.5 px-3.5 py-1 rounded-full text-xs font-mono font-bold text-emerald-400 bg-neutral-900 border border-neutral-700 uppercase">
               <ShieldCheck className="w-3.5 h-3.5 text-emerald-400" />
               ALUR KESIAPSIAGAAN TERSTRUKTUR
             </span>
@@ -937,13 +967,13 @@ export const HomePage: React.FC = () => {
 
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6 relative z-10">
             {/* Step 1 */}
-            <div className="p-6 rounded-3xl bg-[#0c2217] border-2 border-emerald-500/50 hover:border-emerald-400 hover:shadow-[0_0_30px_rgba(16,185,129,0.3)] transition-all duration-300 flex flex-col justify-between space-y-5 group hover:-translate-y-1">
+            <div className="p-6 rounded-3xl bg-[#151917] border border-neutral-800 hover:border-emerald-800/60 transition-all duration-300 flex flex-col justify-between space-y-5 group hover:-translate-y-1">
               <div className="space-y-4">
                 <div className="flex items-center justify-between">
-                  <div className="w-12 h-12 rounded-2xl bg-emerald-950 border-2 border-emerald-500/50 text-emerald-400 flex items-center justify-center font-bold shadow-[0_0_15px_rgba(16,185,129,0.3)] group-hover:scale-105 transition-transform">
+                  <div className="w-12 h-12 rounded-2xl bg-emerald-950/70 border border-emerald-800/60 text-emerald-400 flex items-center justify-center font-bold group-hover:scale-105 transition-transform">
                     <Compass className="w-6 h-6" />
                   </div>
-                  <span className="text-xs font-mono font-black text-emerald-300 bg-emerald-950 px-2.5 py-1 rounded-full border-2 border-emerald-500/50 shadow-[0_0_10px_rgba(16,185,129,0.25)]">
+                  <span className="text-xs font-mono font-bold text-emerald-400 bg-neutral-900 px-2.5 py-1 rounded-full border border-neutral-800">
                     LANGKAH 01
                   </span>
                 </div>
@@ -958,28 +988,28 @@ export const HomePage: React.FC = () => {
                 </div>
 
                 {/* Micro-preview Widget */}
-                <div className="p-3.5 rounded-2xl bg-[#06150e] border-2 border-emerald-500/30 text-xs space-y-2 font-mono">
+                <div className="p-3.5 rounded-2xl bg-[#0e1210] border border-neutral-800 text-xs space-y-2 font-mono">
                   <div className="flex items-center justify-between text-neutral-300 text-[11px]">
                     <span className="flex items-center gap-1 font-sans text-neutral-200 font-bold">
                       <MapPin className="w-3.5 h-3.5 text-emerald-400" /> GPS Sensor
                     </span>
-                    <span className="text-emerald-300 bg-emerald-950 px-2 py-0.5 rounded font-black text-[10px] border border-emerald-500/40">
+                    <span className="text-emerald-400 bg-neutral-900 px-2 py-0.5 rounded font-bold text-[10px] border border-neutral-800">
                       AKTIF 24/7
                     </span>
                   </div>
                   <div className="flex items-center justify-between text-white font-sans font-bold">
                     <span>Status Wilayah:</span>
-                    <span className="text-emerald-400 flex items-center gap-1 font-black">
+                    <span className="text-emerald-400 flex items-center gap-1 font-bold">
                       <CheckCircle2 className="w-3.5 h-3.5 text-emerald-400" /> Aman Terkendali
                     </span>
                   </div>
                 </div>
               </div>
 
-              <div className="pt-2 border-t border-emerald-500/30">
+              <div className="pt-2 border-t border-neutral-800">
                 <a
                   href="#fitur-cek-risiko"
-                  className="inline-flex items-center gap-1.5 text-xs font-black text-emerald-400 hover:text-emerald-300 transition-colors group-hover:translate-x-1"
+                  className="inline-flex items-center gap-1.5 text-xs font-bold text-emerald-400 hover:text-emerald-300 transition-colors group-hover:translate-x-1"
                 >
                   <span>Coba Cek Wilayah Anda</span>
                   <ArrowRight className="w-3.5 h-3.5" />
@@ -988,13 +1018,13 @@ export const HomePage: React.FC = () => {
             </div>
 
             {/* Step 2 */}
-            <div className="p-6 rounded-3xl bg-[#081b33] border-2 border-blue-500/50 hover:border-blue-400 hover:shadow-[0_0_30px_rgba(59,130,246,0.3)] transition-all duration-300 flex flex-col justify-between space-y-5 group hover:-translate-y-1">
+            <div className="p-6 rounded-3xl bg-[#14181f] border border-neutral-800 hover:border-blue-800/60 transition-all duration-300 flex flex-col justify-between space-y-5 group hover:-translate-y-1">
               <div className="space-y-4">
                 <div className="flex items-center justify-between">
-                  <div className="w-12 h-12 rounded-2xl bg-blue-950 border-2 border-blue-500/50 text-blue-400 flex items-center justify-center font-bold shadow-[0_0_15px_rgba(59,130,246,0.3)] group-hover:scale-105 transition-transform">
+                  <div className="w-12 h-12 rounded-2xl bg-blue-950/70 border border-blue-800/60 text-blue-400 flex items-center justify-center font-bold group-hover:scale-105 transition-transform">
                     <ShieldCheck className="w-6 h-6" />
                   </div>
-                  <span className="text-xs font-mono font-black text-blue-300 bg-blue-950 px-2.5 py-1 rounded-full border-2 border-blue-500/50 shadow-[0_0_10px_rgba(59,130,246,0.25)]">
+                  <span className="text-xs font-mono font-bold text-blue-400 bg-neutral-900 px-2.5 py-1 rounded-full border border-neutral-800">
                     LANGKAH 02
                   </span>
                 </div>
@@ -1009,28 +1039,28 @@ export const HomePage: React.FC = () => {
                 </div>
 
                 {/* Micro-preview Widget */}
-                <div className="p-3.5 rounded-2xl bg-[#040e1c] border-2 border-blue-500/30 text-xs space-y-2 font-mono">
+                <div className="p-3.5 rounded-2xl bg-[#0e1217] border border-neutral-800 text-xs space-y-2 font-mono">
                   <div className="flex items-center justify-between text-neutral-300 text-[11px]">
                     <span className="flex items-center gap-1 font-sans text-blue-300 font-bold">
                       <ShieldCheck className="w-3.5 h-3.5 text-blue-400" /> Logistik Mandiri
                     </span>
-                    <span className="text-blue-300 bg-blue-950 px-2 py-0.5 rounded font-black text-[10px] border border-blue-500/40">
+                    <span className="text-blue-400 bg-neutral-900 px-2 py-0.5 rounded font-bold text-[10px] border border-neutral-800">
                       Standar BNPB
                     </span>
                   </div>
                   <div className="flex items-center justify-between text-white font-sans font-bold">
                     <span>Kesiapan Ransum:</span>
-                    <span className="text-blue-300 font-black">
+                    <span className="text-blue-300 font-bold">
                       Air 9L • P3K • Dokumen
                     </span>
                   </div>
                 </div>
               </div>
 
-              <div className="pt-2 border-t border-blue-500/30">
+              <div className="pt-2 border-t border-neutral-800">
                 <Link
                   to={PATHS.PUBLIC.PREPAREDNESS}
-                  className="inline-flex items-center gap-1.5 text-xs font-black text-blue-400 hover:text-blue-300 transition-colors group-hover:translate-x-1"
+                  className="inline-flex items-center gap-1.5 text-xs font-bold text-blue-400 hover:text-blue-300 transition-colors group-hover:translate-x-1"
                 >
                   <span>Buka Panduan Tas Siaga</span>
                   <ArrowRight className="w-3.5 h-3.5" />
@@ -1039,13 +1069,13 @@ export const HomePage: React.FC = () => {
             </div>
 
             {/* Step 3 */}
-            <div className="p-6 rounded-3xl bg-[#261504] border-2 border-amber-500/50 hover:border-amber-400 hover:shadow-[0_0_30px_rgba(245,158,11,0.3)] transition-all duration-300 flex flex-col justify-between space-y-5 group hover:-translate-y-1">
+            <div className="p-6 rounded-3xl bg-[#1c1811] border border-neutral-800 hover:border-amber-800/60 transition-all duration-300 flex flex-col justify-between space-y-5 group hover:-translate-y-1">
               <div className="space-y-4">
                 <div className="flex items-center justify-between">
-                  <div className="w-12 h-12 rounded-2xl bg-amber-950 border-2 border-amber-500/50 text-amber-400 flex items-center justify-center font-bold shadow-[0_0_15px_rgba(245,158,11,0.3)] group-hover:scale-105 transition-transform">
+                  <div className="w-12 h-12 rounded-2xl bg-amber-950/70 border border-amber-800/60 text-amber-400 flex items-center justify-center font-bold group-hover:scale-105 transition-transform">
                     <Navigation className="w-6 h-6" />
                   </div>
-                  <span className="text-xs font-mono font-black text-amber-300 bg-amber-950 px-2.5 py-1 rounded-full border-2 border-amber-500/50 shadow-[0_0_10px_rgba(245,158,11,0.25)]">
+                  <span className="text-xs font-mono font-bold text-amber-400 bg-neutral-900 px-2.5 py-1 rounded-full border border-neutral-800">
                     LANGKAH 03
                   </span>
                 </div>
@@ -1060,28 +1090,28 @@ export const HomePage: React.FC = () => {
                 </div>
 
                 {/* Micro-preview Widget */}
-                <div className="p-3.5 rounded-2xl bg-[#140b02] border-2 border-amber-500/30 text-xs space-y-2 font-mono">
+                <div className="p-3.5 rounded-2xl bg-[#14110b] border border-neutral-800 text-xs space-y-2 font-mono">
                   <div className="flex items-center justify-between text-neutral-300 text-[11px]">
                     <span className="flex items-center gap-1 font-sans text-amber-300 font-bold">
                       <Building2 className="w-3.5 h-3.5 text-amber-400" /> Posko Terverifikasi
                     </span>
-                    <span className="text-amber-300 bg-amber-950 px-2 py-0.5 rounded font-black text-[10px] border border-amber-500/40">
+                    <span className="text-amber-400 bg-neutral-900 px-2 py-0.5 rounded font-bold text-[10px] border border-neutral-800">
                       RAMAH DIFABEL
                     </span>
                   </div>
                   <div className="flex items-center justify-between text-white font-sans font-bold">
                     <span>Titik Shelter:</span>
-                    <span className="text-amber-300 font-black">
+                    <span className="text-amber-300 font-bold">
                       Navigasi Peta Rute Langsung
                     </span>
                   </div>
                 </div>
               </div>
 
-              <div className="pt-2 border-t border-amber-500/30">
+              <div className="pt-2 border-t border-neutral-800">
                 <Link
                   to={PATHS.PUBLIC.SHELTERS}
-                  className="inline-flex items-center gap-1.5 text-xs font-black text-amber-400 hover:text-amber-300 transition-colors group-hover:translate-x-1"
+                  className="inline-flex items-center gap-1.5 text-xs font-bold text-amber-400 hover:text-amber-300 transition-colors group-hover:translate-x-1"
                 >
                   <span>Cari Titik Shelter Terdekat</span>
                   <ArrowRight className="w-3.5 h-3.5" />
@@ -1095,7 +1125,7 @@ export const HomePage: React.FC = () => {
       {/* ========================================================================= */}
       {/* 7. ULASAN & PENGALAMAN WARGA (Interactive Horizontal Auto-Scroll Carousel)*/}
       {/* ========================================================================= */}
-      <section id="ulasan-warga" className="space-y-6 pt-6 border-t border-emerald-950/60">
+      <section id="ulasan-warga" className="space-y-6 pt-6 border-t border-neutral-800">
         <div className="flex flex-col md:flex-row md:items-end justify-between gap-4">
           <div>
             <h2 className="text-2xl sm:text-3xl font-black text-white tracking-tight">
@@ -1104,18 +1134,18 @@ export const HomePage: React.FC = () => {
           </div>
 
           {/* Overall Trust Rating */}
-          <div className="inline-flex items-center gap-3.5 px-4.5 py-2.5 rounded-2xl bg-gradient-to-r from-[#0d261b] to-[#081710] border-2 border-emerald-400/60 shadow-[0_0_20px_rgba(16,185,129,0.25)] shrink-0">
+          <div className="inline-flex items-center gap-3.5 px-4.5 py-2.5 rounded-2xl bg-neutral-900 border border-neutral-800 shrink-0">
             <div className="flex items-center gap-1.5">
               <span className="font-black text-white text-base tracking-tight">4.9</span>
               <span className="text-[11px] text-neutral-400 font-semibold">skala 5.0</span>
             </div>
             <div className="flex items-center gap-0.5 text-amber-400">
               {Array.from({ length: 5 }).map((_, i) => (
-                <Star key={i} className="w-4 h-4 fill-amber-400 text-amber-400 drop-shadow-[0_0_8px_rgba(245,158,11,0.6)]" />
+                <Star key={i} className="w-4 h-4 fill-amber-400 text-amber-400" />
               ))}
             </div>
-            <div className="w-[1.5px] h-4 bg-emerald-500/40" />
-            <span className="text-xs text-amber-300 font-black tracking-wide">
+            <div className="w-[1.5px] h-4 bg-neutral-700" />
+            <span className="text-xs text-amber-300 font-bold tracking-wide">
               32.400+ Ulasan Warga
             </span>
           </div>
@@ -1135,28 +1165,28 @@ export const HomePage: React.FC = () => {
           {infiniteReviews.map((rev, index) => (
             <div
               key={`${rev.id}-${index}`}
-              className="w-[290px] sm:w-[320px] shrink-0 p-4.5 rounded-2xl bg-gradient-to-b from-[#0d2217] via-[#081710] to-[#040c08] border-2 border-emerald-500/40 shadow-xl hover:shadow-[0_0_30px_rgba(16,185,129,0.3)] hover:border-emerald-400 hover:-translate-y-1 transition-all flex flex-col justify-between space-y-3.5 select-none"
+              className="w-[290px] sm:w-[320px] shrink-0 p-4.5 rounded-2xl bg-[#121614] border border-neutral-800 hover:border-neutral-700 hover:-translate-y-1 transition-all flex flex-col justify-between space-y-3.5 select-none"
             >
               <div className="space-y-3">
                 {/* Header: Star rating & verified badge */}
                 <div className="flex items-center justify-between gap-2">
                   <div className="flex items-center gap-0.5 text-amber-400">
                     {Array.from({ length: rev.rating }).map((_, i) => (
-                      <Star key={i} className="w-3.5 h-3.5 fill-amber-400 text-amber-400 drop-shadow-[0_0_6px_rgba(245,158,11,0.5)]" />
+                      <Star key={i} className="w-3.5 h-3.5 fill-amber-400 text-amber-400" />
                     ))}
                   </div>
 
                   <span
-                    className={`text-[10px] font-black uppercase tracking-wider px-2.5 py-0.5 rounded-full border shadow-2xs ${
+                    className={`text-[10px] font-bold uppercase tracking-wider px-2.5 py-0.5 rounded-full border ${
                       rev.category === 'medis'
-                        ? 'text-rose-300 bg-rose-950/80 border-rose-500/50'
+                        ? 'text-rose-400 bg-neutral-900 border-neutral-800'
                         : rev.category === 'international'
-                        ? 'text-cyan-300 bg-cyan-950/80 border-cyan-500/50'
+                        ? 'text-cyan-400 bg-neutral-900 border-neutral-800'
                         : rev.category === 'pemerintah'
-                        ? 'text-emerald-300 bg-emerald-950/80 border-emerald-500/50'
+                        ? 'text-emerald-400 bg-neutral-900 border-neutral-800'
                         : rev.category === 'relawan'
-                        ? 'text-blue-300 bg-blue-950/80 border-blue-500/50'
-                        : 'text-amber-300 bg-amber-950/80 border-amber-500/50'
+                        ? 'text-blue-400 bg-neutral-900 border-neutral-800'
+                        : 'text-amber-400 bg-neutral-900 border-neutral-800'
                     }`}
                   >
                     {rev.verifiedBadge}
@@ -1170,7 +1200,7 @@ export const HomePage: React.FC = () => {
               </div>
 
               {/* Reviewer Profile Footer with Real Photo */}
-              <div className="pt-3 border-t border-emerald-500/30 flex items-center gap-3">
+              <div className="pt-3 border-t border-neutral-800 flex items-center gap-3">
                 <ReviewerAvatar
                   src={rev.avatarUrl}
                   name={rev.name}
@@ -1178,10 +1208,10 @@ export const HomePage: React.FC = () => {
                   bg={rev.avatarBg}
                 />
                 <div className="min-w-0 flex-1">
-                  <div className="text-xs font-black text-white truncate">
+                  <div className="text-xs font-bold text-white truncate">
                     {rev.name}
                   </div>
-                  <div className="text-[11px] text-emerald-300/80 truncate font-medium">{rev.role}</div>
+                  <div className="text-[11px] text-emerald-400/90 truncate font-medium">{rev.role}</div>
                   <div className="text-[10px] text-neutral-400 truncate">{rev.city} • {rev.date}</div>
                 </div>
               </div>
@@ -1193,11 +1223,11 @@ export const HomePage: React.FC = () => {
       {/* ========================================================================= */}
       {/* 8. KONTAK & PUSAT BANTUAN RESMI (Layanan Terpadu & Saluran Darurat)        */}
       {/* ========================================================================= */}
-      <section id="kontak-resmi" className="space-y-8 pt-6 border-t border-emerald-950/60">
+      <section id="kontak-resmi" className="space-y-8 pt-6 border-t border-neutral-800">
         {/* Hotline Darurat Nasional (Bebas Pulsa 1-Tap Dial) */}
-        <div className="p-4 rounded-2xl bg-gradient-to-r from-[#3b0b14] via-[#24060c] to-[#3b0b14] border-2 border-rose-500/70 shadow-[0_0_35px_rgba(244,63,94,0.35)] flex flex-wrap items-center justify-between gap-3 text-xs">
-          <div className="flex items-center gap-2 text-rose-200 font-black">
-            <PhoneCall className="w-4 h-4 text-rose-400 animate-bounce" />
+        <div className="p-4 rounded-2xl bg-[#161617] border border-neutral-800 flex flex-wrap items-center justify-between gap-3 text-xs">
+          <div className="flex items-center gap-2 text-rose-300 font-bold">
+            <PhoneCall className="w-4 h-4 text-rose-400" />
             <span>Hotline Darurat Nasional (Bebas Pulsa):</span>
           </div>
           <div className="flex flex-wrap items-center gap-2">
@@ -1211,18 +1241,18 @@ export const HomePage: React.FC = () => {
               <a
                 key={h.num}
                 href={`tel:${h.num}`}
-                className="inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-xl bg-gradient-to-r from-rose-600 to-red-600 hover:from-rose-500 hover:to-red-500 text-white font-black text-xs transition-all shadow-[0_0_15px_rgba(244,63,94,0.4)] border border-rose-400/50"
+                className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-red-950/80 hover:bg-red-900 text-red-100 font-bold text-xs transition-colors border border-red-800/60"
                 title={`Hubungi ${h.label} di nomor ${h.num}`}
               >
                 <span>{h.num}</span>
-                <span className="hidden sm:inline font-bold text-rose-100">({h.label})</span>
+                <span className="hidden sm:inline font-bold text-red-200">({h.label})</span>
               </a>
             ))}
           </div>
         </div>
 
         <div className="text-center max-w-2xl mx-auto space-y-3">
-          <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full text-xs font-mono font-black tracking-wider uppercase bg-emerald-950/90 border-2 border-emerald-500/60 text-emerald-400 shadow-[0_0_20px_rgba(16,185,129,0.35)]">
+          <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full text-xs font-mono font-bold tracking-wider uppercase bg-neutral-900 border border-neutral-700 text-emerald-400">
             <Mail className="w-3.5 h-3.5 text-emerald-400" />
             <span>PUSAT HUBUNGAN MASYARAKAT</span>
           </div>
@@ -1237,7 +1267,7 @@ export const HomePage: React.FC = () => {
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
           {/* Left Column: Official Contact Directory */}
           <div className="lg:col-span-5 space-y-4">
-            <div className="p-6 rounded-3xl bg-gradient-to-b from-[#0c2419] via-[#071710] to-[#040d09] border-2 border-emerald-500/40 shadow-xl space-y-5">
+            <div className="p-6 rounded-3xl bg-[#121614] border border-neutral-800 space-y-5">
               <h3 className="text-sm font-black text-white flex items-center gap-2">
                 <Building2 className="w-4 h-4 text-emerald-400" />
                 Sekretariat &amp; Komando Layanan
@@ -1245,7 +1275,7 @@ export const HomePage: React.FC = () => {
 
               <div className="space-y-4 text-xs text-neutral-300">
                 <div className="flex items-start gap-3">
-                  <div className="w-9 h-9 rounded-xl bg-emerald-950 border-2 border-emerald-500/40 text-emerald-400 flex items-center justify-center shrink-0 mt-0.5 shadow-[0_0_12px_rgba(16,185,129,0.25)]">
+                  <div className="w-9 h-9 rounded-xl bg-neutral-900 border border-neutral-800 text-emerald-400 flex items-center justify-center shrink-0 mt-0.5">
                     <Mail className="w-4 h-4" />
                   </div>
                   <div>
@@ -1258,7 +1288,7 @@ export const HomePage: React.FC = () => {
                 </div>
 
                 <div className="flex items-start gap-3">
-                  <div className="w-9 h-9 rounded-xl bg-emerald-950 border-2 border-emerald-500/40 text-emerald-400 flex items-center justify-center shrink-0 mt-0.5 shadow-[0_0_12px_rgba(16,185,129,0.25)]">
+                  <div className="w-9 h-9 rounded-xl bg-neutral-900 border border-neutral-800 text-emerald-400 flex items-center justify-center shrink-0 mt-0.5">
                     <MessageSquare className="w-4 h-4" />
                   </div>
                   <div>
@@ -1271,7 +1301,7 @@ export const HomePage: React.FC = () => {
                 </div>
 
                 <div className="flex items-start gap-3">
-                  <div className="w-9 h-9 rounded-xl bg-emerald-950 border-2 border-emerald-500/40 text-emerald-400 flex items-center justify-center shrink-0 mt-0.5 shadow-[0_0_12px_rgba(16,185,129,0.25)]">
+                  <div className="w-9 h-9 rounded-xl bg-neutral-900 border border-neutral-800 text-emerald-400 flex items-center justify-center shrink-0 mt-0.5">
                     <Clock className="w-4 h-4" />
                   </div>
                   <div>
@@ -1284,7 +1314,7 @@ export const HomePage: React.FC = () => {
             </div>
 
             {/* Quick Emergency Note Box */}
-            <div className="p-4 rounded-2xl bg-amber-950/60 border-2 border-amber-500/50 text-xs text-amber-200 flex items-start gap-2.5 shadow-[0_0_20px_rgba(245,158,11,0.2)]">
+            <div className="p-4 rounded-2xl bg-[#1c1811] border border-amber-900/60 text-xs text-amber-200 flex items-start gap-2.5">
               <AlertTriangle className="w-4 h-4 text-amber-400 shrink-0 mt-0.5" />
               <div className="leading-relaxed">
                 <strong>Catatan Kedaruratan Mendesak:</strong> Bila terjadi situasi bahaya yang mengancam nyawa seketika, segera tekan tombol telepon darurat <strong>112</strong> atau <strong>115 (Basarnas)</strong>.
@@ -1293,7 +1323,7 @@ export const HomePage: React.FC = () => {
           </div>
 
           {/* Right Column: Interactive Feedback & Inquiry Form */}
-          <div className="lg:col-span-7 bg-gradient-to-b from-[#0c2419] via-[#071710] to-[#040d09] p-6 sm:p-8 rounded-3xl border-2 border-emerald-500/40 shadow-xl space-y-5">
+          <div className="lg:col-span-7 bg-[#121614] p-6 sm:p-8 rounded-3xl border border-neutral-800 space-y-5">
             <div className="space-y-1">
               <h3 className="text-base font-black text-white">
                 Kirim Pesan, Usulan, atau Pertanyaan
@@ -1316,7 +1346,7 @@ export const HomePage: React.FC = () => {
                     value={contactName}
                     onChange={(e) => setContactName(e.target.value)}
                     placeholder="Contoh: Budi Santoso"
-                    className="w-full px-3.5 py-2.5 rounded-xl border-2 border-emerald-500/35 bg-[#06150e] text-xs text-white placeholder-neutral-500 outline-none focus:border-emerald-400 focus:ring-2 focus:ring-emerald-400/30"
+                    className="w-full px-3.5 py-2.5 rounded-xl border border-neutral-700 bg-[#0d100f] text-xs text-white placeholder-neutral-500 outline-none focus:border-emerald-600 focus:ring-1 focus:ring-emerald-600"
                   />
                 </div>
 
@@ -1331,7 +1361,7 @@ export const HomePage: React.FC = () => {
                     value={contactEmail}
                     onChange={(e) => setContactEmail(e.target.value)}
                     placeholder="budi@example.com"
-                    className="w-full px-3.5 py-2.5 rounded-xl border-2 border-emerald-500/35 bg-[#06150e] text-xs text-white placeholder-neutral-500 outline-none focus:border-emerald-400 focus:ring-2 focus:ring-emerald-400/30"
+                    className="w-full px-3.5 py-2.5 rounded-xl border border-neutral-700 bg-[#0d100f] text-xs text-white placeholder-neutral-500 outline-none focus:border-emerald-600 focus:ring-1 focus:ring-emerald-600"
                   />
                 </div>
               </div>
@@ -1344,12 +1374,12 @@ export const HomePage: React.FC = () => {
                   id="select-contact-category"
                   value={contactCategory}
                   onChange={(e) => setContactCategory(e.target.value)}
-                  className="w-full px-3.5 py-2.5 rounded-xl border-2 border-emerald-500/35 bg-[#06150e] text-xs text-white font-medium outline-none focus:border-emerald-400 focus:ring-2 focus:ring-emerald-400/30"
+                  className="w-full px-3.5 py-2.5 rounded-xl border border-neutral-700 bg-[#0d100f] text-xs text-white font-medium outline-none focus:border-emerald-600 focus:ring-1 focus:ring-emerald-600"
                 >
-                  <option value="pertanyaan" className="bg-[#06150e] text-white">Pertanyaan Umum Seputar Fitur Aplikasi</option>
-                  <option value="usulan_shelter" className="bg-[#06150e] text-white">Usulan Titik Shelter / Jalur Evakuasi Baru</option>
-                  <option value="apresiasi" className="bg-[#06150e] text-white">Apresiasi &amp; Masukan Pengalaman Warga</option>
-                  <option value="kerjasama" className="bg-[#06150e] text-white">Kerjasama Relawan / Komunitas Peduli Bencana</option>
+                  <option value="pertanyaan" className="bg-[#0d100f] text-white">Pertanyaan Umum Seputar Fitur Aplikasi</option>
+                  <option value="usulan_shelter" className="bg-[#0d100f] text-white">Usulan Titik Shelter / Jalur Evakuasi Baru</option>
+                  <option value="apresiasi" className="bg-[#0d100f] text-white">Apresiasi &amp; Masukan Pengalaman Warga</option>
+                  <option value="kerjasama" className="bg-[#0d100f] text-white">Kerjasama Relawan / Komunitas Peduli Bencana</option>
                 </select>
               </div>
 
@@ -1364,14 +1394,14 @@ export const HomePage: React.FC = () => {
                   value={contactMessage}
                   onChange={(e) => setContactMessage(e.target.value)}
                   placeholder="Tuliskan pertanyaan, masukan, atau kendala yang Anda alami..."
-                  className="w-full px-3.5 py-2.5 rounded-xl border-2 border-emerald-500/35 bg-[#06150e] text-xs text-white placeholder-neutral-500 outline-none focus:border-emerald-400 focus:ring-2 focus:ring-emerald-400/30 resize-none"
+                  className="w-full px-3.5 py-2.5 rounded-xl border border-neutral-700 bg-[#0d100f] text-xs text-white placeholder-neutral-500 outline-none focus:border-emerald-600 focus:ring-1 focus:ring-emerald-600 resize-none"
                 />
               </div>
 
               <button
                 type="submit"
                 disabled={isSubmittingContact}
-                className="w-full sm:w-auto inline-flex items-center justify-center gap-2 px-7 py-3 rounded-xl bg-gradient-to-r from-emerald-500 via-emerald-400 to-teal-400 hover:from-emerald-400 hover:to-teal-300 text-black text-xs font-black transition-all shadow-[0_0_25px_rgba(16,185,129,0.45)] disabled:opacity-50 cursor-pointer"
+                className="w-full sm:w-auto inline-flex items-center justify-center gap-2 px-7 py-3 rounded-xl bg-emerald-700 hover:bg-emerald-600 text-white text-xs font-bold transition-colors disabled:opacity-50 cursor-pointer shadow-xs"
               >
                 <Send className="w-3.5 h-3.5" />
                 <span>{isSubmittingContact ? 'Mengirimkan Pesan...' : 'Kirim Pesan Sekarang'}</span>
@@ -1384,9 +1414,9 @@ export const HomePage: React.FC = () => {
       {/* ========================================================================= */}
       {/* 9. PENUTUP & AJAKAN KESIAPSIAGAAN (Friendly Final Call to Action)          */}
       {/* ========================================================================= */}
-      <section className="rounded-3xl bg-gradient-to-r from-[#042417] via-[#083824] to-[#042417] border-2 border-emerald-400/60 text-white p-8 sm:p-12 text-center space-y-6 shadow-[0_0_60px_rgba(16,185,129,0.35)]">
+      <section className="rounded-3xl bg-[#0f1713] border border-neutral-800 text-white p-8 sm:p-12 text-center space-y-6">
         <div className="max-w-2xl mx-auto space-y-3">
-          <span className="inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-full bg-white/10 text-emerald-200 text-xs font-black backdrop-blur-xs border-2 border-white/20">
+          <span className="inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-full bg-neutral-900 text-emerald-300 text-xs font-bold border border-neutral-700">
             <Shield className="w-3.5 h-3.5 text-emerald-400" />
             <span>Keluarga Indonesia Siaga &amp; Tangguh</span>
           </span>
@@ -1401,14 +1431,14 @@ export const HomePage: React.FC = () => {
         <div className="flex flex-wrap items-center justify-center gap-3 pt-2">
           <Link
             to={PATHS.PUBLIC.PREPAREDNESS}
-            className="inline-flex items-center gap-2 px-6 py-3.5 rounded-2xl bg-gradient-to-r from-emerald-400 to-teal-300 hover:from-emerald-300 hover:to-teal-200 text-black text-xs font-black transition-all shadow-[0_0_25px_rgba(16,185,129,0.5)] cursor-pointer"
+            className="inline-flex items-center gap-2 px-6 py-3.5 rounded-2xl bg-emerald-700 hover:bg-emerald-600 text-white text-xs font-bold transition-colors cursor-pointer shadow-xs"
           >
             <span>Buka Panduan Siaga 72 Jam</span>
             <ArrowRight className="w-3.5 h-3.5" />
           </Link>
           <Link
             to={PATHS.PUBLIC.REGISTER}
-            className="inline-flex items-center gap-2 px-6 py-3.5 rounded-2xl bg-white/10 hover:bg-white/20 border-2 border-white/30 text-white text-xs font-bold transition-all backdrop-blur-md cursor-pointer"
+            className="inline-flex items-center gap-2 px-6 py-3.5 rounded-2xl bg-neutral-900 hover:bg-neutral-800 border border-neutral-700 text-white text-xs font-bold transition-colors cursor-pointer"
           >
             <span>Daftar Akun Warga Siaga</span>
           </Link>

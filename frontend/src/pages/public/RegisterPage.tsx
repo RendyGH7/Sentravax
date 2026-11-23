@@ -67,17 +67,14 @@ export const RegisterPage: React.FC = () => {
       <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_center,_var(--tw-gradient-stops))] from-emerald-950/30 via-black/90 to-black pointer-events-none" />
 
       {/* Subtle ambient glowing spots */}
-      <div className="absolute -top-32 -right-32 w-96 h-96 bg-emerald-500/10 rounded-full blur-3xl pointer-events-none" />
-      <div className="absolute -bottom-32 -left-32 w-96 h-96 bg-teal-500/10 rounded-full blur-3xl pointer-events-none" />
+      {/* Full dark cinematic background */}
+      <div className="absolute inset-0 bg-black/90 pointer-events-none" />
 
       <div className="max-w-md w-full relative z-10">
-        <div className="bg-gradient-to-b from-[#0e2218]/95 via-[#081710]/95 to-[#040c08] border-2 border-emerald-500/50 rounded-3xl p-6 sm:p-8 shadow-[0_0_60px_rgba(0,0,0,0.9),0_0_30px_rgba(16,185,129,0.25)] backdrop-blur-2xl space-y-6 relative overflow-hidden">
-          {/* Top radiant edge */}
-          <div className="absolute top-0 inset-x-8 h-[2px] bg-gradient-to-r from-transparent via-emerald-400 to-transparent" />
-
+        <div className="bg-[#121614] border border-neutral-800 rounded-3xl p-6 sm:p-8 space-y-6 relative overflow-hidden">
           <div className="text-center">
-            <div className="w-12 h-12 rounded-2xl bg-gradient-to-br from-emerald-500 to-teal-700 flex items-center justify-center mx-auto mb-3 text-black shadow-[0_0_20px_rgba(16,185,129,0.5)] ring-2 ring-emerald-400/40">
-              <Shield className="w-6 h-6 text-black" />
+            <div className="w-12 h-12 rounded-2xl bg-emerald-700 flex items-center justify-center mx-auto mb-3 text-white shadow-xs">
+              <Shield className="w-6 h-6 text-white" />
             </div>
             <h1 className="text-2xl font-black text-white tracking-tight">Registrasi Akun Warga</h1>
             <p className="text-xs text-neutral-300 mt-1 leading-relaxed">
@@ -103,7 +100,7 @@ export const RegisterPage: React.FC = () => {
                   onChange={(e) => setName(e.target.value)}
                   placeholder="Nama Lengkap Anda"
                   required
-                  className="w-full pl-10 pr-4 py-2.5 rounded-xl bg-[#06120b] border-2 border-emerald-500/35 text-white placeholder-neutral-500 text-xs sm:text-sm focus:outline-none focus:border-emerald-400 focus:ring-2 focus:ring-emerald-400/30 transition-all font-medium"
+                  className="w-full pl-10 pr-4 py-2.5 rounded-xl bg-[#0d100f] border border-neutral-700 text-white placeholder-neutral-500 text-xs sm:text-sm focus:outline-none focus:border-emerald-600 focus:ring-1 focus:ring-emerald-600 transition-colors font-medium"
                 />
               </div>
             </div>
@@ -118,7 +115,7 @@ export const RegisterPage: React.FC = () => {
                   onChange={(e) => setEmail(e.target.value)}
                   placeholder="nama@email.com"
                   required
-                  className="w-full pl-10 pr-4 py-2.5 rounded-xl bg-[#06120b] border-2 border-emerald-500/35 text-white placeholder-neutral-500 text-xs sm:text-sm focus:outline-none focus:border-emerald-400 focus:ring-2 focus:ring-emerald-400/30 transition-all font-medium"
+                  className="w-full pl-10 pr-4 py-2.5 rounded-xl bg-[#0d100f] border border-neutral-700 text-white placeholder-neutral-500 text-xs sm:text-sm focus:outline-none focus:border-emerald-600 focus:ring-1 focus:ring-emerald-600 transition-colors font-medium"
                 />
               </div>
             </div>
@@ -132,7 +129,7 @@ export const RegisterPage: React.FC = () => {
                   value={phone}
                   onChange={(e) => setPhone(e.target.value)}
                   placeholder="08123456789"
-                  className="w-full pl-10 pr-4 py-2.5 rounded-xl bg-[#06120b] border-2 border-emerald-500/35 text-white placeholder-neutral-500 text-xs sm:text-sm focus:outline-none focus:border-emerald-400 focus:ring-2 focus:ring-emerald-400/30 transition-all font-medium"
+                  className="w-full pl-10 pr-4 py-2.5 rounded-xl bg-[#0d100f] border border-neutral-700 text-white placeholder-neutral-500 text-xs sm:text-sm focus:outline-none focus:border-emerald-600 focus:ring-1 focus:ring-emerald-600 transition-colors font-medium"
                 />
               </div>
             </div>
@@ -148,7 +145,7 @@ export const RegisterPage: React.FC = () => {
                   placeholder="Minimal 8 karakter"
                   required
                   minLength={8}
-                  className="w-full pl-10 pr-4 py-2.5 rounded-xl bg-[#06120b] border-2 border-emerald-500/35 text-white placeholder-neutral-500 text-xs sm:text-sm focus:outline-none focus:border-emerald-400 focus:ring-2 focus:ring-emerald-400/30 transition-all font-medium"
+                  className="w-full pl-10 pr-4 py-2.5 rounded-xl bg-[#0d100f] border border-neutral-700 text-white placeholder-neutral-500 text-xs sm:text-sm focus:outline-none focus:border-emerald-600 focus:ring-1 focus:ring-emerald-600 transition-colors font-medium"
                 />
               </div>
             </div>
@@ -157,17 +154,17 @@ export const RegisterPage: React.FC = () => {
               <button
                 type="submit"
                 disabled={isSubmitting}
-                className="w-full flex items-center justify-center gap-2 py-3.5 px-4 rounded-xl bg-gradient-to-r from-emerald-500 via-emerald-400 to-teal-400 hover:from-emerald-400 hover:to-teal-300 text-black font-black text-xs sm:text-sm transition-all shadow-[0_0_25px_rgba(16,185,129,0.5)] hover:shadow-[0_0_35px_rgba(16,185,129,0.7)] disabled:opacity-50 cursor-pointer"
+                className="w-full flex items-center justify-center gap-2 py-3.5 px-4 rounded-xl bg-emerald-700 hover:bg-emerald-600 text-white font-bold text-xs sm:text-sm transition-colors disabled:opacity-50 cursor-pointer shadow-xs"
               >
                 <span>{isSubmitting ? 'Mendaftarkan Akun...' : 'Daftar Akun Warga'}</span>
-                <ArrowRight className="w-4 h-4 text-black" />
+                <ArrowRight className="w-4 h-4 text-white" />
               </button>
             </div>
           </form>
 
-          <div className="text-center text-xs text-neutral-300 pt-3 border-t border-emerald-500/30">
+          <div className="text-center text-xs text-neutral-300 pt-3 border-t border-neutral-800">
             Sudah memiliki akun terdaftar?{' '}
-            <Link to={PATHS.PUBLIC.LOGIN} className="text-emerald-400 hover:text-emerald-300 font-black hover:underline transition-colors">
+            <Link to={PATHS.PUBLIC.LOGIN} className="text-emerald-400 hover:text-emerald-300 font-bold hover:underline transition-colors">
               Masuk disini
             </Link>
           </div>

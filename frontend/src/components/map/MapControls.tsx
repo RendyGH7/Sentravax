@@ -118,8 +118,8 @@ export const MapControls: React.FC<MapControlsProps> = ({
             className={cn(
               btnBaseStyles,
               isBasemapMenuOpen
-                ? 'border-emerald-500 bg-emerald-950/80 text-emerald-300 shadow-[0_0_15px_rgba(16,185,129,0.3)]'
-                : 'hover:border-emerald-500/50'
+                ? 'border-emerald-600 bg-emerald-950/80 text-emerald-300'
+                : 'hover:border-neutral-700'
             )}
           >
             <Layers className="w-4 h-4 sm:w-4.5 sm:h-4.5 text-emerald-400" aria-hidden="true" />
@@ -127,8 +127,8 @@ export const MapControls: React.FC<MapControlsProps> = ({
 
           {/* Basemap Switcher Popover Panel */}
           {isBasemapMenuOpen && (
-            <div className="absolute right-full top-0 mr-2 w-64 rounded-2xl p-2 bg-[#121212]/95 backdrop-blur-xl border-2 border-emerald-500/40 shadow-2xl space-y-1 z-30 animate-in fade-in duration-150">
-              <div className="px-2.5 py-1 text-[11px] font-extrabold uppercase tracking-wider text-emerald-400 flex items-center justify-between border-b border-[#262626] pb-1.5 mb-1">
+            <div className="absolute right-full top-0 mr-2 w-64 rounded-2xl p-2 bg-[#121212] border border-neutral-800 shadow-xl space-y-1 z-30 animate-in fade-in duration-150">
+              <div className="px-2.5 py-1 text-[11px] font-extrabold uppercase tracking-wider text-emerald-400 flex items-center justify-between border-b border-neutral-800 pb-1.5 mb-1">
                 <span>Pilih Tipe Peta</span>
                 <span className="text-[10px] text-neutral-400 font-mono">Real-Time</span>
               </div>
@@ -146,7 +146,7 @@ export const MapControls: React.FC<MapControlsProps> = ({
                     className={cn(
                       'w-full flex items-center justify-between px-3 py-2 rounded-xl text-xs font-bold transition-all text-left cursor-pointer',
                       isActive
-                        ? 'bg-emerald-500 text-black shadow-md shadow-emerald-950/40 font-black'
+                        ? 'bg-emerald-700 text-white font-bold'
                         : 'text-neutral-200 hover:bg-white/10 hover:text-white'
                     )}
                   >
@@ -155,7 +155,7 @@ export const MapControls: React.FC<MapControlsProps> = ({
                       <span>{style.name}</span>
                     </div>
                     {isActive ? (
-                      <Check className="w-4 h-4 text-black" />
+                      <Check className="w-4 h-4 text-white" />
                     ) : style.badge ? (
                       <span className="text-[9px] px-1.5 py-0.5 rounded-full bg-white/10 text-neutral-400">
                         {style.badge}
@@ -180,7 +180,7 @@ export const MapControls: React.FC<MapControlsProps> = ({
           className={cn(
             btnBaseStyles,
             isSheltersOpen
-              ? 'bg-emerald-600 text-white border-emerald-500 hover:bg-emerald-500 shadow-[0_0_15px_rgba(16,185,129,0.3)]'
+              ? 'bg-emerald-700 text-white border-emerald-600 hover:bg-emerald-600'
               : ''
           )}
         >
@@ -199,7 +199,7 @@ export const MapControls: React.FC<MapControlsProps> = ({
           className={cn(
             btnBaseStyles,
             isLegendOpen
-              ? 'border-amber-400 text-amber-400 bg-amber-950/60 shadow-[0_0_15px_rgba(245,158,11,0.3)]'
+              ? 'border-amber-600 text-amber-300 bg-amber-950/60'
               : ''
           )}
         >

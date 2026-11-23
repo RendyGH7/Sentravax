@@ -97,14 +97,14 @@ export const PublicLayout: React.FC = () => {
         <div className="pointer-events-auto max-w-7xl mx-auto h-16 px-4 sm:px-6 rounded-2xl bg-white/[0.08] hover:bg-white/[0.12] backdrop-blur-2xl backdrop-saturate-150 border border-white/25 shadow-[inset_0_1px_1px_0_rgba(255,255,255,0.4),0_12px_36px_rgba(0,0,0,0.5)] flex items-center justify-between gap-3 transition-all">
           {/* Brand Logo & Platform Title */}
           <Link to={PATHS.PUBLIC.HOME} className="flex items-center gap-2.5 shrink-0 group">
-            <div className="w-9 h-9 rounded-xl bg-gradient-to-br from-emerald-500 to-teal-700 flex items-center justify-center text-white shadow-[0_0_15px_rgba(16,185,129,0.4)] transition-transform group-hover:scale-105 ring-2 ring-emerald-400/40">
+            <div className="w-9 h-9 rounded-xl bg-emerald-700 flex items-center justify-center text-white transition-transform group-hover:scale-105 border border-emerald-600/40">
               <Shield className="w-5 h-5 text-white" />
             </div>
             <div className="flex flex-col">
               <span className="text-[15px] font-extrabold tracking-tight text-white drop-shadow-sm">
                 SENTRAVAX
               </span>
-              <span className="text-[10px] text-neutral-300 font-medium tracking-tight -mt-0.5 hidden sm:block drop-shadow-xs">
+              <span className="text-[10px] text-neutral-300 font-medium tracking-tight -mt-0.5 hidden sm:block">
                 Kesiapsiagaan Bencana Nasional
               </span>
             </div>
@@ -118,7 +118,7 @@ export const PublicLayout: React.FC = () => {
                 to={item.to}
                 className={`px-3.5 py-1.5 rounded-xl text-[13px] transition-all ${
                   item.active
-                    ? 'text-emerald-300 bg-emerald-500/25 border border-emerald-400/50 font-bold shadow-[0_0_15px_rgba(16,185,129,0.25)] backdrop-blur-xs'
+                    ? 'text-emerald-300 bg-neutral-800/90 border border-neutral-700 font-bold'
                     : 'text-neutral-200 hover:text-white hover:bg-white/[0.12] font-medium'
                 }`}
               >
@@ -132,7 +132,7 @@ export const PublicLayout: React.FC = () => {
             {/* Quick Report Tool */}
             <Link
               to={PATHS.PUBLIC.REPORT}
-              className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-bold bg-rose-500/20 hover:bg-rose-500/30 text-rose-200 border-2 border-rose-500/50 transition-colors shadow-[0_0_12px_rgba(244,63,94,0.25)] backdrop-blur-xs"
+              className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-bold bg-rose-950/70 hover:bg-rose-900/80 text-rose-200 border border-rose-800/60 transition-colors"
             >
               <AlertCircle className="w-3.5 h-3.5 text-rose-400" />
               <span>Lapor</span>
@@ -149,7 +149,7 @@ export const PublicLayout: React.FC = () => {
                       ? PATHS.INTELLIGENCE.OVERVIEW
                       : PATHS.USER.DASHBOARD
                   }
-                  className="inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-xl text-xs font-semibold bg-emerald-500/25 hover:bg-emerald-500/35 text-emerald-200 border border-emerald-400/40 transition-colors backdrop-blur-xs shadow-[0_0_12px_rgba(16,185,129,0.2)]"
+                  className="inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-xl text-xs font-semibold bg-emerald-950/60 hover:bg-emerald-900/60 text-emerald-200 border border-emerald-800/50 transition-colors"
                 >
                   <User className="w-3.5 h-3.5 text-emerald-300" />
                   <span>{user.name.split(' ')[0]}</span>
@@ -167,7 +167,7 @@ export const PublicLayout: React.FC = () => {
             ) : (
               <Link
                 to={PATHS.PUBLIC.LOGIN}
-                className="inline-flex items-center gap-1.5 px-4 py-1.5 rounded-xl text-xs font-extrabold bg-gradient-to-r from-emerald-500 to-teal-400 hover:from-emerald-400 hover:to-teal-300 text-black shadow-[0_0_20px_rgba(16,185,129,0.4)] transition-all hover:shadow-[0_0_25px_rgba(16,185,129,0.6)] hover:scale-105"
+                className="inline-flex items-center gap-1.5 px-4 py-1.5 rounded-xl text-xs font-bold bg-emerald-700 hover:bg-emerald-600 text-white transition-colors"
               >
                 <LogIn className="w-3.5 h-3.5" />
                 <span>Masuk</span>
