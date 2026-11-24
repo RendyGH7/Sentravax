@@ -1,8 +1,10 @@
 import React, { useState, useEffect, useCallback, useRef, useMemo, Suspense, lazy } from 'react';
 import { Link } from 'react-router-dom';
+import { motion, AnimatePresence } from 'motion/react';
 import { PATHS } from '../../app/router/paths';
 import { publicService } from '../../services/public-service';
 import { AnimatedCounter } from '../../components/shared/AnimatedCounter';
+import { ScrollWordTitle } from '../../components/shared/ScrollWordTitle';
 import type {
   PublicOverviewData,
   HazardEventItem,
@@ -714,10 +716,14 @@ export const HomePage: React.FC = () => {
         {/* Foreground Content */}
         <div className="relative z-10 max-w-4xl mx-auto space-y-6 sm:space-y-8 pt-28 sm:pt-36 pb-20 px-4">
           {/* Heading */}
-          <h1 className="text-3xl sm:text-5xl lg:text-6xl font-black tracking-tight text-white leading-[1.12]">
+          <ScrollWordTitle
+            as="h1"
+            className="text-3xl sm:text-5xl lg:text-6xl font-black tracking-tight text-white leading-[1.12]"
+            stagger={0.05}
+          >
             Lindungi Keluarga Anda.
             <span className="block mt-2 text-emerald-400">Siaga Nyata Sebelum Bencana.</span>
-          </h1>
+          </ScrollWordTitle>
 
           {/* Concise, non-slop subtitle */}
           <p className="text-sm sm:text-base text-neutral-200 leading-relaxed max-w-xl mx-auto font-normal">
@@ -726,27 +732,31 @@ export const HomePage: React.FC = () => {
 
           {/* Action CTAs */}
           <div className="flex flex-wrap items-center justify-center gap-3.5 pt-3">
-            <a
-              href="#fitur-peta"
-              className="inline-flex items-center gap-2 px-7 py-3.5 rounded-2xl bg-emerald-700 hover:bg-emerald-600 text-white font-bold text-sm transition-colors shadow-sm cursor-pointer"
-            >
-              <Map className="w-4 h-4 text-white" />
-              <span>Buka Peta Radar</span>
-            </a>
+            <motion.div whileHover={{ scale: 1.03 }} whileTap={{ scale: 0.97 }}>
+              <a
+                href="#fitur-peta"
+                className="inline-flex items-center gap-2 px-7 py-3.5 rounded-2xl bg-emerald-700 hover:bg-emerald-600 text-white font-bold text-sm transition-colors shadow-sm cursor-pointer"
+              >
+                <Map className="w-4 h-4 text-white" />
+                <span>Buka Peta Radar</span>
+              </a>
+            </motion.div>
 
-            <a
-              href="#fitur-cek-risiko"
-              className="inline-flex items-center gap-2 px-7 py-3.5 rounded-2xl bg-neutral-900/90 hover:bg-neutral-800 border border-neutral-700 text-neutral-100 font-bold text-sm transition-colors cursor-pointer"
-            >
-              <Compass className="w-4 h-4 text-emerald-400" />
-              <span>Cek Risiko Wilayah</span>
-            </a>
+            <motion.div whileHover={{ scale: 1.03 }} whileTap={{ scale: 0.97 }}>
+              <a
+                href="#fitur-cek-risiko"
+                className="inline-flex items-center gap-2 px-7 py-3.5 rounded-2xl bg-neutral-900/90 hover:bg-neutral-800 border border-neutral-700 text-neutral-100 font-bold text-sm transition-colors cursor-pointer"
+              >
+                <Compass className="w-4 h-4 text-emerald-400" />
+                <span>Cek Risiko Wilayah</span>
+              </a>
+            </motion.div>
           </div>
         </div>
       </section>
 
       {/* Main Content Sections Container */}
-      <div className="space-y-16 py-8 px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto text-neutral-100">
+      <div className="space-y-16 py-8 px-4 sm:px-6 lg:px-8 max-w-6xl mx-auto text-neutral-100">
 
       {/* ========================================================================= */}
       {/* 3. INTEGRASI OTORITAS & STATUS SISTEM NASIONAL (Data Angka & Counter)     */}
@@ -754,7 +764,14 @@ export const HomePage: React.FC = () => {
       <section className="py-2 sm:py-3">
         <div className="grid grid-cols-2 lg:grid-cols-4 gap-6 lg:gap-8">
           {/* Kolom 1: Cakupan Wilayah Nasional */}
-          <div className="space-y-1">
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true, margin: '-20px' }}
+            transition={{ duration: 0.5, delay: 0.05 }}
+            whileHover={{ y: -3, transition: { duration: 0.2 } }}
+            className="space-y-1 p-3.5 rounded-2xl bg-neutral-900/30 border border-neutral-800/40 hover:border-neutral-700/60 hover:bg-neutral-900/50 transition-colors cursor-default"
+          >
             <div className="text-[10px] font-mono font-bold tracking-wider uppercase text-sky-400">
               CAKUPAN WILAYAH
             </div>
@@ -771,10 +788,17 @@ export const HomePage: React.FC = () => {
             <div className="text-[11px] sm:text-xs text-sky-400 font-medium">
               38 Provinsi Indonesia
             </div>
-          </div>
+          </motion.div>
 
           {/* Kolom 2: Teritorial Kepulauan */}
-          <div className="space-y-1">
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true, margin: '-20px' }}
+            transition={{ duration: 0.5, delay: 0.1 }}
+            whileHover={{ y: -3, transition: { duration: 0.2 } }}
+            className="space-y-1 p-3.5 rounded-2xl bg-neutral-900/30 border border-neutral-800/40 hover:border-neutral-700/60 hover:bg-neutral-900/50 transition-colors cursor-default"
+          >
             <div className="text-[10px] font-mono font-bold tracking-wider uppercase text-indigo-400">
               TERITORIAL KEPULAUAN
             </div>
@@ -791,10 +815,17 @@ export const HomePage: React.FC = () => {
             <div className="text-[11px] sm:text-xs text-indigo-300 font-medium">
               Zona Maritim &amp; Pesisir
             </div>
-          </div>
+          </motion.div>
 
           {/* Kolom 3: Pemetaan Risiko Kecamatan */}
-          <div className="space-y-1">
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true, margin: '-20px' }}
+            transition={{ duration: 0.5, delay: 0.15 }}
+            whileHover={{ y: -3, transition: { duration: 0.2 } }}
+            className="space-y-1 p-3.5 rounded-2xl bg-neutral-900/30 border border-neutral-800/40 hover:border-neutral-700/60 hover:bg-neutral-900/50 transition-colors cursor-default"
+          >
             <div className="text-[10px] font-mono font-bold tracking-wider uppercase text-amber-400">
               PEMETAAN RISIKO
             </div>
@@ -811,10 +842,17 @@ export const HomePage: React.FC = () => {
             <div className="text-[11px] sm:text-xs text-amber-300 font-medium">
               Multi-Ancaman Geospasial
             </div>
-          </div>
+          </motion.div>
 
           {/* Kolom 4: Titik Evakuasi & Shelter Terdata (Belasan Ribu) */}
-          <div className="space-y-1">
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true, margin: '-20px' }}
+            transition={{ duration: 0.5, delay: 0.2 }}
+            whileHover={{ y: -3, transition: { duration: 0.2 } }}
+            className="space-y-1 p-3.5 rounded-2xl bg-neutral-900/30 border border-neutral-800/40 hover:border-neutral-700/60 hover:bg-neutral-900/50 transition-colors cursor-default"
+          >
             <div className="text-[10px] font-mono font-bold tracking-wider uppercase text-emerald-400">
               TITIK EVAKUASI &amp; SHELTER
             </div>
@@ -832,7 +870,7 @@ export const HomePage: React.FC = () => {
             <div className="text-[11px] sm:text-xs text-emerald-300 font-medium">
               Infrastruktur Evakuasi Warga
             </div>
-          </div>
+          </motion.div>
         </div>
       </section>
 
@@ -842,19 +880,24 @@ export const HomePage: React.FC = () => {
       <section id="fitur-peta" className="space-y-4">
         <div className="flex flex-col md:flex-row md:items-end justify-between gap-4">
           <div>
-            <h2 className="text-2xl sm:text-3xl font-black text-white tracking-tight">
+            <ScrollWordTitle
+              as="h2"
+              className="text-2xl sm:text-3xl font-black text-white tracking-tight"
+            >
               Peta Situasi Bencana &amp; Shelter Terkini
-            </h2>
+            </ScrollWordTitle>
           </div>
 
           <div className="flex items-center gap-2 shrink-0">
-            <Link
-              to={PATHS.PUBLIC.MAP}
-              className="inline-flex items-center gap-1.5 px-4 py-2.5 rounded-xl bg-neutral-900 hover:bg-neutral-800 border border-neutral-700 text-neutral-200 hover:text-white text-xs font-bold transition-colors cursor-pointer"
-            >
-              <span>Buka Peta Layar Penuh</span>
-              <ExternalLink className="w-3.5 h-3.5 text-emerald-400" />
-            </Link>
+            <motion.div whileHover={{ scale: 1.02 }} whileTap={{ scale: 0.98 }}>
+              <Link
+                to={PATHS.PUBLIC.MAP}
+                className="inline-flex items-center gap-1.5 px-4 py-2.5 rounded-xl bg-neutral-900 hover:bg-neutral-800 border border-neutral-700 text-neutral-200 hover:text-white text-xs font-bold transition-colors cursor-pointer"
+              >
+                <span>Buka Peta Layar Penuh</span>
+                <ExternalLink className="w-3.5 h-3.5 text-emerald-400" />
+              </Link>
+            </motion.div>
           </div>
         </div>
 
@@ -925,25 +968,36 @@ export const HomePage: React.FC = () => {
       {/* 5. FITUR UTAMA 2: CEK CEPAT ZONA RISIKO LOKASI & REKOMENDASI (1-Tap)       */}
       {/* ========================================================================= */}
       <section id="fitur-cek-risiko" className="space-y-6 pt-6 border-t border-neutral-800">
-        <div className="rounded-3xl bg-[#111513] border border-neutral-800 p-6 sm:p-8 space-y-6">
+        <motion.div
+          initial={{ opacity: 0, y: 24 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true, margin: '-40px' }}
+          transition={{ duration: 0.6 }}
+          className="rounded-3xl bg-[#111513] border border-neutral-800 p-6 sm:p-8 space-y-6"
+        >
           <div className="flex flex-col md:flex-row md:items-end justify-between gap-4">
             <div className="space-y-1.5">
-              <h2 className="text-2xl sm:text-3xl font-black text-white tracking-tight">
+              <ScrollWordTitle
+                as="h2"
+                className="text-2xl sm:text-3xl font-black text-white tracking-tight"
+              >
                 Pengecekan Cepat Zona Risiko Wilayah Anda
-              </h2>
+              </ScrollWordTitle>
               <p className="text-xs sm:text-sm text-neutral-300 max-w-2xl font-normal">
                 Cukup klik satu tombol untuk mendeteksi potensi ancaman gempa bumi, banjir luapan, atau cuaca ekstrem di posisi Anda saat ini.
               </p>
             </div>
 
             <div className="flex items-center gap-2">
-              <Link
-                to={PATHS.PUBLIC.PREPAREDNESS}
-                className="inline-flex items-center gap-1.5 px-4 py-2.5 rounded-xl bg-neutral-900 hover:bg-neutral-800 border border-neutral-700 text-white text-xs font-bold transition-colors shrink-0 cursor-pointer"
-              >
-                <span>Buka Rencana Siaga Lengkap</span>
-                <ArrowRight className="w-3.5 h-3.5 text-emerald-400" />
-              </Link>
+              <motion.div whileHover={{ scale: 1.02 }} whileTap={{ scale: 0.98 }}>
+                <Link
+                  to={PATHS.PUBLIC.PREPAREDNESS}
+                  className="inline-flex items-center gap-1.5 px-4 py-2.5 rounded-xl bg-neutral-900 hover:bg-neutral-800 border border-neutral-700 text-white text-xs font-bold transition-colors shrink-0 cursor-pointer"
+                >
+                  <span>Buka Rencana Siaga Lengkap</span>
+                  <ArrowRight className="w-3.5 h-3.5 text-emerald-400" />
+                </Link>
+              </motion.div>
             </div>
           </div>
 
@@ -955,15 +1009,17 @@ export const HomePage: React.FC = () => {
               </span>
 
               <div className="space-y-3">
-                <button
+                <motion.button
                   type="button"
                   onClick={handleGpsCheck}
                   disabled={isQuickChecking}
+                  whileHover={{ scale: 1.015 }}
+                  whileTap={{ scale: 0.985 }}
                   className="w-full inline-flex items-center justify-center gap-2 px-4 py-3.5 rounded-xl bg-emerald-700 hover:bg-emerald-600 text-white text-xs font-bold transition-colors disabled:opacity-50 cursor-pointer tracking-wide shadow-xs"
                 >
                   <Navigation className="w-4 h-4 text-white shrink-0" />
                   <span>{isQuickChecking ? 'Sedang Mendeteksi Posisi Anda...' : 'Deteksi Lokasi Saya Sekarang (GPS)'}</span>
-                </button>
+                </motion.button>
 
                 <div className="relative flex items-center justify-center">
                   <div className="border-t border-neutral-800 w-full" />
@@ -1058,7 +1114,7 @@ export const HomePage: React.FC = () => {
               )}
             </div>
           </div>
-        </div>
+        </motion.div>
       </section>
 
       {/* ========================================================================= */}
@@ -1070,9 +1126,12 @@ export const HomePage: React.FC = () => {
             <LayoutGrid className="w-3.5 h-3.5 text-emerald-400" />
             <span>DOKUMENTASI KESELAMATAN WARGA</span>
           </div>
-          <h2 className="text-2xl sm:text-4xl font-black text-white tracking-tight">
+          <ScrollWordTitle
+            as="h2"
+            className="text-2xl sm:text-4xl font-black text-white tracking-tight"
+          >
             Galeri Warga Terselamatkan dari Bencana
-          </h2>
+          </ScrollWordTitle>
           <p className="text-xs sm:text-base text-neutral-300 leading-relaxed font-normal">
             Potret nyata warga dan keluarga di berbagai penjuru nusantara yang berhasil selamat dan tiba di posko shelter aman berkat deteksi dini dan panduan evakuasi terarah SENTRAVAX.
           </p>
@@ -1089,9 +1148,12 @@ export const HomePage: React.FC = () => {
           ].map((tab) => {
             const isActive = galleryCategory === tab.id;
             return (
-              <button
+              <motion.button
                 key={tab.id}
                 type="button"
+                whileHover={{ scale: 1.04 }}
+                whileTap={{ scale: 0.96 }}
+                transition={{ duration: 0.15 }}
                 onClick={() => setGalleryCategory(tab.id as typeof galleryCategory)}
                 className={`px-4 py-2 rounded-2xl text-xs font-bold transition-all cursor-pointer shrink-0 border ${
                   isActive
@@ -1100,172 +1162,213 @@ export const HomePage: React.FC = () => {
                 }`}
               >
                 <span>{tab.label}</span>
-              </button>
+              </motion.button>
             );
           })}
         </div>
 
-        {/* 10 Foto Dokumentasi Grid — Visual Portrait (Panjang ke Bawah) dengan Efek Kaca Bening & Transisi Halus */}
+        {/* 10 Foto Dokumentasi Grid — Editorial Bento Mosaic Layout (10 Foto Pas Tanpa Sisa, Top & Bottom Rata Rapi) */}
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5 sm:gap-6">
           {RESCUE_GALLERY_STORIES.filter((item) =>
             galleryCategory === 'all' ? true : item.category === galleryCategory
-          ).map((item) => (
-            <div
-              key={item.id}
-              onClick={() => setSelectedStory(item)}
-              className="group relative rounded-3xl overflow-hidden aspect-[3/4] border border-neutral-800/80 bg-neutral-950 cursor-pointer shadow-lg hover:border-emerald-500/40 hover:shadow-xl hover:shadow-emerald-950/20 transition-all duration-300 select-none"
-            >
-              {/* Foto Dokumentasi Penuh (Panjang ke bawah / Portrait, Bersih tanpa Teks Awal) */}
-              <img
-                src={item.image}
-                alt={item.title}
-                className="w-full h-full object-cover object-center transition-transform duration-500 ease-out group-hover:scale-105"
-                loading="lazy"
-              />
+          ).map((item, idx) => {
+            const isAll = galleryCategory === 'all';
+            // Bento rhythm: Baris 1 (1 + 2), Baris 2 (1 + 1 + 1), Baris 3 (1 + 2), Baris 4 (1 + 1 + 1) = 10 foto pas
+            const isWide = isAll && (idx === 1 || idx === 6);
+            const isTaller = isAll && (idx === 0 || idx === 1 || idx === 5 || idx === 6);
 
-              {/* Animasi Glass Overlay dari Bawah: Efek Kaca Bening (Foto tetap terlihat), Gradien Halus Tanpa Garis Patah */}
-              <div
-                className="absolute inset-x-0 bottom-0 pt-24 pb-5 px-5 sm:px-6 bg-gradient-to-t from-black/75 via-black/35 via-55% to-transparent backdrop-blur-[3px] transform translate-y-6 opacity-0 group-hover:translate-y-0 group-hover:opacity-100 transition-all duration-300 ease-out flex flex-col justify-end space-y-2 pointer-events-none"
-                style={{
-                  WebkitMaskImage: 'linear-gradient(to top, rgba(0,0,0,1) 0%, rgba(0,0,0,0.9) 60%, rgba(0,0,0,0) 100%)',
-                  maskImage: 'linear-gradient(to top, rgba(0,0,0,1) 0%, rgba(0,0,0,0.9) 60%, rgba(0,0,0,0) 100%)',
+            const cardClasses = isAll
+              ? isWide
+                ? 'col-span-1 lg:col-span-2 h-[380px] sm:h-[440px]'
+                : isTaller
+                  ? 'col-span-1 lg:col-span-1 h-[380px] sm:h-[440px]'
+                  : 'col-span-1 lg:col-span-1 h-[340px] sm:h-[400px]'
+              : 'col-span-1 h-[360px] sm:h-[420px]';
+
+            return (
+              <motion.div
+                key={item.id}
+                onClick={() => setSelectedStory(item)}
+                initial={{ opacity: 0, y: 28 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true, margin: '-40px' }}
+                transition={{
+                  duration: 0.55,
+                  delay: (idx % 3) * 0.08,
+                  ease: [0.22, 1, 0.36, 1],
                 }}
+                whileHover={{
+                  y: -6,
+                  transition: { duration: 0.25, ease: 'easeOut' },
+                }}
+                whileTap={{ scale: 0.99 }}
+                className={`group relative rounded-3xl overflow-hidden ${cardClasses} border border-neutral-800/80 bg-neutral-950 cursor-pointer shadow-lg hover:border-emerald-500/40 hover:shadow-xl hover:shadow-emerald-950/20 transition-all duration-300 select-none`}
               >
-                {/* Baris Lokasi & Tag Status Bahaya */}
-                <div className="flex items-center justify-between gap-2 drop-shadow-[0_1px_2px_rgba(0,0,0,0.9)]">
-                  <span className="inline-flex items-center gap-1.5 text-xs font-semibold text-emerald-300">
-                    <MapPin className="w-3.5 h-3.5 text-emerald-400 shrink-0" />
-                    <span>{item.location}</span>
-                  </span>
-                  <span className="inline-flex items-center px-2 py-0.5 rounded-md bg-emerald-950/70 border border-emerald-600/60 text-[10px] font-mono font-bold text-emerald-300 uppercase backdrop-blur-xs">
-                    {item.hazardType.split(' ')[0]}
-                  </span>
+                {/* Foto Dokumentasi Penuh (Bersih tanpa Teks Awal) */}
+                <img
+                  src={item.image}
+                  alt={item.title}
+                  className="w-full h-full object-cover object-center transition-transform duration-500 ease-out group-hover:scale-105"
+                  loading="lazy"
+                />
+
+                {/* Animasi Glass Overlay dari Bawah: Efek Kaca Bening, Gradien Halus Tanpa Garis Patah */}
+                <div
+                  className="absolute inset-x-0 bottom-0 pt-24 pb-5 px-5 sm:px-6 bg-gradient-to-t from-black/75 via-black/35 via-55% to-transparent backdrop-blur-[3px] transform translate-y-6 opacity-0 group-hover:translate-y-0 group-hover:opacity-100 transition-all duration-300 ease-out flex flex-col justify-end space-y-2 pointer-events-none"
+                  style={{
+                    WebkitMaskImage: 'linear-gradient(to top, rgba(0,0,0,1) 0%, rgba(0,0,0,0.9) 60%, rgba(0,0,0,0) 100%)',
+                    maskImage: 'linear-gradient(to top, rgba(0,0,0,1) 0%, rgba(0,0,0,0.9) 60%, rgba(0,0,0,0) 100%)',
+                  }}
+                >
+                  {/* Baris Lokasi & Tag Status Bahaya */}
+                  <div className="flex items-center justify-between gap-2 drop-shadow-[0_1px_2px_rgba(0,0,0,0.9)]">
+                    <span className="inline-flex items-center gap-1.5 text-xs font-semibold text-emerald-300">
+                      <MapPin className="w-3.5 h-3.5 text-emerald-400 shrink-0" />
+                      <span>{item.location}</span>
+                    </span>
+                    <span className="inline-flex items-center px-2 py-0.5 rounded-md bg-emerald-950/70 border border-emerald-600/60 text-[10px] font-mono font-bold text-emerald-300 uppercase backdrop-blur-xs">
+                      {item.hazardType.split(' ')[0]}
+                    </span>
+                  </div>
+
+                  {/* Judul Informasi Singkat */}
+                  <h3 className="text-sm font-bold text-white tracking-tight leading-snug line-clamp-2 drop-shadow-[0_1px_2px_rgba(0,0,0,0.9)]">
+                    {item.title}
+                  </h3>
+
+                  {/* Ringkasan Singkat Dampak & Manfaat */}
+                  <p className="text-xs text-neutral-200 leading-relaxed line-clamp-2 font-normal drop-shadow-[0_1px_2px_rgba(0,0,0,0.9)]">
+                    {item.story}
+                  </p>
+
+                  {/* Footer Informasi Halus Tanpa Border Kaku */}
+                  <div className="pt-1.5 flex items-center justify-between text-[11px] text-neutral-300 font-medium drop-shadow-[0_1px_2px_rgba(0,0,0,0.9)]">
+                    <span className="truncate max-w-[200px] text-neutral-300/90">{item.shelterName.split(' - ')[0]}</span>
+                    <span className="text-emerald-300 font-semibold flex items-center gap-1 shrink-0">
+                      Buka Detail <ArrowRight className="w-3 h-3 group-hover:translate-x-0.5 transition-transform" />
+                    </span>
+                  </div>
                 </div>
-
-                {/* Judul Informasi Singkat */}
-                <h3 className="text-sm font-bold text-white tracking-tight leading-snug line-clamp-2 drop-shadow-[0_1px_2px_rgba(0,0,0,0.9)]">
-                  {item.title}
-                </h3>
-
-                {/* Ringkasan Singkat Dampak & Manfaat */}
-                <p className="text-xs text-neutral-200 leading-relaxed line-clamp-2 font-normal drop-shadow-[0_1px_2px_rgba(0,0,0,0.9)]">
-                  {item.story}
-                </p>
-
-                {/* Footer Informasi Halus Tanpa Border Kaku */}
-                <div className="pt-1.5 flex items-center justify-between text-[11px] text-neutral-300 font-medium drop-shadow-[0_1px_2px_rgba(0,0,0,0.9)]">
-                  <span className="truncate max-w-[200px] text-neutral-300/90">{item.shelterName.split(' - ')[0]}</span>
-                  <span className="text-emerald-300 font-semibold flex items-center gap-1 shrink-0">
-                    Buka Detail <ArrowRight className="w-3 h-3 group-hover:translate-x-0.5 transition-transform" />
-                  </span>
-                </div>
-              </div>
-            </div>
-          ))}
+              </motion.div>
+            );
+          })}
         </div>
 
         {/* Lightbox Modal Detail Kisah Penyelamatan */}
-        {selectedStory && (
-          <div
-            className="fixed inset-0 z-50 bg-black/85 backdrop-blur-md flex items-center justify-center p-4 sm:p-6"
-            onClick={() => setSelectedStory(null)}
-          >
-            <div
-              className="relative max-w-3xl w-full max-h-[92vh] overflow-y-auto rounded-3xl bg-[#0e1210] border border-neutral-800 shadow-2xl space-y-6 p-6 sm:p-8"
-              onClick={(e) => e.stopPropagation()}
+        <AnimatePresence>
+          {selectedStory && (
+            <motion.div
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              transition={{ duration: 0.22 }}
+              className="fixed inset-0 z-50 bg-black/85 backdrop-blur-md flex items-center justify-center p-4 sm:p-6"
+              onClick={() => setSelectedStory(null)}
             >
-              {/* Close Button */}
-              <button
-                type="button"
-                onClick={() => setSelectedStory(null)}
-                className="absolute top-5 right-5 p-2 rounded-full bg-neutral-900 border border-neutral-700 text-neutral-300 hover:text-white hover:bg-neutral-800 transition-colors z-10"
-                aria-label="Tutup Detail"
+              <motion.div
+                data-lenis-prevent
+                initial={{ opacity: 0, scale: 0.94, y: 20 }}
+                animate={{ opacity: 1, scale: 1, y: 0 }}
+                exit={{ opacity: 0, scale: 0.95, y: 15 }}
+                transition={{ duration: 0.26, ease: [0.16, 1, 0.3, 1] }}
+                className="relative max-w-3xl w-full max-h-[92vh] overflow-y-auto rounded-3xl bg-[#0e1210] border border-neutral-800 shadow-2xl space-y-6 p-6 sm:p-8"
+                onClick={(e) => e.stopPropagation()}
               >
-                <X className="w-5 h-5" />
-              </button>
-
-              {/* Header Modal */}
-              <div className="space-y-2 pr-12">
-                <div className="flex flex-wrap items-center gap-2">
-                  <span className="inline-flex items-center gap-1 px-3 py-1 rounded-xl bg-emerald-950/80 border border-emerald-800 text-xs font-mono font-bold text-emerald-300 uppercase">
-                    Warga Selamat
-                  </span>
-                  <span className="inline-flex items-center gap-1 px-2.5 py-1 rounded-xl bg-neutral-900 border border-neutral-700 text-xs font-semibold text-neutral-200">
-                    <MapPin className="w-3.5 h-3.5 text-emerald-400" />
-                    <span>{selectedStory.location}</span>
-                  </span>
-                  <span className="text-xs font-mono text-amber-300 bg-amber-950/60 px-2 py-0.5 rounded-md border border-amber-800/80">
-                    {selectedStory.hazardType}
-                  </span>
-                </div>
-                <h3 className="text-xl sm:text-2xl font-black text-white tracking-tight">
-                  {selectedStory.title}
-                </h3>
-                <div className="text-xs text-neutral-400">
-                  Subjek: <span className="text-neutral-200 font-semibold">{selectedStory.person}</span> ({selectedStory.role}) • {selectedStory.date}
-                </div>
-              </div>
-
-              {/* Gambar Dokumentasi Penuh */}
-              <div className="relative aspect-[16/10] sm:aspect-[16/9] rounded-2xl overflow-hidden border border-neutral-800 bg-black">
-                <img
-                  src={selectedStory.image}
-                  alt={selectedStory.title}
-                  className="w-full h-full object-cover"
-                />
-              </div>
-
-              {/* Narasi dan Protokol Penyelamatan */}
-              <div className="grid grid-cols-1 md:grid-cols-3 gap-4 p-4 rounded-2xl bg-[#121614] border border-neutral-800">
-                <div className="space-y-1">
-                  <div className="text-[10px] font-mono text-neutral-400 uppercase">Posko Evakuasi Tujuan</div>
-                  <div className="text-xs font-bold text-white flex items-center gap-1.5">
-                    <Building2 className="w-3.5 h-3.5 text-emerald-400 shrink-0" />
-                    <span>{selectedStory.shelterName}</span>
-                  </div>
-                </div>
-                <div className="space-y-1">
-                  <div className="text-[10px] font-mono text-neutral-400 uppercase">Protokol Penyelamatan</div>
-                  <div className="text-xs font-bold text-emerald-400 flex items-center gap-1.5">
-                    <ShieldCheck className="w-3.5 h-3.5 text-emerald-400 shrink-0" />
-                    <span>{selectedStory.protocolBadge}</span>
-                  </div>
-                </div>
-                <div className="space-y-1">
-                  <div className="text-[10px] font-mono text-neutral-400 uppercase">Hasil Evakuasi</div>
-                  <div className="text-xs font-bold text-white flex items-center gap-1.5">
-                    <CheckCircle2 className="w-3.5 h-3.5 text-emerald-400 shrink-0" />
-                    <span>{selectedStory.stats}</span>
-                  </div>
-                </div>
-              </div>
-
-              {/* Narasi Kronologi */}
-              <div className="space-y-2">
-                <h4 className="text-xs font-mono font-bold tracking-wider uppercase text-neutral-400">
-                  Kronologi Lapangan &amp; Manfaat Aplikasi:
-                </h4>
-                <p className="text-sm text-neutral-200 leading-relaxed bg-[#111513] p-4 rounded-2xl border border-neutral-800/80">
-                  {selectedStory.story}
-                </p>
-              </div>
-
-              {/* Action Buttons */}
-              <div className="flex flex-col sm:flex-row items-center justify-between gap-3 pt-2">
-                <span className="text-xs text-neutral-400">
-                  Dokumentasi verifikasi relawan lapangan &amp; posko koordinasi Sentravax.
-                </span>
-                <Link
-                  to={PATHS.PUBLIC.SHELTERS}
-                  className="w-full sm:w-auto inline-flex items-center justify-center gap-2 px-5 py-2.5 rounded-xl bg-emerald-600 hover:bg-emerald-500 text-white font-bold text-xs tracking-tight transition-all"
+                {/* Close Button */}
+                <motion.button
+                  type="button"
+                  whileHover={{ scale: 1.08 }}
+                  whileTap={{ scale: 0.92 }}
+                  onClick={() => setSelectedStory(null)}
+                  className="absolute top-5 right-5 p-2 rounded-full bg-neutral-900 border border-neutral-700 text-neutral-300 hover:text-white hover:bg-neutral-800 transition-colors z-10 cursor-pointer"
+                  aria-label="Tutup Detail"
                 >
-                  <Building2 className="w-3.5 h-3.5" />
-                  <span>Cari Shelter Siaga Terdekat</span>
-                </Link>
-              </div>
-            </div>
-          </div>
-        )}
+                  <X className="w-5 h-5" />
+                </motion.button>
+
+                {/* Header Modal */}
+                <div className="space-y-2 pr-12">
+                  <div className="flex flex-wrap items-center gap-2">
+                    <span className="inline-flex items-center gap-1 px-3 py-1 rounded-xl bg-emerald-950/80 border border-emerald-800 text-xs font-mono font-bold text-emerald-300 uppercase">
+                      Warga Selamat
+                    </span>
+                    <span className="inline-flex items-center gap-1 px-2.5 py-1 rounded-xl bg-neutral-900 border border-neutral-700 text-xs font-semibold text-neutral-200">
+                      <MapPin className="w-3.5 h-3.5 text-emerald-400" />
+                      <span>{selectedStory.location}</span>
+                    </span>
+                    <span className="text-xs font-mono text-amber-300 bg-amber-950/60 px-2 py-0.5 rounded-md border border-amber-800/80">
+                      {selectedStory.hazardType}
+                    </span>
+                  </div>
+                  <h3 className="text-xl sm:text-2xl font-black text-white tracking-tight">
+                    {selectedStory.title}
+                  </h3>
+                  <div className="text-xs text-neutral-400">
+                    Subjek: <span className="text-neutral-200 font-semibold">{selectedStory.person}</span> ({selectedStory.role}) • {selectedStory.date}
+                  </div>
+                </div>
+
+                {/* Gambar Dokumentasi Penuh */}
+                <div className="relative aspect-[16/10] sm:aspect-[16/9] rounded-2xl overflow-hidden border border-neutral-800 bg-black">
+                  <img
+                    src={selectedStory.image}
+                    alt={selectedStory.title}
+                    className="w-full h-full object-cover"
+                  />
+                </div>
+
+                {/* Narasi dan Protokol Penyelamatan */}
+                <div className="grid grid-cols-1 md:grid-cols-3 gap-4 p-4 rounded-2xl bg-[#121614] border border-neutral-800">
+                  <div className="space-y-1">
+                    <div className="text-[10px] font-mono text-neutral-400 uppercase">Posko Evakuasi Tujuan</div>
+                    <div className="text-xs font-bold text-white flex items-center gap-1.5">
+                      <Building2 className="w-3.5 h-3.5 text-emerald-400 shrink-0" />
+                      <span>{selectedStory.shelterName}</span>
+                    </div>
+                  </div>
+                  <div className="space-y-1">
+                    <div className="text-[10px] font-mono text-neutral-400 uppercase">Protokol Penyelamatan</div>
+                    <div className="text-xs font-bold text-emerald-400 flex items-center gap-1.5">
+                      <ShieldCheck className="w-3.5 h-3.5 text-emerald-400 shrink-0" />
+                      <span>{selectedStory.protocolBadge}</span>
+                    </div>
+                  </div>
+                  <div className="space-y-1">
+                    <div className="text-[10px] font-mono text-neutral-400 uppercase">Hasil Evakuasi</div>
+                    <div className="text-xs font-bold text-white flex items-center gap-1.5">
+                      <CheckCircle2 className="w-3.5 h-3.5 text-emerald-400 shrink-0" />
+                      <span>{selectedStory.stats}</span>
+                    </div>
+                  </div>
+                </div>
+
+                {/* Narasi Kronologi */}
+                <div className="space-y-2">
+                  <h4 className="text-xs font-mono font-bold tracking-wider uppercase text-neutral-400">
+                    Kronologi Lapangan &amp; Manfaat Aplikasi:
+                  </h4>
+                  <p className="text-sm text-neutral-200 leading-relaxed bg-[#111513] p-4 rounded-2xl border border-neutral-800/80">
+                    {selectedStory.story}
+                  </p>
+                </div>
+
+                {/* Action Buttons */}
+                <div className="flex flex-col sm:flex-row items-center justify-between gap-3 pt-2">
+                  <span className="text-xs text-neutral-400">
+                    Dokumentasi verifikasi relawan lapangan &amp; posko koordinasi Sentravax.
+                  </span>
+                  <Link
+                    to={PATHS.PUBLIC.SHELTERS}
+                    className="w-full sm:w-auto inline-flex items-center justify-center gap-2 px-5 py-2.5 rounded-xl bg-emerald-600 hover:bg-emerald-500 text-white font-bold text-xs tracking-tight transition-all"
+                  >
+                    <Building2 className="w-3.5 h-3.5" />
+                    <span>Cari Shelter Siaga Terdekat</span>
+                  </Link>
+                </div>
+              </motion.div>
+            </motion.div>
+          )}
+        </AnimatePresence>
       </section>
 
       {/* ========================================================================= */}
@@ -1274,9 +1377,12 @@ export const HomePage: React.FC = () => {
       <section id="ulasan-warga" className="space-y-6 pt-6 border-t border-neutral-800">
         <div className="flex flex-col md:flex-row md:items-end justify-between gap-4">
           <div>
-            <h2 className="text-2xl sm:text-3xl font-black text-white tracking-tight">
+            <ScrollWordTitle
+              as="h2"
+              className="text-2xl sm:text-3xl font-black text-white tracking-tight"
+            >
               Suara Nyata dari Puluhan Ribu Pengguna
-            </h2>
+            </ScrollWordTitle>
           </div>
 
           {/* Overall Trust Rating */}
@@ -1309,9 +1415,10 @@ export const HomePage: React.FC = () => {
           className="flex gap-4 overflow-x-auto py-2 [scrollbar-width:none] [-ms-overflow-style:none] [&::-webkit-scrollbar]:hidden cursor-grab active:cursor-grabbing touch-pan-x"
         >
           {infiniteReviews.map((rev, index) => (
-            <div
+            <motion.div
               key={`${rev.id}-${index}`}
-              className="w-[290px] sm:w-[320px] shrink-0 p-4.5 rounded-2xl bg-[#121614] border border-neutral-800 hover:border-neutral-700 hover:-translate-y-1 transition-all flex flex-col justify-between space-y-3.5 select-none"
+              whileHover={{ y: -5, scale: 1.015, transition: { duration: 0.2 } }}
+              className="w-[290px] sm:w-[320px] shrink-0 p-4.5 rounded-2xl bg-[#121614] border border-neutral-800 hover:border-emerald-500/30 hover:shadow-lg hover:shadow-emerald-950/20 flex flex-col justify-between space-y-3.5 select-none transition-colors"
             >
               <div className="space-y-3">
                 {/* Header: Star rating & verified badge */}
@@ -1361,7 +1468,7 @@ export const HomePage: React.FC = () => {
                   <div className="text-[10px] text-neutral-400 truncate">{rev.city} • {rev.date}</div>
                 </div>
               </div>
-            </div>
+            </motion.div>
           ))}
         </div>
       </section>
@@ -1371,7 +1478,13 @@ export const HomePage: React.FC = () => {
       {/* ========================================================================= */}
       <section id="kontak-resmi" className="space-y-8 pt-8 border-t border-neutral-800">
         {/* Hotline Darurat Nasional (Bebas Pulsa 1-Tap Dial) */}
-        <div className="p-4 rounded-2xl bg-[#121614] border border-neutral-800 flex flex-col md:flex-row md:items-center justify-between gap-4 text-xs">
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true, margin: '-30px' }}
+          transition={{ duration: 0.5 }}
+          className="p-4 rounded-2xl bg-[#121614] border border-neutral-800 flex flex-col md:flex-row md:items-center justify-between gap-4 text-xs"
+        >
           <div className="flex items-center gap-3">
             <div className="w-8 h-8 rounded-xl bg-rose-950/80 border border-rose-800/60 flex items-center justify-center text-rose-400 shrink-0">
               <PhoneCall className="w-4 h-4 animate-pulse" />
@@ -1389,18 +1502,20 @@ export const HomePage: React.FC = () => {
               { num: '119', label: 'Ambulans' },
               { num: '113', label: 'Damkar' },
             ].map((h) => (
-              <a
+              <motion.a
                 key={h.num}
                 href={`tel:${h.num}`}
-                className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-neutral-900 hover:bg-neutral-800 text-neutral-200 hover:text-white font-mono text-xs font-bold transition-all border border-neutral-700 shadow-xs"
+                whileHover={{ scale: 1.05 }}
+                whileTap={{ scale: 0.95 }}
+                className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-neutral-900 hover:bg-neutral-800 text-neutral-200 hover:text-white font-mono text-xs font-bold transition-all border border-neutral-700 shadow-xs cursor-pointer"
                 title={`Hubungi ${h.label} (${h.num})`}
               >
                 <span className="text-rose-400 font-bold">{h.num}</span>
                 <span className="text-[11px] text-neutral-400 font-sans font-medium">{h.label}</span>
-              </a>
+              </motion.a>
             ))}
           </div>
-        </div>
+        </motion.div>
 
         {/* Section Header */}
         <div className="text-center max-w-2xl mx-auto space-y-2.5">
@@ -1408,16 +1523,25 @@ export const HomePage: React.FC = () => {
             <Mail className="w-3.5 h-3.5 text-emerald-400" />
             <span>PUSAT LAYANAN &amp; KOORDINASI PUBLIK</span>
           </div>
-          <h2 className="text-2xl sm:text-3xl font-black text-white tracking-tight">
+          <ScrollWordTitle
+            as="h2"
+            className="text-2xl sm:text-3xl font-black text-white tracking-tight"
+          >
             Hubungi Kami &amp; Layanan Publik
-          </h2>
+          </ScrollWordTitle>
           <p className="text-xs sm:text-sm text-neutral-300 leading-relaxed font-normal">
             Saluran komunikasi resmi untuk verifikasi data kebencanaan, usulan titik evakuasi baru, koordinasi kemitraan relawan, dan pertanyaan seputar platform kesiapsiagaan nasional.
           </p>
         </div>
 
         {/* Master Unified Container */}
-        <div className="rounded-3xl border border-neutral-800 bg-[#0e1110] overflow-hidden shadow-2xl">
+        <motion.div
+          initial={{ opacity: 0, y: 24 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true, margin: '-40px' }}
+          transition={{ duration: 0.6 }}
+          className="rounded-3xl border border-neutral-800 bg-[#0e1110] overflow-hidden shadow-2xl"
+        >
           <div className="grid grid-cols-1 lg:grid-cols-12 divide-y lg:divide-y-0 lg:divide-x divide-neutral-800">
             {/* Left Column: Official Direct Channels & Command Office (5 cols) */}
             <div className="lg:col-span-5 p-6 sm:p-8 space-y-6 flex flex-col justify-between bg-gradient-to-b from-[#111413] to-[#0c0e0d]">
@@ -1440,7 +1564,10 @@ export const HomePage: React.FC = () => {
                 {/* Direct Channel Cards */}
                 <div className="space-y-3">
                   {/* Channel 1: Email */}
-                  <div className="p-4 rounded-2xl bg-neutral-900/60 border border-neutral-800/80 hover:border-neutral-700 transition-all space-y-2">
+                  <motion.div
+                    whileHover={{ x: 4, transition: { duration: 0.15 } }}
+                    className="p-4 rounded-2xl bg-neutral-900/60 border border-neutral-800/80 hover:border-neutral-700 transition-all space-y-2"
+                  >
                     <div className="flex items-center justify-between">
                       <div className="flex items-center gap-2.5">
                         <div className="w-8 h-8 rounded-xl bg-emerald-950/60 border border-emerald-800/50 text-emerald-400 flex items-center justify-center shrink-0">
@@ -1451,8 +1578,10 @@ export const HomePage: React.FC = () => {
                           <span className="text-[10px] text-neutral-400 font-mono">SLA Balasan &lt; 24 Jam Kerja</span>
                         </div>
                       </div>
-                      <button
+                      <motion.button
                         type="button"
+                        whileHover={{ scale: 1.06 }}
+                        whileTap={{ scale: 0.94 }}
                         onClick={() => handleCopy('layanan@sentravax.id', 'Email')}
                         className="inline-flex items-center gap-1 px-2.5 py-1 rounded-lg bg-neutral-800 hover:bg-neutral-700 text-[11px] text-neutral-300 hover:text-white transition-colors cursor-pointer border border-neutral-700"
                         title="Salin alamat email"
@@ -1468,7 +1597,7 @@ export const HomePage: React.FC = () => {
                             <span>Salin</span>
                           </>
                         )}
-                      </button>
+                      </motion.button>
                     </div>
                     <div className="pt-1">
                       <a
@@ -1479,10 +1608,13 @@ export const HomePage: React.FC = () => {
                         <ExternalLink className="w-3 h-3 opacity-70" />
                       </a>
                     </div>
-                  </div>
+                  </motion.div>
 
                   {/* Channel 2: WhatsApp */}
-                  <div className="p-4 rounded-2xl bg-neutral-900/60 border border-neutral-800/80 hover:border-neutral-700 transition-all space-y-2">
+                  <motion.div
+                    whileHover={{ x: 4, transition: { duration: 0.15 } }}
+                    className="p-4 rounded-2xl bg-neutral-900/60 border border-neutral-800/80 hover:border-neutral-700 transition-all space-y-2"
+                  >
                     <div className="flex items-center justify-between">
                       <div className="flex items-center gap-2.5">
                         <div className="w-8 h-8 rounded-xl bg-emerald-950/60 border border-emerald-800/50 text-emerald-400 flex items-center justify-center shrink-0">
@@ -1493,8 +1625,10 @@ export const HomePage: React.FC = () => {
                           <span className="text-[10px] text-neutral-400 font-mono">Koordinasi &amp; Verifikasi Data</span>
                         </div>
                       </div>
-                      <button
+                      <motion.button
                         type="button"
+                        whileHover={{ scale: 1.06 }}
+                        whileTap={{ scale: 0.94 }}
                         onClick={() => handleCopy('+6281123456789', 'Nomor WhatsApp')}
                         className="inline-flex items-center gap-1 px-2.5 py-1 rounded-lg bg-neutral-800 hover:bg-neutral-700 text-[11px] text-neutral-300 hover:text-white transition-colors cursor-pointer border border-neutral-700"
                         title="Salin nomor WhatsApp"
@@ -1510,7 +1644,7 @@ export const HomePage: React.FC = () => {
                             <span>Salin</span>
                           </>
                         )}
-                      </button>
+                      </motion.button>
                     </div>
                     <div className="pt-1">
                       <a
@@ -1523,7 +1657,7 @@ export const HomePage: React.FC = () => {
                         <ExternalLink className="w-3 h-3 opacity-70" />
                       </a>
                     </div>
-                  </div>
+                  </motion.div>
 
                   {/* Channel 3: Operational Schedule & HQ */}
                   <div className="p-4 rounded-2xl bg-neutral-900/60 border border-neutral-800/80 space-y-2">
@@ -1588,9 +1722,11 @@ export const HomePage: React.FC = () => {
                     ].map((topic) => {
                       const isActive = contactCategory === topic.id;
                       return (
-                        <button
+                        <motion.button
                           key={topic.id}
                           type="button"
+                          whileHover={{ scale: 1.03 }}
+                          whileTap={{ scale: 0.97 }}
                           onClick={() => setContactCategory(topic.id)}
                           className={`px-3 py-2 rounded-xl text-xs font-semibold text-center transition-all cursor-pointer border ${
                             isActive
@@ -1599,7 +1735,7 @@ export const HomePage: React.FC = () => {
                           }`}
                         >
                           {topic.label}
-                        </button>
+                        </motion.button>
                       );
                     })}
                   </div>
@@ -1661,14 +1797,16 @@ export const HomePage: React.FC = () => {
 
                 {/* Submit Row & Assurance */}
                 <div className="pt-2 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
-                  <button
+                  <motion.button
                     type="submit"
                     disabled={isSubmittingContact}
+                    whileHover={{ scale: 1.02 }}
+                    whileTap={{ scale: 0.98 }}
                     className="inline-flex items-center justify-center gap-2 px-7 py-3 rounded-xl bg-emerald-600 hover:bg-emerald-500 active:bg-emerald-700 text-white text-xs sm:text-sm font-bold transition-all disabled:opacity-50 cursor-pointer shadow-md"
                   >
                     <Send className="w-4 h-4" />
                     <span>{isSubmittingContact ? 'Mengirimkan Pesan...' : 'Kirim Pesan Sekarang'}</span>
-                  </button>
+                  </motion.button>
 
                   <div className="flex items-center gap-2 text-[11px] text-neutral-400">
                     <ShieldCheck className="w-4 h-4 text-emerald-400 shrink-0" />
@@ -1678,42 +1816,55 @@ export const HomePage: React.FC = () => {
               </form>
             </div>
           </div>
-        </div>
+        </motion.div>
       </section>
 
       {/* ========================================================================= */}
       {/* 9. PENUTUP & AJAKAN KESIAPSIAGAAN (Friendly Final Call to Action)          */}
       {/* ========================================================================= */}
-      <section className="rounded-3xl bg-[#0f1713] border border-neutral-800 text-white p-8 sm:p-12 text-center space-y-6">
+      <motion.section
+        initial={{ opacity: 0, y: 24 }}
+        whileInView={{ opacity: 1, y: 0 }}
+        viewport={{ once: true, margin: '-40px' }}
+        transition={{ duration: 0.6 }}
+        className="rounded-3xl bg-[#0f1713] border border-neutral-800 text-white p-8 sm:p-12 text-center space-y-6"
+      >
         <div className="max-w-2xl mx-auto space-y-3">
           <span className="inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-full bg-neutral-900 text-emerald-300 text-xs font-bold border border-neutral-700">
             <Shield className="w-3.5 h-3.5 text-emerald-400" />
             <span>Keluarga Indonesia Siaga &amp; Tangguh</span>
           </span>
-          <h2 className="text-2xl sm:text-4xl font-black tracking-tight">
+          <ScrollWordTitle
+            as="h2"
+            className="text-2xl sm:text-4xl font-black tracking-tight"
+          >
             Kesiapsiagaan Dimulai dari Langkah Kecil Hari Ini
-          </h2>
+          </ScrollWordTitle>
           <p className="text-xs sm:text-sm text-neutral-200 leading-relaxed font-normal">
             Jangan tunggu hingga sirine berbunyi. Mulai buat rencana darurat keluarga Anda sekarang juga—bebas biaya, terpercaya, dan dirancang khusus untuk Anda.
           </p>
         </div>
 
         <div className="flex flex-wrap items-center justify-center gap-3 pt-2">
-          <Link
-            to={PATHS.PUBLIC.PREPAREDNESS}
-            className="inline-flex items-center gap-2 px-6 py-3.5 rounded-2xl bg-emerald-700 hover:bg-emerald-600 text-white text-xs font-bold transition-colors cursor-pointer shadow-xs"
-          >
-            <span>Buka Panduan Siaga 72 Jam</span>
-            <ArrowRight className="w-3.5 h-3.5" />
-          </Link>
-          <Link
-            to={PATHS.PUBLIC.REGISTER}
-            className="inline-flex items-center gap-2 px-6 py-3.5 rounded-2xl bg-neutral-900 hover:bg-neutral-800 border border-neutral-700 text-white text-xs font-bold transition-colors cursor-pointer"
-          >
-            <span>Daftar Akun Warga Siaga</span>
-          </Link>
+          <motion.div whileHover={{ scale: 1.03 }} whileTap={{ scale: 0.97 }}>
+            <Link
+              to={PATHS.PUBLIC.PREPAREDNESS}
+              className="inline-flex items-center gap-2 px-6 py-3.5 rounded-2xl bg-emerald-700 hover:bg-emerald-600 text-white text-xs font-bold transition-colors cursor-pointer shadow-xs"
+            >
+              <span>Buka Panduan Siaga 72 Jam</span>
+              <ArrowRight className="w-3.5 h-3.5" />
+            </Link>
+          </motion.div>
+          <motion.div whileHover={{ scale: 1.03 }} whileTap={{ scale: 0.97 }}>
+            <Link
+              to={PATHS.PUBLIC.REGISTER}
+              className="inline-flex items-center gap-2 px-6 py-3.5 rounded-2xl bg-neutral-900 hover:bg-neutral-800 border border-neutral-700 text-white text-xs font-bold transition-colors cursor-pointer"
+            >
+              <span>Daftar Akun Warga Siaga</span>
+            </Link>
+          </motion.div>
         </div>
-      </section>
+      </motion.section>
       </div>
     </div>
   );

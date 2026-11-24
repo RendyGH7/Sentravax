@@ -345,7 +345,7 @@ export const PublicWarningDetailPage: React.FC = () => {
   // SKELETON LOADING VIEW
   if (isLoading) {
     return (
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 space-y-6">
+      <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-8 space-y-6">
         <div className="w-48 h-4 bg-neutral-800 rounded-md animate-pulse" />
         <div className="bg-[#121614] border border-neutral-800 rounded-2xl p-6 sm:p-8 space-y-4 animate-pulse">
           <div className="w-32 h-6 bg-neutral-800 rounded-md" />
@@ -412,7 +412,7 @@ export const PublicWarningDetailPage: React.FC = () => {
     <div className="min-h-screen bg-transparent pb-16 text-neutral-100">
       {/* 1. BREADCRUMBS & NAVIGATION */}
       <div className="bg-[#0d0f0e] border-b border-neutral-800 py-3.5 px-4 sm:px-6 lg:px-8">
-        <div className="max-w-7xl mx-auto flex items-center justify-between text-xs">
+        <div className="max-w-6xl mx-auto flex items-center justify-between text-xs">
           <nav className="flex items-center gap-1.5 text-neutral-400 truncate" aria-label="Breadcrumb">
             <Link to={PATHS.PUBLIC.HOME} className="hover:text-[#047857] transition-colors shrink-0">
               Beranda
@@ -437,7 +437,7 @@ export const PublicWarningDetailPage: React.FC = () => {
         </div>
       </div>
 
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 mt-6 space-y-6">
+      <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 mt-6 space-y-6">
         {/* 2. HEADER CARD */}
         <header className="bg-[#121614] border border-neutral-800 rounded-2xl p-6 sm:p-8 shadow-xs">
           <div className="flex flex-col md:flex-row md:items-start justify-between gap-6">

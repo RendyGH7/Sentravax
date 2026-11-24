@@ -418,7 +418,7 @@ export const PublicPreparednessPage: React.FC = () => {
   }> | undefined;
 
   return (
-    <div className="space-y-10 py-6 px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto text-neutral-100">
+    <div className="space-y-10 py-6 px-4 sm:px-6 lg:px-8 max-w-6xl mx-auto text-neutral-100">
       {/* 0. 1-CLICK EMERGENCY HOTLINE SPEED-DIAL BAR */}
       <section aria-label="Kontak Darurat Cepat" className="p-4 rounded-2xl bg-[#121614] border border-neutral-800 shadow-xs">
         <div className="flex flex-col md:flex-row md:items-center justify-between gap-3 text-xs">

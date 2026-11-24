@@ -1,6 +1,7 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
 import { PATHS } from '../../app/router/paths';
+import { ScrollWordTitle } from '../../components/shared/ScrollWordTitle';
 import { 
   Shield, 
   Map, 
@@ -16,7 +17,7 @@ import {
 
 export const PublicAboutPage: React.FC = () => {
   return (
-    <div className="space-y-8 py-6 px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto text-neutral-100">
+    <div className="space-y-8 py-6 px-4 sm:px-6 lg:px-8 max-w-6xl mx-auto text-neutral-100">
       {/* 1. TOP HEADER & HOTLINE BAR */}
       <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 pb-4 border-b border-[#262626]">
         <div>
@@ -26,9 +27,12 @@ export const PublicAboutPage: React.FC = () => {
               ARSITEKTUR & FITUR PLATFORM
             </span>
           </div>
-          <h1 className="text-2xl sm:text-3xl font-extrabold text-white tracking-tight">
+          <ScrollWordTitle
+            as="h1"
+            className="text-2xl sm:text-3xl font-extrabold text-white tracking-tight"
+          >
             Tentang SENTRAVAX
-          </h1>
+          </ScrollWordTitle>
           <p className="text-xs text-neutral-400 mt-0.5">
             Platform intelijen geospasial & kesiapsiagaan bencana multi-hazard berbasis sains dan data terbuka.
           </p>

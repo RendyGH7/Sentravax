@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { Outlet, Link, useLocation } from 'react-router-dom';
+import { SmoothScrollProvider, useLenis } from '../../components/shared/SmoothScrollProvider';
 import { PATHS } from '../../app/router/paths';
 import { useAuth } from '../../app/context/useAuth';
 import {
@@ -66,6 +67,21 @@ const AppStoreBadge: React.FC<{ className?: string }> = ({ className = '' }) => 
   </button>
 );
 
+const ScrollToTopOnNav: React.FC = () => {
+  const { pathname } = useLocation();
+  const lenis = useLenis();
+
+  React.useEffect(() => {
+    if (lenis) {
+      lenis.scrollTo(0, { immediate: true });
+    } else {
+      window.scrollTo(0, 0);
+    }
+  }, [pathname, lenis]);
+
+  return null;
+};
+
 export const PublicLayout: React.FC = () => {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [downloadModalOpen, setDownloadModalOpen] = useState(false);
@@ -89,12 +105,14 @@ export const PublicLayout: React.FC = () => {
   ];
 
   return (
-    <div className="min-h-screen flex flex-col bg-black text-neutral-100 selection:bg-emerald-500/30 selection:text-emerald-300">
+    <SmoothScrollProvider>
+      <ScrollToTopOnNav />
+      <div className="min-h-screen flex flex-col bg-black text-neutral-100 selection:bg-emerald-500/30 selection:text-emerald-300">
       {/* ========================================================================= */}
       {/* 1. PROFESSIONAL & ELEGANT FLOATING GLASSMORPHIC NAVBAR                    */}
       {/* ========================================================================= */}
       <header className="fixed top-0 inset-x-0 z-50 pt-3 sm:pt-4 px-3 sm:px-6 lg:px-8 pointer-events-none transition-all duration-300">
-        <div className="pointer-events-auto max-w-7xl mx-auto h-16 px-4 sm:px-6 rounded-2xl bg-white/[0.08] hover:bg-white/[0.12] backdrop-blur-2xl backdrop-saturate-150 border border-white/25 shadow-[inset_0_1px_1px_0_rgba(255,255,255,0.4),0_12px_36px_rgba(0,0,0,0.5)] flex items-center justify-between gap-3 transition-all">
+        <div className="pointer-events-auto max-w-6xl mx-auto h-16 px-4 sm:px-6 rounded-2xl bg-white/[0.08] hover:bg-white/[0.12] backdrop-blur-2xl backdrop-saturate-150 border border-white/25 shadow-[inset_0_1px_1px_0_rgba(255,255,255,0.4),0_12px_36px_rgba(0,0,0,0.5)] flex items-center justify-between gap-3 transition-all">
           {/* Brand Logo & Platform Title */}
           <Link to={PATHS.PUBLIC.HOME} className="flex items-center gap-2.5 shrink-0 group">
             <div className="w-9 h-9 rounded-xl bg-emerald-700 flex items-center justify-center text-white transition-transform group-hover:scale-105 border border-emerald-600/40">
@@ -262,7 +280,10 @@ export const PublicLayout: React.FC = () => {
 
         {/* Mobile menu drawer */}
         {mobileMenuOpen && (
-          <div className="lg:hidden pointer-events-auto max-w-7xl mx-auto mt-2 rounded-2xl bg-[#121212]/95 backdrop-blur-2xl border border-[#2a2a2a] px-4 pt-3 pb-6 space-y-4 shadow-[inset_0_1px_1px_rgba(255,255,255,0.2),0_16px_40px_rgba(0,0,0,0.7)] animate-in slide-in-from-top-2 duration-200 max-h-[calc(100vh-5.5rem)] overflow-y-auto text-neutral-200">
+          <div
+            data-lenis-prevent
+            className="lg:hidden pointer-events-auto max-w-6xl mx-auto mt-2 rounded-2xl bg-[#121212]/95 backdrop-blur-2xl border border-[#2a2a2a] px-4 pt-3 pb-6 space-y-4 shadow-[inset_0_1px_1px_rgba(255,255,255,0.2),0_16px_40px_rgba(0,0,0,0.7)] animate-in slide-in-from-top-2 duration-200 max-h-[calc(100vh-5.5rem)] overflow-y-auto text-neutral-200"
+          >
             {/* Core Tools */}
             <div className="space-y-1">
               <div className="text-[10px] font-bold text-neutral-400 uppercase tracking-wider px-3 py-1">
@@ -424,7 +445,7 @@ export const PublicLayout: React.FC = () => {
       {/* 3. PUBLIC FOOTER WITH APP STORE & PLAY STORE DOWNLOAD BADGES              */}
       {/* ========================================================================= */}
       <footer className="bg-black border-t border-[#222222] text-neutral-400 py-12 px-4 sm:px-6 lg:px-8 text-xs">
-        <div className="max-w-7xl mx-auto grid grid-cols-1 md:grid-cols-4 gap-8 mb-8">
+        <div className="max-w-6xl mx-auto grid grid-cols-1 md:grid-cols-4 gap-8 mb-8">
           {/* Brand & Mobile App Info */}
           <div className="space-y-3">
             <div className="flex items-center gap-2">
@@ -479,5 +500,6 @@ export const PublicLayout: React.FC = () => {
         </div>
       </footer>
     </div>
+    </SmoothScrollProvider>
   );
 };

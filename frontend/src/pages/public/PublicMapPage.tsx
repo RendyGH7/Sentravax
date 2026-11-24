@@ -1,5 +1,6 @@
 import React, { Suspense, lazy } from 'react';
 import { RefreshCw } from 'lucide-react';
+import { ScrollWordTitle } from '../../components/shared/ScrollWordTitle';
 
 // Code Splitting: Lazy-load Leaflet map module so non-map routes do not pay the bundle cost
 const DisasterMap = lazy(() =>
@@ -8,11 +9,14 @@ const DisasterMap = lazy(() =>
 
 export const PublicMapPage: React.FC = () => {
   return (
-    <div className="py-6 px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto space-y-4">
+    <div className="py-6 px-4 sm:px-6 lg:px-8 max-w-6xl mx-auto space-y-4">
       <div>
-        <h1 className="text-xl sm:text-2xl font-bold tracking-tight text-white">
-          Peta Bencana & Kesiapsiagaan Indonesia
-        </h1>
+        <ScrollWordTitle
+          as="h1"
+          className="text-xl sm:text-2xl font-bold tracking-tight text-white"
+        >
+          Peta Bencana &amp; Kesiapsiagaan Indonesia
+        </ScrollWordTitle>
         <p className="text-xs sm:text-sm text-neutral-400 mt-1">
           Pantauan geospasial real-time kejadian bencana aktif terverifikasi dari telemetri BMKG dan jaringan posko nasional.
         </p>

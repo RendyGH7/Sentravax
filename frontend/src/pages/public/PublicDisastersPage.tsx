@@ -1,5 +1,6 @@
 import React, { useState, useEffect, useCallback, useMemo, useRef } from 'react';
 import { useSearchParams, Link } from 'react-router-dom';
+import { ScrollWordTitle } from '../../components/shared/ScrollWordTitle';
 import {
   Activity,
   Waves,
@@ -309,16 +310,19 @@ export const PublicDisastersPage: React.FC = () => {
     <div className="min-h-screen bg-transparent pb-16 text-neutral-100">
       {/* 1. HERO & TELEMETRY BANNER */}
       <section className="bg-[#0d0f0e] border-b border-neutral-800 pt-8 pb-10 px-4 sm:px-6 lg:px-8">
-        <div className="max-w-7xl mx-auto">
+        <div className="max-w-6xl mx-auto">
           <div className="flex flex-col md:flex-row md:items-end justify-between gap-6">
             <div className="space-y-3 max-w-3xl">
               <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-neutral-900 border border-neutral-700 text-emerald-400 text-xs font-mono font-bold tracking-wider uppercase">
                 <Radio className="w-3.5 h-3.5 text-emerald-400" />
                 <span>PUSAT INTELIJEN BENCANA TERPADU</span>
               </div>
-              <h1 className="text-2xl sm:text-3xl lg:text-4xl font-black tracking-tight text-white">
+              <ScrollWordTitle
+                as="h1"
+                className="text-2xl sm:text-3xl lg:text-4xl font-black tracking-tight text-white"
+              >
                 Katalog Kejadian Bencana Indonesia
-              </h1>
+              </ScrollWordTitle>
               <p className="text-xs sm:text-sm text-neutral-300 leading-relaxed font-normal">
                 Akses publik terbuka untuk pemantauan data bencana geospasial real-time dan historis. Dihimpun langsung dari telemetri sensor BMKG, PVMBG, BNPB, dan posko pantau terintegrasi.
               </p>
@@ -394,7 +398,7 @@ export const PublicDisastersPage: React.FC = () => {
       </section>
 
       {/* 2. MAIN CONTENT AREA */}
-      <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 mt-6 space-y-6">
+      <main className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 mt-6 space-y-6">
         {/* INTERACTIVE GEOSPATIAL MAP (Collapsible / Synced) */}
         {isMapVisible && (
           <div ref={mapSectionRef} className="bg-[#121614] border border-neutral-800 rounded-2xl p-4 shadow-xs space-y-3">

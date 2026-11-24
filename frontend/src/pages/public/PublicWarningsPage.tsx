@@ -1,5 +1,6 @@
 import React, { useState, useEffect, useCallback, useMemo } from 'react';
 import { useSearchParams, Link } from 'react-router-dom';
+import { ScrollWordTitle } from '../../components/shared/ScrollWordTitle';
 import {
   BellRing,
   ShieldAlert,
@@ -315,16 +316,19 @@ export const PublicWarningsPage: React.FC = () => {
     <div className="min-h-screen bg-transparent pb-16 text-neutral-100">
       {/* 1. HERO & TELEMETRY BANNER */}
       <section className="bg-[#0d0f0e] border-b border-neutral-800 pt-8 pb-10 px-4 sm:px-6 lg:px-8">
-        <div className="max-w-7xl mx-auto">
+        <div className="max-w-6xl mx-auto">
           <div className="flex flex-col md:flex-row md:items-end justify-between gap-6">
             <div className="space-y-3 max-w-3xl">
               <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-neutral-900 border border-neutral-700 text-amber-400 text-xs font-mono font-bold tracking-wider uppercase">
                 <BellRing className="w-3.5 h-3.5 text-amber-400" />
                 <span>PUSAT INFORMASI PERINGATAN DINI PUBLIK</span>
               </div>
-              <h1 className="text-2xl sm:text-3xl lg:text-4xl font-black tracking-tight text-white">
+              <ScrollWordTitle
+                as="h1"
+                className="text-2xl sm:text-3xl lg:text-4xl font-black tracking-tight text-white"
+              >
                 Pusat Peringatan Dini Kebencanaan
-              </h1>
+              </ScrollWordTitle>
               <p className="text-xs sm:text-sm text-neutral-300 leading-relaxed font-normal">
                 Agregasi peringatan dini resmi dan advisori kewaspadaan bahaya kebencanaan untuk membantu masyarakat mempersiapkan langkah antisipasi dan keselamatan.
               </p>
@@ -426,7 +430,7 @@ export const PublicWarningsPage: React.FC = () => {
       </section>
 
       {/* 2. MAIN CONTENT AREA */}
-      <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 mt-6 space-y-6">
+      <main className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 mt-6 space-y-6">
         {/* URGENT WARNING CALLOUT */}
         {!isLoading && topUrgentAlert && (
           <div className="bg-gradient-to-r from-rose-950 via-rose-900 to-amber-950 border border-rose-800/80 rounded-2xl p-5 sm:p-6 text-white shadow-md relative overflow-hidden">

@@ -1,7 +1,9 @@
 import React, { useState, useEffect, useCallback, useMemo } from 'react';
 import { Link } from 'react-router-dom';
+import { motion } from 'motion/react';
 import { PATHS } from '../../app/router/paths';
 import { publicService } from '../../services/public-service';
+import { ScrollWordTitle } from '../../components/shared/ScrollWordTitle';
 import type { ShelterItem, ShelterDetail, FacilityType } from '../../types/shelter';
 import {
   Home,
@@ -128,14 +130,17 @@ export const PublicSheltersPage: React.FC = () => {
   };
 
   return (
-    <div className="py-6 px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto space-y-6 text-neutral-100">
+    <div className="py-6 px-4 sm:px-6 lg:px-8 max-w-6xl mx-auto space-y-6 text-neutral-100">
       {/* Top Header */}
       <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 pb-4 border-b border-neutral-800">
         <div>
           <div className="flex flex-wrap items-center gap-2.5">
-            <h1 className="text-xl sm:text-2xl font-black text-white tracking-tight">
+            <ScrollWordTitle
+              as="h1"
+              className="text-xl sm:text-2xl font-black text-white tracking-tight"
+            >
               Direktori Shelter &amp; Titik Kumpul Evakuasi
-            </h1>
+            </ScrollWordTitle>
             <span className="text-[11px] font-mono font-bold px-3 py-0.5 rounded-full bg-emerald-950/80 text-emerald-300 border border-emerald-800/60">
               Terverifikasi BPBD / BNPB
             </span>
@@ -231,14 +236,19 @@ export const PublicSheltersPage: React.FC = () => {
         </div>
       ) : (
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-          {filteredShelters.map((shelter) => {
+          {filteredShelters.map((shelter, idx) => {
             const totalCapacity = shelter.capacity || 100;
             const occupancyPct = Math.min(100, Math.round((shelter.current_occupancy / totalCapacity) * 100));
 
             return (
-              <div
+              <motion.div
                 key={shelter.id}
-                className="p-5 rounded-2xl bg-[#121614] border border-neutral-800 hover:border-emerald-500/40 transition-all shadow-xs flex flex-col justify-between space-y-4"
+                initial={{ opacity: 0, y: 22 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true, margin: '-30px' }}
+                transition={{ duration: 0.45, delay: (idx % 3) * 0.07, ease: [0.22, 1, 0.36, 1] }}
+                whileHover={{ y: -4, transition: { duration: 0.2 } }}
+                className="p-5 rounded-2xl bg-[#121614] border border-neutral-800 hover:border-emerald-500/40 hover:shadow-xl hover:shadow-emerald-950/20 transition-colors shadow-xs flex flex-col justify-between space-y-4"
               >
                 <div className="space-y-3">
                   <div className="flex items-start justify-between gap-2">
@@ -331,7 +341,7 @@ export const PublicSheltersPage: React.FC = () => {
                     </Link>
                   </div>
                 </div>
-              </div>
+              </motion.div>
             );
           })}
         </div>
@@ -340,7 +350,7 @@ export const PublicSheltersPage: React.FC = () => {
       {/* MODAL: Shelter Detail Inspection */}
       {selectedShelter && (
         <div className="fixed inset-0 z-50 bg-black/80 backdrop-blur-sm flex items-center justify-center p-4">
-          <div className="bg-[#121614] rounded-3xl max-w-lg w-full p-6 shadow-2xl space-y-5 border border-neutral-800 text-neutral-100">
+          <div data-lenis-prevent className="bg-[#121614] rounded-3xl max-w-lg w-full p-6 shadow-2xl space-y-5 border border-neutral-800 text-neutral-100">
             <div className="flex items-center justify-between pb-3 border-b border-neutral-800">
               <div>
                 <span className="text-[10px] font-mono font-bold text-emerald-400 uppercase tracking-wider">
