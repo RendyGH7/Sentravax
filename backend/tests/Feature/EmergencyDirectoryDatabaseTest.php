@@ -226,15 +226,15 @@ class EmergencyDirectoryDatabaseTest extends TestCase
     }
 
     /**
-     * Test 10: Seed menghasilkan jumlah sesuai manifest aktual (7 parent, 11 child).
+     * Test 10: Seed menghasilkan jumlah sesuai manifest aktual (7 parent, 12 child setelah penambahan BNPB 117).
      */
-    public function test_seed_yields_exact_manifest_counts_seven_parents_eleven_channels(): void
+    public function test_seed_yields_exact_manifest_counts_seven_parents_twelve_channels(): void
     {
         $parentCount = EmergencyContact::count();
         $channelCount = EmergencyContactChannel::count();
 
         $this->assertEquals(7, $parentCount, 'Emergency contacts parent count must be exactly 7.');
-        $this->assertEquals(11, $channelCount, 'Emergency contact channels count must be exactly 11.');
+        $this->assertEquals(12, $channelCount, 'Emergency contact channels count must be exactly 12.');
     }
 
     /**
@@ -284,6 +284,7 @@ class EmergencyDirectoryDatabaseTest extends TestCase
         $this->assertNotNull($channel113);
         $this->assertEquals(EmergencyContactChannel::STATUS_UNVERIFIED, $channel113->verification_status);
         $this->assertNull($channel113->verified_at);
+        $this->assertFalse($channel113->is_toll_free, 'Damkar 113 must not claim toll-free without explicit proof.');
     }
 
     /**
