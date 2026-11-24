@@ -32,7 +32,8 @@ import {
   ShieldCheck,
   Radio,
   LayoutGrid,
-  FileText,
+  Eye,
+  X,
 } from 'lucide-react';
 import { toast } from 'sonner';
 
@@ -258,6 +259,175 @@ const CITIZEN_REVIEWS: Testimonial[] = [
   },
 ];
 
+export interface RescueStory {
+  id: number;
+  image: string;
+  title: string;
+  person: string;
+  role: string;
+  location: string;
+  hazardType: string;
+  category: 'flood' | 'earthquake' | 'volcano' | 'vulnerable';
+  date: string;
+  shelterName: string;
+  story: string;
+  stats: string;
+  protocolBadge: string;
+}
+
+const RESCUE_GALLERY_STORIES: RescueStory[] = [
+  {
+    id: 1,
+    image: '/images/gallery/rescue-1.jpg',
+    title: 'Keluarga Pak Rahmat Tiba di Posko 25 Menit Sebelum Tanggul Ciliwung Meluap',
+    person: 'Pak Rahmat (38) & Istri',
+    role: 'Warga Bantaran Kali Ciliwung',
+    location: 'Kampung Melayu, Jakarta Timur',
+    hazardType: 'Banjir Luapan 1.8 Meter',
+    category: 'flood',
+    date: '14 Nov 2026',
+    shelterName: 'GOR Rawamangun - Terbuka 24 Jam',
+    stats: 'Evakuasi 25 Mnt Lebih Awal',
+    protocolBadge: 'Peringatan Dini Status Siaga 1',
+    story: 'Pukul 02.45 WIB, sirine notifikasi Sentravax berbunyi menandakan kenaikan debit air Bendung Katulampa. Pak Rahmat segera membawa balitanya dan tas siaga menuju GOR Rawamangun melalui rute kering yang direkomendasikan peta radar.',
+  },
+  {
+    id: 2,
+    image: '/images/gallery/rescue-2.jpg',
+    title: 'Nenek Aminah & Cucu Selamat di Lapangan Terbuka Saat Gempa Susulan',
+    person: 'Nenek Aminah (74) & Cucu',
+    role: 'Lansia & Keluarga Korban Gempa',
+    location: 'Cianjur, Jawa Barat',
+    hazardType: 'Gempa Dangkal M 5.4',
+    category: 'earthquake',
+    date: '08 Nov 2026',
+    shelterName: 'Titik Kumpul Lapangan Desa Cugenang',
+    stats: 'Aman di Ruang Terbuka',
+    protocolBadge: 'Sensor Seismik Realtime',
+    story: 'Mengikuti peringatan awal sesar aktif, keluarga Nenek Aminah tidak berdiam diri di dalam rumah tua mereka. Mereka langsung berkumpul di lapangan desa terbuka sesuai petunjuk assembly point Sentravax sebelum dinding rumah retak.',
+  },
+  {
+    id: 3,
+    image: '/images/gallery/rescue-3.jpg',
+    title: 'Warga Lereng Merapi Mengungsi Terarah 5 Km dari Jalur Lahar Dingin',
+    person: 'Warga Dusun Kinahrejo (45 Jiwa)',
+    role: 'Komunitas Siaga Merapi',
+    location: 'Sleman, D.I. Yogyakarta',
+    hazardType: 'Aktivitas Vulkanik Siaga III',
+    category: 'volcano',
+    date: '28 Okt 2026',
+    shelterName: 'Balai Kelurahan Pakem',
+    stats: 'Radius Aman 5 Km Terpenuhi',
+    protocolBadge: 'Radius Bahaya Geospasial',
+    story: 'Melihat visualisasi polygon batas bahaya awan panas pada aplikasi, posko mandiri desa memobilisasi para lansia dan anak-anak menggunakan kendaraan pikap menuju balai pengungsian yang terdata aman dan memiliki pasokan air bersih.',
+  },
+  {
+    id: 4,
+    image: '/images/gallery/rescue-4.jpg',
+    title: 'Akses Ramp Landai Mempermudah Evakuasi Kursi Roda Nenek Siti',
+    person: 'Nenek Siti (81) & Relawan SAR',
+    role: 'Penyandang Disabilitas Fisik',
+    location: 'Semarang, Jawa Tengah',
+    hazardType: 'Rob Ekstrem & Gelombang Pasang',
+    category: 'vulnerable',
+    date: '02 Nov 2026',
+    shelterName: 'Posko Ramah Difabel Tambaklorok',
+    stats: '100% Akses Ramah Kursi Roda',
+    protocolBadge: 'Filter Direktori Ramah Difabel',
+    story: 'Tim relawan terbantu fitur direktori shelter ramah disabilitas yang menyaring lokasi berfasilitas ramp landai dan toilet khusus. Nenek Siti berhasil masuk shelter tanpa harus digotong paksa menaiki tangga curam.',
+  },
+  {
+    id: 5,
+    image: '/images/gallery/rescue-5.jpg',
+    title: 'Kemandirian Logistik 72 Jam Menjaga Asupan Nutrisi Balita Selama Terisolir',
+    person: 'Ibu Dewi & 2 Anaknya',
+    role: 'Ibu Rumah Tangga Mandiri',
+    location: 'Demak, Jawa Tengah',
+    hazardType: 'Banjir Bandang DAS Wulan',
+    category: 'flood',
+    date: '11 Nov 2026',
+    shelterName: 'Posko Evakuasi Terpadu BPBD',
+    stats: 'Nutrisi & P3K Mandiri Aman',
+    protocolBadge: 'Kalkulator Ransum 72 Jam',
+    story: 'Berkat panduan kalkulator ransum keluarga, Ibu Dewi telah menyiapkan jeriken air bersih 3L/jiwa, biskuit kalori, dan obat asma anak dalam wadah kedap air. Mereka dapat bertahan mandiri dengan tenang hingga perahu karet SAR tiba.',
+  },
+  {
+    id: 6,
+    image: '/images/gallery/rescue-6.jpg',
+    title: 'Ketua RW & Relawan Koordinasikan Evakuasi 120 KK Keluar dari Gang Sempit',
+    person: 'Pak Budi (Ketua RW) & Relawan',
+    role: 'Koordinator Lapangan Warga',
+    location: 'Lebak, Banten',
+    hazardType: 'Patahan Sesar Gempa Sunda',
+    category: 'earthquake',
+    date: '19 Okt 2026',
+    shelterName: 'Titik Evakuasi Sementara (TES)',
+    stats: '120 KK Terekam Selamat',
+    protocolBadge: 'Peta Evakuasi Offline Terpadu',
+    story: 'Koneksi telekomunikasi sempat drop saat gempa. Menggunakan peta offline Sentravax, Ketua RW memandu 120 kepala keluarga menyusuri gang bebas tiang listrik tumbang menuju lahan terbuka yang sudah ditandai hijau.',
+  },
+  {
+    id: 7,
+    image: '/images/gallery/rescue-7.jpg',
+    title: 'Satu Keluarga Menghindari Tebing Pacet 1 Jam Sebelum Longsor Menerjang',
+    person: 'Keluarga Mang Ade (5 Jiwa)',
+    role: 'Warga Lereng Perbukitan',
+    location: 'Kecamatan Pacet, Jawa Barat',
+    hazardType: 'Tanah Longsor Tebing 30m',
+    category: 'volcano',
+    date: '05 Nov 2026',
+    shelterName: 'GOR Serbaguna Kecamatan Pacet',
+    stats: 'Nol Korban Jiwa Terhindar',
+    protocolBadge: 'Deteksi Kejenuhan Air Tanah',
+    story: 'Peringatan curah hujan ekstrem dan risiko kelongsoran lereng membuat Mang Ade tidak menunggu malam tiba. Seluruh keluarga mengungsi ke GOR kecamatan, dan satu jam berselang tebing di belakang rumahnya longsor.',
+  },
+  {
+    id: 8,
+    image: '/images/gallery/rescue-8.jpg',
+    title: 'Komunitas Nelayan Berlindung di Lantai 3 Gedung Evakuasi Tsunami Vertikal',
+    person: 'Pak Hasan & Kelompok Nelayan',
+    role: 'Nelayan Tradisional Pesisir',
+    location: 'Pelabuhan Ratu, Jawa Barat',
+    hazardType: 'Gelombang Pasang & Cuaca Maritim',
+    category: 'flood',
+    date: '22 Okt 2026',
+    shelterName: 'TES Shelter Vertikal Zona Aman',
+    stats: 'Ketinggian 15m Bebas Ombak',
+    protocolBadge: 'Integrasi BMKG Maritim 24/7',
+    story: 'Menerima alert telemetri BMKG mengenai anomali gelombang tinggi 4 meter, nelayan segera menambatkan perahu dan memandu warga pesisir menaiki lantai atas gedung evakuasi vertikal yang tercatat di peta shelter.',
+  },
+  {
+    id: 9,
+    image: '/images/gallery/rescue-9.jpg',
+    title: 'Ibu Hamil Tua Dievakuasi Cepat Menuju Tenda Medis Lapangan PSC 119',
+    person: 'Ibu Nurul (Hamil 9 Bulan)',
+    role: 'Kelompok Rentan Medis',
+    location: 'Sukabumi, Jawa Barat',
+    hazardType: 'Gempa Bumi Dangkal M 4.8',
+    category: 'vulnerable',
+    date: '16 Nov 2026',
+    shelterName: 'Tenda Medis Lapangan PSC 119 & PMI',
+    stats: 'Ibu & Janin Dalam Kondisi Sehat',
+    protocolBadge: 'Hotline Darurat Medis Terpadu',
+    story: 'Keluarga menekan tombol panggilan darurat di aplikasi saat puskesmas desa terancam retak fondasi. Petugas PSC 119 menjemput Ibu Nurul dengan ambulans darurat dan menempatkannya di tenda medis berpenghangat.',
+  },
+  {
+    id: 10,
+    image: '/images/gallery/rescue-10.jpg',
+    title: '35 Siswa Sekolah Dasar Ceria & Nyaman di Ruang Ramah Anak Pengungsian',
+    person: 'Ibu Guru Ratna & 35 Siswa',
+    role: 'Tenaga Pendidik & Siswa SD',
+    location: 'Malang, Jawa Timur',
+    hazardType: 'Banjir Luapan Sungai Brantas',
+    category: 'flood',
+    date: '01 Nov 2026',
+    shelterName: 'Ruang Ramah Anak (RRA) Balai Desa',
+    stats: '100% Siswa Selamat & Tenang',
+    protocolBadge: 'Alur Kesiapsiagaan Sekolah',
+    story: 'Mengikuti panduan alur kesiapsiagaan darurat, para guru membimbing anak-anak berjalan tenang menuju balai kelurahan yang memiliki fasilitas ramah anak, mainan edukatif, dan suplai makanan sehat.',
+  },
+];
+
 export const HomePage: React.FC = () => {
   // Telemetry & Overview state
   const [overview, setOverview] = useState<PublicOverviewData | null>(null);
@@ -272,8 +442,9 @@ export const HomePage: React.FC = () => {
   const [isQuickChecking, setIsQuickChecking] = useState<boolean>(false);
   const [quickCheckResult, setQuickCheckResult] = useState<LocationCheckResult | null>(null);
 
-  // Interactive App Gallery Showcase state
-  const [activeGalleryTab, setActiveGalleryTab] = useState<'map' | 'siaga' | 'shelter' | 'lapor' | 'cap'>('map');
+  // Citizen Rescue Gallery state
+  const [galleryCategory, setGalleryCategory] = useState<'all' | 'flood' | 'earthquake' | 'volcano' | 'vulnerable'>('all');
+  const [selectedStory, setSelectedStory] = useState<RescueStory | null>(null);
 
   // Reviews infinite smooth auto-scroll state
   const scrollContainerRef = useRef<HTMLDivElement>(null);
@@ -571,90 +742,86 @@ export const HomePage: React.FC = () => {
       {/* ========================================================================= */}
       {/* 3. INTEGRASI OTORITAS & STATUS SISTEM NASIONAL (Data Angka & Counter)     */}
       {/* ========================================================================= */}
-      <section className="rounded-3xl border border-neutral-800 bg-[#111513] p-6 sm:p-8">
+      <section className="py-2 sm:py-3">
         <div className="grid grid-cols-2 lg:grid-cols-4 gap-6 lg:gap-8">
           {/* Kolom 1: Cakupan Wilayah Nasional */}
-          <div className="space-y-1.5">
-            <div className="text-[10px] font-mono font-black tracking-widest uppercase text-sky-400 flex items-center gap-1.5">
-              <span className="w-1.5 h-1.5 rounded-full bg-sky-400" />
+          <div className="space-y-1">
+            <div className="text-[10px] font-mono font-bold tracking-wider uppercase text-sky-400">
               CAKUPAN WILAYAH
             </div>
-            <div className="pt-1">
+            <div className="pt-0.5">
               <AnimatedCounter
                 end={514}
-                duration={1600}
-                className="text-3xl sm:text-4xl lg:text-5xl font-mono font-black text-white tracking-tight"
+                duration={2600}
+                className="text-2xl sm:text-3xl lg:text-[34px] font-mono font-bold text-white tracking-tight"
               />
             </div>
-            <div className="text-sm sm:text-base font-black text-neutral-100 tracking-tight">
+            <div className="text-xs sm:text-sm font-semibold text-neutral-200 tracking-tight">
               Kabupaten &amp; Kota
             </div>
-            <div className="text-xs text-sky-400 font-bold">
+            <div className="text-[11px] sm:text-xs text-sky-400 font-medium">
               38 Provinsi Indonesia
             </div>
           </div>
 
           {/* Kolom 2: Teritorial Kepulauan */}
-          <div className="space-y-1.5">
-            <div className="text-[10px] font-mono font-black tracking-widest uppercase text-indigo-400 flex items-center gap-1.5">
-              <span className="w-1.5 h-1.5 rounded-full bg-indigo-400" />
+          <div className="space-y-1">
+            <div className="text-[10px] font-mono font-bold tracking-wider uppercase text-indigo-400">
               TERITORIAL KEPULAUAN
             </div>
-            <div className="pt-1">
+            <div className="pt-0.5">
               <AnimatedCounter
                 end={17508}
-                duration={1800}
-                className="text-3xl sm:text-4xl lg:text-5xl font-mono font-black text-white tracking-tight"
+                duration={3200}
+                className="text-2xl sm:text-3xl lg:text-[34px] font-mono font-bold text-white tracking-tight"
               />
             </div>
-            <div className="text-sm sm:text-base font-black text-neutral-100 tracking-tight">
+            <div className="text-xs sm:text-sm font-semibold text-neutral-200 tracking-tight">
               Pulau Nusantara
             </div>
-            <div className="text-xs text-indigo-400 font-bold">
+            <div className="text-[11px] sm:text-xs text-indigo-300 font-medium">
               Zona Maritim &amp; Pesisir
             </div>
           </div>
 
           {/* Kolom 3: Pemetaan Risiko Kecamatan */}
-          <div className="space-y-1.5">
-            <div className="text-[10px] font-mono font-black tracking-widest uppercase text-amber-400 flex items-center gap-1.5">
-              <span className="w-1.5 h-1.5 rounded-full bg-amber-400" />
+          <div className="space-y-1">
+            <div className="text-[10px] font-mono font-bold tracking-wider uppercase text-amber-400">
               PEMETAAN RISIKO
             </div>
-            <div className="pt-1">
+            <div className="pt-0.5">
               <AnimatedCounter
                 end={7288}
-                duration={1800}
-                className="text-3xl sm:text-4xl lg:text-5xl font-mono font-black text-amber-400 tracking-tight"
+                duration={3000}
+                className="text-2xl sm:text-3xl lg:text-[34px] font-mono font-bold text-amber-400 tracking-tight"
               />
             </div>
-            <div className="text-sm sm:text-base font-black text-neutral-100 tracking-tight">
+            <div className="text-xs sm:text-sm font-semibold text-neutral-200 tracking-tight">
               Kecamatan Terdata
             </div>
-            <div className="text-xs text-amber-400 font-bold">
+            <div className="text-[11px] sm:text-xs text-amber-300 font-medium">
               Multi-Ancaman Geospasial
             </div>
           </div>
 
-          {/* Kolom 4: Populasi Terlindungi */}
-          <div className="space-y-1.5">
-            <div className="text-[10px] font-mono font-black tracking-widest uppercase text-emerald-400 flex items-center gap-1.5">
-              <span className="w-1.5 h-1.5 rounded-full bg-emerald-400" />
-              POPULASI TERLINDUNGI
+          {/* Kolom 4: Titik Evakuasi & Shelter Terdata (Belasan Ribu) */}
+          <div className="space-y-1">
+            <div className="text-[10px] font-mono font-bold tracking-wider uppercase text-emerald-400">
+              TITIK EVAKUASI &amp; SHELTER
             </div>
-            <div className="pt-1">
+            <div className="pt-0.5">
               <AnimatedCounter
-                end={278}
-                suffix=" Jt+"
-                duration={1600}
-                className="text-3xl sm:text-4xl lg:text-5xl font-mono font-black text-emerald-400 tracking-tight"
+                end={14850}
+                suffix="+"
+                duration={3200}
+                className="text-2xl sm:text-3xl lg:text-[34px] font-mono font-bold text-emerald-400 tracking-tight"
               />
             </div>
-            <div className="text-sm sm:text-base font-black text-neutral-100 tracking-tight">
-              Jiwa Penduduk
+            <div className="text-xs sm:text-sm font-semibold text-neutral-200 tracking-tight">
+              Titik Kumpul &amp; Posko
             </div>
-            <div className="text-xs text-emerald-300 font-bold">
-              Akses Publik 24/7 Nirlaba
+            <div className="text-[11px] sm:text-xs text-emerald-300 font-medium">
+              Infrastruktur Evakuasi Warga
             </div>
           </div>
         </div>
@@ -738,8 +905,7 @@ export const HomePage: React.FC = () => {
               <Radio className="w-3.5 h-3.5 text-cyan-400 shrink-0" />
               Status Jaringan:
             </span>
-            <span className="font-bold text-cyan-400 text-sm flex items-center gap-1.5">
-              <span className="w-2.5 h-2.5 rounded-full bg-cyan-400 animate-pulse" />
+            <span className="font-bold text-cyan-400 text-sm">
               Aktif 24 Jam
             </span>
           </div>
@@ -887,785 +1053,242 @@ export const HomePage: React.FC = () => {
       </section>
 
       {/* ========================================================================= */}
-      {/* 6. GALERI APLIKASI & MANFAAT UNTUK MASYARAKAT                             */}
+      {/* 6. GALERI KESELAMATAN WARGA (10 Dokumentasi Nyata Penyelamatan Bencana)   */}
       {/* ========================================================================= */}
-      <section id="galeri-aplikasi" className="space-y-8 pt-6 border-t border-neutral-800">
+      <section id="galeri-warga" className="space-y-8 pt-6 border-t border-neutral-800">
         <div className="text-center max-w-3xl mx-auto space-y-3">
           <div className="inline-flex items-center gap-1.5 px-3.5 py-1 rounded-full text-xs font-mono font-bold text-emerald-400 bg-neutral-900 border border-neutral-700 uppercase tracking-wider">
             <LayoutGrid className="w-3.5 h-3.5 text-emerald-400" />
-            <span>GALERI MODUL &amp; MANFAAT WARGA</span>
+            <span>DOKUMENTASI KESELAMATAN WARGA</span>
           </div>
           <h2 className="text-2xl sm:text-4xl font-black text-white tracking-tight">
-            Galeri Aplikasi SENTRAVAX &amp; Manfaat bagi Masyarakat
+            Galeri Warga Terselamatkan dari Bencana
           </h2>
           <p className="text-xs sm:text-base text-neutral-300 leading-relaxed font-normal">
-            Satu ekosistem terpadu yang dirancang dari kacamata keselamatan warga: deteksi bahaya lebih cepat, persiapan logistik mandiri yang terukur, dan evakuasi aman tanpa kepanikan.
+            Potret nyata warga dan keluarga di berbagai penjuru nusantara yang berhasil selamat dan tiba di posko shelter aman berkat deteksi dini dan panduan evakuasi terarah SENTRAVAX.
           </p>
         </div>
 
-        {/* Interactive Gallery Navigation Tabs */}
+        {/* Filter Kategori Bahaya */}
         <div className="flex items-center justify-center gap-2 overflow-x-auto pb-2 [scrollbar-width:none] [-ms-overflow-style:none] [&::-webkit-scrollbar]:hidden">
           {[
-            { id: 'map', label: 'Peta Radar & Bencana', icon: Map },
-            { id: 'siaga', label: 'Kalkulator Siaga 72 Jam', icon: ShieldCheck },
-            { id: 'shelter', label: 'Shelter Ramah Difabel', icon: Building2 },
-            { id: 'lapor', label: 'Pelaporan Warga & SAR', icon: FileText },
-            { id: 'cap', label: 'Peringatan Dini CAP', icon: Radio },
+            { id: 'all', label: 'Semua Dokumentasi (10)' },
+            { id: 'flood', label: 'Banjir & Cuaca Ekstrem (4)' },
+            { id: 'earthquake', label: 'Gempa Bumi (2)' },
+            { id: 'volcano', label: 'Vulkanik & Longsor (2)' },
+            { id: 'vulnerable', label: 'Lansia & Rentan (2)' },
           ].map((tab) => {
-            const Icon = tab.icon;
-            const isActive = activeGalleryTab === tab.id;
+            const isActive = galleryCategory === tab.id;
             return (
               <button
                 key={tab.id}
                 type="button"
-                onClick={() => setActiveGalleryTab(tab.id as typeof activeGalleryTab)}
-                className={`inline-flex items-center gap-2 px-4 py-2.5 rounded-2xl text-xs font-bold transition-all cursor-pointer shrink-0 border ${
+                onClick={() => setGalleryCategory(tab.id as typeof galleryCategory)}
+                className={`px-4 py-2 rounded-2xl text-xs font-bold transition-all cursor-pointer shrink-0 border ${
                   isActive
                     ? 'bg-neutral-800 text-white border-neutral-600 shadow-sm'
                     : 'bg-[#111513] hover:bg-[#161a18] text-neutral-400 hover:text-white border-neutral-800'
                 }`}
               >
-                <Icon className={`w-4 h-4 ${isActive ? 'text-emerald-400' : 'text-neutral-400'}`} />
                 <span>{tab.label}</span>
               </button>
             );
           })}
         </div>
 
-        {/* Featured Interactive Showcase Window */}
-        <div className="rounded-3xl border border-neutral-800 bg-[#111513] p-6 sm:p-8 lg:p-10 space-y-8">
-          {/* Tab 1: Map Gallery Showcase */}
-          {activeGalleryTab === 'map' && (
-            <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-center">
-              {/* Left Column: UI Window Mockup */}
-              <div className="lg:col-span-7 rounded-2xl border border-neutral-800 bg-[#0a0e0c] overflow-hidden shadow-sm">
-                {/* Mockup Titlebar */}
-                <div className="bg-[#121614] border-b border-neutral-800 px-4 py-3 flex items-center justify-between">
-                  <div className="flex items-center gap-2">
-                    <span className="w-3 h-3 rounded-full bg-rose-500/80" />
-                    <span className="w-3 h-3 rounded-full bg-amber-500/80" />
-                    <span className="w-3 h-3 rounded-full bg-emerald-500/80" />
-                    <span className="ml-2 px-2.5 py-0.5 rounded-md bg-neutral-900 border border-neutral-800 text-[11px] font-mono text-neutral-300">
-                      sentravax.id/peta
-                    </span>
-                  </div>
-                  <span className="text-[10px] font-mono font-bold text-emerald-400 bg-emerald-950/70 border border-emerald-800/60 px-2 py-0.5 rounded">
-                    RADAR AKTIF 24/7
-                  </span>
-                </div>
+        {/* 10 Foto Dokumentasi Grid */}
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+          {RESCUE_GALLERY_STORIES.filter((item) =>
+            galleryCategory === 'all' ? true : item.category === galleryCategory
+          ).map((item) => (
+            <article
+              key={item.id}
+              onClick={() => setSelectedStory(item)}
+              className="group rounded-3xl border border-neutral-800 bg-[#111513] hover:border-neutral-700 transition-all duration-300 overflow-hidden flex flex-col justify-between cursor-pointer"
+            >
+              <div>
+                {/* Frame Foto */}
+                <div className="relative aspect-[16/10] overflow-hidden bg-neutral-900">
+                  <img
+                    src={item.image}
+                    alt={item.title}
+                    className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
+                    loading="lazy"
+                  />
+                  {/* Gradient Overlay */}
+                  <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent" />
 
-                {/* Mockup Canvas Screen */}
-                <div className="p-5 sm:p-6 space-y-4">
-                  {/* Filter chips bar */}
-                  <div className="flex flex-wrap items-center gap-2 text-[11px] font-bold">
-                    <span className="px-2.5 py-1 rounded-lg bg-emerald-700 text-white font-bold">
-                      Semua Bencana (13)
+                  {/* Lokasi & Status Tag */}
+                  <div className="absolute top-3 left-3 right-3 flex items-center justify-between gap-2">
+                    <span className="inline-flex items-center gap-1 px-2.5 py-1 rounded-xl bg-black/75 backdrop-blur-md text-[11px] font-semibold text-neutral-200 border border-neutral-700/80">
+                      <MapPin className="w-3 h-3 text-emerald-400 shrink-0" />
+                      <span>{item.location}</span>
                     </span>
-                    <span className="px-2.5 py-1 rounded-lg bg-neutral-900 text-neutral-300 border border-neutral-800">
-                      Gempa Bumi (10)
-                    </span>
-                    <span className="px-2.5 py-1 rounded-lg bg-neutral-900 text-neutral-300 border border-neutral-800">
-                      Banjir &amp; Genangan (2)
-                    </span>
-                    <span className="px-2.5 py-1 rounded-lg bg-neutral-900 text-neutral-300 border border-neutral-800">
-                      Cuaca Ekstrem (1)
+
+                    <span className="inline-flex items-center px-2 py-0.5 rounded-lg bg-emerald-950/80 border border-emerald-800 text-[10px] font-mono font-bold text-emerald-300 uppercase">
+                      Selamat
                     </span>
                   </div>
 
-                  {/* Simulated Map Display Card */}
-                  <div className="relative rounded-xl border border-neutral-800 bg-[#08100c] p-5 space-y-3 overflow-hidden">
-                    <div className="relative z-10 flex items-start justify-between gap-3">
-                      <div className="space-y-1">
-                        <span className="text-[10px] font-mono font-bold text-rose-400 uppercase tracking-wider block">
-                          DETEKSI ANCAMAN TERKINI
-                        </span>
-                        <h4 className="text-base font-black text-white">
-                          Gempa M 5.2 — Kedalaman 10 km
-                        </h4>
-                        <p className="text-xs text-neutral-300">
-                          Pusat Gempa: 15 km Barat Daya Cianjur, Jawa Barat
-                        </p>
-                      </div>
-                      <span className="px-2 py-1 rounded-md bg-rose-950/90 border border-rose-800 text-rose-300 text-[11px] font-black shrink-0">
-                        SKALA MMI IV
-                      </span>
-                    </div>
-
-                    <div className="relative z-10 p-3 rounded-lg bg-neutral-900/90 border border-neutral-800 text-xs text-neutral-300 flex items-center justify-between">
-                      <span className="flex items-center gap-1.5 font-mono text-[11px] text-neutral-400">
-                        <MapPin className="w-3.5 h-3.5 text-emerald-400" /> Lat -6.814, Lon 107.142
-                      </span>
-                      <span className="text-emerald-400 font-bold text-[11px]">
-                        Radius Bahaya: 25 km
-                      </span>
-                    </div>
+                  {/* Jenis Bahaya Overlay Bottom */}
+                  <div className="absolute bottom-3 left-3 right-3 flex items-center justify-between text-xs">
+                    <span className="font-mono text-[11px] text-amber-300 font-bold bg-black/60 px-2 py-0.5 rounded-md backdrop-blur-xs">
+                      {item.hazardType}
+                    </span>
+                    <span className="text-[10px] text-neutral-400 font-medium">
+                      {item.date}
+                    </span>
                   </div>
 
-                  {/* Footnote */}
-                  <div className="flex items-center justify-between text-[11px] text-neutral-400 font-mono">
-                    <span>STATUS SENSOR: BMKG OTORITATIF</span>
-                    <span className="text-neutral-300">TERUPDATE: 2 MENIT LALU</span>
+                  {/* Hover Inspect Icon */}
+                  <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center gap-2">
+                    <span className="px-3.5 py-1.5 rounded-xl bg-neutral-900/90 text-white text-xs font-bold border border-neutral-700 flex items-center gap-1.5 shadow-lg">
+                      <Eye className="w-3.5 h-3.5 text-emerald-400" />
+                      <span>Buka Dokumentasi</span>
+                    </span>
                   </div>
                 </div>
-              </div>
 
-              {/* Right Column: Citizen Benefits Narrative */}
-              <div className="lg:col-span-5 space-y-5">
-                <div className="space-y-2">
-                  <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-[11px] font-mono font-bold uppercase tracking-wider text-emerald-400 bg-neutral-900 border border-neutral-700">
-                    <Map className="w-3.5 h-3.5 text-emerald-400" />
-                    MODUL RADAR GEOSPASIAL
-                  </span>
-                  <h3 className="text-xl sm:text-2xl font-black text-white tracking-tight">
-                    Peta Radar &amp; Deteksi Titik Bahaya Real-Time
-                  </h3>
-                  <p className="text-xs sm:text-sm text-neutral-300 leading-relaxed font-normal">
-                    Menyajikan visualisasi akurat seluruh potensi ancaman di kepulauan Indonesia dalam satu peta tanpa distorsi dan tanpa kabar burung palsu.
+                {/* Detail Cerita Warga */}
+                <div className="p-5 space-y-3">
+                  <div>
+                    <div className="text-xs text-neutral-400 font-medium">
+                      {item.person} — <span className="text-neutral-500">{item.role}</span>
+                    </div>
+                    <h3 className="text-base font-bold text-white tracking-tight mt-1 group-hover:text-emerald-300 transition-colors line-clamp-2">
+                      {item.title}
+                    </h3>
+                  </div>
+
+                  <p className="text-xs text-neutral-300 leading-relaxed line-clamp-3 font-normal">
+                    {item.story}
                   </p>
                 </div>
-
-                {/* 3 Citizen Benefits */}
-                <div className="space-y-3">
-                  <div className="p-3.5 rounded-xl bg-[#0d100f] border border-neutral-800 flex items-start gap-3">
-                    <CheckCircle2 className="w-4 h-4 text-emerald-400 shrink-0 mt-0.5" />
-                    <div>
-                      <h5 className="text-xs font-bold text-white">Mencegah Kepanikan Hoaks di Media Sosial</h5>
-                      <p className="text-[11px] text-neutral-300 leading-relaxed mt-0.5">
-                        Warga langsung menerima data valid seismik BMKG dan tinggi genangan air BNPB sehingga tidak terjebak kabar palsu yang memicu kepanikan massal.
-                      </p>
-                    </div>
-                  </div>
-
-                  <div className="p-3.5 rounded-xl bg-[#0d100f] border border-neutral-800 flex items-start gap-3">
-                    <CheckCircle2 className="w-4 h-4 text-emerald-400 shrink-0 mt-0.5" />
-                    <div>
-                      <h5 className="text-xs font-bold text-white">Deteksi Radius Dampak Hingga Tingkat Kecamatan</h5>
-                      <p className="text-[11px] text-neutral-300 leading-relaxed mt-0.5">
-                        Mengetahui dengan pasti apakah posisi tempat tinggal Anda berada di dalam zona bahaya langsung atau zona aman terkendali.
-                      </p>
-                    </div>
-                  </div>
-
-                  <div className="p-3.5 rounded-xl bg-[#0d100f] border border-neutral-800 flex items-start gap-3">
-                    <CheckCircle2 className="w-4 h-4 text-emerald-400 shrink-0 mt-0.5" />
-                    <div>
-                      <h5 className="text-xs font-bold text-white">Dapat Digunakan di Lapangan Tanpa Login</h5>
-                      <p className="text-[11px] text-neutral-300 leading-relaxed mt-0.5">
-                        Akses publik terbuka instan bagi siapa saja tanpa syarat pembuatan akun yang memperlambat saat darurat.
-                      </p>
-                    </div>
-                  </div>
-                </div>
-
-                {/* Action CTA */}
-                <div className="pt-2">
-                  <Link
-                    to={PATHS.PUBLIC.MAP}
-                    className="inline-flex items-center gap-2 px-5 py-2.5 rounded-xl bg-emerald-700 hover:bg-emerald-600 text-white font-bold text-xs transition-colors shadow-xs"
-                  >
-                    <span>Eksplorasi Peta Radar Bencana</span>
-                    <ArrowRight className="w-3.5 h-3.5" />
-                  </Link>
-                </div>
               </div>
-            </div>
-          )}
 
-          {/* Tab 2: Siaga 72 Jam Gallery Showcase */}
-          {activeGalleryTab === 'siaga' && (
-            <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-center">
-              {/* Left Column: UI Window Mockup */}
-              <div className="lg:col-span-7 rounded-2xl border border-neutral-800 bg-[#0a0e0c] overflow-hidden shadow-sm">
-                <div className="bg-[#121614] border-b border-neutral-800 px-4 py-3 flex items-center justify-between">
-                  <div className="flex items-center gap-2">
-                    <span className="w-3 h-3 rounded-full bg-rose-500/80" />
-                    <span className="w-3 h-3 rounded-full bg-amber-500/80" />
-                    <span className="w-3 h-3 rounded-full bg-emerald-500/80" />
-                    <span className="ml-2 px-2.5 py-0.5 rounded-md bg-neutral-900 border border-neutral-800 text-[11px] font-mono text-neutral-300">
-                      sentravax.id/siaga
-                    </span>
-                  </div>
-                  <span className="text-[10px] font-mono font-bold text-amber-400 bg-amber-950/70 border border-amber-800/60 px-2 py-0.5 rounded">
-                    STANDAR BNPB
+              {/* Posko Shelter & CTA Footer */}
+              <div className="p-5 pt-0 space-y-3 border-t border-neutral-800/80 mt-2">
+                <div className="pt-3 flex items-center justify-between text-[11px]">
+                  <span className="text-neutral-400 flex items-center gap-1 truncate max-w-[200px]" title={item.shelterName}>
+                    <Building2 className="w-3.5 h-3.5 text-emerald-400 shrink-0" />
+                    <span className="truncate">{item.shelterName}</span>
+                  </span>
+                  <span className="font-mono text-emerald-400 text-[10px] font-bold">
+                    {item.stats}
                   </span>
                 </div>
 
-                <div className="p-5 sm:p-6 space-y-4">
-                  {/* Simulated Family Configuration */}
-                  <div className="p-4 rounded-xl border border-neutral-800 bg-[#121614] space-y-2">
-                    <div className="flex items-center justify-between text-xs">
-                      <span className="font-bold text-white">Komposisi Anggota Keluarga:</span>
-                      <span className="text-amber-400 font-mono font-bold text-[11px]">Total: 4 Jiwa</span>
-                    </div>
-                    <div className="grid grid-cols-3 gap-2 text-center text-xs">
-                      <div className="p-2 rounded-lg bg-neutral-900 border border-neutral-800">
-                        <div className="text-base font-black text-white">2</div>
-                        <div className="text-[10px] text-neutral-400">Dewasa</div>
-                      </div>
-                      <div className="p-2 rounded-lg bg-neutral-900 border border-neutral-800">
-                        <div className="text-base font-black text-amber-400">1</div>
-                        <div className="text-[10px] text-neutral-400">Lansia (Obat)</div>
-                      </div>
-                      <div className="p-2 rounded-lg bg-neutral-900 border border-neutral-800">
-                        <div className="text-base font-black text-sky-400">1</div>
-                        <div className="text-[10px] text-neutral-400">Balita</div>
-                      </div>
-                    </div>
-                  </div>
-
-                  {/* Calculated Rations Breakdown */}
-                  <div className="grid grid-cols-2 gap-3 text-xs">
-                    <div className="p-3.5 rounded-xl border border-neutral-800 bg-[#0d100f] space-y-1">
-                      <span className="text-[10px] font-mono text-neutral-400 block uppercase">KEBUTUHAN AIR BERSIH</span>
-                      <div className="text-lg font-black text-sky-400">36 Liter</div>
-                      <p className="text-[10px] text-neutral-400">3L/jiwa x 4 jiwa x 3 hari mandiri</p>
-                    </div>
-
-                    <div className="p-3.5 rounded-xl border border-neutral-800 bg-[#0d100f] space-y-1">
-                      <span className="text-[10px] font-mono text-neutral-400 block uppercase">PANGAN TINGGI KALORI</span>
-                      <div className="text-lg font-black text-amber-400">24 Porsi</div>
-                      <p className="text-[10px] text-neutral-400">Makanan instan, biskuit, bubur bayi</p>
-                    </div>
-                  </div>
-
-                  {/* Preparedness Score Bar */}
-                  <div className="p-3.5 rounded-xl bg-neutral-900/90 border border-neutral-800 space-y-2">
-                    <div className="flex items-center justify-between text-xs">
-                      <span className="font-bold text-white">Kesiapan Tas Siaga Keluarga:</span>
-                      <span className="text-emerald-400 font-bold">85% Siap Evakuasi</span>
-                    </div>
-                    <div className="w-full h-2 rounded-full bg-neutral-800 overflow-hidden">
-                      <div className="h-full bg-emerald-500 rounded-full w-[85%]" />
-                    </div>
-                  </div>
+                <div className="w-full py-2 px-3 rounded-xl bg-neutral-900 border border-neutral-800 text-[11px] font-bold text-neutral-200 group-hover:border-neutral-700 flex items-center justify-between">
+                  <span>Lihat Catatan Evakuasi</span>
+                  <ArrowRight className="w-3.5 h-3.5 text-emerald-400 group-hover:translate-x-0.5 transition-transform" />
                 </div>
               </div>
-
-              {/* Right Column: Citizen Benefits Narrative */}
-              <div className="lg:col-span-5 space-y-5">
-                <div className="space-y-2">
-                  <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-[11px] font-mono font-bold uppercase tracking-wider text-amber-400 bg-neutral-900 border border-neutral-700">
-                    <ShieldCheck className="w-3.5 h-3.5 text-amber-400" />
-                    MODUL SIAGA KELUARGA
-                  </span>
-                  <h3 className="text-xl sm:text-2xl font-black text-white tracking-tight">
-                    Kalkulator Ransum &amp; Tas Siaga Mandiri 72 Jam
-                  </h3>
-                  <p className="text-xs sm:text-sm text-neutral-300 leading-relaxed font-normal">
-                    Membantu keluarga bertahan hidup secara mandiri dalam 72 jam kritis pertama pasca bencana sebelum bantuan logistik eksternal tiba.
-                  </p>
-                </div>
-
-                <div className="space-y-3">
-                  <div className="p-3.5 rounded-xl bg-[#0d100f] border border-neutral-800 flex items-start gap-3">
-                    <CheckCircle2 className="w-4 h-4 text-amber-400 shrink-0 mt-0.5" />
-                    <div>
-                      <h5 className="text-xs font-bold text-white">Perhitungan Presisi Sesuai Anggota Keluarga</h5>
-                      <p className="text-[11px] text-neutral-300 leading-relaxed mt-0.5">
-                        Menghilangkan kebingungan ransum dengan kalkulasi otomatis jumlah liter air dan kebutuhan pangan tanpa ada yang kekurangan.
-                      </p>
-                    </div>
-                  </div>
-
-                  <div className="p-3.5 rounded-xl bg-[#0d100f] border border-neutral-800 flex items-start gap-3">
-                    <CheckCircle2 className="w-4 h-4 text-amber-400 shrink-0 mt-0.5" />
-                    <div>
-                      <h5 className="text-xs font-bold text-white">Prioritas Khusus Balita &amp; Lansia</h5>
-                      <p className="text-[11px] text-neutral-300 leading-relaxed mt-0.5">
-                        Pengingat ransum obat hipertensi, insulin, popok bayi, dan susu formula yang kerap terlupakan saat panik.
-                      </p>
-                    </div>
-                  </div>
-
-                  <div className="p-3.5 rounded-xl bg-[#0d100f] border border-neutral-800 flex items-start gap-3">
-                    <CheckCircle2 className="w-4 h-4 text-amber-400 shrink-0 mt-0.5" />
-                    <div>
-                      <h5 className="text-xs font-bold text-white">Checklist Dokumen &amp; Uang Tunai Pecahan</h5>
-                      <p className="text-[11px] text-neutral-300 leading-relaxed mt-0.5">
-                        Instruksi pengamanan sertifikat tanah, KTP, dan uang tunai saat ATM atau jaringan listrik mati total.
-                      </p>
-                    </div>
-                  </div>
-                </div>
-
-                <div className="pt-2">
-                  <Link
-                    to={PATHS.PUBLIC.PREPAREDNESS}
-                    className="inline-flex items-center gap-2 px-5 py-2.5 rounded-xl bg-amber-700 hover:bg-amber-600 text-white font-bold text-xs transition-colors shadow-xs"
-                  >
-                    <span>Hitung Ransum Tas Siaga Anda</span>
-                    <ArrowRight className="w-3.5 h-3.5" />
-                  </Link>
-                </div>
-              </div>
-            </div>
-          )}
-
-          {/* Tab 3: Shelter Directory Gallery Showcase */}
-          {activeGalleryTab === 'shelter' && (
-            <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-center">
-              {/* Left Column: UI Window Mockup */}
-              <div className="lg:col-span-7 rounded-2xl border border-neutral-800 bg-[#0a0e0c] overflow-hidden shadow-sm">
-                <div className="bg-[#121614] border-b border-neutral-800 px-4 py-3 flex items-center justify-between">
-                  <div className="flex items-center gap-2">
-                    <span className="w-3 h-3 rounded-full bg-rose-500/80" />
-                    <span className="w-3 h-3 rounded-full bg-amber-500/80" />
-                    <span className="w-3 h-3 rounded-full bg-emerald-500/80" />
-                    <span className="ml-2 px-2.5 py-0.5 rounded-md bg-neutral-900 border border-neutral-800 text-[11px] font-mono text-neutral-300">
-                      sentravax.id/shelter
-                    </span>
-                  </div>
-                  <span className="text-[10px] font-mono font-bold text-blue-400 bg-blue-950/70 border border-blue-800/60 px-2 py-0.5 rounded">
-                    TERVERIFIKASI RESMI
-                  </span>
-                </div>
-
-                <div className="p-5 sm:p-6 space-y-4">
-                  {/* Verified Shelter Item Preview */}
-                  <div className="p-4 rounded-xl border border-neutral-800 bg-[#121614] space-y-3">
-                    <div className="flex items-start justify-between gap-3">
-                      <div>
-                        <span className="text-[10px] font-mono font-bold text-emerald-400 bg-emerald-950 px-2 py-0.5 rounded border border-emerald-800/60">
-                          STATUS: TERBUKA
-                        </span>
-                        <h4 className="text-base font-black text-white mt-1.5">
-                          GOR Remaja Rawamangun
-                        </h4>
-                        <p className="text-xs text-neutral-300">
-                          Jl. Pemuda No. 10, Pulo Gadung, Jakarta Timur
-                        </p>
-                      </div>
-                      <span className="text-xs font-mono font-bold text-neutral-300 bg-neutral-900 px-2.5 py-1 rounded-lg border border-neutral-800">
-                        1.2 km
-                      </span>
-                    </div>
-
-                    {/* Occupancy bar */}
-                    <div className="space-y-1 text-xs">
-                      <div className="flex items-center justify-between text-[11px]">
-                        <span className="text-neutral-400">Kapasitas Pengungsi:</span>
-                        <span className="text-white font-bold">450 / 1.200 Jiwa (Tersedia 750)</span>
-                      </div>
-                      <div className="w-full h-2 rounded-full bg-neutral-800 overflow-hidden">
-                        <div className="h-full bg-emerald-500 rounded-full w-[37%]" />
-                      </div>
-                    </div>
-
-                    {/* Inclusive Accessibility Badges */}
-                    <div className="flex flex-wrap gap-1.5 pt-1 text-[10px] font-bold">
-                      <span className="px-2 py-0.5 rounded bg-blue-950 text-blue-300 border border-blue-800/60">
-                        Akses Kursi Roda
-                      </span>
-                      <span className="px-2 py-0.5 rounded bg-neutral-900 text-neutral-300 border border-neutral-800">
-                        Pos Medis 24 Jam
-                      </span>
-                      <span className="px-2 py-0.5 rounded bg-neutral-900 text-neutral-300 border border-neutral-800">
-                        Dapur Umum PMI
-                      </span>
-                      <span className="px-2 py-0.5 rounded bg-neutral-900 text-neutral-300 border border-neutral-800">
-                        Sanitasi Terpisah
-                      </span>
-                    </div>
-                  </div>
-
-                  <div className="p-3 rounded-lg bg-neutral-900/90 border border-neutral-800 text-xs text-neutral-300 flex items-center justify-between">
-                    <span className="font-mono text-[11px] text-neutral-400">Petugas Kontak: Pak Hendra Kurniawan</span>
-                    <span className="text-emerald-400 font-bold text-[11px]">(021) 489-0123</span>
-                  </div>
-                </div>
-              </div>
-
-              {/* Right Column: Citizen Benefits Narrative */}
-              <div className="lg:col-span-5 space-y-5">
-                <div className="space-y-2">
-                  <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-[11px] font-mono font-bold uppercase tracking-wider text-blue-400 bg-neutral-900 border border-neutral-700">
-                    <Building2 className="w-3.5 h-3.5 text-blue-400" />
-                    MODUL DIREKTORI SHELTER
-                  </span>
-                  <h3 className="text-xl sm:text-2xl font-black text-white tracking-tight">
-                    Direktori Shelter &amp; Fasilitas Ramah Inklusif
-                  </h3>
-                  <p className="text-xs sm:text-sm text-neutral-300 leading-relaxed font-normal">
-                    Memastikan warga mengungsi ke tempat yang siap pakai, aman dari bencana lanjutan, dan memiliki fasilitas layak kemanusiaan.
-                  </p>
-                </div>
-
-                <div className="space-y-3">
-                  <div className="p-3.5 rounded-xl bg-[#0d100f] border border-neutral-800 flex items-start gap-3">
-                    <CheckCircle2 className="w-4 h-4 text-blue-400 shrink-0 mt-0.5" />
-                    <div>
-                      <h5 className="text-xs font-bold text-white">Kepastian Daya Tampung Sebelum Berangkat</h5>
-                      <p className="text-[11px] text-neutral-300 leading-relaxed mt-0.5">
-                        Menghindari pengungsi ditolak karena posko sudah penuh sesak, sehingga warga langsung menuju titik yang masih memiliki kuota.
-                      </p>
-                    </div>
-                  </div>
-
-                  <div className="p-3.5 rounded-xl bg-[#0d100f] border border-neutral-800 flex items-start gap-3">
-                    <CheckCircle2 className="w-4 h-4 text-blue-400 shrink-0 mt-0.5" />
-                    <div>
-                      <h5 className="text-xs font-bold text-white">Fasilitas Khusus Difabel &amp; Ibu Menyusui</h5>
-                      <p className="text-[11px] text-neutral-300 leading-relaxed mt-0.5">
-                        Informasi ketersediaan toilet ramah disabilitas, ruang laktasi, dan tenda medis darurat di setiap lokasi posko terdaftar.
-                      </p>
-                    </div>
-                  </div>
-
-                  <div className="p-3.5 rounded-xl bg-[#0d100f] border border-neutral-800 flex items-start gap-3">
-                    <CheckCircle2 className="w-4 h-4 text-blue-400 shrink-0 mt-0.5" />
-                    <div>
-                      <h5 className="text-xs font-bold text-white">Navigasi Langsung Jalur Evakuasi</h5>
-                      <p className="text-[11px] text-neutral-300 leading-relaxed mt-0.5">
-                        Terintegrasi dengan peta rute langsung sehingga rombongan warga tidak tersesat di tengah kepanikan darurat.
-                      </p>
-                    </div>
-                  </div>
-                </div>
-
-                <div className="pt-2">
-                  <Link
-                    to={PATHS.PUBLIC.SHELTERS}
-                    className="inline-flex items-center gap-2 px-5 py-2.5 rounded-xl bg-blue-700 hover:bg-blue-600 text-white font-bold text-xs transition-colors shadow-xs"
-                  >
-                    <span>Cari Titik Shelter Terdekat</span>
-                    <ArrowRight className="w-3.5 h-3.5" />
-                  </Link>
-                </div>
-              </div>
-            </div>
-          )}
-
-          {/* Tab 4: Citizen Reports Gallery Showcase */}
-          {activeGalleryTab === 'lapor' && (
-            <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-center">
-              {/* Left Column: UI Window Mockup */}
-              <div className="lg:col-span-7 rounded-2xl border border-neutral-800 bg-[#0a0e0c] overflow-hidden shadow-sm">
-                <div className="bg-[#121614] border-b border-neutral-800 px-4 py-3 flex items-center justify-between">
-                  <div className="flex items-center gap-2">
-                    <span className="w-3 h-3 rounded-full bg-rose-500/80" />
-                    <span className="w-3 h-3 rounded-full bg-amber-500/80" />
-                    <span className="w-3 h-3 rounded-full bg-emerald-500/80" />
-                    <span className="ml-2 px-2.5 py-0.5 rounded-md bg-neutral-900 border border-neutral-800 text-[11px] font-mono text-neutral-300">
-                      sentravax.id/lapor
-                    </span>
-                  </div>
-                  <span className="text-[10px] font-mono font-bold text-rose-400 bg-rose-950/70 border border-rose-800/60 px-2 py-0.5 rounded">
-                    RESPON CEPAT
-                  </span>
-                </div>
-
-                <div className="p-5 sm:p-6 space-y-4">
-                  {/* Reporting ticket card */}
-                  <div className="p-4 rounded-xl border border-neutral-800 bg-[#121614] space-y-3">
-                    <div className="flex items-center justify-between border-b border-neutral-800 pb-2 text-xs">
-                      <span className="font-mono text-neutral-400">Tiket: #RP-2026-JKT-114</span>
-                      <span className="px-2 py-0.5 rounded bg-amber-950 text-amber-300 text-[10px] font-bold border border-amber-800/60">
-                        SEDANG DITANGANI SAR
-                      </span>
-                    </div>
-
-                    <div className="space-y-1">
-                      <h4 className="text-sm font-black text-white">
-                        Genangan Banjir 90 cm Memutus Akses Jalan
-                      </h4>
-                      <p className="text-xs text-neutral-300">
-                        Lokasi: RT 04 / RW 02, Rawajati, Pancoran, Jakarta Selatan
-                      </p>
-                    </div>
-
-                    <div className="p-3 rounded-lg bg-neutral-900 border border-neutral-800 space-y-2 text-xs">
-                      <div className="flex items-center gap-2 text-emerald-400 font-bold text-[11px]">
-                        <CheckCircle2 className="w-3.5 h-3.5" />
-                        <span>Foto &amp; Titik GPS Telah Tervalidasi Spasial</span>
-                      </div>
-                      <p className="text-[11px] text-neutral-300">
-                        Status Terkini: 2 unit perahu karet BPBD DKI Jakarta telah diberangkatkan menuju lokasi warga.
-                      </p>
-                    </div>
-                  </div>
-
-                  <div className="p-3 rounded-lg bg-neutral-900/90 border border-neutral-800 text-xs text-neutral-300 flex items-center justify-between font-mono text-[11px]">
-                    <span>Waktu Input: 12 Menit Lalu</span>
-                    <span className="text-emerald-400 font-bold">Estimasi Tiba: 8 Menit</span>
-                  </div>
-                </div>
-              </div>
-
-              {/* Right Column: Citizen Benefits Narrative */}
-              <div className="lg:col-span-5 space-y-5">
-                <div className="space-y-2">
-                  <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-[11px] font-mono font-bold uppercase tracking-wider text-rose-400 bg-neutral-900 border border-neutral-700">
-                    <FileText className="w-3.5 h-3.5 text-rose-400" />
-                    MODUL LAPOR DARURAT
-                  </span>
-                  <h3 className="text-xl sm:text-2xl font-black text-white tracking-tight">
-                    Portal Pelaporan Warga &amp; Tracking Bantuan SAR
-                  </h3>
-                  <p className="text-xs sm:text-sm text-neutral-300 leading-relaxed font-normal">
-                    Menghubungkan warga yang terjebak bencana langsung ke komando relawan dan SAR secara transparan tanpa hambatan birokrasi.
-                  </p>
-                </div>
-
-                <div className="space-y-3">
-                  <div className="p-3.5 rounded-xl bg-[#0d100f] border border-neutral-800 flex items-start gap-3">
-                    <CheckCircle2 className="w-4 h-4 text-rose-400 shrink-0 mt-0.5" />
-                    <div>
-                      <h5 className="text-xs font-bold text-white">Pengiriman Koordinat GPS Sekali Klik</h5>
-                      <p className="text-[11px] text-neutral-300 leading-relaxed mt-0.5">
-                        Warga tidak perlu mengetik alamat panjang saat panik; sensor GPS ponsel otomatis mengirim titik lintang dan bujur presisi.
-                      </p>
-                    </div>
-                  </div>
-
-                  <div className="p-3.5 rounded-xl bg-[#0d100f] border border-neutral-800 flex items-start gap-3">
-                    <CheckCircle2 className="w-4 h-4 text-rose-400 shrink-0 mt-0.5" />
-                    <div>
-                      <h5 className="text-xs font-bold text-white">Pelacakan Transparan Status Penanganan</h5>
-                      <p className="text-[11px] text-neutral-300 leading-relaxed mt-0.5">
-                        Warga dapat mengetahui apakah laporan sudah diterima, diverifikasi, atau tim penyelamat sedang dalam perjalanan ke lokasi.
-                      </p>
-                    </div>
-                  </div>
-
-                  <div className="p-3.5 rounded-xl bg-[#0d100f] border border-neutral-800 flex items-start gap-3">
-                    <CheckCircle2 className="w-4 h-4 text-rose-400 shrink-0 mt-0.5" />
-                    <div>
-                      <h5 className="text-xs font-bold text-white">Pencegahan Penyalahgunaan Armada Evakuasi</h5>
-                      <p className="text-[11px] text-neutral-300 leading-relaxed mt-0.5">
-                        Sistem verifikasi ganda memastikan armada SAR difokuskan ke titik yang benar-benar membutuhkan evakuasi segera.
-                      </p>
-                    </div>
-                  </div>
-                </div>
-
-                <div className="pt-2">
-                  <Link
-                    to={PATHS.PUBLIC.REPORT}
-                    className="inline-flex items-center gap-2 px-5 py-2.5 rounded-xl bg-rose-700 hover:bg-rose-600 text-white font-bold text-xs transition-colors shadow-xs"
-                  >
-                    <span>Buka Portal Pelaporan Warga</span>
-                    <ArrowRight className="w-3.5 h-3.5" />
-                  </Link>
-                </div>
-              </div>
-            </div>
-          )}
-
-          {/* Tab 5: CAP Early Warning Gallery Showcase */}
-          {activeGalleryTab === 'cap' && (
-            <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-center">
-              {/* Left Column: UI Window Mockup */}
-              <div className="lg:col-span-7 rounded-2xl border border-neutral-800 bg-[#0a0e0c] overflow-hidden shadow-sm">
-                <div className="bg-[#121614] border-b border-neutral-800 px-4 py-3 flex items-center justify-between">
-                  <div className="flex items-center gap-2">
-                    <span className="w-3 h-3 rounded-full bg-rose-500/80" />
-                    <span className="w-3 h-3 rounded-full bg-amber-500/80" />
-                    <span className="w-3 h-3 rounded-full bg-emerald-500/80" />
-                    <span className="ml-2 px-2.5 py-0.5 rounded-md bg-neutral-900 border border-neutral-800 text-[11px] font-mono text-neutral-300">
-                      sentravax.id/intelijen/peringatan
-                    </span>
-                  </div>
-                  <span className="text-[10px] font-mono font-bold text-cyan-400 bg-cyan-950/70 border border-cyan-800/60 px-2 py-0.5 rounded">
-                    PROTOKOL CAP v1.2
-                  </span>
-                </div>
-
-                <div className="p-5 sm:p-6 space-y-4">
-                  {/* CAP Alert card */}
-                  <div className="p-4 rounded-xl border border-amber-800/60 bg-[#16120c] space-y-3">
-                    <div className="flex items-center justify-between text-xs">
-                      <span className="px-2 py-0.5 rounded bg-amber-950 text-amber-300 font-bold border border-amber-800/80">
-                        TINGKAT: SIAGA (ORANGE)
-                      </span>
-                      <span className="text-neutral-400 font-mono text-[11px]">WMO / ITU Standar</span>
-                    </div>
-
-                    <div className="space-y-1">
-                      <h4 className="text-sm font-black text-white">
-                        Peringatan Gelombang Pasang &amp; Banjir Rob Pesisir
-                      </h4>
-                      <p className="text-xs text-neutral-300">
-                        Wilayah Terdampak: Pesisir Utara Jakarta, Bekasi, &amp; Tangerang
-                      </p>
-                    </div>
-
-                    <div className="p-3 rounded-lg bg-neutral-900 border border-neutral-800 text-xs text-neutral-200 space-y-1">
-                      <span className="font-bold text-white block">Instruksi Aksi Masyarakat:</span>
-                      <p className="text-[11px] text-neutral-300 leading-relaxed">
-                        Amankan dokumen penting ke lantai atas, hindari beraktivitas di dermaga pelabuhan, dan pantau shelter evakuasi terdekat.
-                      </p>
-                    </div>
-                  </div>
-
-                  <div className="flex flex-wrap gap-2 text-[10px] font-mono font-bold text-neutral-300">
-                    <span className="px-2 py-1 rounded bg-neutral-900 border border-neutral-800">
-                      Kanal: Web Portal &amp; PWA
-                    </span>
-                    <span className="px-2 py-1 rounded bg-neutral-900 border border-neutral-800">
-                      Kanal: Sirene EWS Daerah
-                    </span>
-                    <span className="px-2 py-1 rounded bg-neutral-900 border border-neutral-800">
-                      Kanal: Radio Komunitas
-                    </span>
-                  </div>
-                </div>
-              </div>
-
-              {/* Right Column: Citizen Benefits Narrative */}
-              <div className="lg:col-span-5 space-y-5">
-                <div className="space-y-2">
-                  <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-[11px] font-mono font-bold uppercase tracking-wider text-cyan-400 bg-neutral-900 border border-neutral-700">
-                    <Radio className="w-3.5 h-3.5 text-cyan-400" />
-                    SISTEM PERINGATAN RESMI
-                  </span>
-                  <h3 className="text-xl sm:text-2xl font-black text-white tracking-tight">
-                    Diseminasi Peringatan Dini Berstandar Internasional
-                  </h3>
-                  <p className="text-xs sm:text-sm text-neutral-300 leading-relaxed font-normal">
-                    Menggunakan format Common Alerting Protocol (CAP v1.2) agar peringatan bahaya tersampaikan serentak dalam hitungan detik.
-                  </p>
-                </div>
-
-                <div className="space-y-3">
-                  <div className="p-3.5 rounded-xl bg-[#0d100f] border border-neutral-800 flex items-start gap-3">
-                    <CheckCircle2 className="w-4 h-4 text-cyan-400 shrink-0 mt-0.5" />
-                    <div>
-                      <h5 className="text-xs font-bold text-white">Notifikasi Tiba Sebelum Bahaya Memuncak</h5>
-                      <p className="text-[11px] text-neutral-300 leading-relaxed mt-0.5">
-                        Memberikan waktu kritis berharga bagi keluarga untuk berkemas dan meninggalkan zona bahaya secara tenang.
-                      </p>
-                    </div>
-                  </div>
-
-                  <div className="p-3.5 rounded-xl bg-[#0d100f] border border-neutral-800 flex items-start gap-3">
-                    <CheckCircle2 className="w-4 h-4 text-cyan-400 shrink-0 mt-0.5" />
-                    <div>
-                      <h5 className="text-xs font-bold text-white">Instruksi Aksi Nyata, Bukan Sekadar Sirene</h5>
-                      <p className="text-[11px] text-neutral-300 leading-relaxed mt-0.5">
-                        Menjelaskan apa yang harus dilakukan secara bertahap, meminimalisir risiko korban jiwa dan kerugian harta benda.
-                      </p>
-                    </div>
-                  </div>
-
-                  <div className="p-3.5 rounded-xl bg-[#0d100f] border border-neutral-800 flex items-start gap-3">
-                    <CheckCircle2 className="w-4 h-4 text-cyan-400 shrink-0 mt-0.5" />
-                    <div>
-                      <h5 className="text-xs font-bold text-white">Diseminasi Multi-Kanal Serentak</h5>
-                      <p className="text-[11px] text-neutral-300 leading-relaxed mt-0.5">
-                        Tersinkronisasi otomatis dengan portal warga, sirene peringatan dini, dan siaran darurat publik.
-                      </p>
-                    </div>
-                  </div>
-                </div>
-
-                <div className="pt-2">
-                  <Link
-                    to={PATHS.PUBLIC.PREPAREDNESS}
-                    className="inline-flex items-center gap-2 px-5 py-2.5 rounded-xl bg-cyan-700 hover:bg-cyan-600 text-white font-bold text-xs transition-colors shadow-xs"
-                  >
-                    <span>Pelajari Standar Protokol CAP</span>
-                    <ArrowRight className="w-3.5 h-3.5" />
-                  </Link>
-                </div>
-              </div>
-            </div>
-          )}
+            </article>
+          ))}
         </div>
 
-        {/* Quick Gallery Grid Cards (Ringkasan 4 Modul untuk Warga) */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+        {/* Lightbox Modal Detail Kisah Penyelamatan */}
+        {selectedStory && (
           <div
-            onClick={() => setActiveGalleryTab('map')}
-            className={`p-5 rounded-2xl border transition-all cursor-pointer space-y-3 ${
-              activeGalleryTab === 'map'
-                ? 'bg-[#151917] border-emerald-700/80 shadow-xs'
-                : 'bg-[#121614] border-neutral-800 hover:border-neutral-700'
-            }`}
+            className="fixed inset-0 z-50 bg-black/85 backdrop-blur-md flex items-center justify-center p-4 sm:p-6"
+            onClick={() => setSelectedStory(null)}
           >
-            <div className="w-10 h-10 rounded-xl bg-emerald-950/70 border border-emerald-800/60 text-emerald-400 flex items-center justify-center font-bold">
-              <Map className="w-5 h-5" />
-            </div>
-            <div>
-              <h4 className="text-sm font-black text-white">1. Radar Geospasial</h4>
-              <p className="text-xs text-neutral-300 mt-1 leading-relaxed">
-                Deteksi koordinat gempa BMKG dan sebaran banjir real-time tanpa kabar burung hoaks.
-              </p>
-            </div>
-            <div className="pt-1 text-[11px] font-bold text-emerald-400 flex items-center gap-1">
-              <span>Buka Galeri Peta</span>
-              <ArrowRight className="w-3 h-3" />
-            </div>
-          </div>
+            <div
+              className="relative max-w-3xl w-full max-h-[92vh] overflow-y-auto rounded-3xl bg-[#0e1210] border border-neutral-800 shadow-2xl space-y-6 p-6 sm:p-8"
+              onClick={(e) => e.stopPropagation()}
+            >
+              {/* Close Button */}
+              <button
+                type="button"
+                onClick={() => setSelectedStory(null)}
+                className="absolute top-5 right-5 p-2 rounded-full bg-neutral-900 border border-neutral-700 text-neutral-300 hover:text-white hover:bg-neutral-800 transition-colors z-10"
+                aria-label="Tutup Detail"
+              >
+                <X className="w-5 h-5" />
+              </button>
 
-          <div
-            onClick={() => setActiveGalleryTab('siaga')}
-            className={`p-5 rounded-2xl border transition-all cursor-pointer space-y-3 ${
-              activeGalleryTab === 'siaga'
-                ? 'bg-[#1a1711] border-amber-700/80 shadow-xs'
-                : 'bg-[#121614] border-neutral-800 hover:border-neutral-700'
-            }`}
-          >
-            <div className="w-10 h-10 rounded-xl bg-amber-950/70 border border-amber-800/60 text-amber-400 flex items-center justify-center font-bold">
-              <ShieldCheck className="w-5 h-5" />
-            </div>
-            <div>
-              <h4 className="text-sm font-black text-white">2. Tas Siaga 72 Jam</h4>
-              <p className="text-xs text-neutral-300 mt-1 leading-relaxed">
-                Kalkulator otomatis ransum air dan kalori agar keluarga mandiri sebelum bantuan tiba.
-              </p>
-            </div>
-            <div className="pt-1 text-[11px] font-bold text-amber-400 flex items-center gap-1">
-              <span>Buka Galeri Ransum</span>
-              <ArrowRight className="w-3 h-3" />
-            </div>
-          </div>
+              {/* Header Modal */}
+              <div className="space-y-2 pr-12">
+                <div className="flex flex-wrap items-center gap-2">
+                  <span className="inline-flex items-center gap-1 px-3 py-1 rounded-xl bg-emerald-950/80 border border-emerald-800 text-xs font-mono font-bold text-emerald-300 uppercase">
+                    Warga Selamat
+                  </span>
+                  <span className="inline-flex items-center gap-1 px-2.5 py-1 rounded-xl bg-neutral-900 border border-neutral-700 text-xs font-semibold text-neutral-200">
+                    <MapPin className="w-3.5 h-3.5 text-emerald-400" />
+                    <span>{selectedStory.location}</span>
+                  </span>
+                  <span className="text-xs font-mono text-amber-300 bg-amber-950/60 px-2 py-0.5 rounded-md border border-amber-800/80">
+                    {selectedStory.hazardType}
+                  </span>
+                </div>
+                <h3 className="text-xl sm:text-2xl font-black text-white tracking-tight">
+                  {selectedStory.title}
+                </h3>
+                <div className="text-xs text-neutral-400">
+                  Subjek: <span className="text-neutral-200 font-semibold">{selectedStory.person}</span> ({selectedStory.role}) • {selectedStory.date}
+                </div>
+              </div>
 
-          <div
-            onClick={() => setActiveGalleryTab('shelter')}
-            className={`p-5 rounded-2xl border transition-all cursor-pointer space-y-3 ${
-              activeGalleryTab === 'shelter'
-                ? 'bg-[#121620] border-blue-700/80 shadow-xs'
-                : 'bg-[#121614] border-neutral-800 hover:border-neutral-700'
-            }`}
-          >
-            <div className="w-10 h-10 rounded-xl bg-blue-950/70 border border-blue-800/60 text-blue-400 flex items-center justify-center font-bold">
-              <Building2 className="w-5 h-5" />
-            </div>
-            <div>
-              <h4 className="text-sm font-black text-white">3. Shelter Ramah Difabel</h4>
-              <p className="text-xs text-neutral-300 mt-1 leading-relaxed">
-                Kepastian kapasitas tersisa, akses kursi roda, sanitasi, dan posko medis 24 jam.
-              </p>
-            </div>
-            <div className="pt-1 text-[11px] font-bold text-blue-400 flex items-center gap-1">
-              <span>Buka Galeri Shelter</span>
-              <ArrowRight className="w-3 h-3" />
-            </div>
-          </div>
+              {/* Gambar Dokumentasi Penuh */}
+              <div className="relative aspect-[16/10] sm:aspect-[16/9] rounded-2xl overflow-hidden border border-neutral-800 bg-black">
+                <img
+                  src={selectedStory.image}
+                  alt={selectedStory.title}
+                  className="w-full h-full object-cover"
+                />
+              </div>
 
-          <div
-            onClick={() => setActiveGalleryTab('lapor')}
-            className={`p-5 rounded-2xl border transition-all cursor-pointer space-y-3 ${
-              activeGalleryTab === 'lapor'
-                ? 'bg-[#1c1214] border-rose-700/80 shadow-xs'
-                : 'bg-[#121614] border-neutral-800 hover:border-neutral-700'
-            }`}
-          >
-            <div className="w-10 h-10 rounded-xl bg-rose-950/70 border border-rose-800/60 text-rose-400 flex items-center justify-center font-bold">
-              <FileText className="w-5 h-5" />
-            </div>
-            <div>
-              <h4 className="text-sm font-black text-white">4. Lapor &amp; Respon SAR</h4>
-              <p className="text-xs text-neutral-300 mt-1 leading-relaxed">
-                Kirim koordinat GPS dan foto situasi darurat langsung ke tim relawan dan SAR.
-              </p>
-            </div>
-            <div className="pt-1 text-[11px] font-bold text-rose-400 flex items-center gap-1">
-              <span>Buka Galeri Lapor</span>
-              <ArrowRight className="w-3 h-3" />
+              {/* Narasi dan Protokol Penyelamatan */}
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-4 p-4 rounded-2xl bg-[#121614] border border-neutral-800">
+                <div className="space-y-1">
+                  <div className="text-[10px] font-mono text-neutral-400 uppercase">Posko Evakuasi Tujuan</div>
+                  <div className="text-xs font-bold text-white flex items-center gap-1.5">
+                    <Building2 className="w-3.5 h-3.5 text-emerald-400 shrink-0" />
+                    <span>{selectedStory.shelterName}</span>
+                  </div>
+                </div>
+                <div className="space-y-1">
+                  <div className="text-[10px] font-mono text-neutral-400 uppercase">Protokol Penyelamatan</div>
+                  <div className="text-xs font-bold text-emerald-400 flex items-center gap-1.5">
+                    <ShieldCheck className="w-3.5 h-3.5 text-emerald-400 shrink-0" />
+                    <span>{selectedStory.protocolBadge}</span>
+                  </div>
+                </div>
+                <div className="space-y-1">
+                  <div className="text-[10px] font-mono text-neutral-400 uppercase">Hasil Evakuasi</div>
+                  <div className="text-xs font-bold text-white flex items-center gap-1.5">
+                    <CheckCircle2 className="w-3.5 h-3.5 text-emerald-400 shrink-0" />
+                    <span>{selectedStory.stats}</span>
+                  </div>
+                </div>
+              </div>
+
+              {/* Narasi Kronologi */}
+              <div className="space-y-2">
+                <h4 className="text-xs font-mono font-bold tracking-wider uppercase text-neutral-400">
+                  Kronologi Lapangan &amp; Manfaat Aplikasi:
+                </h4>
+                <p className="text-sm text-neutral-200 leading-relaxed bg-[#111513] p-4 rounded-2xl border border-neutral-800/80">
+                  {selectedStory.story}
+                </p>
+              </div>
+
+              {/* Action Buttons */}
+              <div className="flex flex-col sm:flex-row items-center justify-between gap-3 pt-2">
+                <span className="text-xs text-neutral-400">
+                  Dokumentasi verifikasi relawan lapangan &amp; posko koordinasi Sentravax.
+                </span>
+                <Link
+                  to={PATHS.PUBLIC.SHELTERS}
+                  className="w-full sm:w-auto inline-flex items-center justify-center gap-2 px-5 py-2.5 rounded-xl bg-emerald-600 hover:bg-emerald-500 text-white font-bold text-xs tracking-tight transition-all"
+                >
+                  <Building2 className="w-3.5 h-3.5" />
+                  <span>Cari Shelter Siaga Terdekat</span>
+                </Link>
+              </div>
             </div>
           </div>
-        </div>
+        )}
       </section>
 
       {/* ========================================================================= */}
