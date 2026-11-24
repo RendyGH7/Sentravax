@@ -7,8 +7,6 @@ import type {
   LocationCheckResult,
   GoBagChecklistItem
 } from '../../types';
-import { Badge } from '../../components/ui/Badge';
-import { Button } from '../../components/ui/Button';
 import { Skeleton } from '../../components/ui/Skeleton';
 import { EmptyState } from '../../components/ui/EmptyState';
 import { DisasterMap } from '../../components/map/DisasterMap';

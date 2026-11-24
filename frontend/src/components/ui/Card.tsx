@@ -11,7 +11,7 @@ export interface CardProps extends React.HTMLAttributes<HTMLDivElement> {
 }
 
 export const Card = React.forwardRef<HTMLDivElement, CardProps>(
-  ({ children, className, theme = 'light', padding = 'md', interactive = false, ...props }, ref) => {
+  ({ children, className, theme = 'dark', padding = 'md', interactive = false, ...props }, ref) => {
     const isDark = theme === 'dark';
 
     const paddingStyles: Record<CardPadding, string> = {
@@ -56,7 +56,7 @@ export interface CardHeaderProps extends React.HTMLAttributes<HTMLDivElement> {
 }
 
 export const CardHeader = React.forwardRef<HTMLDivElement, CardHeaderProps>(
-  ({ children, className, bordered = false, theme = 'light', ...props }, ref) => {
+  ({ children, className, bordered = false, theme = 'dark', ...props }, ref) => {
     const isDark = theme === 'dark';
     return (
       <div
@@ -81,7 +81,7 @@ export interface CardTitleProps extends React.HTMLAttributes<HTMLHeadingElement>
 }
 
 export const CardTitle = React.forwardRef<HTMLHeadingElement, CardTitleProps>(
-  ({ children, className, as: Component = 'h3', theme = 'light', ...props }, ref) => {
+  ({ children, className, as: Component = 'h3', theme = 'dark', ...props }, ref) => {
     const isDark = theme === 'dark';
     return (
       <Component
@@ -105,7 +105,7 @@ export interface CardDescriptionProps extends React.HTMLAttributes<HTMLParagraph
 }
 
 export const CardDescription = React.forwardRef<HTMLParagraphElement, CardDescriptionProps>(
-  ({ children, className, theme = 'light', ...props }, ref) => {
+  ({ children, className, theme = 'dark', ...props }, ref) => {
     const isDark = theme === 'dark';
     return (
       <p
@@ -143,7 +143,7 @@ export interface CardFooterProps extends React.HTMLAttributes<HTMLDivElement> {
 }
 
 export const CardFooter = React.forwardRef<HTMLDivElement, CardFooterProps>(
-  ({ children, className, bordered = false, theme = 'light', ...props }, ref) => {
+  ({ children, className, bordered = false, theme = 'dark', ...props }, ref) => {
     const isDark = theme === 'dark';
     return (
       <div

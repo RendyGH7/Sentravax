@@ -28,7 +28,7 @@ export const Modal: React.FC<ModalProps> = ({
   children,
   footer,
   size = 'md',
-  theme = 'light',
+  theme = 'dark',
   closeOnBackdropClick = true,
   closeOnEscape = true,
   className,

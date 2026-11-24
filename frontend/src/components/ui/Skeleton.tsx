@@ -15,7 +15,7 @@ export interface SkeletonProps extends React.HTMLAttributes<HTMLDivElement> {
 export const Skeleton: React.FC<SkeletonProps> = ({
   className,
   variant = 'rectangular',
-  theme = 'light',
+  theme = 'dark',
   width,
   height,
   count = 1,

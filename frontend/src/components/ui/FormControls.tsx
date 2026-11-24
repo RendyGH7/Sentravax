@@ -15,7 +15,7 @@ export const Label: React.FC<LabelProps> = ({
   children,
   className,
   required = false,
-  theme = 'light',
+  theme = 'dark',
   ...props
 }) => {
   const isDark = theme === 'dark';
@@ -50,7 +50,7 @@ export interface FormErrorMessageProps extends React.HTMLAttributes<HTMLParagrap
 export const FormErrorMessage: React.FC<FormErrorMessageProps> = ({
   error,
   className,
-  theme = 'light',
+  theme = 'dark',
   ...props
 }) => {
   if (!error) return null;
@@ -91,7 +91,7 @@ export const Input = forwardRef<HTMLInputElement, InputProps>(
       label,
       error,
       helperText,
-      theme = 'light',
+      theme = 'dark',
       leftIcon,
       rightIcon,
       required,
@@ -198,7 +198,7 @@ export const Select = forwardRef<HTMLSelectElement, SelectProps>(
       label,
       error,
       helperText,
-      theme = 'light',
+      theme = 'dark',
       options,
       placeholder,
       required,
@@ -292,7 +292,7 @@ export const Textarea = forwardRef<HTMLTextAreaElement, TextareaProps>(
       label,
       error,
       helperText,
-      theme = 'light',
+      theme = 'dark',
       required,
       className,
       disabled,
@@ -361,7 +361,7 @@ export interface CheckboxProps extends Omit<React.InputHTMLAttributes<HTMLInputE
 }
 
 export const Checkbox = forwardRef<HTMLInputElement, CheckboxProps>(
-  ({ id, label, description, theme = 'light', className, disabled, ...props }, ref) => {
+  ({ id, label, description, theme = 'dark', className, disabled, ...props }, ref) => {
     const generatedId = useId();
     const checkboxId = id || generatedId;
     const descId = `${checkboxId}-desc`;
@@ -415,7 +415,7 @@ export interface RadioProps extends Omit<React.InputHTMLAttributes<HTMLInputElem
 }
 
 export const Radio = forwardRef<HTMLInputElement, RadioProps>(
-  ({ id, label, description, theme = 'light', className, disabled, ...props }, ref) => {
+  ({ id, label, description, theme = 'dark', className, disabled, ...props }, ref) => {
     const generatedId = useId();
     const radioId = id || generatedId;
     const descId = `${radioId}-desc`;

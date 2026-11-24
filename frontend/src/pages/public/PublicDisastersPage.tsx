@@ -35,7 +35,6 @@ import type {
   HazardSeverity,
   EventStatus,
 } from '../../types/disaster';
-import { Button } from '../../components/ui/Button';
 import { EmptyState } from '../../components/ui/EmptyState';
 import { DisasterMap } from '../../components/map/DisasterMap';
 import { DataTrustGroup } from '../../components/shared/DataTrustBadges';
@@ -128,7 +127,7 @@ function getStatusBadge(status?: string) {
 }
 
 export const PublicDisastersPage: React.FC = () => {
-  const [searchParams, setSearchParams] = useSearchParams();
+  const [searchParams] = useSearchParams();
 
   // Filter States initialized from URL params if present
   const [searchQuery, setSearchQuery] = useState<string>(searchParams.get('q') || '');

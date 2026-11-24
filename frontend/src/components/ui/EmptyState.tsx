@@ -27,7 +27,7 @@ export const EmptyState: React.FC<EmptyStateProps> = ({
   description,
   action,
   secondaryAction,
-  theme = 'light',
+  theme = 'dark',
   children,
   className,
   ...props

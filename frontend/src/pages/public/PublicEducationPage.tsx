@@ -3,8 +3,6 @@ import { Link } from 'react-router-dom';
 import { PATHS } from '../../app/router/paths';
 import { publicService } from '../../services/public-service';
 import type { EducationContentItem } from '../../types';
-import { Badge } from '../../components/ui/Badge';
-import { Card } from '../../components/ui/Card';
 import { EmptyState } from '../../components/ui/EmptyState';
 import { 
   Search, 
@@ -253,17 +251,17 @@ export const PublicEducationPage: React.FC = () => {
   };
 
   return (
-    <div className="space-y-6 max-w-7xl mx-auto py-6 px-4 sm:px-6 lg:px-8">
+    <div className="space-y-6 max-w-7xl mx-auto py-6 px-4 sm:px-6 lg:px-8 text-neutral-100">
       {/* 1. TOP EMERGENCY HOTLINE SPEED-DIAL BAR */}
-      <section aria-label="Kontak Darurat Cepat" className="p-3.5 rounded-2xl bg-white border border-[#E5E7EB] shadow-xs">
+      <section aria-label="Kontak Darurat Cepat" className="p-4 rounded-2xl bg-[#121614] border border-neutral-800 shadow-xs">
         <div className="flex flex-col md:flex-row md:items-center justify-between gap-3">
           <div className="flex items-center gap-2">
-            <div className="w-8 h-8 rounded-xl bg-red-50 text-red-600 flex items-center justify-center font-bold shrink-0">
+            <div className="w-8 h-8 rounded-xl bg-neutral-900 border border-neutral-700 text-rose-400 flex items-center justify-center font-bold shrink-0">
               <PhoneCall className="w-4 h-4 animate-pulse" />
             </div>
             <div>
-              <span className="text-xs font-bold text-[#111827] block">Panggilan Darurat Siaga (1-Klik):</span>
-              <span className="text-[11px] text-[#6B7280]">Bebas pulsa nasional 24/7 untuk tanggap darurat</span>
+              <span className="text-sm font-bold text-white block">Panggilan Darurat Siaga (1-Klik):</span>
+              <span className="text-[11px] text-neutral-400">Bebas pulsa nasional 24/7 untuk tanggap darurat</span>
             </div>
           </div>
 
@@ -272,11 +270,11 @@ export const PublicEducationPage: React.FC = () => {
               <a
                 key={h.number}
                 href={`tel:${h.number}`}
-                className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-neutral-50 hover:bg-neutral-100 border border-neutral-200 text-xs font-bold text-neutral-800 transition-colors"
+                className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-neutral-900 hover:bg-neutral-800 border border-neutral-700 text-xs font-bold text-neutral-200 transition-colors"
                 title={`${h.name} - ${h.desc}`}
               >
-                <span className="text-red-600 font-mono font-extrabold">{h.number}</span>
-                <span className="text-[11px] text-neutral-600 hidden sm:inline">{h.name.split(' ')[0]}</span>
+                <span className="text-rose-400 font-mono font-bold">{h.number}</span>
+                <span className="text-[11px] text-neutral-400 hidden sm:inline">{h.name.split(' ')[0]}</span>
               </a>
             ))}
           </div>
@@ -288,13 +286,13 @@ export const PublicEducationPage: React.FC = () => {
         <div className="flex flex-col md:flex-row md:items-end justify-between gap-4">
           <div className="space-y-1">
             <div className="flex items-center gap-2">
-              <Badge variant="success" size="sm">SIAP SIAGA</Badge>
-              <Badge variant="neutral" size="sm">STANDAR BNPB & BMKG</Badge>
+              <span className="text-[10px] font-mono font-bold px-2.5 py-0.5 rounded-md bg-emerald-950/80 text-emerald-300 border border-emerald-800/60">SIAP SIAGA</span>
+              <span className="text-[10px] font-mono font-bold px-2.5 py-0.5 rounded-md bg-neutral-900 text-neutral-300 border border-neutral-700">STANDAR BNPB &amp; BMKG</span>
             </div>
-            <h1 className="text-2xl sm:text-3xl font-extrabold text-[#111827] tracking-tight">
+            <h1 className="text-2xl sm:text-3xl font-black text-white tracking-tight">
               Pusat Edukasi & Mitigasi Multi-Hazard
             </h1>
-            <p className="text-xs sm:text-sm text-[#4B5563]">
+            <p className="text-xs sm:text-sm text-neutral-400">
               Langkah terstruktur penyelamatan mandiri sebelum, saat, dan sesudah bencana melanda.
             </p>
           </div>
@@ -304,7 +302,7 @@ export const PublicEducationPage: React.FC = () => {
             <Link to={PATHS.PUBLIC.PREPAREDNESS}>
               <button
                 type="button"
-                className="inline-flex items-center gap-1.5 px-3.5 py-2 rounded-xl bg-[#047857] hover:bg-[#065F46] text-white text-xs font-bold transition-all shadow-xs"
+                className="inline-flex items-center gap-1.5 px-3.5 py-2 rounded-xl bg-emerald-700 hover:bg-emerald-600 text-white text-xs font-bold transition-all shadow-xs"
               >
                 <span>Cek Risiko Lokasi</span>
                 <ArrowRight className="w-3.5 h-3.5" />
@@ -313,7 +311,7 @@ export const PublicEducationPage: React.FC = () => {
             <Link to={`${PATHS.PUBLIC.MAP}?layer=shelters`}>
               <button
                 type="button"
-                className="inline-flex items-center gap-1.5 px-3.5 py-2 rounded-xl bg-white hover:bg-neutral-50 border border-neutral-300 text-[#111827] text-xs font-bold transition-all shadow-xs"
+                className="inline-flex items-center gap-1.5 px-3.5 py-2 rounded-xl bg-neutral-900 hover:bg-neutral-800 border border-neutral-700 text-neutral-200 text-xs font-bold transition-all shadow-xs"
               >
                 <span>Lokasi Shelter</span>
               </button>
@@ -322,7 +320,7 @@ export const PublicEducationPage: React.FC = () => {
         </div>
 
         {/* 3. TOOLBAR: SEARCH & HAZARD SELECTOR CHIPS */}
-        <div className="space-y-3 p-4 rounded-2xl bg-white border border-[#E5E7EB] shadow-xs">
+        <div className="space-y-3 p-4 rounded-2xl bg-[#121614] border border-neutral-800 shadow-xs">
           <div className="grid grid-cols-1 md:grid-cols-12 gap-3 items-center">
             {/* Instant Search Bar */}
             <div className="md:col-span-8 relative">
@@ -332,7 +330,7 @@ export const PublicEducationPage: React.FC = () => {
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
                 placeholder="Cari panduan keselamatan (contoh: gempa, listrik, tas siaga, banjir)..."
-                className="w-full pl-10 pr-4 py-2 text-xs sm:text-sm rounded-xl border border-neutral-300 focus:border-[#047857] focus:ring-1 focus:ring-[#047857] outline-none"
+                className="w-full pl-10 pr-4 py-2 text-xs sm:text-sm rounded-xl border border-neutral-700 bg-emerald-700 text-white placeholder:text-neutral-500 focus:border-emerald-500 focus:ring-1 focus:ring-emerald-500 outline-none transition-colors"
               />
               {searchQuery && (
                 <button
@@ -354,8 +352,8 @@ export const PublicEducationPage: React.FC = () => {
                   onClick={() => setPhaseFilter(p)}
                   className={`px-2.5 py-1.5 rounded-lg text-xs font-bold capitalize transition-all ${
                     phaseFilter === p
-                      ? 'bg-neutral-900 text-white'
-                      : 'bg-neutral-100 hover:bg-neutral-200 text-neutral-700'
+                      ? 'bg-emerald-700 text-white'
+                      : 'bg-neutral-900 text-neutral-400 border border-neutral-800 hover:text-white'
                   }`}
                 >
                   {p === 'all' ? 'Semua Fase' : p}
@@ -387,7 +385,7 @@ export const PublicEducationPage: React.FC = () => {
                   className={`inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl font-bold whitespace-nowrap transition-all ${
                     isSelected
                       ? 'bg-[#047857] text-white shadow-xs'
-                      : 'bg-neutral-100 hover:bg-neutral-200 text-neutral-700'
+                      : 'bg-neutral-900 text-neutral-400 border border-neutral-800 hover:text-white'
                   }`}
                 >
                   <IconComp className="w-3.5 h-3.5" />
@@ -404,14 +402,14 @@ export const PublicEducationPage: React.FC = () => {
         {loading ? (
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             {[1, 2, 3, 4].map((i) => (
-              <div key={i} className="h-44 rounded-2xl bg-white border border-neutral-200 animate-pulse p-5"></div>
+              <div key={i} className="h-44 rounded-2xl bg-[#121614] border border-neutral-800 animate-pulse p-5"></div>
             ))}
           </div>
         ) : filteredGuides.length === 0 ? (
           <EmptyState
             title="Tidak Ada Panduan Sesuai Pencarian"
             description="Coba ubah kata kunci pencarian atau pilih kategori bahaya lainnya."
-            className="py-12 bg-white rounded-2xl border border-neutral-200"
+            className="py-12 bg-[#121614] rounded-2xl border border-neutral-800 text-neutral-300"
           />
         ) : (
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4 items-start">
@@ -423,23 +421,13 @@ export const PublicEducationPage: React.FC = () => {
                 : sections.filter(s => s.title.toLowerCase().includes(phaseFilter));
 
               return (
-                <Card 
-                  key={guide.id} 
-                  padding="md" 
-                  className={`border transition-all ${
-                    isExpanded ? 'border-[#047857] ring-1 ring-[#047857]/30 shadow-sm' : 'border-neutral-200 hover:border-neutral-300'
-                  }`}
-                >
+                <div key={guide.id} className={`p-5 rounded-2xl bg-[#121614] border transition-all ${isExpanded ? "border-emerald-500 ring-1 ring-emerald-500/30" : "border-neutral-800 hover:border-emerald-500/40"}`}>
                   <div className="space-y-3">
                     {/* Top Row: Badges & Controls */}
                     <div className="flex items-center justify-between gap-2">
                       <div className="flex items-center gap-1.5 flex-wrap">
-                        <Badge variant="success" size="sm">
-                          {guide.hazard_type?.name || 'Multi-Hazard'}
-                        </Badge>
-                        <Badge variant="neutral" size="sm">
-                          {guide.category.toUpperCase()}
-                        </Badge>
+                        <span className="text-[10px] font-mono font-bold px-2 py-0.5 rounded-md bg-emerald-950/80 text-emerald-300 border border-emerald-800/60">{guide.hazard_type?.name || "Multi-Hazard"}</span>
+                        <span className="text-[10px] font-mono font-bold px-2 py-0.5 rounded-md bg-neutral-900 text-neutral-300 border border-neutral-700">{guide.category.toUpperCase()}</span>
                       </div>
 
                       <div className="flex items-center gap-1">
@@ -448,7 +436,7 @@ export const PublicEducationPage: React.FC = () => {
                           onClick={() => handleCopyGuide(guide)}
                           title="Salin Panduan"
                           aria-label="Salin Panduan"
-                          className="p-1.5 rounded-lg text-neutral-400 hover:text-neutral-700 hover:bg-neutral-100 transition-colors"
+                          className="p-1.5 rounded-lg text-neutral-400 hover:text-white hover:bg-neutral-800 transition-colors"
                         >
                           <Copy className="w-3.5 h-3.5" />
                         </button>
@@ -457,7 +445,7 @@ export const PublicEducationPage: React.FC = () => {
                           onClick={() => window.print()}
                           title="Cetak Panduan"
                           aria-label="Cetak Panduan"
-                          className="p-1.5 rounded-lg text-neutral-400 hover:text-neutral-700 hover:bg-neutral-100 transition-colors"
+                          className="p-1.5 rounded-lg text-neutral-400 hover:text-white hover:bg-neutral-800 transition-colors"
                         >
                           <Printer className="w-3.5 h-3.5" />
                         </button>
@@ -466,27 +454,27 @@ export const PublicEducationPage: React.FC = () => {
 
                     {/* Title & Summary */}
                     <div>
-                      <h2 className="text-base font-bold text-[#111827] leading-snug">
+                      <h2 className="text-base font-bold text-white leading-snug">
                         {guide.title}
                       </h2>
-                      <p className="text-xs text-[#4B5563] mt-1 leading-relaxed">
+                      <p className="text-xs text-neutral-300 mt-1 leading-relaxed font-normal">
                         {guide.summary}
                       </p>
                     </div>
 
                     {/* Collapsible Action Checklist */}
                     {isExpanded && (
-                      <div className="pt-3 border-t border-neutral-100 space-y-3">
+                      <div className="pt-3 border-t border-neutral-800 space-y-3">
                         {displaySections.map((sec, idx) => (
-                          <div key={idx} className="p-3 rounded-xl bg-neutral-50 border border-neutral-200 space-y-2">
-                            <h3 className="text-xs font-bold text-neutral-900 flex items-center gap-1.5">
+                          <div key={idx} className="p-3 rounded-xl bg-neutral-900 border border-neutral-800 space-y-2">
+                            <h3 className="text-xs font-bold text-white flex items-center gap-1.5">
                               <CheckCircle2 className="w-3.5 h-3.5 text-[#047857]" />
                               <span>{sec.title}</span>
                             </h3>
-                            <ul className="space-y-1.5 text-xs text-neutral-700">
+                            <ul className="space-y-1.5 text-xs text-neutral-300">
                               {sec.content.map((c, cIdx) => (
                                 <li key={cIdx} className="flex items-start gap-2 leading-relaxed">
-                                  <span className="w-1.5 h-1.5 rounded-full bg-[#047857] shrink-0 mt-1.5" />
+                                  <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 shrink-0 mt-1.5" />
                                   <span>{c}</span>
                                 </li>
                               ))}
@@ -497,21 +485,21 @@ export const PublicEducationPage: React.FC = () => {
                     )}
 
                     {/* Bottom Action Footer */}
-                    <div className="pt-2 border-t border-neutral-100 flex items-center justify-between">
+                    <div className="pt-2 border-t border-neutral-800 flex items-center justify-between">
                       <span className="text-[11px] text-neutral-500 font-mono">
                         Standar BNPB 2026
                       </span>
                       <button
                         type="button"
                         onClick={() => toggleExpand(guide.id)}
-                        className="inline-flex items-center gap-1 text-xs font-bold text-[#047857] hover:text-[#065F46] transition-colors"
+                        className="inline-flex items-center gap-1 text-xs font-bold text-emerald-400 hover:text-emerald-300 transition-colors"
                       >
                         <span>{isExpanded ? 'Tutup Detail' : 'Buka Tindakan Lengkap'}</span>
                         {isExpanded ? <ChevronUp className="w-3.5 h-3.5" /> : <ChevronDown className="w-3.5 h-3.5" />}
                       </button>
                     </div>
                   </div>
-                </Card>
+                </div>
               );
             })}
           </div>

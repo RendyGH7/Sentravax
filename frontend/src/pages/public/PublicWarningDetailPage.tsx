@@ -99,7 +99,7 @@ function getBroadcastBadge(level: BroadcastLevel | null) {
     default:
       return {
         label: 'Cakupan Belum Ditentukan',
-        badgeClass: 'bg-gray-100 text-gray-600 border-gray-200',
+        badgeClass: 'bg-neutral-900 text-gray-600 border-gray-200',
         dotClass: 'bg-gray-400',
       };
   }
@@ -128,7 +128,7 @@ function getAlertClassBadge(alertClass: AlertClass) {
     default:
       return {
         label: 'Peringatan Terbuka',
-        badgeClass: 'bg-gray-100 text-gray-700 border-gray-200',
+        badgeClass: 'bg-neutral-900 text-gray-700 border-gray-200',
       };
   }
 }
@@ -151,7 +151,7 @@ function getStatusBadge(status: AlertStatus) {
     case 'cancelled':
       return {
         label: 'Dibatalkan',
-        badgeClass: 'bg-gray-100 text-gray-500 border-gray-200',
+        badgeClass: 'bg-neutral-900 text-gray-500 border-gray-200',
         dotClass: 'bg-gray-400',
       };
     default:
@@ -190,7 +190,7 @@ const AlertCenterMap: React.FC<{
       attributionControl: false,
     });
 
-    const tileConfig = TILE_LAYERS.light;
+    const tileConfig = TILE_LAYERS.dark;
     L.tileLayer(tileConfig.url, {
       attribution: tileConfig.attribution,
       maxZoom: tileConfig.maxZoom,
@@ -252,7 +252,7 @@ const AlertCenterMap: React.FC<{
   return (
     <div
       ref={containerRef}
-      className="w-full h-[260px] sm:h-[300px] rounded-xl overflow-hidden border border-[#E5E7EB] bg-gray-100 relative z-0"
+      className="w-full h-[260px] sm:h-[300px] rounded-xl overflow-hidden border border-neutral-800 bg-neutral-900 relative z-0"
     />
   );
 };
@@ -323,10 +323,10 @@ export const PublicWarningDetailPage: React.FC = () => {
         <div className="w-14 h-14 mx-auto rounded-2xl bg-red-50 text-red-600 flex items-center justify-center border border-red-200">
           <AlertCircle className="w-7 h-7" />
         </div>
-        <h1 className="text-xl sm:text-2xl font-bold text-[#111827]">
+        <h1 className="text-xl sm:text-2xl font-bold text-white">
           Parameter ID Peringatan Dini Tidak Valid
         </h1>
-        <p className="text-sm text-[#4B5563] max-w-md mx-auto">
+        <p className="text-sm text-neutral-300 max-w-md mx-auto">
           URL peringatan dini harus menyertakan identifikasi bilangan bulat positif.
         </p>
         <div className="pt-2">
@@ -346,20 +346,20 @@ export const PublicWarningDetailPage: React.FC = () => {
   if (isLoading) {
     return (
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 space-y-6">
-        <div className="w-48 h-4 bg-gray-200 rounded-md animate-pulse" />
-        <div className="bg-white border border-[#E5E7EB] rounded-2xl p-6 sm:p-8 space-y-4 animate-pulse">
-          <div className="w-32 h-6 bg-gray-200 rounded-md" />
-          <div className="w-2/3 h-8 bg-gray-300 rounded-md" />
-          <div className="w-full h-12 bg-gray-100 rounded-md" />
+        <div className="w-48 h-4 bg-neutral-800 rounded-md animate-pulse" />
+        <div className="bg-[#121614] border border-neutral-800 rounded-2xl p-6 sm:p-8 space-y-4 animate-pulse">
+          <div className="w-32 h-6 bg-neutral-800 rounded-md" />
+          <div className="w-2/3 h-8 bg-neutral-700 rounded-md" />
+          <div className="w-full h-12 bg-neutral-900 rounded-md" />
         </div>
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
           <div className="lg:col-span-2 space-y-6">
-            <div className="h-64 bg-white border border-[#E5E7EB] rounded-2xl p-6 animate-pulse" />
-            <div className="h-48 bg-white border border-[#E5E7EB] rounded-2xl p-6 animate-pulse" />
+            <div className="h-64 bg-[#121614] border border-neutral-800 rounded-2xl p-6 animate-pulse" />
+            <div className="h-48 bg-[#121614] border border-neutral-800 rounded-2xl p-6 animate-pulse" />
           </div>
           <div className="space-y-6">
-            <div className="h-64 bg-white border border-[#E5E7EB] rounded-2xl p-6 animate-pulse" />
-            <div className="h-48 bg-white border border-[#E5E7EB] rounded-2xl p-6 animate-pulse" />
+            <div className="h-64 bg-[#121614] border border-neutral-800 rounded-2xl p-6 animate-pulse" />
+            <div className="h-48 bg-[#121614] border border-neutral-800 rounded-2xl p-6 animate-pulse" />
           </div>
         </div>
       </div>
@@ -373,16 +373,16 @@ export const PublicWarningDetailPage: React.FC = () => {
         <div className="w-14 h-14 mx-auto rounded-2xl bg-amber-50 text-amber-600 flex items-center justify-center border border-amber-200">
           <AlertTriangle className="w-7 h-7" />
         </div>
-        <h1 className="text-xl sm:text-2xl font-bold text-[#111827]">
+        <h1 className="text-xl sm:text-2xl font-bold text-white">
           Peringatan Dini #{alertId} Tidak Ditemukan
         </h1>
-        <p className="text-sm text-[#4B5563] max-w-md mx-auto">
+        <p className="text-sm text-neutral-300 max-w-md mx-auto">
           {errorMessage || 'Peringatan dini ini tidak tercatat dalam database atau telah diarsipkan.'}
         </p>
         <div className="pt-2 flex items-center justify-center gap-3">
           <Link
             to={PATHS.PUBLIC.WARNINGS}
-            className="inline-flex items-center gap-2 px-4 py-2 rounded-xl bg-white border border-[#D1D5DB] text-sm font-bold text-[#111827] shadow-xs hover:border-amber-500 hover:text-amber-800 transition-all"
+            className="inline-flex items-center gap-2 px-4 py-2 rounded-xl bg-[#121614] border border-neutral-700 text-sm font-bold text-white shadow-xs hover:border-amber-500 hover:text-amber-800 transition-all"
           >
             <ArrowLeft className="w-4 h-4" />
             <span>Pusat Peringatan</span>
@@ -409,11 +409,11 @@ export const PublicWarningDetailPage: React.FC = () => {
     typeof alertDetail.region?.center?.longitude === 'number';
 
   return (
-    <div className="min-h-screen bg-[#F9FAFB] pb-16">
+    <div className="min-h-screen bg-transparent pb-16 text-neutral-100">
       {/* 1. BREADCRUMBS & NAVIGATION */}
-      <div className="bg-white border-b border-[#E5E7EB] py-3.5 px-4 sm:px-6 lg:px-8">
+      <div className="bg-[#0d0f0e] border-b border-neutral-800 py-3.5 px-4 sm:px-6 lg:px-8">
         <div className="max-w-7xl mx-auto flex items-center justify-between text-xs">
-          <nav className="flex items-center gap-1.5 text-[#6B7280] truncate" aria-label="Breadcrumb">
+          <nav className="flex items-center gap-1.5 text-neutral-400 truncate" aria-label="Breadcrumb">
             <Link to={PATHS.PUBLIC.HOME} className="hover:text-[#047857] transition-colors shrink-0">
               Beranda
             </Link>
@@ -422,7 +422,7 @@ export const PublicWarningDetailPage: React.FC = () => {
               Pusat Peringatan Dini
             </Link>
             <span>/</span>
-            <span className="text-[#111827] font-semibold truncate">
+            <span className="text-white font-semibold truncate">
               {alertDetail.title}
             </span>
           </nav>
@@ -439,7 +439,7 @@ export const PublicWarningDetailPage: React.FC = () => {
 
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 mt-6 space-y-6">
         {/* 2. HEADER CARD */}
-        <header className="bg-white border border-[#E5E7EB] rounded-2xl p-6 sm:p-8 shadow-xs">
+        <header className="bg-[#121614] border border-neutral-800 rounded-2xl p-6 sm:p-8 shadow-xs">
           <div className="flex flex-col md:flex-row md:items-start justify-between gap-6">
             <div className="flex items-start gap-4 sm:gap-5">
               {/* Large Hazard Icon */}
@@ -452,7 +452,7 @@ export const PublicWarningDetailPage: React.FC = () => {
                   <span className="px-2.5 py-0.5 rounded-md bg-amber-100 text-amber-900 text-xs font-bold font-mono">
                     #{alertDetail.id}
                   </span>
-                  <span className="text-xs font-bold text-[#6B7280] uppercase tracking-wide">
+                  <span className="text-xs font-bold text-neutral-400 uppercase tracking-wide">
                     {alertDetail.hazard_type?.name || 'Peringatan Dini'}
                   </span>
                   <span className="text-gray-300">•</span>
@@ -461,7 +461,7 @@ export const PublicWarningDetailPage: React.FC = () => {
                   </span>
                 </div>
 
-                <h1 className="text-xl sm:text-2xl lg:text-3xl font-extrabold text-[#111827] tracking-tight leading-snug">
+                <h1 className="text-xl sm:text-2xl lg:text-3xl font-extrabold text-white tracking-tight leading-snug">
                   {alertDetail.title}
                 </h1>
 
@@ -502,40 +502,40 @@ export const PublicWarningDetailPage: React.FC = () => {
           </div>
 
           {/* Meta Information Bar */}
-          <div className="mt-6 pt-5 border-t border-[#F3F4F6] grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 text-xs">
+          <div className="mt-6 pt-5 border-t border-neutral-800 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 text-xs">
             <div className="flex items-center gap-3">
-              <Clock className="w-4 h-4 text-[#9CA3AF] shrink-0" />
+              <Clock className="w-4 h-4 text-neutral-500 shrink-0" />
               <div>
-                <p className="text-[#6B7280] font-semibold text-[11px]">Waktu Mulai Berlaku</p>
-                <p className="font-bold text-[#111827]">{formatAlertDate(alertDetail.starts_at)}</p>
+                <p className="text-neutral-400 font-semibold text-[11px]">Waktu Mulai Berlaku</p>
+                <p className="font-bold text-white">{formatAlertDate(alertDetail.starts_at)}</p>
               </div>
             </div>
 
             <div className="flex items-center gap-3">
-              <Clock className="w-4 h-4 text-[#9CA3AF] shrink-0" />
+              <Clock className="w-4 h-4 text-neutral-500 shrink-0" />
               <div>
-                <p className="text-[#6B7280] font-semibold text-[11px]">Batas Waktu Berlaku</p>
-                <p className="font-bold text-[#111827]">
+                <p className="text-neutral-400 font-semibold text-[11px]">Batas Waktu Berlaku</p>
+                <p className="font-bold text-white">
                   {alertDetail.expires_at ? formatAlertDate(alertDetail.expires_at) : 'Hingga pemberitahuan lanjut'}
                 </p>
               </div>
             </div>
 
             <div className="flex items-center gap-3">
-              <MapPin className="w-4 h-4 text-[#9CA3AF] shrink-0" />
+              <MapPin className="w-4 h-4 text-neutral-500 shrink-0" />
               <div>
-                <p className="text-[#6B7280] font-semibold text-[11px]">Wilayah Siaran</p>
-                <p className="font-bold text-[#111827]">
+                <p className="text-neutral-400 font-semibold text-[11px]">Wilayah Siaran</p>
+                <p className="font-bold text-white">
                   {alertDetail.region?.name || 'Seluruh Wilayah Nasional'}
                 </p>
               </div>
             </div>
 
             <div className="flex items-center gap-3">
-              <Radio className="w-4 h-4 text-[#9CA3AF] shrink-0" />
+              <Radio className="w-4 h-4 text-neutral-500 shrink-0" />
               <div>
-                <p className="text-[#6B7280] font-semibold text-[11px]">Waktu Diterbitkan</p>
-                <p className="font-bold text-[#111827]">{formatAlertDate(alertDetail.created_at)}</p>
+                <p className="text-neutral-400 font-semibold text-[11px]">Waktu Diterbitkan</p>
+                <p className="font-bold text-white">{formatAlertDate(alertDetail.created_at)}</p>
               </div>
             </div>
           </div>
@@ -548,70 +548,70 @@ export const PublicWarningDetailPage: React.FC = () => {
           {/* ======================================================== */}
           <div className="lg:col-span-2 space-y-6">
             {/* FULL WARNING MESSAGE */}
-            <section className="bg-white border border-[#E5E7EB] rounded-2xl p-6 shadow-xs space-y-3">
-              <h2 className="text-base font-bold text-[#111827] flex items-center gap-2">
-                <ShieldAlert className="w-4 h-4 text-rose-600" />
-                <span>Pesan Siaran & Deskripsi Situasi</span>
+            <section className="bg-[#121614] border border-neutral-800 rounded-2xl p-6 shadow-xs space-y-3">
+              <h2 className="text-base font-bold text-white flex items-center gap-2">
+                <ShieldAlert className="w-4 h-4 text-rose-500" />
+                <span>Pesan Siaran &amp; Deskripsi Situasi</span>
               </h2>
-              <div className="text-sm sm:text-base text-[#1F2937] leading-relaxed p-4 bg-[#FFFBEB] rounded-xl border border-amber-200">
+              <div className="text-sm sm:text-base text-neutral-200 leading-relaxed p-4 bg-neutral-900 border border-amber-900/40 rounded-xl">
                 <p className="font-medium">{alertDetail.message}</p>
               </div>
             </section>
 
             {/* OFFICIAL INSTRUCTION BOX (CAP ACTIONABLE GUIDANCE) */}
             {alertDetail.instruction && (
-              <section className="bg-white border border-teal-200 rounded-2xl p-6 shadow-xs space-y-3">
-                <h2 className="text-base font-bold text-teal-900 flex items-center gap-2">
-                  <BookOpen className="w-4 h-4 text-teal-600" />
+              <section className="bg-[#121614] border border-neutral-800 rounded-2xl p-6 shadow-xs space-y-3">
+                <h2 className="text-base font-bold text-white flex items-center gap-2">
+                  <BookOpen className="w-4 h-4 text-emerald-400" />
                   <span>Instruksi Keselamatan Resmi (Official CAP Instruction)</span>
                 </h2>
-                <div className="text-sm text-teal-950 leading-relaxed p-4 bg-teal-50/70 rounded-xl border border-teal-200 font-medium">
+                <div className="text-sm text-neutral-200 leading-relaxed p-4 bg-neutral-900 rounded-xl border border-neutral-800 font-medium">
                   {alertDetail.instruction}
                 </div>
               </section>
             )}
 
             {/* ISSUER & DATA PROVENANCE (STRICT SEMANTIC SEPARATION) */}
-            <section className="bg-white border border-[#E5E7EB] rounded-2xl p-6 shadow-xs space-y-4">
-              <h2 className="text-base font-bold text-[#111827] flex items-center gap-2">
+            <section className="bg-[#121614] border border-neutral-800 rounded-2xl p-6 shadow-xs space-y-4">
+              <h2 className="text-base font-bold text-white flex items-center gap-2">
                 <ShieldCheck className="w-4 h-4 text-[#047857]" />
                 <span>Atribusi Penerbit & Sumber Data Kejadian</span>
               </h2>
 
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                 {/* 1. ALERT ISSUER BOX */}
-                <div className="bg-[#F9FAFB] rounded-xl p-4 border border-[#E5E7EB] space-y-2 text-xs">
+                <div className="bg-neutral-900 rounded-xl p-4 border border-neutral-800 space-y-2 text-xs">
                   <div className="flex items-center justify-between pb-1.5 border-b border-gray-200">
-                    <span className="font-bold text-[#111827]">Penerbit Peringatan (Issuer)</span>
+                    <span className="font-bold text-white">Penerbit Peringatan (Issuer)</span>
                     <span
                       className={`px-1.5 py-0.5 rounded-md text-[10px] font-bold ${
                         alertDetail.issuer.is_verified
                           ? 'bg-emerald-50 text-emerald-700 border border-emerald-200'
-                          : 'bg-gray-100 text-gray-600 border border-gray-200'
+                          : 'bg-neutral-900 text-gray-600 border border-gray-200'
                       }`}
                     >
                       {alertDetail.issuer.is_verified ? 'Terverifikasi' : 'Belum Tersertifikasi'}
                     </span>
                   </div>
 
-                  <p className="text-sm font-bold text-[#111827]">
+                  <p className="text-sm font-bold text-white">
                     {alertDetail.issuer.name || 'Penerbit tidak terverifikasi'}
                   </p>
 
-                  <p className="text-[11px] text-[#6B7280] leading-relaxed">
+                  <p className="text-[11px] text-neutral-400 leading-relaxed">
                     {alertDetail.issuer.verification_basis ||
                       'Tidak terdapat data dasar verifikasi penerbit pada sistem.'}
                   </p>
 
                   {alertDetail.external_identifier && (
-                    <div className="text-[10px] font-mono text-[#6B7280] pt-1.5 border-t border-gray-200 break-all">
+                    <div className="text-[10px] font-mono text-neutral-400 pt-1.5 border-t border-gray-200 break-all">
                       <span className="font-semibold text-slate-700">CAP ID: </span>
                       {alertDetail.external_identifier}
                     </div>
                   )}
 
                   {alertDetail.area_description && (
-                    <div className="text-[11px] text-[#4B5563] pt-0.5">
+                    <div className="text-[11px] text-neutral-300 pt-0.5">
                       <span className="font-semibold text-slate-700">Cakupan Wilayah: </span>
                       {alertDetail.area_description}
                     </div>
@@ -619,9 +619,9 @@ export const PublicWarningDetailPage: React.FC = () => {
                 </div>
 
                 {/* 2. EVENT DATA SOURCE BOX */}
-                <div className="bg-[#F9FAFB] rounded-xl p-4 border border-[#E5E7EB] space-y-2 text-xs">
+                <div className="bg-neutral-900 rounded-xl p-4 border border-neutral-800 space-y-2 text-xs">
                   <div className="flex items-center justify-between pb-1.5 border-b border-gray-200">
-                    <span className="font-bold text-[#111827]">Sumber Data Kejadian</span>
+                    <span className="font-bold text-white">Sumber Data Kejadian</span>
                     <span className="px-1.5 py-0.5 rounded-md text-[10px] font-bold bg-blue-50 text-blue-700 border border-blue-200">
                       Telemetri Kejadian
                     </span>
@@ -629,18 +629,18 @@ export const PublicWarningDetailPage: React.FC = () => {
 
                   {alertDetail.event_data_source ? (
                     <>
-                      <p className="text-sm font-bold text-[#111827]">
+                      <p className="text-sm font-bold text-white">
                         {alertDetail.event_data_source.name}
                       </p>
-                      <p className="text-[11px] text-[#4B5563]">
+                      <p className="text-[11px] text-neutral-300">
                         Penyedia: <span className="font-semibold">{alertDetail.event_data_source.provider}</span>
                       </p>
-                      <p className="text-[10px] text-[#6B7280]">
+                      <p className="text-[10px] text-neutral-400">
                         Asal data observasi fisik bencana, terpisah secara semantik dari pihak penerbit siaran.
                       </p>
                     </>
                   ) : (
-                    <p className="text-[11px] text-[#6B7280] leading-relaxed pt-1">
+                    <p className="text-[11px] text-neutral-400 leading-relaxed pt-1">
                       Peringatan ini diterbitkan secara mandiri tanpa keterkaitan langsung dengan rekaman telemetri observasi kejadian bencana tunggal.
                     </p>
                   )}
@@ -649,33 +649,33 @@ export const PublicWarningDetailPage: React.FC = () => {
             </section>
 
             {/* ASSOCIATED HAZARD EVENT */}
-            <section className="bg-white border border-[#E5E7EB] rounded-2xl p-6 shadow-xs space-y-3">
-              <h2 className="text-base font-bold text-[#111827] flex items-center gap-2">
+            <section className="bg-[#121614] border border-neutral-800 rounded-2xl p-6 shadow-xs space-y-3">
+              <h2 className="text-base font-bold text-white flex items-center gap-2">
                 <Activity className="w-4 h-4 text-[#047857]" />
                 <span>Kejadian Bencana Terkait</span>
               </h2>
 
               {alertDetail.hazard_event ? (
-                <div className="bg-[#F0FDF4] border border-[#BBF7D0] rounded-xl p-4 space-y-2.5">
+                <div className="bg-neutral-900 border border-neutral-800 rounded-xl p-4 space-y-2.5">
                   <div className="flex items-center justify-between text-xs">
-                    <span className="px-2 py-0.5 rounded-md bg-emerald-100 text-emerald-800 font-bold text-[10px]">
+                    <span className="px-2 py-0.5 rounded-md bg-emerald-950/80 text-emerald-300 border border-emerald-800/60 font-bold text-[10px]">
                       Kejadian #{alertDetail.hazard_event.id}
                     </span>
-                    <span className="text-[11px] text-[#166534] font-semibold">
+                    <span className="text-[11px] text-emerald-400 font-semibold">
                       Tingkat {alertDetail.hazard_event.severity} • Status {alertDetail.hazard_event.status}
                     </span>
                   </div>
 
-                  <h3 className="font-bold text-sm text-[#111827]">
+                  <h3 className="font-bold text-sm text-white">
                     {alertDetail.hazard_event.title}
                   </h3>
 
-                  <div className="flex items-center justify-between pt-2 border-t border-emerald-200 text-xs text-[#166534]">
+                  <div className="flex items-center justify-between pt-2 border-t border-neutral-800 text-xs text-neutral-400">
                     <span>Waktu Kejadian: {formatAlertDate(alertDetail.hazard_event.occurred_at)}</span>
 
                     <Link
                       to={`/disasters/${alertDetail.hazard_event.id}`}
-                      className="inline-flex items-center gap-1 font-bold text-[#047857] hover:underline"
+                      className="inline-flex items-center gap-1 font-bold text-emerald-400 hover:text-emerald-300"
                     >
                       <span>Buka Detail Kejadian</span>
                       <ChevronRight className="w-3.5 h-3.5" />
@@ -683,7 +683,7 @@ export const PublicWarningDetailPage: React.FC = () => {
                   </div>
                 </div>
               ) : (
-                <div className="bg-[#F9FAFB] border border-[#E5E7EB] rounded-xl p-4 text-center text-xs text-[#6B7280]">
+                <div className="bg-neutral-900 border border-neutral-800 rounded-xl p-4 text-center text-xs text-neutral-400">
                   Peringatan ini tidak terikat secara langsung dengan rekaman kejadian bencana spesifik pada katalog.
                 </div>
               )}
@@ -691,9 +691,9 @@ export const PublicWarningDetailPage: React.FC = () => {
 
             {/* BROADCAST SPATIAL CENTER MAP */}
             {hasCoordinates && (
-              <section className="bg-white border border-[#E5E7EB] rounded-2xl p-6 shadow-xs space-y-3">
+              <section className="bg-[#121614] border border-neutral-800 rounded-2xl p-6 shadow-xs space-y-3">
                 <div className="flex items-center justify-between">
-                  <h2 className="text-base font-bold text-[#111827] flex items-center gap-2">
+                  <h2 className="text-base font-bold text-white flex items-center gap-2">
                     <MapPin className="w-4 h-4 text-amber-600" />
                     <span>Pusat Geospasial Wilayah Siaran</span>
                   </h2>
@@ -717,9 +717,9 @@ export const PublicWarningDetailPage: React.FC = () => {
           {/* ======================================================== */}
           <div className="space-y-6">
             {/* 1. ACTIONABLE PREPAREDNESS GUIDANCE */}
-            <section className="bg-white border border-[#E5E7EB] rounded-2xl p-6 shadow-xs space-y-4">
+            <section className="bg-[#121614] border border-neutral-800 rounded-2xl p-6 shadow-xs space-y-4">
               <div className="flex items-center justify-between flex-wrap gap-2">
-                <div className="flex items-center gap-2 text-[#111827]">
+                <div className="flex items-center gap-2 text-white">
                   <BookOpen className="w-5 h-5 text-amber-600" />
                   <h3 className="font-bold text-base">Panduan Kesiapsiagaan Mandiri</h3>
                 </div>
@@ -727,115 +727,115 @@ export const PublicWarningDetailPage: React.FC = () => {
                   Panduan Edukasi Umum
                 </span>
               </div>
-              <p className="text-xs text-[#4B5563] leading-relaxed">
+              <p className="text-xs text-neutral-300 leading-relaxed">
                 Langkah mitigasi perlindungan diri mandiri yang umum dianjurkan. Panduan ini merupakan edukasi kesiapsiagaan umum dan tidak menggantikan arahan langsung dari petugas di lapangan:
               </p>
 
               <div className="space-y-3">
-                <div className="flex items-start gap-3 p-3 bg-amber-50/70 border border-amber-200 rounded-xl">
-                  <span className="w-5 h-5 rounded-full bg-amber-200 text-amber-900 flex items-center justify-center font-bold text-[11px] shrink-0 mt-0.5">
+                <div className="flex items-start gap-3 p-3 bg-neutral-900 border border-neutral-800 rounded-xl">
+                  <span className="w-5 h-5 rounded-full bg-neutral-800 text-neutral-200 border border-neutral-700 flex items-center justify-center font-bold text-[11px] shrink-0 mt-0.5">
                     1
                   </span>
-                  <div className="text-xs text-[#1F2937] space-y-0.5">
+                  <div className="text-xs text-white space-y-0.5">
                     <p className="font-bold">Tingkatkan Kewaspadaan</p>
-                    <p className="text-[#4B5563]">Pantau saluran radio, televisi, dan kanal pengumuman resmi instansi setempat secara berkala.</p>
+                    <p className="text-neutral-300 font-normal">Pantau saluran radio, televisi, dan kanal pengumuman resmi instansi setempat secara berkala.</p>
                   </div>
                 </div>
 
-                <div className="flex items-start gap-3 p-3 bg-amber-50/70 border border-amber-200 rounded-xl">
-                  <span className="w-5 h-5 rounded-full bg-amber-200 text-amber-900 flex items-center justify-center font-bold text-[11px] shrink-0 mt-0.5">
+                <div className="flex items-start gap-3 p-3 bg-neutral-900 border border-neutral-800 rounded-xl">
+                  <span className="w-5 h-5 rounded-full bg-neutral-800 text-neutral-200 border border-neutral-700 flex items-center justify-center font-bold text-[11px] shrink-0 mt-0.5">
                     2
                   </span>
-                  <div className="text-xs text-[#1F2937] space-y-0.5">
-                    <p className="font-bold">Amankan Dokumen & Aset</p>
-                    <p className="text-[#4B5563]">Simpan dokumen penting di wadah kedap air dan tempatkan peralatan berharga di posisi yang aman.</p>
+                  <div className="text-xs text-white space-y-0.5">
+                    <p className="font-bold">Amankan Dokumen &amp; Aset</p>
+                    <p className="text-neutral-300 font-normal">Simpan dokumen penting di wadah kedap air dan tempatkan peralatan berharga di posisi yang aman.</p>
                   </div>
                 </div>
 
-                <div className="flex items-start gap-3 p-3 bg-amber-50/70 border border-amber-200 rounded-xl">
-                  <span className="w-5 h-5 rounded-full bg-amber-200 text-amber-900 flex items-center justify-center font-bold text-[11px] shrink-0 mt-0.5">
+                <div className="flex items-start gap-3 p-3 bg-neutral-900 border border-neutral-800 rounded-xl">
+                  <span className="w-5 h-5 rounded-full bg-neutral-800 text-neutral-200 border border-neutral-700 flex items-center justify-center font-bold text-[11px] shrink-0 mt-0.5">
                     3
                   </span>
-                  <div className="text-xs text-[#1F2937] space-y-0.5">
+                  <div className="text-xs text-white space-y-0.5">
                     <p className="font-bold">Siapkan Tas Siaga Bencana</p>
-                    <p className="text-[#4B5563]">Pastikan pasokan air minum, makanan tahan lama, P3K, dan senter telah siap dibawa.</p>
+                    <p className="text-neutral-300 font-normal">Pastikan pasokan air minum, makanan tahan lama, P3K, dan senter telah siap dibawa.</p>
                   </div>
                 </div>
 
-                <div className="flex items-start gap-3 p-3 bg-amber-50/70 border border-amber-200 rounded-xl">
-                  <span className="w-5 h-5 rounded-full bg-amber-200 text-amber-900 flex items-center justify-center font-bold text-[11px] shrink-0 mt-0.5">
+                <div className="flex items-start gap-3 p-3 bg-neutral-900 border border-neutral-800 rounded-xl">
+                  <span className="w-5 h-5 rounded-full bg-neutral-800 text-neutral-200 border border-neutral-700 flex items-center justify-center font-bold text-[11px] shrink-0 mt-0.5">
                     4
                   </span>
-                  <div className="text-xs text-[#1F2937] space-y-0.5">
+                  <div className="text-xs text-white space-y-0.5">
                     <p className="font-bold">Ikuti Arahan Petugas Lapangan</p>
-                    <p className="text-[#4B5563]">Bila aparat BPBD atau perangkat desa/kelurahan setempat menginstruksikan evakuasi, segera menuju titik kumpul aman.</p>
+                    <p className="text-neutral-300 font-normal">Bila aparat BPBD atau perangkat desa/kelurahan setempat menginstruksikan evakuasi, segera menuju titik kumpul aman.</p>
                   </div>
                 </div>
               </div>
             </section>
 
             {/* 2. EMERGENCY HOTLINES */}
-            <section className="bg-gradient-to-br from-rose-50 to-orange-50 border border-rose-200 rounded-2xl p-6 shadow-xs space-y-3">
-              <div className="flex items-center gap-2 text-rose-800">
-                <PhoneCall className="w-5 h-5 text-rose-600" />
+            <section className="bg-[#121614] border border-neutral-800 rounded-2xl p-6 shadow-xs space-y-3">
+              <div className="flex items-center gap-2 text-white">
+                <PhoneCall className="w-5 h-5 text-rose-500" />
                 <h3 className="font-bold text-sm">Nomor Kontak Darurat Nasional</h3>
               </div>
-              <p className="text-xs text-rose-700 leading-relaxed">
+              <p className="text-xs text-neutral-300 leading-relaxed">
                 Akses cepat ke kontak layanan darurat instansi berwenang di Indonesia:
               </p>
 
               <div className="grid grid-cols-2 gap-2 pt-1 text-xs font-bold">
                 <a
                   href="tel:112"
-                  className="bg-white p-2.5 rounded-xl border border-rose-200 text-center hover:bg-rose-100 transition-colors text-rose-900 block"
+                  className="bg-neutral-900 p-2.5 rounded-xl border border-neutral-800 text-center hover:border-rose-500/40 transition-colors text-white block"
                 >
-                  <p className="text-[10px] text-rose-600 font-semibold">Panggilan Darurat Terpadu</p>
-                  <p className="text-base font-extrabold">112</p>
-                  <p className="text-[9px] text-[#6B7280] font-normal mt-0.5">Pemda Penyelenggara</p>
+                  <p className="text-[10px] text-rose-400 font-semibold">Panggilan Darurat Terpadu</p>
+                  <p className="text-base font-extrabold text-white">112</p>
+                  <p className="text-[9px] text-neutral-400 font-normal mt-0.5">Pemda Penyelenggara</p>
                 </a>
                 <a
                   href="tel:115"
-                  className="bg-white p-2.5 rounded-xl border border-rose-200 text-center hover:bg-rose-100 transition-colors text-rose-900 block"
+                  className="bg-neutral-900 p-2.5 rounded-xl border border-neutral-800 text-center hover:border-rose-500/40 transition-colors text-white block"
                 >
-                  <p className="text-[10px] text-rose-600 font-semibold">BASARNAS</p>
-                  <p className="text-base font-extrabold">115</p>
-                  <p className="text-[9px] text-[#6B7280] font-normal mt-0.5">Pencarian & Pertolongan</p>
+                  <p className="text-[10px] text-rose-400 font-semibold">BASARNAS</p>
+                  <p className="text-base font-extrabold text-white">115</p>
+                  <p className="text-[9px] text-neutral-400 font-normal mt-0.5">Pencarian &amp; Pertolongan</p>
                 </a>
                 <a
                   href="tel:119"
-                  className="bg-white p-2.5 rounded-xl border border-rose-200 text-center hover:bg-rose-100 transition-colors text-rose-900 block"
+                  className="bg-neutral-900 p-2.5 rounded-xl border border-neutral-800 text-center hover:border-rose-500/40 transition-colors text-white block"
                 >
-                  <p className="text-[10px] text-rose-600 font-semibold">PSC Darurat Medis</p>
-                  <p className="text-base font-extrabold">119</p>
-                  <p className="text-[9px] text-[#6B7280] font-normal mt-0.5">Layanan Kesehatan</p>
+                  <p className="text-[10px] text-rose-400 font-semibold">PSC Darurat Medis</p>
+                  <p className="text-base font-extrabold text-white">119</p>
+                  <p className="text-[9px] text-neutral-400 font-normal mt-0.5">Layanan Kesehatan</p>
                 </a>
                 <a
                   href="tel:117"
-                  className="bg-white p-2.5 rounded-xl border border-rose-200 text-center hover:bg-rose-100 transition-colors text-rose-900 block"
+                  className="bg-neutral-900 p-2.5 rounded-xl border border-neutral-800 text-center hover:border-rose-500/40 transition-colors text-white block"
                 >
-                  <p className="text-[10px] text-rose-600 font-semibold">Pusdalops BNPB</p>
-                  <p className="text-base font-extrabold">117</p>
-                  <p className="text-[9px] text-[#6B7280] font-normal mt-0.5">Call Center Penanggulangan</p>
+                  <p className="text-[10px] text-rose-400 font-semibold">Pusdalops BNPB</p>
+                  <p className="text-base font-extrabold text-white">117</p>
+                  <p className="text-[9px] text-neutral-400 font-normal mt-0.5">Call Center Penanggulangan</p>
                 </a>
               </div>
 
-              <p className="text-[11px] text-rose-700 leading-relaxed pt-1 border-t border-rose-200/60">
-                <span className="font-semibold">Catatan Layanan:</span> Panggilan nomor 112 diselenggarakan secara bertahap oleh pemerintah daerah kabupaten/kota terkait. Ketersediaan layanan darurat bergantung pada kesiapan implementasi pemda dan cakupan operator telekomunikasi di wilayah setempat.
+              <p className="text-[11px] text-neutral-400 leading-relaxed pt-1 border-t border-neutral-800">
+                <span className="font-semibold text-neutral-300">Catatan Layanan:</span> Panggilan nomor 112 diselenggarakan secara bertahap oleh pemerintah daerah kabupaten/kota terkait. Ketersediaan layanan darurat bergantung pada kesiapan implementasi pemda dan cakupan operator telekomunikasi di wilayah setempat.
               </p>
             </section>
 
             {/* 3. RELATED PLATFORM LINKS */}
-            <section className="bg-white border border-[#E5E7EB] rounded-2xl p-5 shadow-xs space-y-3">
-              <h4 className="text-xs font-bold text-[#6B7280] uppercase tracking-wider">
+            <section className="bg-[#121614] border border-neutral-800 rounded-2xl p-5 shadow-xs space-y-3">
+              <h4 className="text-xs font-bold text-neutral-400 uppercase tracking-wider">
                 Fitur Terkait SENTRAVAX
               </h4>
               <div className="space-y-2 text-xs">
                 <Link
                   to={PATHS.PUBLIC.HOME}
-                  className="flex items-center justify-between p-2.5 rounded-xl hover:bg-emerald-50 text-[#374151] hover:text-[#047857] transition-colors border border-transparent hover:border-emerald-200"
+                  className="flex items-center justify-between p-2.5 rounded-xl hover:bg-neutral-900 text-neutral-200 hover:text-emerald-400 transition-colors border border-transparent hover:border-neutral-800"
                 >
                   <div className="flex items-center gap-2">
-                    <Compass className="w-4 h-4 text-[#047857]" />
+                    <Compass className="w-4 h-4 text-emerald-400" />
                     <span className="font-semibold">SIAGA PERSONAL (Cek Koordinat)</span>
                   </div>
                   <ChevronRight className="w-3.5 h-3.5" />
@@ -843,10 +843,10 @@ export const PublicWarningDetailPage: React.FC = () => {
 
                 <Link
                   to={PATHS.PUBLIC.DISASTERS}
-                  className="flex items-center justify-between p-2.5 rounded-xl hover:bg-emerald-50 text-[#374151] hover:text-[#047857] transition-colors border border-transparent hover:border-emerald-200"
+                  className="flex items-center justify-between p-2.5 rounded-xl hover:bg-neutral-900 text-neutral-200 hover:text-emerald-400 transition-colors border border-transparent hover:border-neutral-800"
                 >
                   <div className="flex items-center gap-2">
-                    <Activity className="w-4 h-4 text-[#047857]" />
+                    <Activity className="w-4 h-4 text-emerald-400" />
                     <span className="font-semibold">Katalog Kejadian Bencana</span>
                   </div>
                   <ChevronRight className="w-3.5 h-3.5" />
@@ -854,10 +854,10 @@ export const PublicWarningDetailPage: React.FC = () => {
 
                 <Link
                   to={PATHS.PUBLIC.EDUCATION}
-                  className="flex items-center justify-between p-2.5 rounded-xl hover:bg-emerald-50 text-[#374151] hover:text-[#047857] transition-colors border border-transparent hover:border-emerald-200"
+                  className="flex items-center justify-between p-2.5 rounded-xl hover:bg-neutral-900 text-neutral-200 hover:text-emerald-400 transition-colors border border-transparent hover:border-neutral-800"
                 >
                   <div className="flex items-center gap-2">
-                    <BookOpen className="w-4 h-4 text-[#047857]" />
+                    <BookOpen className="w-4 h-4 text-emerald-400" />
                     <span className="font-semibold">Panduan Edukasi & Kesiapsiagaan</span>
                   </div>
                   <ChevronRight className="w-3.5 h-3.5" />

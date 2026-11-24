@@ -138,7 +138,7 @@ function getBroadcastLevelBadge(level: BroadcastLevel | null) {
     case 'local':
       return { label: 'Siaran Lokal', badgeClass: 'bg-blue-50 text-blue-700 border-blue-200' };
     default:
-      return { label: 'Cakupan Belum Ditentukan', badgeClass: 'bg-gray-100 text-gray-600 border-gray-200' };
+      return { label: 'Cakupan Belum Ditentukan', badgeClass: 'bg-neutral-900 text-gray-600 border-gray-200' };
   }
 }
 
@@ -171,7 +171,7 @@ const EventMiniMap: React.FC<{
       attributionControl: false,
     });
 
-    const tileConfig = TILE_LAYERS.light;
+    const tileConfig = TILE_LAYERS.dark;
     L.tileLayer(tileConfig.url, {
       attribution: tileConfig.attribution,
       maxZoom: tileConfig.maxZoom,
@@ -193,7 +193,7 @@ const EventMiniMap: React.FC<{
       },
     };
 
-    const icon = createMarkerIcon(pointFeature, true, 'light');
+    const icon = createMarkerIcon(pointFeature, true, 'dark');
     const marker = L.marker([latitude, longitude], { icon }).addTo(map);
 
     const popupHtml = `
@@ -235,7 +235,7 @@ const EventMiniMap: React.FC<{
   return (
     <div
       ref={containerRef}
-      className="w-full h-[280px] sm:h-[320px] rounded-xl overflow-hidden border border-[#E5E7EB] bg-gray-100 relative z-0"
+      className="w-full h-[280px] sm:h-[320px] rounded-xl overflow-hidden border border-neutral-800 bg-neutral-900 relative z-0"
     />
   );
 };
@@ -306,10 +306,10 @@ export const PublicDisasterDetailPage: React.FC = () => {
         <div className="w-14 h-14 mx-auto rounded-2xl bg-red-50 text-red-600 flex items-center justify-center border border-red-200">
           <AlertCircle className="w-7 h-7" />
         </div>
-        <h1 className="text-xl sm:text-2xl font-bold text-[#111827]">
+        <h1 className="text-xl sm:text-2xl font-bold text-white">
           Parameter ID Kejadian Bencana Tidak Valid
         </h1>
-        <p className="text-sm text-[#4B5563] max-w-md mx-auto">
+        <p className="text-sm text-neutral-300 max-w-md mx-auto">
           URL kejadian bencana harus menyertakan identifikasi bilangan bulat positif.
         </p>
         <div className="pt-2">
@@ -329,20 +329,20 @@ export const PublicDisasterDetailPage: React.FC = () => {
   if (isLoading) {
     return (
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 space-y-6">
-        <div className="w-48 h-4 bg-gray-200 rounded-md animate-pulse" />
-        <div className="bg-white border border-[#E5E7EB] rounded-2xl p-6 sm:p-8 space-y-4 animate-pulse">
-          <div className="w-32 h-6 bg-gray-200 rounded-md" />
-          <div className="w-2/3 h-8 bg-gray-300 rounded-md" />
-          <div className="w-full h-12 bg-gray-100 rounded-md" />
+        <div className="w-48 h-4 bg-neutral-800 rounded-md animate-pulse" />
+        <div className="bg-[#121614] border border-neutral-800 rounded-2xl p-6 sm:p-8 space-y-4 animate-pulse">
+          <div className="w-32 h-6 bg-neutral-800 rounded-md" />
+          <div className="w-2/3 h-8 bg-neutral-700 rounded-md" />
+          <div className="w-full h-12 bg-neutral-900 rounded-md" />
         </div>
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
           <div className="lg:col-span-2 space-y-6">
-            <div className="h-64 bg-white border border-[#E5E7EB] rounded-2xl p-6 animate-pulse" />
-            <div className="h-48 bg-white border border-[#E5E7EB] rounded-2xl p-6 animate-pulse" />
+            <div className="h-64 bg-[#121614] border border-neutral-800 rounded-2xl p-6 animate-pulse" />
+            <div className="h-48 bg-[#121614] border border-neutral-800 rounded-2xl p-6 animate-pulse" />
           </div>
           <div className="space-y-6">
-            <div className="h-64 bg-white border border-[#E5E7EB] rounded-2xl p-6 animate-pulse" />
-            <div className="h-48 bg-white border border-[#E5E7EB] rounded-2xl p-6 animate-pulse" />
+            <div className="h-64 bg-[#121614] border border-neutral-800 rounded-2xl p-6 animate-pulse" />
+            <div className="h-48 bg-[#121614] border border-neutral-800 rounded-2xl p-6 animate-pulse" />
           </div>
         </div>
       </div>
@@ -356,16 +356,16 @@ export const PublicDisasterDetailPage: React.FC = () => {
         <div className="w-14 h-14 mx-auto rounded-2xl bg-amber-50 text-amber-600 flex items-center justify-center border border-amber-200">
           <AlertTriangle className="w-7 h-7" />
         </div>
-        <h1 className="text-xl sm:text-2xl font-bold text-[#111827]">
+        <h1 className="text-xl sm:text-2xl font-bold text-white">
           Kejadian Bencana #{eventId} Tidak Ditemukan
         </h1>
-        <p className="text-sm text-[#4B5563] max-w-md mx-auto">
+        <p className="text-sm text-neutral-300 max-w-md mx-auto">
           {errorMessage || 'Data untuk kejadian bencana ini tidak tercatat atau telah diarsipkan.'}
         </p>
         <div className="pt-2 flex items-center justify-center gap-3">
           <Link
             to={PATHS.PUBLIC.DISASTERS}
-            className="inline-flex items-center gap-2 px-4 py-2 rounded-xl bg-white border border-[#D1D5DB] text-sm font-bold text-[#111827] shadow-xs hover:border-[#047857] hover:text-[#047857] transition-all"
+            className="inline-flex items-center gap-2 px-4 py-2 rounded-xl bg-[#121614] border border-neutral-700 text-sm font-bold text-white shadow-xs hover:border-[#047857] hover:text-[#047857] transition-all"
           >
             <ArrowLeft className="w-4 h-4" />
             <span>Katalog Bencana</span>
@@ -393,11 +393,11 @@ export const PublicDisasterDetailPage: React.FC = () => {
     typeof eventDetail.coordinates?.longitude === 'number';
 
   return (
-    <div className="min-h-screen bg-[#F9FAFB] pb-16">
+    <div className="min-h-screen bg-transparent pb-16 text-neutral-100">
       {/* 1. BREADCRUMBS & NAVIGATION */}
-      <div className="bg-white border-b border-[#E5E7EB] py-3.5 px-4 sm:px-6 lg:px-8">
+      <div className="bg-[#0d0f0e] border-b border-neutral-800 py-3.5 px-4 sm:px-6 lg:px-8">
         <div className="max-w-7xl mx-auto flex items-center justify-between text-xs">
-          <nav className="flex items-center gap-1.5 text-[#6B7280] truncate" aria-label="Breadcrumb">
+          <nav className="flex items-center gap-1.5 text-neutral-400 truncate" aria-label="Breadcrumb">
             <Link to={PATHS.PUBLIC.HOME} className="hover:text-[#047857] transition-colors shrink-0">
               Beranda
             </Link>
@@ -406,7 +406,7 @@ export const PublicDisasterDetailPage: React.FC = () => {
               Katalog Bencana
             </Link>
             <span>/</span>
-            <span className="text-[#111827] font-semibold truncate">
+            <span className="text-white font-semibold truncate">
               {eventDetail.title}
             </span>
           </nav>
@@ -423,7 +423,7 @@ export const PublicDisasterDetailPage: React.FC = () => {
 
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 mt-6 space-y-6">
         {/* 2. HEADER CARD */}
-        <header className="bg-white border border-[#E5E7EB] rounded-2xl p-6 sm:p-8 shadow-xs">
+        <header className="bg-[#121614] border border-neutral-800 rounded-2xl p-6 sm:p-8 shadow-xs">
           <div className="flex flex-col md:flex-row md:items-start justify-between gap-6">
             <div className="flex items-start gap-4 sm:gap-5">
               {/* Large Hazard Icon */}
@@ -436,7 +436,7 @@ export const PublicDisasterDetailPage: React.FC = () => {
                   <span className="px-2.5 py-0.5 rounded-md bg-emerald-100 text-[#047857] text-xs font-bold font-mono">
                     #{eventDetail.id}
                   </span>
-                  <span className="text-xs font-bold text-[#6B7280] uppercase tracking-wide">
+                  <span className="text-xs font-bold text-neutral-400 uppercase tracking-wide">
                     {eventDetail.hazard_type?.name || 'Kejadian Bencana'}
                   </span>
                   <span className="text-gray-300">•</span>
@@ -449,7 +449,7 @@ export const PublicDisasterDetailPage: React.FC = () => {
                   />
                 </div>
 
-                <h1 className="text-xl sm:text-2xl lg:text-3xl font-extrabold text-[#111827] tracking-tight leading-snug">
+                <h1 className="text-xl sm:text-2xl lg:text-3xl font-extrabold text-white tracking-tight leading-snug">
                   {eventDetail.title}
                 </h1>
 
@@ -490,30 +490,30 @@ export const PublicDisasterDetailPage: React.FC = () => {
           </div>
 
           {/* Meta Information Bar */}
-          <div className="mt-6 pt-5 border-t border-[#F3F4F6] grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 text-xs">
+          <div className="mt-6 pt-5 border-t border-neutral-800 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 text-xs">
             <div className="flex items-center gap-3">
-              <Calendar className="w-4 h-4 text-[#9CA3AF] shrink-0" />
+              <Calendar className="w-4 h-4 text-neutral-500 shrink-0" />
               <div>
-                <p className="text-[#6B7280] font-semibold text-[11px]">Waktu Kejadian (WIB)</p>
-                <p className="font-bold text-[#111827]">{formatEventDate(eventDetail.occurred_at)}</p>
+                <p className="text-neutral-400 font-semibold text-[11px]">Waktu Kejadian (WIB)</p>
+                <p className="font-bold text-white">{formatEventDate(eventDetail.occurred_at)}</p>
               </div>
             </div>
 
             <div className="flex items-center gap-3">
-              <MapPin className="w-4 h-4 text-[#9CA3AF] shrink-0" />
+              <MapPin className="w-4 h-4 text-neutral-500 shrink-0" />
               <div>
-                <p className="text-[#6B7280] font-semibold text-[11px]">Wilayah Terdampak</p>
-                <p className="font-bold text-[#111827]">
+                <p className="text-neutral-400 font-semibold text-[11px]">Wilayah Terdampak</p>
+                <p className="font-bold text-white">
                   {eventDetail.region?.name || 'Wilayah Republik Indonesia'}
                 </p>
               </div>
             </div>
 
             <div className="flex items-center gap-3">
-              <Compass className="w-4 h-4 text-[#9CA3AF] shrink-0" />
+              <Compass className="w-4 h-4 text-neutral-500 shrink-0" />
               <div>
-                <p className="text-[#6B7280] font-semibold text-[11px]">Titik Koordinat</p>
-                <p className="font-bold font-mono text-[#111827]">
+                <p className="text-neutral-400 font-semibold text-[11px]">Titik Koordinat</p>
+                <p className="font-bold font-mono text-white">
                   {hasCoordinates
                     ? `${eventDetail.coordinates.latitude?.toFixed(4)}°, ${eventDetail.coordinates.longitude?.toFixed(4)}°`
                     : 'Koordinat Umum'}
@@ -522,10 +522,10 @@ export const PublicDisasterDetailPage: React.FC = () => {
             </div>
 
             <div className="flex items-center gap-3">
-              <Radio className="w-4 h-4 text-[#9CA3AF] shrink-0" />
+              <Radio className="w-4 h-4 text-neutral-500 shrink-0" />
               <div>
-                <p className="text-[#6B7280] font-semibold text-[11px]">Sumber Telemetri</p>
-                <p className="font-bold text-[#111827] truncate">
+                <p className="text-neutral-400 font-semibold text-[11px]">Sumber Telemetri</p>
+                <p className="font-bold text-white truncate">
                   {eventDetail.data_source?.name || eventDetail.source_name || 'Sumber data tidak tercatat'}
                 </p>
               </div>
@@ -540,12 +540,12 @@ export const PublicDisasterDetailPage: React.FC = () => {
           {/* ======================================================== */}
           <div className="lg:col-span-2 space-y-6">
             {/* SITUATION REPORT & DESCRIPTION */}
-            <section className="bg-white border border-[#E5E7EB] rounded-2xl p-6 shadow-xs space-y-3">
-              <h2 className="text-base font-bold text-[#111827] flex items-center gap-2">
+            <section className="bg-[#121614] border border-neutral-800 rounded-2xl p-6 shadow-xs space-y-3">
+              <h2 className="text-base font-bold text-white flex items-center gap-2">
                 <Info className="w-4 h-4 text-[#047857]" />
                 <span>Ringkasan Situasi Kebencanaan</span>
               </h2>
-              <div className="text-sm text-[#374151] leading-relaxed space-y-3">
+              <div className="text-sm text-neutral-200 leading-relaxed space-y-3">
                 <p>
                   {eventDetail.description ||
                     'Laporan pemantauan rutin posko kebencanaan terhadap anomali geofisika dan hidrometeorologi terdeteksi pada wilayah ini.'}
@@ -555,9 +555,9 @@ export const PublicDisasterDetailPage: React.FC = () => {
 
             {/* MINI GEOSPATIAL MAP */}
             {hasCoordinates && (
-              <section className="bg-white border border-[#E5E7EB] rounded-2xl p-6 shadow-xs space-y-3">
+              <section className="bg-[#121614] border border-neutral-800 rounded-2xl p-6 shadow-xs space-y-3">
                 <div className="flex items-center justify-between">
-                  <h2 className="text-base font-bold text-[#111827] flex items-center gap-2">
+                  <h2 className="text-base font-bold text-white flex items-center gap-2">
                     <MapPin className="w-4 h-4 text-[#047857]" />
                     <span>Peta Lokasi Episentrum / Pusat Kejadian</span>
                   </h2>
@@ -578,13 +578,13 @@ export const PublicDisasterDetailPage: React.FC = () => {
             )}
 
             {/* TELEMETRY & SOURCE METADATA (Safe Allowlist) */}
-            <section className="bg-white border border-[#E5E7EB] rounded-2xl p-6 shadow-xs space-y-4">
+            <section className="bg-[#121614] border border-neutral-800 rounded-2xl p-6 shadow-xs space-y-4">
               <div className="flex items-center justify-between">
-                <h2 className="text-base font-bold text-[#111827] flex items-center gap-2">
+                <h2 className="text-base font-bold text-white flex items-center gap-2">
                   <Activity className="w-4 h-4 text-[#047857]" />
                   <span>Parameter Sensor & Data Telemetri</span>
                 </h2>
-                <span className="text-[11px] font-semibold text-[#6B7280]">
+                <span className="text-[11px] font-semibold text-neutral-400">
                   Metadata Otoritatif Terverifikasi
                 </span>
               </div>
@@ -596,9 +596,9 @@ export const PublicDisasterDetailPage: React.FC = () => {
                 <div className="grid grid-cols-2 sm:grid-cols-3 gap-3">
                   {/* Earthquake Magnitude */}
                   {eventDetail.source_metadata.Magnitude !== undefined && (
-                    <div className="bg-[#F9FAFB] p-3.5 rounded-xl border border-[#E5E7EB]">
-                      <p className="text-[11px] font-semibold text-[#6B7280]">Magnitudo Gempa</p>
-                      <p className="text-lg font-extrabold text-[#111827]">
+                    <div className="bg-neutral-900 p-3.5 rounded-xl border border-neutral-800">
+                      <p className="text-[11px] font-semibold text-neutral-400">Magnitudo Gempa</p>
+                      <p className="text-lg font-extrabold text-white">
                         {String(eventDetail.source_metadata.Magnitude)} <span className="text-xs font-semibold">M</span>
                       </p>
                     </div>
@@ -606,9 +606,9 @@ export const PublicDisasterDetailPage: React.FC = () => {
 
                   {/* Earthquake Depth */}
                   {eventDetail.source_metadata.Kedalaman !== undefined && (
-                    <div className="bg-[#F9FAFB] p-3.5 rounded-xl border border-[#E5E7EB]">
-                      <p className="text-[11px] font-semibold text-[#6B7280]">Kedalaman Hiposentrum</p>
-                      <p className="text-lg font-extrabold text-[#111827]">
+                    <div className="bg-neutral-900 p-3.5 rounded-xl border border-neutral-800">
+                      <p className="text-[11px] font-semibold text-neutral-400">Kedalaman Hiposentrum</p>
+                      <p className="text-lg font-extrabold text-white">
                         {String(eventDetail.source_metadata.Kedalaman)}
                       </p>
                     </div>
@@ -616,9 +616,9 @@ export const PublicDisasterDetailPage: React.FC = () => {
 
                   {/* Flow Rate */}
                   {eventDetail.source_metadata.flow_rate_m3s !== undefined && (
-                    <div className="bg-[#F9FAFB] p-3.5 rounded-xl border border-[#E5E7EB]">
-                      <p className="text-[11px] font-semibold text-[#6B7280]">Debit Aliran Air</p>
-                      <p className="text-lg font-extrabold text-[#111827]">
+                    <div className="bg-neutral-900 p-3.5 rounded-xl border border-neutral-800">
+                      <p className="text-[11px] font-semibold text-neutral-400">Debit Aliran Air</p>
+                      <p className="text-lg font-extrabold text-white">
                         {String(eventDetail.source_metadata.flow_rate_m3s)}{' '}
                         <span className="text-xs font-semibold">m³/detik</span>
                       </p>
@@ -627,9 +627,9 @@ export const PublicDisasterDetailPage: React.FC = () => {
 
                   {/* Water Level */}
                   {eventDetail.source_metadata.water_level_m !== undefined && (
-                    <div className="bg-[#F9FAFB] p-3.5 rounded-xl border border-[#E5E7EB]">
-                      <p className="text-[11px] font-semibold text-[#6B7280]">Tinggi Muka Air</p>
-                      <p className="text-lg font-extrabold text-[#111827]">
+                    <div className="bg-neutral-900 p-3.5 rounded-xl border border-neutral-800">
+                      <p className="text-[11px] font-semibold text-neutral-400">Tinggi Muka Air</p>
+                      <p className="text-lg font-extrabold text-white">
                         {String(eventDetail.source_metadata.water_level_m)}{' '}
                         <span className="text-xs font-semibold">meter</span>
                       </p>
@@ -638,9 +638,9 @@ export const PublicDisasterDetailPage: React.FC = () => {
 
                   {/* Dirasakan / Intensity */}
                   {eventDetail.source_metadata.Dirasakan !== undefined && eventDetail.source_metadata.Dirasakan !== '-' && (
-                    <div className="bg-[#F9FAFB] p-3.5 rounded-xl border border-[#E5E7EB]">
-                      <p className="text-[11px] font-semibold text-[#6B7280]">Intensitas Dirasakan</p>
-                      <p className="text-sm font-extrabold text-[#111827]">
+                    <div className="bg-neutral-900 p-3.5 rounded-xl border border-neutral-800">
+                      <p className="text-[11px] font-semibold text-neutral-400">Intensitas Dirasakan</p>
+                      <p className="text-sm font-extrabold text-white">
                         {String(eventDetail.source_metadata.Dirasakan)}
                       </p>
                     </div>
@@ -661,27 +661,27 @@ export const PublicDisasterDetailPage: React.FC = () => {
 
                   {/* Shakemap Preview if available */}
                   {typeof eventDetail.source_metadata.Shakemap === 'string' && (
-                    <div className="col-span-2 sm:col-span-3 bg-[#F9FAFB] p-3.5 rounded-xl border border-[#E5E7EB] flex items-center justify-between text-xs">
-                      <span className="font-semibold text-[#4B5563]">Peta Guncangan (Shakemap):</span>
-                      <span className="font-mono text-[11px] text-[#6B7280]">{String(eventDetail.source_metadata.Shakemap)}</span>
+                    <div className="col-span-2 sm:col-span-3 bg-neutral-900 p-3.5 rounded-xl border border-neutral-800 flex items-center justify-between text-xs">
+                      <span className="font-semibold text-neutral-300">Peta Guncangan (Shakemap):</span>
+                      <span className="font-mono text-[11px] text-neutral-400">{String(eventDetail.source_metadata.Shakemap)}</span>
                     </div>
                   )}
                 </div>
               ) : (
-                <div className="bg-[#F9FAFB] border border-[#E5E7EB] rounded-xl p-4 text-center text-xs text-[#6B7280]">
+                <div className="bg-neutral-900 border border-neutral-800 rounded-xl p-4 text-center text-xs text-neutral-400">
                   Parameter telemetri sensor spesifik tidak tersedia pada rekaman data kejadian ini.
                 </div>
               )}
             </section>
 
             {/* LINKED EARLY WARNING ALERTS */}
-            <section className="bg-white border border-[#E5E7EB] rounded-2xl p-6 shadow-xs space-y-4">
+            <section className="bg-[#121614] border border-neutral-800 rounded-2xl p-6 shadow-xs space-y-4">
               <div className="flex items-center justify-between">
-                <h2 className="text-base font-bold text-[#111827] flex items-center gap-2">
+                <h2 className="text-base font-bold text-white flex items-center gap-2">
                   <ShieldAlert className="w-4 h-4 text-amber-600" />
                   <span>Peringatan Dini Terkait</span>
                 </h2>
-                <span className="text-xs font-bold text-[#6B7280]">
+                <span className="text-xs font-bold text-neutral-400">
                   {eventDetail.alerts?.length || 0} Peringatan Aktif
                 </span>
               </div>
@@ -695,14 +695,14 @@ export const PublicDisasterDetailPage: React.FC = () => {
                     return (
                       <div
                         key={alert.id}
-                        className="bg-[#FFFBEB] border border-[#FDE68A] rounded-xl p-4 space-y-2.5 transition-all hover:border-amber-400"
+                        className="bg-neutral-900 border border-neutral-800 rounded-xl p-4 space-y-2.5 transition-all hover:border-amber-500/40"
                       >
                         <div className="flex items-center justify-between gap-2 flex-wrap">
                           <span
                             className={`px-2 py-0.5 rounded-md text-[10px] font-bold ${
                               isOfficial
-                                ? 'bg-amber-200 text-amber-900'
-                                : 'bg-blue-100 text-blue-900'
+                                ? 'bg-amber-950/80 text-amber-300 border border-amber-800/60'
+                                : 'bg-sky-950/80 text-sky-300 border border-sky-800/60'
                             }`}
                           >
                             {isOfficial ? 'Peringatan Resmi Otoritas' : 'Advisori Platform'}
@@ -713,10 +713,10 @@ export const PublicDisasterDetailPage: React.FC = () => {
                           </span>
                         </div>
 
-                        <h3 className="font-bold text-sm text-[#111827]">{alert.title}</h3>
-                        <p className="text-xs text-[#78350F] leading-relaxed">{alert.message}</p>
+                        <h3 className="font-bold text-sm text-white">{alert.title}</h3>
+                        <p className="text-xs text-neutral-300 leading-relaxed">{alert.message}</p>
 
-                        <div className="flex items-center justify-between pt-2 border-t border-amber-200/70 text-[11px] text-[#92400E]">
+                        <div className="flex items-center justify-between pt-2 border-t border-neutral-800 text-[11px] text-neutral-400">
                           <span className="flex items-center gap-1">
                             <Clock className="w-3.5 h-3.5" />
                             Mulai: {formatEventDate(alert.starts_at)}
@@ -724,7 +724,7 @@ export const PublicDisasterDetailPage: React.FC = () => {
 
                           <Link
                             to={`/warnings/${alert.id}`}
-                            className="inline-flex items-center gap-1 font-bold text-[#047857] hover:underline"
+                            className="inline-flex items-center gap-1 font-bold text-emerald-400 hover:text-emerald-300"
                           >
                             <span>Lihat Peringatan</span>
                             <ChevronRight className="w-3.5 h-3.5" />
@@ -735,40 +735,40 @@ export const PublicDisasterDetailPage: React.FC = () => {
                   })}
                 </div>
               ) : (
-                <div className="bg-[#F9FAFB] border border-[#E5E7EB] rounded-xl p-4 text-center text-xs text-[#6B7280]">
+                <div className="bg-neutral-900 border border-neutral-800 rounded-xl p-4 text-center text-xs text-neutral-400">
                   Tidak ada peringatan dini darurat spesifik yang diterbitkan untuk kejadian ini.
                 </div>
               )}
             </section>
 
             {/* DATA PROVENANCE & INTEGRITY */}
-            <section className="bg-white border border-[#E5E7EB] rounded-2xl p-6 shadow-xs space-y-3">
-              <h2 className="text-base font-bold text-[#111827] flex items-center gap-2">
+            <section className="bg-[#121614] border border-neutral-800 rounded-2xl p-6 shadow-xs space-y-3">
+              <h2 className="text-base font-bold text-white flex items-center gap-2">
                 <ShieldCheck className="w-4 h-4 text-[#047857]" />
                 <span>Integritas & Asal Data Sumber</span>
               </h2>
 
-              <div className="bg-[#F9FAFB] rounded-xl p-4 border border-[#E5E7EB] space-y-2 text-xs">
+              <div className="bg-neutral-900 rounded-xl p-4 border border-neutral-800 space-y-2 text-xs">
                 <div className="flex items-center justify-between">
-                  <span className="text-[#6B7280]">Nama Penyedia / Otoritas:</span>
-                  <span className="font-bold text-[#111827]">
+                  <span className="text-neutral-400">Nama Penyedia / Otoritas:</span>
+                  <span className="font-bold text-white">
                     {eventDetail.data_source?.provider || eventDetail.provider_name || 'Penyedia data tidak terverifikasi'}
                   </span>
                 </div>
                 <div className="flex items-center justify-between">
-                  <span className="text-[#6B7280]">Saluran Telemetri:</span>
-                  <span className="font-bold text-[#111827]">
+                  <span className="text-neutral-400">Saluran Telemetri:</span>
+                  <span className="font-bold text-white">
                     {eventDetail.data_source?.name || eventDetail.source_name || 'Sumber data tidak tercatat'}
                   </span>
                 </div>
                 <div className="flex items-center justify-between">
-                  <span className="text-[#6B7280]">Tipe Sumber Data:</span>
-                  <span className="font-mono font-semibold text-[#111827] uppercase">
+                  <span className="text-neutral-400">Tipe Sumber Data:</span>
+                  <span className="font-mono font-semibold text-white uppercase">
                     {eventDetail.data_source?.source_type || 'Tidak tercatat'}
                   </span>
                 </div>
                 <div className="flex items-center justify-between pt-2 border-t border-gray-200">
-                  <span className="text-[#6B7280]">Status Kepercayaan:</span>
+                  <span className="text-neutral-400">Status Kepercayaan:</span>
                   <DataTrustGroup
                     connectivity={eventDetail.connectivity_state || eventDetail.data_source?.connectivity_state || (isLive ? 'LIVE' : 'STATIC')}
                     provenance={eventDetail.provenance_type || eventDetail.data_source?.provenance_type || (eventDetail.is_simulated ? 'SIMULATED' : 'OFFICIAL')}
@@ -786,13 +786,13 @@ export const PublicDisasterDetailPage: React.FC = () => {
           {/* ======================================================== */}
           <div className="space-y-6">
             {/* 1. NEARBY HAZARD EVENTS (SPATIAL QUERY 50 KM) */}
-            <section className="bg-white border border-[#E5E7EB] rounded-2xl p-6 shadow-xs space-y-4">
+            <section className="bg-[#121614] border border-neutral-800 rounded-2xl p-6 shadow-xs space-y-4">
               <div className="flex items-center justify-between">
-                <h2 className="text-base font-bold text-[#111827] flex items-center gap-2">
+                <h2 className="text-base font-bold text-white flex items-center gap-2">
                   <Compass className="w-4 h-4 text-[#047857]" />
                   <span>Kejadian Terdekat (&le; 50 km)</span>
                 </h2>
-                <span className="text-xs font-semibold text-[#6B7280]">
+                <span className="text-xs font-semibold text-neutral-400">
                   {eventDetail.nearby_events?.length || 0} Kejadian
                 </span>
               </div>
@@ -806,7 +806,7 @@ export const PublicDisasterDetailPage: React.FC = () => {
                       <Link
                         key={nearby.id}
                         to={`/disasters/${nearby.id}`}
-                        className="block bg-[#F9FAFB] hover:bg-emerald-50/50 border border-[#E5E7EB] hover:border-[#047857]/40 rounded-xl p-3.5 transition-all group"
+                        className="block bg-neutral-900 hover:bg-emerald-50/50 border border-neutral-800 hover:border-[#047857]/40 rounded-xl p-3.5 transition-all group"
                       >
                         <div className="flex items-center justify-between text-xs mb-1.5">
                           <span className="inline-flex items-center gap-1 font-bold text-[#047857]">
@@ -818,11 +818,11 @@ export const PublicDisasterDetailPage: React.FC = () => {
                           </span>
                         </div>
 
-                        <h4 className="font-bold text-xs sm:text-sm text-[#111827] group-hover:text-[#047857] transition-colors line-clamp-2">
+                        <h4 className="font-bold text-xs sm:text-sm text-white group-hover:text-[#047857] transition-colors line-clamp-2">
                           {nearby.title}
                         </h4>
 
-                        <div className="mt-2 flex items-center justify-between text-[11px] text-[#6B7280]">
+                        <div className="mt-2 flex items-center justify-between text-[11px] text-neutral-400">
                           <span className={`px-1.5 py-0.5 rounded-md font-bold text-[10px] ${nSev.badgeClass}`}>
                             {nSev.label}
                           </span>
@@ -835,7 +835,7 @@ export const PublicDisasterDetailPage: React.FC = () => {
                   })}
                 </div>
               ) : (
-                <div className="bg-[#F9FAFB] border border-[#E5E7EB] rounded-xl p-4 text-center text-xs text-[#6B7280]">
+                <div className="bg-neutral-900 border border-neutral-800 rounded-xl p-4 text-center text-xs text-neutral-400">
                   Tidak ada kejadian bencana lain terdeteksi dalam radius 50 km dari lokasi ini.
                 </div>
               )}
@@ -843,8 +843,8 @@ export const PublicDisasterDetailPage: React.FC = () => {
 
             {/* 2. CHRONOLOGICAL VERIFIED TIMELINE */}
             {eventDetail.timeline && eventDetail.timeline.length > 0 && (
-              <section className="bg-white border border-[#E5E7EB] rounded-2xl p-6 shadow-xs space-y-4">
-                <h2 className="text-base font-bold text-[#111827] flex items-center gap-2">
+              <section className="bg-[#121614] border border-neutral-800 rounded-2xl p-6 shadow-xs space-y-4">
+                <h2 className="text-base font-bold text-white flex items-center gap-2">
                   <Clock className="w-4 h-4 text-[#047857]" />
                   <span>Kronologi Kejadian Terverifikasi</span>
                 </h2>
@@ -853,14 +853,14 @@ export const PublicDisasterDetailPage: React.FC = () => {
                   {eventDetail.timeline.map((item, idx) => (
                     <div key={idx} className="relative group">
                       {/* Timeline Dot */}
-                      <span className="absolute -left-[1.65rem] top-1 w-3 h-3 rounded-full bg-white border-2 border-[#047857]" />
+                      <span className="absolute -left-[1.65rem] top-1 w-3 h-3 rounded-full bg-[#121614] border-2 border-[#047857]" />
 
                       <div className="space-y-0.5">
                         <span className="text-[10px] font-bold font-mono text-[#047857]">
                           {formatEventDate(item.timestamp)}
                         </span>
-                        <h4 className="font-bold text-xs text-[#111827] leading-snug">{item.label}</h4>
-                        <p className="text-[11px] text-[#4B5563] leading-relaxed">{item.description}</p>
+                        <h4 className="font-bold text-xs text-white leading-snug">{item.label}</h4>
+                        <p className="text-[11px] text-neutral-300 leading-relaxed">{item.description}</p>
                       </div>
                     </div>
                   ))}
@@ -870,8 +870,8 @@ export const PublicDisasterDetailPage: React.FC = () => {
 
             {/* 3. SAFETY & MITIGATION GUIDELINES */}
             {eventDetail.safety_guidelines && eventDetail.safety_guidelines.length > 0 && (
-              <section className="bg-white border border-[#E5E7EB] rounded-2xl p-6 shadow-xs space-y-3">
-                <h2 className="text-base font-bold text-[#111827] flex items-center gap-2">
+              <section className="bg-[#121614] border border-neutral-800 rounded-2xl p-6 shadow-xs space-y-3">
+                <h2 className="text-base font-bold text-white flex items-center gap-2">
                   <BookOpen className="w-4 h-4 text-[#047857]" />
                   <span>Panduan Keselamatan & Mitigasi</span>
                 </h2>
@@ -880,17 +880,17 @@ export const PublicDisasterDetailPage: React.FC = () => {
                   {eventDetail.safety_guidelines.map((guide) => (
                     <div
                       key={guide.id}
-                      className="bg-[#F0FDF4] border border-[#BBF7D0] rounded-xl p-3.5 space-y-2"
+                      className="bg-neutral-900 border border-neutral-800 rounded-xl p-3.5 space-y-2"
                     >
-                      <div className="flex items-center justify-between text-[10px] font-bold text-[#047857] uppercase">
+                      <div className="flex items-center justify-between text-[10px] font-bold text-emerald-400 uppercase">
                         <span>{guide.category}</span>
                       </div>
-                      <h4 className="font-bold text-xs sm:text-sm text-[#111827]">{guide.title}</h4>
-                      <p className="text-xs text-[#166534] leading-relaxed">{guide.summary}</p>
+                      <h4 className="font-bold text-xs sm:text-sm text-white">{guide.title}</h4>
+                      <p className="text-xs text-neutral-300 leading-relaxed">{guide.summary}</p>
                       <div className="pt-1">
                         <Link
                           to={`/education/${guide.slug}`}
-                          className="inline-flex items-center gap-1 text-xs font-bold text-[#047857] hover:underline"
+                          className="inline-flex items-center gap-1 text-xs font-bold text-emerald-400 hover:text-emerald-300"
                         >
                           <span>Baca Panduan Lengkap</span>
                           <ExternalLink className="w-3 h-3" />
@@ -915,28 +915,28 @@ export const PublicDisasterDetailPage: React.FC = () => {
               <div className="grid grid-cols-2 gap-2 pt-1 text-xs font-bold">
                 <a
                   href="tel:112"
-                  className="bg-white p-2.5 rounded-xl border border-rose-200 text-center hover:bg-rose-100 transition-colors text-rose-900 block"
+                  className="bg-[#121614] p-2.5 rounded-xl border border-rose-200 text-center hover:bg-rose-100 transition-colors text-rose-900 block"
                 >
                   <p className="text-[10px] text-rose-600 font-semibold">Panggilan Darurat</p>
                   <p className="text-base font-extrabold">112</p>
                 </a>
                 <a
                   href="tel:115"
-                  className="bg-white p-2.5 rounded-xl border border-rose-200 text-center hover:bg-rose-100 transition-colors text-rose-900 block"
+                  className="bg-[#121614] p-2.5 rounded-xl border border-rose-200 text-center hover:bg-rose-100 transition-colors text-rose-900 block"
                 >
                   <p className="text-[10px] text-rose-600 font-semibold">BASARNAS (SAR)</p>
                   <p className="text-base font-extrabold">115</p>
                 </a>
                 <a
                   href="tel:119"
-                  className="bg-white p-2.5 rounded-xl border border-rose-200 text-center hover:bg-rose-100 transition-colors text-rose-900 block"
+                  className="bg-[#121614] p-2.5 rounded-xl border border-rose-200 text-center hover:bg-rose-100 transition-colors text-rose-900 block"
                 >
                   <p className="text-[10px] text-rose-600 font-semibold">Kemenkes / Medis</p>
                   <p className="text-base font-extrabold">119</p>
                 </a>
                 <a
                   href="tel:117"
-                  className="bg-white p-2.5 rounded-xl border border-rose-200 text-center hover:bg-rose-100 transition-colors text-rose-900 block"
+                  className="bg-[#121614] p-2.5 rounded-xl border border-rose-200 text-center hover:bg-rose-100 transition-colors text-rose-900 block"
                 >
                   <p className="text-[10px] text-rose-600 font-semibold">Pusdalops BNPB</p>
                   <p className="text-base font-extrabold">117</p>

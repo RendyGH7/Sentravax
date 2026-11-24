@@ -20,7 +20,7 @@ export const Badge: React.FC<BadgeProps> = ({
   className,
   variant = 'neutral',
   size = 'md',
-  theme = 'light',
+  theme = 'dark',
   dataStatus,
   dot,
   ...props

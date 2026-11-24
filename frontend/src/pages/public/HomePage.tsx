@@ -32,8 +32,9 @@ import {
   ShieldCheck,
   Radio,
   LayoutGrid,
-  Eye,
   X,
+  Copy,
+  Check,
 } from 'lucide-react';
 import { toast } from 'sonner';
 
@@ -567,6 +568,14 @@ export const HomePage: React.FC = () => {
   const [contactCategory, setContactCategory] = useState<string>('pertanyaan');
   const [contactMessage, setContactMessage] = useState<string>('');
   const [isSubmittingContact, setIsSubmittingContact] = useState<boolean>(false);
+  const [copiedField, setCopiedField] = useState<string | null>(null);
+
+  const handleCopy = (text: string, fieldName: string) => {
+    navigator.clipboard.writeText(text);
+    setCopiedField(fieldName);
+    toast.success(`${fieldName} disalin ke clipboard.`);
+    setTimeout(() => setCopiedField(null), 2000);
+  };
 
   // Fetch initial telemetry
   const fetchOverview = useCallback(async () => {
@@ -1096,94 +1105,56 @@ export const HomePage: React.FC = () => {
           })}
         </div>
 
-        {/* 10 Foto Dokumentasi Grid */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+        {/* 10 Foto Dokumentasi Grid — Visual-First Cards dengan Animasi Blur Drawer dari Bawah saat Hover */}
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5 sm:gap-6">
           {RESCUE_GALLERY_STORIES.filter((item) =>
             galleryCategory === 'all' ? true : item.category === galleryCategory
           ).map((item) => (
-            <article
+            <div
               key={item.id}
               onClick={() => setSelectedStory(item)}
-              className="group rounded-3xl border border-neutral-800 bg-[#111513] hover:border-neutral-700 transition-all duration-300 overflow-hidden flex flex-col justify-between cursor-pointer"
+              className="group relative rounded-3xl overflow-hidden aspect-[4/3] sm:aspect-[16/11] border border-neutral-800 bg-neutral-950 cursor-pointer shadow-lg hover:border-emerald-500/50 hover:shadow-xl hover:shadow-emerald-950/20 transition-all duration-300 select-none"
             >
-              <div>
-                {/* Frame Foto */}
-                <div className="relative aspect-[16/10] overflow-hidden bg-neutral-900">
-                  <img
-                    src={item.image}
-                    alt={item.title}
-                    className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
-                    loading="lazy"
-                  />
-                  {/* Gradient Overlay */}
-                  <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent" />
+              {/* Foto Dokumentasi Penuh (Default: Benar-benar Hanya Gambar Bersih) */}
+              <img
+                src={item.image}
+                alt={item.title}
+                className="w-full h-full object-cover transition-transform duration-500 ease-out group-hover:scale-105"
+                loading="lazy"
+              />
 
-                  {/* Lokasi & Status Tag */}
-                  <div className="absolute top-3 left-3 right-3 flex items-center justify-between gap-2">
-                    <span className="inline-flex items-center gap-1 px-2.5 py-1 rounded-xl bg-black/75 backdrop-blur-md text-[11px] font-semibold text-neutral-200 border border-neutral-700/80">
-                      <MapPin className="w-3 h-3 text-emerald-400 shrink-0" />
-                      <span>{item.location}</span>
-                    </span>
-
-                    <span className="inline-flex items-center px-2 py-0.5 rounded-lg bg-emerald-950/80 border border-emerald-800 text-[10px] font-mono font-bold text-emerald-300 uppercase">
-                      Selamat
-                    </span>
-                  </div>
-
-                  {/* Jenis Bahaya Overlay Bottom */}
-                  <div className="absolute bottom-3 left-3 right-3 flex items-center justify-between text-xs">
-                    <span className="font-mono text-[11px] text-amber-300 font-bold bg-black/60 px-2 py-0.5 rounded-md backdrop-blur-xs">
-                      {item.hazardType}
-                    </span>
-                    <span className="text-[10px] text-neutral-400 font-medium">
-                      {item.date}
-                    </span>
-                  </div>
-
-                  {/* Hover Inspect Icon */}
-                  <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center gap-2">
-                    <span className="px-3.5 py-1.5 rounded-xl bg-neutral-900/90 text-white text-xs font-bold border border-neutral-700 flex items-center gap-1.5 shadow-lg">
-                      <Eye className="w-3.5 h-3.5 text-emerald-400" />
-                      <span>Buka Dokumentasi</span>
-                    </span>
-                  </div>
-                </div>
-
-                {/* Detail Cerita Warga */}
-                <div className="p-5 space-y-3">
-                  <div>
-                    <div className="text-xs text-neutral-400 font-medium">
-                      {item.person} — <span className="text-neutral-500">{item.role}</span>
-                    </div>
-                    <h3 className="text-base font-bold text-white tracking-tight mt-1 group-hover:text-emerald-300 transition-colors line-clamp-2">
-                      {item.title}
-                    </h3>
-                  </div>
-
-                  <p className="text-xs text-neutral-300 leading-relaxed line-clamp-3 font-normal">
-                    {item.story}
-                  </p>
-                </div>
-              </div>
-
-              {/* Posko Shelter & CTA Footer */}
-              <div className="p-5 pt-0 space-y-3 border-t border-neutral-800/80 mt-2">
-                <div className="pt-3 flex items-center justify-between text-[11px]">
-                  <span className="text-neutral-400 flex items-center gap-1 truncate max-w-[200px]" title={item.shelterName}>
-                    <Building2 className="w-3.5 h-3.5 text-emerald-400 shrink-0" />
-                    <span className="truncate">{item.shelterName}</span>
+              {/* Animasi Drawer dari Bawah: Nge-blur dengan warna dan teks singkat saat di-hover, menghilang ke bawah saat tidak di-hover */}
+              <div className="absolute inset-x-0 bottom-0 p-5 bg-gradient-to-t from-black/95 via-black/80 to-black/40 backdrop-blur-md border-t border-white/10 transform translate-y-full opacity-0 group-hover:translate-y-0 group-hover:opacity-100 transition-all duration-300 ease-in-out flex flex-col justify-end space-y-2 pointer-events-none">
+                {/* Baris Lokasi & Tag Status Bahaya */}
+                <div className="flex items-center justify-between gap-2">
+                  <span className="inline-flex items-center gap-1.5 text-xs font-semibold text-emerald-300">
+                    <MapPin className="w-3.5 h-3.5 text-emerald-400 shrink-0" />
+                    <span>{item.location}</span>
                   </span>
-                  <span className="font-mono text-emerald-400 text-[10px] font-bold">
-                    {item.stats}
+                  <span className="inline-flex items-center px-2 py-0.5 rounded-md bg-emerald-950/90 border border-emerald-800 text-[10px] font-mono font-bold text-emerald-300 uppercase">
+                    {item.hazardType.split(' ')[0]}
                   </span>
                 </div>
 
-                <div className="w-full py-2 px-3 rounded-xl bg-neutral-900 border border-neutral-800 text-[11px] font-bold text-neutral-200 group-hover:border-neutral-700 flex items-center justify-between">
-                  <span>Lihat Catatan Evakuasi</span>
-                  <ArrowRight className="w-3.5 h-3.5 text-emerald-400 group-hover:translate-x-0.5 transition-transform" />
+                {/* Judul Informasi Singkat */}
+                <h3 className="text-sm font-bold text-white tracking-tight leading-snug line-clamp-1">
+                  {item.title}
+                </h3>
+
+                {/* Ringkasan Manfaat & Penyelamatan */}
+                <p className="text-xs text-neutral-300 leading-relaxed line-clamp-2 font-normal">
+                  {item.story}
+                </p>
+
+                {/* Footer Drawer */}
+                <div className="pt-1.5 flex items-center justify-between text-[11px] border-t border-white/10 text-neutral-400 font-medium">
+                  <span className="truncate max-w-[200px]">{item.shelterName.split(' - ')[0]}</span>
+                  <span className="text-emerald-400 font-semibold flex items-center gap-1 shrink-0">
+                    Buka Detail <ArrowRight className="w-3 h-3 group-hover:translate-x-0.5 transition-transform" />
+                  </span>
                 </div>
               </div>
-            </article>
+            </div>
           ))}
         </div>
 
@@ -1392,190 +1363,314 @@ export const HomePage: React.FC = () => {
       {/* ========================================================================= */}
       {/* 8. KONTAK & PUSAT BANTUAN RESMI (Layanan Terpadu & Saluran Darurat)        */}
       {/* ========================================================================= */}
-      <section id="kontak-resmi" className="space-y-8 pt-6 border-t border-neutral-800">
+      <section id="kontak-resmi" className="space-y-8 pt-8 border-t border-neutral-800">
         {/* Hotline Darurat Nasional (Bebas Pulsa 1-Tap Dial) */}
-        <div className="p-4 rounded-2xl bg-[#161617] border border-neutral-800 flex flex-wrap items-center justify-between gap-3 text-xs">
-          <div className="flex items-center gap-2 text-rose-300 font-bold">
-            <PhoneCall className="w-4 h-4 text-rose-400" />
-            <span>Hotline Darurat Nasional (Bebas Pulsa):</span>
+        <div className="p-4 rounded-2xl bg-[#121614] border border-neutral-800 flex flex-col md:flex-row md:items-center justify-between gap-4 text-xs">
+          <div className="flex items-center gap-3">
+            <div className="w-8 h-8 rounded-xl bg-rose-950/80 border border-rose-800/60 flex items-center justify-center text-rose-400 shrink-0">
+              <PhoneCall className="w-4 h-4 animate-pulse" />
+            </div>
+            <div>
+              <span className="text-sm font-bold text-white block">Panggilan Darurat Siaga (1-Klik):</span>
+              <span className="text-[11px] text-neutral-400">Saluran bebas pulsa nasional 24/7 bagi kondisi mendesak</span>
+            </div>
           </div>
           <div className="flex flex-wrap items-center gap-2">
             {[
-              { num: '112', label: 'Panggilan Darurat Terpadu' },
-              { num: '117', label: 'BNPB Bencana' },
-              { num: '115', label: 'Basarnas SAR' },
-              { num: '119', label: 'Ambulans Medis' },
+              { num: '112', label: 'Darurat Terpadu' },
+              { num: '117', label: 'BNPB' },
+              { num: '115', label: 'Basarnas' },
+              { num: '119', label: 'Ambulans' },
               { num: '113', label: 'Damkar' },
             ].map((h) => (
               <a
                 key={h.num}
                 href={`tel:${h.num}`}
-                className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-red-950/80 hover:bg-red-900 text-red-100 font-bold text-xs transition-colors border border-red-800/60"
-                title={`Hubungi ${h.label} di nomor ${h.num}`}
+                className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-neutral-900 hover:bg-neutral-800 text-neutral-200 hover:text-white font-mono text-xs font-bold transition-all border border-neutral-700 shadow-xs"
+                title={`Hubungi ${h.label} (${h.num})`}
               >
-                <span>{h.num}</span>
-                <span className="hidden sm:inline font-bold text-red-200">({h.label})</span>
+                <span className="text-rose-400 font-bold">{h.num}</span>
+                <span className="text-[11px] text-neutral-400 font-sans font-medium">{h.label}</span>
               </a>
             ))}
           </div>
         </div>
 
-        <div className="text-center max-w-2xl mx-auto space-y-3">
-          <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full text-xs font-mono font-bold tracking-wider uppercase bg-neutral-900 border border-neutral-700 text-emerald-400">
+        {/* Section Header */}
+        <div className="text-center max-w-2xl mx-auto space-y-2.5">
+          <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full text-[11px] font-mono font-bold tracking-wider uppercase bg-emerald-950/60 border border-emerald-800/60 text-emerald-300">
             <Mail className="w-3.5 h-3.5 text-emerald-400" />
-            <span>PUSAT HUBUNGAN MASYARAKAT</span>
+            <span>PUSAT LAYANAN &amp; KOORDINASI PUBLIK</span>
           </div>
           <h2 className="text-2xl sm:text-3xl font-black text-white tracking-tight">
             Hubungi Kami &amp; Layanan Publik
           </h2>
           <p className="text-xs sm:text-sm text-neutral-300 leading-relaxed font-normal">
-            Punya pertanyaan, usulan lokasi shelter baru, atau butuh bantuan koordinasi bencana? Tim SENTRAVAX siap melayani Anda.
+            Saluran komunikasi resmi untuk verifikasi data kebencanaan, usulan titik evakuasi baru, koordinasi kemitraan relawan, dan pertanyaan seputar platform kesiapsiagaan nasional.
           </p>
         </div>
 
-        <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
-          {/* Left Column: Official Contact Directory */}
-          <div className="lg:col-span-5 space-y-4">
-            <div className="p-6 rounded-3xl bg-[#121614] border border-neutral-800 space-y-5">
-              <h3 className="text-sm font-black text-white flex items-center gap-2">
-                <Building2 className="w-4 h-4 text-emerald-400" />
-                Sekretariat &amp; Komando Layanan
-              </h3>
-
-              <div className="space-y-4 text-xs text-neutral-300">
-                <div className="flex items-start gap-3">
-                  <div className="w-9 h-9 rounded-xl bg-neutral-900 border border-neutral-800 text-emerald-400 flex items-center justify-center shrink-0 mt-0.5">
-                    <Mail className="w-4 h-4" />
+        {/* Master Unified Container */}
+        <div className="rounded-3xl border border-neutral-800 bg-[#0e1110] overflow-hidden shadow-2xl">
+          <div className="grid grid-cols-1 lg:grid-cols-12 divide-y lg:divide-y-0 lg:divide-x divide-neutral-800">
+            {/* Left Column: Official Direct Channels & Command Office (5 cols) */}
+            <div className="lg:col-span-5 p-6 sm:p-8 space-y-6 flex flex-col justify-between bg-gradient-to-b from-[#111413] to-[#0c0e0d]">
+              <div className="space-y-5">
+                <div className="space-y-1">
+                  <div className="flex items-center justify-between">
+                    <h3 className="text-sm sm:text-base font-bold text-white flex items-center gap-2">
+                      <Building2 className="w-4 h-4 text-emerald-400" />
+                      <span>Sekretariat &amp; Komando Layanan</span>
+                    </h3>
+                    <span className="text-[10px] font-mono font-bold px-2 py-0.5 rounded-md bg-emerald-950/80 text-emerald-300 border border-emerald-800/60">
+                      RESMI
+                    </span>
                   </div>
-                  <div>
-                    <span className="font-bold text-white block">Surat Elektronik (Email)</span>
-                    <a href="mailto:layanan@sentravax.id" className="text-emerald-400 hover:text-emerald-300 font-semibold hover:underline">
-                      layanan@sentravax.id
-                    </a>
-                    <span className="text-[10px] text-neutral-400 block mt-0.5">Balasan resmi dalam waktu 1x24 jam kerja</span>
-                  </div>
+                  <p className="text-xs text-neutral-400 leading-relaxed">
+                    Pusat koordinasi terpadu SENTRAVAX bersama posko kebencanaan dan jajaran otoritas terkait.
+                  </p>
                 </div>
 
-                <div className="flex items-start gap-3">
-                  <div className="w-9 h-9 rounded-xl bg-neutral-900 border border-neutral-800 text-emerald-400 flex items-center justify-center shrink-0 mt-0.5">
-                    <MessageSquare className="w-4 h-4" />
+                {/* Direct Channel Cards */}
+                <div className="space-y-3">
+                  {/* Channel 1: Email */}
+                  <div className="p-4 rounded-2xl bg-neutral-900/60 border border-neutral-800/80 hover:border-neutral-700 transition-all space-y-2">
+                    <div className="flex items-center justify-between">
+                      <div className="flex items-center gap-2.5">
+                        <div className="w-8 h-8 rounded-xl bg-emerald-950/60 border border-emerald-800/50 text-emerald-400 flex items-center justify-center shrink-0">
+                          <Mail className="w-4 h-4" />
+                        </div>
+                        <div>
+                          <span className="text-xs font-bold text-white block">Surat Elektronik (Email)</span>
+                          <span className="text-[10px] text-neutral-400 font-mono">SLA Balasan &lt; 24 Jam Kerja</span>
+                        </div>
+                      </div>
+                      <button
+                        type="button"
+                        onClick={() => handleCopy('layanan@sentravax.id', 'Email')}
+                        className="inline-flex items-center gap-1 px-2.5 py-1 rounded-lg bg-neutral-800 hover:bg-neutral-700 text-[11px] text-neutral-300 hover:text-white transition-colors cursor-pointer border border-neutral-700"
+                        title="Salin alamat email"
+                      >
+                        {copiedField === 'Email' ? (
+                          <>
+                            <Check className="w-3 h-3 text-emerald-400" />
+                            <span className="text-emerald-400 font-bold">Disalin</span>
+                          </>
+                        ) : (
+                          <>
+                            <Copy className="w-3 h-3" />
+                            <span>Salin</span>
+                          </>
+                        )}
+                      </button>
+                    </div>
+                    <div className="pt-1">
+                      <a
+                        href="mailto:layanan@sentravax.id"
+                        className="text-xs sm:text-sm font-mono font-bold text-emerald-400 hover:text-emerald-300 transition-colors inline-flex items-center gap-1.5"
+                      >
+                        <span>layanan@sentravax.id</span>
+                        <ExternalLink className="w-3 h-3 opacity-70" />
+                      </a>
+                    </div>
                   </div>
-                  <div>
-                    <span className="font-bold text-white block">WhatsApp Layanan Cepat</span>
-                    <a href="https://wa.me/6281123456789" target="_blank" rel="noopener noreferrer" className="text-emerald-400 hover:text-emerald-300 font-semibold hover:underline">
-                      +62 811-2345-6789 (Biro Komunikasi)
-                    </a>
-                    <span className="text-[10px] text-neutral-400 block mt-0.5">Khusus koordinasi kedaruratan &amp; verifikasi data</span>
+
+                  {/* Channel 2: WhatsApp */}
+                  <div className="p-4 rounded-2xl bg-neutral-900/60 border border-neutral-800/80 hover:border-neutral-700 transition-all space-y-2">
+                    <div className="flex items-center justify-between">
+                      <div className="flex items-center gap-2.5">
+                        <div className="w-8 h-8 rounded-xl bg-emerald-950/60 border border-emerald-800/50 text-emerald-400 flex items-center justify-center shrink-0">
+                          <MessageSquare className="w-4 h-4" />
+                        </div>
+                        <div>
+                          <span className="text-xs font-bold text-white block">WhatsApp Biro Komunikasi</span>
+                          <span className="text-[10px] text-neutral-400 font-mono">Koordinasi &amp; Verifikasi Data</span>
+                        </div>
+                      </div>
+                      <button
+                        type="button"
+                        onClick={() => handleCopy('+6281123456789', 'Nomor WhatsApp')}
+                        className="inline-flex items-center gap-1 px-2.5 py-1 rounded-lg bg-neutral-800 hover:bg-neutral-700 text-[11px] text-neutral-300 hover:text-white transition-colors cursor-pointer border border-neutral-700"
+                        title="Salin nomor WhatsApp"
+                      >
+                        {copiedField === 'Nomor WhatsApp' ? (
+                          <>
+                            <Check className="w-3 h-3 text-emerald-400" />
+                            <span className="text-emerald-400 font-bold">Disalin</span>
+                          </>
+                        ) : (
+                          <>
+                            <Copy className="w-3 h-3" />
+                            <span>Salin</span>
+                          </>
+                        )}
+                      </button>
+                    </div>
+                    <div className="pt-1">
+                      <a
+                        href="https://wa.me/6281123456789"
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="text-xs sm:text-sm font-mono font-bold text-emerald-400 hover:text-emerald-300 transition-colors inline-flex items-center gap-1.5"
+                      >
+                        <span>+62 811-2345-6789</span>
+                        <ExternalLink className="w-3 h-3 opacity-70" />
+                      </a>
+                    </div>
+                  </div>
+
+                  {/* Channel 3: Operational Schedule & HQ */}
+                  <div className="p-4 rounded-2xl bg-neutral-900/60 border border-neutral-800/80 space-y-2">
+                    <div className="flex items-start gap-2.5">
+                      <div className="w-8 h-8 rounded-xl bg-neutral-800 text-neutral-300 flex items-center justify-center shrink-0 mt-0.5">
+                        <Clock className="w-4 h-4" />
+                      </div>
+                      <div className="space-y-1 text-xs">
+                        <span className="font-bold text-white block">Jam Operasional Layanan</span>
+                        <p className="text-neutral-300 text-[11px] leading-relaxed">
+                          <strong className="text-emerald-400">Monitoring Sensor &amp; Telemetri:</strong> 24 Jam Non-Stop<br />
+                          <strong className="text-neutral-200">Layanan Konsultasi Warga:</strong> Senin – Jumat (08.00 – 17.00 WIB)
+                        </p>
+                      </div>
+                    </div>
                   </div>
                 </div>
+              </div>
 
-                <div className="flex items-start gap-3">
-                  <div className="w-9 h-9 rounded-xl bg-neutral-900 border border-neutral-800 text-emerald-400 flex items-center justify-center shrink-0 mt-0.5">
-                    <Clock className="w-4 h-4" />
+              {/* Integrated Emergency Callout */}
+              <div className="pt-4 border-t border-neutral-800/80">
+                <div className="p-3.5 rounded-2xl bg-rose-950/20 border border-rose-900/50 text-xs text-rose-200 flex items-start gap-3">
+                  <div className="w-7 h-7 rounded-lg bg-rose-900/50 flex items-center justify-center text-rose-400 shrink-0 mt-0.5">
+                    <AlertTriangle className="w-4 h-4" />
                   </div>
-                  <div>
-                    <span className="font-bold text-white block">Jam Operasional Layanan Publik</span>
-                    <span className="text-neutral-200">Pusat Monitoring: 24 Jam Non-Stop</span>
-                    <span className="text-[10px] text-neutral-400 block mt-0.5">Layanan Konsultasi Warga: Senin – Jumat (08.00 – 17.00 WIB)</span>
+                  <div className="space-y-1">
+                    <span className="font-bold text-white block">Situasi Bahaya Mengancam Jiwa?</span>
+                    <p className="text-[11px] text-rose-200/90 leading-relaxed font-normal">
+                      Segera hubungi hotline darurat nasional: <strong className="text-white">112</strong> (Panggilan Darurat) atau <strong className="text-white">115</strong> (Basarnas SAR).
+                    </p>
                   </div>
                 </div>
               </div>
             </div>
 
-            {/* Quick Emergency Note Box */}
-            <div className="p-4 rounded-2xl bg-[#1c1811] border border-amber-900/60 text-xs text-amber-200 flex items-start gap-2.5">
-              <AlertTriangle className="w-4 h-4 text-amber-400 shrink-0 mt-0.5" />
-              <div className="leading-relaxed">
-                <strong>Catatan Kedaruratan Mendesak:</strong> Bila terjadi situasi bahaya yang mengancam nyawa seketika, segera tekan tombol telepon darurat <strong>112</strong> atau <strong>115 (Basarnas)</strong>.
+            {/* Right Column: Refined Interactive Feedback & Inquiry Form (7 cols) */}
+            <div className="lg:col-span-7 p-6 sm:p-8 space-y-6 bg-[#0e1110]">
+              <div className="space-y-1">
+                <div className="flex items-center justify-between">
+                  <h3 className="text-sm sm:text-base font-bold text-white">
+                    Formulir Komunikasi &amp; Partisipasi Warga
+                  </h3>
+                  <span className="text-[11px] text-neutral-400 font-medium">Tanggapan Resmi</span>
+                </div>
+                <p className="text-xs text-neutral-400 leading-relaxed">
+                  Kirimkan pertanyaan, verifikasi laporan kebencanaan, atau usulkan titik shelter baru di lingkungan Anda.
+                </p>
               </div>
-            </div>
-          </div>
 
-          {/* Right Column: Interactive Feedback & Inquiry Form */}
-          <div className="lg:col-span-7 bg-[#121614] p-6 sm:p-8 rounded-3xl border border-neutral-800 space-y-5">
-            <div className="space-y-1">
-              <h3 className="text-base font-black text-white">
-                Kirim Pesan, Usulan, atau Pertanyaan
-              </h3>
-              <p className="text-xs text-neutral-300">
-                Kami sangat menghargai saran dari masyarakat untuk terus menyempurnakan platform kesiapsiagaan ini.
-              </p>
-            </div>
-
-            <form onSubmit={handleContactSubmit} className="space-y-4">
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                <div className="space-y-1.5">
-                  <label htmlFor="input-name" className="text-xs font-bold text-neutral-200 block">
-                    Nama Lengkap Anda
+              <form onSubmit={handleContactSubmit} className="space-y-4">
+                {/* Topic Selector Pills */}
+                <div className="space-y-2">
+                  <label className="text-[11px] font-mono font-bold text-neutral-400 block uppercase tracking-wider">
+                    Topik Komunikasi
                   </label>
-                  <input
-                    id="input-name"
-                    type="text"
+                  <div className="grid grid-cols-2 sm:grid-cols-4 gap-2">
+                    {[
+                      { id: 'pertanyaan', label: 'Pertanyaan Fitur' },
+                      { id: 'usulan_shelter', label: 'Usulan Shelter' },
+                      { id: 'verifikasi', label: 'Verifikasi Data' },
+                      { id: 'kerjasama', label: 'Relawan & Mitra' },
+                    ].map((topic) => {
+                      const isActive = contactCategory === topic.id;
+                      return (
+                        <button
+                          key={topic.id}
+                          type="button"
+                          onClick={() => setContactCategory(topic.id)}
+                          className={`px-3 py-2 rounded-xl text-xs font-semibold text-center transition-all cursor-pointer border ${
+                            isActive
+                              ? 'bg-emerald-950/80 text-emerald-300 border-emerald-600/80 shadow-xs'
+                              : 'bg-neutral-900/60 text-neutral-400 border-neutral-800 hover:text-white hover:border-neutral-700'
+                          }`}
+                        >
+                          {topic.label}
+                        </button>
+                      );
+                    })}
+                  </div>
+                </div>
+
+                {/* Name & Email Fields */}
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                  <div className="space-y-1.5">
+                    <label htmlFor="input-name" className="text-xs font-bold text-neutral-300 block">
+                      Nama Lengkap Anda <span className="text-rose-400">*</span>
+                    </label>
+                    <input
+                      id="input-name"
+                      type="text"
+                      required
+                      value={contactName}
+                      onChange={(e) => setContactName(e.target.value)}
+                      placeholder="Contoh: Budi Santoso"
+                      className="w-full px-4 py-2.5 rounded-xl border border-neutral-800 bg-neutral-900/70 text-xs sm:text-sm text-white placeholder-neutral-500 outline-none focus:border-emerald-500 focus:ring-1 focus:ring-emerald-500/20 transition-all"
+                    />
+                  </div>
+
+                  <div className="space-y-1.5">
+                    <label htmlFor="input-email" className="text-xs font-bold text-neutral-300 block">
+                      Alamat Email Aktif <span className="text-rose-400">*</span>
+                    </label>
+                    <input
+                      id="input-email"
+                      type="email"
+                      required
+                      value={contactEmail}
+                      onChange={(e) => setContactEmail(e.target.value)}
+                      placeholder="budi@example.com"
+                      className="w-full px-4 py-2.5 rounded-xl border border-neutral-800 bg-neutral-900/70 text-xs sm:text-sm text-white placeholder-neutral-500 outline-none focus:border-emerald-500 focus:ring-1 focus:ring-emerald-500/20 transition-all"
+                    />
+                  </div>
+                </div>
+
+                {/* Message Field */}
+                <div className="space-y-1.5">
+                  <div className="flex items-center justify-between">
+                    <label htmlFor="input-message" className="text-xs font-bold text-neutral-300 block">
+                      Isi Pesan atau Usulan Anda <span className="text-rose-400">*</span>
+                    </label>
+                    <span className="text-[10px] text-neutral-500 font-mono">
+                      {contactMessage.length} karakter
+                    </span>
+                  </div>
+                  <textarea
+                    id="input-message"
                     required
-                    value={contactName}
-                    onChange={(e) => setContactName(e.target.value)}
-                    placeholder="Contoh: Budi Santoso"
-                    className="w-full px-3.5 py-2.5 rounded-xl border border-neutral-700 bg-[#0d100f] text-xs text-white placeholder-neutral-500 outline-none focus:border-emerald-600 focus:ring-1 focus:ring-emerald-600"
+                    rows={4}
+                    value={contactMessage}
+                    onChange={(e) => setContactMessage(e.target.value)}
+                    placeholder="Tuliskan pertanyaan, masukan, rincian lokasi usulan shelter, atau kendala lapangan yang Anda alami..."
+                    className="w-full px-4 py-3 rounded-xl border border-neutral-800 bg-neutral-900/70 text-xs sm:text-sm text-white placeholder-neutral-500 outline-none focus:border-emerald-500 focus:ring-1 focus:ring-emerald-500/20 resize-none transition-all leading-relaxed"
                   />
                 </div>
 
-                <div className="space-y-1.5">
-                  <label htmlFor="input-email" className="text-xs font-bold text-neutral-200 block">
-                    Alamat Email Aktif
-                  </label>
-                  <input
-                    id="input-email"
-                    type="email"
-                    required
-                    value={contactEmail}
-                    onChange={(e) => setContactEmail(e.target.value)}
-                    placeholder="budi@example.com"
-                    className="w-full px-3.5 py-2.5 rounded-xl border border-neutral-700 bg-[#0d100f] text-xs text-white placeholder-neutral-500 outline-none focus:border-emerald-600 focus:ring-1 focus:ring-emerald-600"
-                  />
+                {/* Submit Row & Assurance */}
+                <div className="pt-2 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+                  <button
+                    type="submit"
+                    disabled={isSubmittingContact}
+                    className="inline-flex items-center justify-center gap-2 px-7 py-3 rounded-xl bg-emerald-600 hover:bg-emerald-500 active:bg-emerald-700 text-white text-xs sm:text-sm font-bold transition-all disabled:opacity-50 cursor-pointer shadow-md"
+                  >
+                    <Send className="w-4 h-4" />
+                    <span>{isSubmittingContact ? 'Mengirimkan Pesan...' : 'Kirim Pesan Sekarang'}</span>
+                  </button>
+
+                  <div className="flex items-center gap-2 text-[11px] text-neutral-400">
+                    <ShieldCheck className="w-4 h-4 text-emerald-400 shrink-0" />
+                    <span>Data terenkripsi dan dijaga kerahasiaannya.</span>
+                  </div>
                 </div>
-              </div>
-
-              <div className="space-y-1.5">
-                <label htmlFor="select-contact-category" className="text-xs font-bold text-neutral-200 block">
-                  Kategori Pesan
-                </label>
-                <select
-                  id="select-contact-category"
-                  value={contactCategory}
-                  onChange={(e) => setContactCategory(e.target.value)}
-                  className="w-full px-3.5 py-2.5 rounded-xl border border-neutral-700 bg-[#0d100f] text-xs text-white font-medium outline-none focus:border-emerald-600 focus:ring-1 focus:ring-emerald-600"
-                >
-                  <option value="pertanyaan" className="bg-[#0d100f] text-white">Pertanyaan Umum Seputar Fitur Aplikasi</option>
-                  <option value="usulan_shelter" className="bg-[#0d100f] text-white">Usulan Titik Shelter / Jalur Evakuasi Baru</option>
-                  <option value="apresiasi" className="bg-[#0d100f] text-white">Apresiasi &amp; Masukan Pengalaman Warga</option>
-                  <option value="kerjasama" className="bg-[#0d100f] text-white">Kerjasama Relawan / Komunitas Peduli Bencana</option>
-                </select>
-              </div>
-
-              <div className="space-y-1.5">
-                <label htmlFor="input-message" className="text-xs font-bold text-neutral-200 block">
-                  Isi Pesan atau Masukan Anda
-                </label>
-                <textarea
-                  id="input-message"
-                  required
-                  rows={4}
-                  value={contactMessage}
-                  onChange={(e) => setContactMessage(e.target.value)}
-                  placeholder="Tuliskan pertanyaan, masukan, atau kendala yang Anda alami..."
-                  className="w-full px-3.5 py-2.5 rounded-xl border border-neutral-700 bg-[#0d100f] text-xs text-white placeholder-neutral-500 outline-none focus:border-emerald-600 focus:ring-1 focus:ring-emerald-600 resize-none"
-                />
-              </div>
-
-              <button
-                type="submit"
-                disabled={isSubmittingContact}
-                className="w-full sm:w-auto inline-flex items-center justify-center gap-2 px-7 py-3 rounded-xl bg-emerald-700 hover:bg-emerald-600 text-white text-xs font-bold transition-colors disabled:opacity-50 cursor-pointer shadow-xs"
-              >
-                <Send className="w-3.5 h-3.5" />
-                <span>{isSubmittingContact ? 'Mengirimkan Pesan...' : 'Kirim Pesan Sekarang'}</span>
-              </button>
-            </form>
+              </form>
+            </div>
           </div>
         </div>
       </section>

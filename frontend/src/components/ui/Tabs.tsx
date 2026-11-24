@@ -27,7 +27,7 @@ export const Tabs: React.FC<TabsProps> = ({
   activeTab,
   onChange,
   variant = 'underline',
-  theme = 'light',
+  theme = 'dark',
   className,
   children,
 }) => {
