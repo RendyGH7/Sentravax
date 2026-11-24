@@ -322,4 +322,21 @@ class EmergencyDirectoryDatabaseTest extends TestCase
         $this->assertEquals(6, DataSource::count(), 'DataSources baseline count altered!');
         $this->assertEquals(1, AiInsight::count(), 'AiInsights baseline count altered!');
     }
+
+    /**
+     * Test 17: BNPB 117 adalah kontak operasional terverifikasi tanpa klaim bebas pulsa atau 24 jam tanpa bukti.
+     */
+    public function test_bnpb_117_is_verified_operational_contact_without_unproven_toll_free_or_24h_claims(): void
+    {
+        $bnpb = EmergencyContact::where('slug', 'pusdalops-bnpb')->first();
+        $this->assertNotNull($bnpb);
+
+        $channel117 = $bnpb->channels()->where('value', '117')->first();
+        $this->assertNotNull($channel117, 'BNPB 117 channel must exist.');
+        $this->assertEquals(EmergencyContactChannel::STATUS_VERIFIED, $channel117->verification_status);
+        $this->assertEquals(EmergencyContactChannel::CLASS_OPERATIONAL_CONTACT, $channel117->channel_classification);
+        $this->assertFalse($channel117->is_toll_free, 'BNPB 117 must not claim toll-free without explicit proof.');
+        $this->assertNull($channel117->operating_hours, 'BNPB 117 must not claim 24 hours operating hours without explicit proof.');
+        $this->assertStringContainsString('bnpb.go.id', $channel117->source_url);
+    }
 }
