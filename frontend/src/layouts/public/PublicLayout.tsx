@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { Outlet, Link, useLocation } from 'react-router-dom';
+import { motion, AnimatePresence } from 'motion/react';
 import { SmoothScrollProvider, useLenis } from '../../components/shared/SmoothScrollProvider';
 import { PATHS } from '../../app/router/paths';
 import { useAuth } from '../../app/context/useAuth';
@@ -107,11 +108,16 @@ export const PublicLayout: React.FC = () => {
   return (
     <SmoothScrollProvider>
       <ScrollToTopOnNav />
-      <div className="min-h-screen flex flex-col bg-black text-neutral-100 selection:bg-emerald-500/30 selection:text-emerald-300">
+      <div className="min-h-screen flex flex-col bg-[#0d0f11] text-neutral-100 selection:bg-emerald-500/30 selection:text-emerald-300">
       {/* ========================================================================= */}
       {/* 1. PROFESSIONAL & ELEGANT FLOATING GLASSMORPHIC NAVBAR                    */}
       {/* ========================================================================= */}
-      <header className="fixed top-0 inset-x-0 z-50 pt-3 sm:pt-4 px-3 sm:px-6 lg:px-8 pointer-events-none transition-all duration-300">
+      <motion.header
+        initial={{ y: -80, opacity: 0 }}
+        animate={{ y: 0, opacity: 1 }}
+        transition={{ duration: 0.55, ease: [0.22, 1, 0.36, 1], delay: 0.05 }}
+        className="fixed top-0 inset-x-0 z-50 pt-3 sm:pt-4 px-3 sm:px-6 lg:px-8 pointer-events-none transition-all duration-300"
+      >
         <div className="pointer-events-auto max-w-6xl mx-auto h-16 px-4 sm:px-6 rounded-2xl bg-white/[0.08] hover:bg-white/[0.12] backdrop-blur-2xl backdrop-saturate-150 border border-white/25 shadow-[inset_0_1px_1px_0_rgba(255,255,255,0.4),0_12px_36px_rgba(0,0,0,0.5)] flex items-center justify-between gap-3 transition-all">
           {/* Brand Logo & Platform Title */}
           <Link to={PATHS.PUBLIC.HOME} className="flex items-center gap-2.5 shrink-0 group">
@@ -130,18 +136,24 @@ export const PublicLayout: React.FC = () => {
 
           {/* Desktop Navigation - Clean, Typographic, Balanced */}
           <nav className="hidden lg:flex items-center gap-1 xl:gap-1.5">
-            {navLinks.map((item) => (
-              <Link
+            {navLinks.map((item, i) => (
+              <motion.div
                 key={item.label}
-                to={item.to}
-                className={`px-3.5 py-1.5 rounded-xl text-[13px] transition-all ${
-                  item.active
-                    ? 'text-emerald-300 bg-neutral-800/90 border border-neutral-700 font-bold'
-                    : 'text-neutral-200 hover:text-white hover:bg-white/[0.12] font-medium'
-                }`}
+                initial={{ opacity: 0, y: -6 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.4, ease: [0.22, 1, 0.36, 1], delay: 0.15 + i * 0.06 }}
               >
-                {item.label}
-              </Link>
+                <Link
+                  to={item.to}
+                  className={`px-3.5 py-1.5 rounded-xl text-[13px] transition-all ${
+                    item.active
+                      ? 'text-emerald-300 bg-neutral-800/90 border border-neutral-700 font-bold'
+                      : 'text-neutral-200 hover:text-white hover:bg-white/[0.12] font-medium'
+                  }`}
+                >
+                  {item.label}
+                </Link>
+              </motion.div>
             ))}
           </nav>
 
@@ -352,7 +364,7 @@ export const PublicLayout: React.FC = () => {
             </div>
           </div>
         )}
-      </header>
+      </motion.header>
 
       {/* ========================================================================= */}
       {/* 2. APP STORE & PLAY STORE DOWNLOAD MODAL (Interactive & High-End)         */}
@@ -438,13 +450,29 @@ export const PublicLayout: React.FC = () => {
 
       {/* Main Page Area */}
       <main className={`flex-1 ${isHomeActive ? '' : 'pt-24 sm:pt-28'}`}>
-        <Outlet />
+        <AnimatePresence mode="wait">
+          <motion.div
+            key={location.pathname}
+            initial={{ opacity: 0, y: 14 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0, y: -8 }}
+            transition={{ duration: 0.32, ease: [0.22, 1, 0.36, 1] }}
+          >
+            <Outlet />
+          </motion.div>
+        </AnimatePresence>
       </main>
 
       {/* ========================================================================= */}
       {/* 3. PUBLIC FOOTER WITH APP STORE & PLAY STORE DOWNLOAD BADGES              */}
       {/* ========================================================================= */}
-      <footer className="bg-black border-t border-[#222222] text-neutral-400 py-12 px-4 sm:px-6 lg:px-8 text-xs">
+      <motion.footer
+        initial={{ opacity: 0 }}
+        whileInView={{ opacity: 1 }}
+        viewport={{ once: true, margin: '-60px' }}
+        transition={{ duration: 0.6, ease: 'easeOut' }}
+        className="bg-[#0d0f11] border-t border-[#222222] text-neutral-400 py-12 px-4 sm:px-6 lg:px-8 text-xs"
+      >
         <div className="max-w-6xl mx-auto grid grid-cols-1 md:grid-cols-4 gap-8 mb-8">
           {/* Brand & Mobile App Info */}
           <div className="space-y-3">
@@ -498,7 +526,7 @@ export const PublicLayout: React.FC = () => {
             </p>
           </div>
         </div>
-      </footer>
+      </motion.footer>
     </div>
     </SmoothScrollProvider>
   );

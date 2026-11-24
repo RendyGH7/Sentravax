@@ -5,7 +5,7 @@ import { AlertCircle, ArrowLeft, Home } from 'lucide-react';
 
 export const NotFoundPage: React.FC = () => {
   return (
-    <div className="min-h-[70vh] flex flex-col items-center justify-center text-center px-4 py-16 bg-black text-neutral-100">
+    <div className="min-h-[70vh] flex flex-col items-center justify-center text-center px-4 py-16 bg-transparent text-neutral-100">
       <div className="w-14 h-14 rounded-2xl bg-neutral-900 border border-neutral-800 flex items-center justify-center text-rose-400 mb-5">
         <AlertCircle className="w-7 h-7" />
       </div>

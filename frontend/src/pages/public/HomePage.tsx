@@ -700,17 +700,20 @@ export const HomePage: React.FC = () => {
       {/* ========================================================================= */}
       {/* 1. HERO: Full-Bleed Edge-to-Edge Cinematic Experience                      */}
       {/* ========================================================================= */}
-      <section className="relative w-full min-h-screen flex flex-col justify-center items-center text-center px-4 sm:px-6 lg:px-8 overflow-hidden bg-black text-white">
-        {/* Full-bleed background image */}
-        <img
+      <section className="relative w-full min-h-screen flex flex-col justify-center items-center text-center px-4 sm:px-6 lg:px-8 overflow-hidden bg-[#0d0f11] text-white">
+        {/* Full-bleed background image with smooth entrance scale */}
+        <motion.img
+          initial={{ scale: 1.15, opacity: 0 }}
+          animate={{ scale: 1.05, opacity: 1 }}
+          transition={{ duration: 1.4, ease: [0.22, 1, 0.36, 1] }}
           src="https://images.unsplash.com/photo-1446776811953-b23d57bd21aa?auto=format&fit=crop&q=85&w=2560"
           alt="Atmospheric Earth Observation & Early Warning Telemetry"
-          className="absolute inset-0 w-full h-full object-cover object-center scale-105"
+          className="absolute inset-0 w-full h-full object-cover object-center"
           loading="eager"
         />
 
         {/* Sophisticated dark cinematic gradient overlay */}
-        <div className="absolute inset-0 bg-gradient-to-b from-black/80 via-black/45 to-black" />
+        <div className="absolute inset-0 bg-gradient-to-b from-[#0d0f11]/80 via-[#0d0f11]/45 to-[#0d0f11]" />
         <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_center,_var(--tw-gradient-stops))] from-emerald-500/10 via-transparent to-transparent pointer-events-none" />
 
         {/* Foreground Content */}
@@ -725,13 +728,23 @@ export const HomePage: React.FC = () => {
             <span className="block mt-2 text-emerald-400">Siaga Nyata Sebelum Bencana.</span>
           </ScrollWordTitle>
 
-          {/* Concise, non-slop subtitle */}
-          <p className="text-sm sm:text-base text-neutral-200 leading-relaxed max-w-xl mx-auto font-normal">
+          {/* Concise, non-slop subtitle with smooth fade-in */}
+          <motion.p
+            initial={{ opacity: 0, y: 16 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.6, ease: [0.22, 1, 0.36, 1], delay: 0.4 }}
+            className="text-sm sm:text-base text-neutral-200 leading-relaxed max-w-xl mx-auto font-normal"
+          >
             Pantau potensi risiko di koordinat Anda dan temukan jalur evakuasi resmi dalam hitungan detik.
-          </p>
+          </motion.p>
 
-          {/* Action CTAs */}
-          <div className="flex flex-wrap items-center justify-center gap-3.5 pt-3">
+          {/* Action CTAs with smooth fade-up */}
+          <motion.div
+            initial={{ opacity: 0, y: 18 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.6, ease: [0.22, 1, 0.36, 1], delay: 0.55 }}
+            className="flex flex-wrap items-center justify-center gap-3.5 pt-3"
+          >
             <motion.div whileHover={{ scale: 1.03 }} whileTap={{ scale: 0.97 }}>
               <a
                 href="#fitur-peta"
@@ -751,7 +764,7 @@ export const HomePage: React.FC = () => {
                 <span>Cek Risiko Wilayah</span>
               </a>
             </motion.div>
-          </div>
+          </motion.div>
         </div>
       </section>
 
@@ -902,7 +915,7 @@ export const HomePage: React.FC = () => {
         </div>
 
         {/* Embedded Leaflet Map */}
-        <div className="rounded-3xl border border-neutral-800 overflow-hidden bg-black">
+        <div className="rounded-3xl border border-neutral-800 overflow-hidden bg-[#0d0f11]">
           <Suspense
             fallback={
               <div className="h-[520px] w-full flex flex-col items-center justify-center gap-3 bg-[#0a1410] text-xs text-emerald-300">

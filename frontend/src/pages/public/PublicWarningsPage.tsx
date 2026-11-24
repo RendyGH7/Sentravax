@@ -1,5 +1,6 @@
 import React, { useState, useEffect, useCallback, useMemo } from 'react';
 import { useSearchParams, Link } from 'react-router-dom';
+import { motion } from 'motion/react';
 import { ScrollWordTitle } from '../../components/shared/ScrollWordTitle';
 import {
   BellRing,
@@ -355,47 +356,30 @@ export const PublicWarningsPage: React.FC = () => {
 
           {/* Quick Metrics Bar */}
           <div className="mt-8 grid grid-cols-2 sm:grid-cols-4 gap-3 sm:gap-4">
-            <div className="bg-[#121614] p-3.5 sm:p-4 rounded-2xl border border-neutral-800 shadow-xs flex items-center gap-3">
-              <div className="w-10 h-10 rounded-xl bg-neutral-900 border border-neutral-700 text-rose-400 flex items-center justify-center font-bold shrink-0">
-                <BellRing className="w-5 h-5" />
-              </div>
-              <div>
-                <p className="text-[11px] font-semibold text-neutral-400">Peringatan Terdata</p>
-                <p className="text-lg font-black text-white">{totalAlerts} Peringatan</p>
-              </div>
-            </div>
-
-            <div className="bg-[#121614] p-3.5 sm:p-4 rounded-2xl border border-neutral-800 shadow-xs flex items-center gap-3">
-              <div className="w-10 h-10 rounded-xl bg-neutral-900 border border-neutral-700 text-indigo-400 flex items-center justify-center font-bold shrink-0">
-                <Radio className="w-5 h-5" />
-              </div>
-              <div>
-                <p className="text-[11px] font-semibold text-neutral-400">Cakupan Siaran</p>
-                <p className="text-sm sm:text-base font-black text-white">Multi-Tingkat</p>
-              </div>
-            </div>
-
-            <div className="bg-[#121614] p-3.5 sm:p-4 rounded-2xl border border-neutral-800 shadow-xs flex items-center gap-3">
-              <div className="w-10 h-10 rounded-xl bg-neutral-900 border border-neutral-700 text-amber-400 flex items-center justify-center font-bold shrink-0">
-                <ShieldAlert className="w-5 h-5" />
-              </div>
-              <div>
-                <p className="text-[11px] font-semibold text-neutral-400">Status Peringatan</p>
-                <p className="text-sm sm:text-base font-black text-amber-400">
-                  {alerts.filter((a) => a.is_active || a.status === 'active').length} Peringatan Aktif
-                </p>
-              </div>
-            </div>
-
-            <div className="bg-[#121614] p-3.5 sm:p-4 rounded-2xl border border-neutral-800 shadow-xs flex items-center gap-3">
-              <div className="w-10 h-10 rounded-xl bg-neutral-900 border border-neutral-700 text-emerald-400 flex items-center justify-center font-bold shrink-0">
-                <CheckCircle2 className="w-5 h-5 text-emerald-400" />
-              </div>
-              <div>
-                <p className="text-[11px] font-semibold text-neutral-400">Sumber Pembaruan</p>
-                <p className="text-xs sm:text-sm font-mono font-bold text-emerald-400">Sinkronisasi Berkala</p>
-              </div>
-            </div>
+            {[
+              { icon: <BellRing className="w-5 h-5" />, color: 'text-rose-400', label: 'Peringatan Terdata', value: `${totalAlerts} Peringatan` },
+              { icon: <Radio className="w-5 h-5" />, color: 'text-indigo-400', label: 'Cakupan Siaran', value: 'Multi-Tingkat' },
+              { icon: <ShieldAlert className="w-5 h-5" />, color: 'text-amber-400', label: 'Status Peringatan', value: `${alerts.filter((a) => a.is_active || a.status === 'active').length} Peringatan Aktif`, amber: true },
+              { icon: <CheckCircle2 className="w-5 h-5 text-emerald-400" />, color: 'text-emerald-400', label: 'Sumber Pembaruan', value: 'Sinkronisasi Berkala', mono: true },
+            ].map((item, i) => (
+              <motion.div
+                key={i}
+                initial={{ opacity: 0, y: 16 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true }}
+                transition={{ duration: 0.4, ease: [0.22, 1, 0.36, 1], delay: i * 0.08 }}
+                whileHover={{ y: -3, transition: { duration: 0.18 } }}
+                className="bg-[#121614] p-3.5 sm:p-4 rounded-2xl border border-neutral-800 shadow-xs flex items-center gap-3"
+              >
+                <div className={`w-10 h-10 rounded-xl bg-neutral-900 border border-neutral-700 ${item.color} flex items-center justify-center font-bold shrink-0`}>
+                  {item.icon}
+                </div>
+                <div>
+                  <p className="text-[11px] font-semibold text-neutral-400">{item.label}</p>
+                  <p className={`${item.mono ? 'text-xs sm:text-sm font-mono font-bold text-emerald-400' : item.amber ? 'text-sm sm:text-base font-black text-amber-400' : 'text-lg font-black text-white'}`}>{item.value}</p>
+                </div>
+              </motion.div>
+            ))}
           </div>
 
           {/* Classification & Provenance Distinction Legend */}
@@ -761,15 +745,20 @@ export const PublicWarningsPage: React.FC = () => {
           {/* ALERTS GRID */}
           {!isLoading && !errorMessage && alerts.length > 0 && (
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-5">
-              {alerts.map((alt) => {
+              {alerts.map((alt, idx) => {
                 const bcast = getBroadcastBadge(alt.broadcast_level);
                 const aclass = getAlertClassBadge(alt.alert_class);
                 const stat = getStatusBadge(alt.status);
 
                 return (
-                  <article
+                  <motion.article
                     key={alt.id}
-                    className="bg-[#121614] rounded-2xl border border-neutral-800 hover:border-amber-500/40 transition-all duration-200 p-5 flex flex-col justify-between shadow-xs"
+                    initial={{ opacity: 0, y: 24 }}
+                    whileInView={{ opacity: 1, y: 0 }}
+                    viewport={{ once: true, margin: '-40px' }}
+                    transition={{ duration: 0.42, ease: [0.22, 1, 0.36, 1], delay: (idx % 3) * 0.07 }}
+                    whileHover={{ y: -4, transition: { duration: 0.2 } }}
+                    className="bg-[#121614] rounded-2xl border border-neutral-800 hover:border-amber-500/40 transition-colors duration-200 p-5 flex flex-col justify-between shadow-xs"
                   >
                     <div className="space-y-3">
                       {/* Top Badges Row */}
@@ -885,7 +874,7 @@ export const PublicWarningsPage: React.FC = () => {
                         <ChevronRight className="w-3.5 h-3.5" />
                       </Link>
                     </div>
-                  </article>
+                  </motion.article>
                 );
               })}
             </div>

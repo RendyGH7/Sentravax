@@ -1,4 +1,5 @@
 import React, { Suspense, lazy } from 'react';
+import { motion } from 'motion/react';
 import { RefreshCw } from 'lucide-react';
 import { ScrollWordTitle } from '../../components/shared/ScrollWordTitle';
 
@@ -22,18 +23,26 @@ export const PublicMapPage: React.FC = () => {
         </p>
       </div>
 
-      <Suspense
-        fallback={
-          <div className="h-[680px] w-full rounded-2xl border border-[#262626] bg-[#121212] flex flex-col items-center justify-center p-6 gap-3">
-            <RefreshCw className="w-6 h-6 animate-spin text-emerald-400" />
-            <span className="text-sm font-semibold text-white">
-              Memuat Komponen Geospasial Leaflet...
-            </span>
-          </div>
-        }
+      <motion.div
+        initial={{ opacity: 0, y: 16 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.5, ease: [0.22, 1, 0.36, 1], delay: 0.1 }}
+        data-lenis-prevent
+        className="rounded-2xl overflow-hidden border border-[#262626] shadow-md"
       >
-        <DisasterMap theme="dark" height="680px" />
-      </Suspense>
+        <Suspense
+          fallback={
+            <div className="h-[680px] w-full bg-[#121212] flex flex-col items-center justify-center p-6 gap-3">
+              <RefreshCw className="w-6 h-6 animate-spin text-emerald-400" />
+              <span className="text-sm font-semibold text-white">
+                Memuat Komponen Geospasial Leaflet...
+              </span>
+            </div>
+          }
+        >
+          <DisasterMap theme="dark" height="680px" />
+        </Suspense>
+      </motion.div>
     </div>
   );
 };

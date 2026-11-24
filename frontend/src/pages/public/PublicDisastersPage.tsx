@@ -1,5 +1,6 @@
 import React, { useState, useEffect, useCallback, useMemo, useRef } from 'react';
 import { useSearchParams, Link } from 'react-router-dom';
+import { motion } from 'motion/react';
 import { ScrollWordTitle } from '../../components/shared/ScrollWordTitle';
 import {
   Activity,
@@ -350,49 +351,30 @@ export const PublicDisastersPage: React.FC = () => {
 
           {/* Quick Metrics Bar */}
           <div className="mt-8 grid grid-cols-2 sm:grid-cols-4 gap-3 sm:gap-4">
-            <div className="bg-[#121614] p-3.5 sm:p-4 rounded-2xl border border-neutral-800 shadow-xs flex items-center gap-3">
-              <div className="w-10 h-10 rounded-xl bg-neutral-900 border border-neutral-700 text-emerald-400 flex items-center justify-center font-bold shrink-0">
-                <Activity className="w-5 h-5" />
-              </div>
-              <div>
-                <p className="text-[11px] font-semibold text-neutral-400">Total Kejadian Aktif</p>
-                <p className="text-lg font-black text-white">{totalEvents} Kejadian</p>
-              </div>
-            </div>
-
-            <div className="bg-[#121614] p-3.5 sm:p-4 rounded-2xl border border-neutral-800 shadow-xs flex items-center gap-3">
-              <div className="w-10 h-10 rounded-xl bg-neutral-900 border border-neutral-700 text-sky-400 flex items-center justify-center font-bold shrink-0">
-                <Radio className="w-5 h-5" />
-              </div>
-              <div>
-                <p className="text-[11px] font-semibold text-neutral-400">Kategori Dipantau</p>
-                <p className="text-lg font-black text-white">
-                  {hazardTypes.length > 0 ? `${hazardTypes.length} Kategori` : '5 Kategori'}
-                </p>
-              </div>
-            </div>
-
-            <div className="bg-[#121614] p-3.5 sm:p-4 rounded-2xl border border-neutral-800 shadow-xs flex items-center gap-3">
-              <div className="w-10 h-10 rounded-xl bg-neutral-900 border border-neutral-700 text-amber-400 flex items-center justify-center font-bold shrink-0">
-                <ShieldAlert className="w-5 h-5" />
-              </div>
-              <div>
-                <p className="text-[11px] font-semibold text-neutral-400">Wilayah Terintegrasi</p>
-                <p className="text-lg font-black text-white">
-                  {regions.length > 0 ? `${regions.length} Wilayah` : '5 Wilayah'}
-                </p>
-              </div>
-            </div>
-
-            <div className="bg-[#121614] p-3.5 sm:p-4 rounded-2xl border border-neutral-800 shadow-xs flex items-center gap-3">
-              <div className="w-10 h-10 rounded-xl bg-neutral-900 border border-neutral-700 text-emerald-400 flex items-center justify-center font-bold shrink-0">
-                <CheckCircle2 className="w-5 h-5 text-emerald-400" />
-              </div>
-              <div>
-                <p className="text-[11px] font-semibold text-neutral-400">Status Sinkronisasi</p>
-                <p className="text-xs sm:text-sm font-mono font-bold text-emerald-400">LIVE FEED ON</p>
-              </div>
-            </div>
+            {[
+              { icon: <Activity className="w-5 h-5" />, color: 'text-emerald-400', label: 'Total Kejadian Aktif', value: `${totalEvents} Kejadian` },
+              { icon: <Radio className="w-5 h-5" />, color: 'text-sky-400', label: 'Kategori Dipantau', value: hazardTypes.length > 0 ? `${hazardTypes.length} Kategori` : '5 Kategori' },
+              { icon: <ShieldAlert className="w-5 h-5" />, color: 'text-amber-400', label: 'Wilayah Terintegrasi', value: regions.length > 0 ? `${regions.length} Wilayah` : '5 Wilayah' },
+              { icon: <CheckCircle2 className="w-5 h-5 text-emerald-400" />, color: 'text-emerald-400', label: 'Status Sinkronisasi', value: 'LIVE FEED ON', mono: true },
+            ].map((item, i) => (
+              <motion.div
+                key={i}
+                initial={{ opacity: 0, y: 16 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true }}
+                transition={{ duration: 0.4, ease: [0.22, 1, 0.36, 1], delay: i * 0.08 }}
+                whileHover={{ y: -3, transition: { duration: 0.18 } }}
+                className="bg-[#121614] p-3.5 sm:p-4 rounded-2xl border border-neutral-800 shadow-xs flex items-center gap-3"
+              >
+                <div className={`w-10 h-10 rounded-xl bg-neutral-900 border border-neutral-700 ${item.color} flex items-center justify-center font-bold shrink-0`}>
+                  {item.icon}
+                </div>
+                <div>
+                  <p className="text-[11px] font-semibold text-neutral-400">{item.label}</p>
+                  <p className={`${item.mono ? 'text-xs sm:text-sm font-mono font-bold text-emerald-400' : 'text-lg font-black text-white'}`}>{item.value}</p>
+                </div>
+              </motion.div>
+            ))}
           </div>
         </div>
       </section>
@@ -705,20 +687,25 @@ export const PublicDisastersPage: React.FC = () => {
           {/* EVENTS GRID */}
           {!isLoading && !errorMessage && events.length > 0 && (
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-5">
-              {events.map((ev) => {
+              {events.map((ev, idx) => {
                 const sev = getSeverityBadge(ev.severity);
                 const stat = getStatusBadge(ev.status);
                 const isSelected = selectedEventId === ev.id;
                 const isLive = ev.provenance_status === 'LIVE';
 
                 return (
-                  <article
+                  <motion.article
                     key={ev.id}
                     ref={(el) => {
                       if (el) cardRefs.current.set(ev.id, el as HTMLDivElement);
                       else cardRefs.current.delete(ev.id);
                     }}
-                    className={`bg-[#121614] rounded-2xl border transition-all duration-200 p-5 flex flex-col justify-between shadow-xs ${
+                    initial={{ opacity: 0, y: 24 }}
+                    whileInView={{ opacity: 1, y: 0 }}
+                    viewport={{ once: true, margin: '-40px' }}
+                    transition={{ duration: 0.42, ease: [0.22, 1, 0.36, 1], delay: (idx % 3) * 0.07 }}
+                    whileHover={{ y: -4, transition: { duration: 0.2 } }}
+                    className={`bg-[#121614] rounded-2xl border transition-colors duration-200 p-5 flex flex-col justify-between shadow-xs ${
                       isSelected
                         ? 'border-emerald-500 ring-2 ring-emerald-500/20'
                         : 'border-neutral-800 hover:border-emerald-500/40'
@@ -822,7 +809,7 @@ export const PublicDisastersPage: React.FC = () => {
                         <ChevronRight className="w-3.5 h-3.5" />
                       </Link>
                     </div>
-                  </article>
+                  </motion.article>
                 );
               })}
             </div>

@@ -1,5 +1,6 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
+import { motion } from 'motion/react';
 import { PATHS } from '../../app/router/paths';
 import { ScrollWordTitle } from '../../components/shared/ScrollWordTitle';
 import { 
@@ -84,69 +85,64 @@ export const PublicAboutPage: React.FC = () => {
       {/* 3. CAPABILITIES GRID (FEATURE-DENSE) */}
       <div className="space-y-3">
         <h2 className="text-sm font-bold text-white uppercase tracking-wider">
-          Kemampuan & Fitur Utama
+          Kemampuan &amp; Fitur Utama
         </h2>
 
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-          <div className="p-5 rounded-2xl bg-[#141414] border border-[#262626] shadow-sm space-y-2">
-            <div className="w-9 h-9 rounded-xl bg-emerald-950/60 text-emerald-400 flex items-center justify-center font-bold border border-emerald-500/20">
-              <Compass className="w-5 h-5" />
-            </div>
-            <h3 className="text-sm font-bold text-white">Emergency Zero-Barrier</h3>
-            <p className="text-xs text-neutral-400 leading-relaxed">
-              Pelaporan kejadian darurat publik tanpa hambatan login, dilengkapi deteksi GPS instan dan clustering spasial otomatis.
-            </p>
-          </div>
-
-          <div className="p-5 rounded-2xl bg-[#141414] border border-[#262626] shadow-sm space-y-2">
-            <div className="w-9 h-9 rounded-xl bg-blue-950/60 text-blue-400 flex items-center justify-center font-bold border border-blue-500/20">
-              <Layers className="w-5 h-5" />
-            </div>
-            <h3 className="text-sm font-bold text-white">PostGIS Spatial Engine</h3>
-            <p className="text-xs text-neutral-400 leading-relaxed">
-              Kalkulasi radius ancaman 25 km, spatial buffering, dan korelasi jarak presisi menggunakan geometri geospasial PostgreSQL.
-            </p>
-          </div>
-
-          <div className="p-5 rounded-2xl bg-[#141414] border border-[#262626] shadow-sm space-y-2">
-            <div className="w-9 h-9 rounded-xl bg-amber-950/60 text-amber-400 flex items-center justify-center font-bold border border-amber-500/20">
-              <Radio className="w-5 h-5" />
-            </div>
-            <h3 className="text-sm font-bold text-white">CAP Inbound & Broadcast</h3>
-            <p className="text-xs text-neutral-400 leading-relaxed">
-              Penerimaan dan diseminasi peringatan berstandar Common Alerting Protocol (ITU-T X.1303) dengan deduplikasi in-app.
-            </p>
-          </div>
-
-          <div className="p-5 rounded-2xl bg-[#141414] border border-[#262626] shadow-sm space-y-2">
-            <div className="w-9 h-9 rounded-xl bg-purple-950/60 text-purple-400 flex items-center justify-center font-bold border border-purple-500/20">
-              <Cpu className="w-5 h-5" />
-            </div>
-            <h3 className="text-sm font-bold text-white">AI Proactive Insights</h3>
-            <p className="text-xs text-neutral-400 leading-relaxed">
-              Sintesis bukti bahaya multi-sumber dengan skor keyakinan transparan (High 0.9, Medium 0.7, Low 0.4) dan fallback deterministik.
-            </p>
-          </div>
-
-          <div className="p-5 rounded-2xl bg-[#141414] border border-[#262626] shadow-sm space-y-2">
-            <div className="w-9 h-9 rounded-xl bg-emerald-950/60 text-emerald-400 flex items-center justify-center font-bold border border-emerald-500/20">
-              <HeartHandshake className="w-5 h-5" />
-            </div>
-            <h3 className="text-sm font-bold text-white">SIAGA PERSONAL Warga</h3>
-            <p className="text-xs text-neutral-400 leading-relaxed">
-              Checklist 13 tas siaga BNPB, rencana darurat keluarga dengan titik kumpul privat, dan pemantauan multi-lokasi.
-            </p>
-          </div>
-
-          <div className="p-5 rounded-2xl bg-[#141414] border border-[#262626] shadow-sm space-y-2">
-            <div className="w-9 h-9 rounded-xl bg-rose-950/60 text-rose-400 flex items-center justify-center font-bold border border-rose-500/20">
-              <Shield className="w-5 h-5" />
-            </div>
-            <h3 className="text-sm font-bold text-white">Verified Shelter Registry</h3>
-            <p className="text-xs text-neutral-400 leading-relaxed">
-              Direktori shelter dan titik kumpul tervalidasi BPBD dengan kapasitas, fasilitas sanitasi, dan aksesibilitas lansia.
-            </p>
-          </div>
+          {[
+            {
+              icon: <Compass className="w-5 h-5" />,
+              color: 'bg-emerald-950/60 text-emerald-400 border-emerald-500/20',
+              title: 'Emergency Zero-Barrier',
+              desc: 'Pelaporan kejadian darurat publik tanpa hambatan login, dilengkapi deteksi GPS instan dan clustering spasial otomatis.',
+            },
+            {
+              icon: <Layers className="w-5 h-5" />,
+              color: 'bg-blue-950/60 text-blue-400 border-blue-500/20',
+              title: 'PostGIS Spatial Engine',
+              desc: 'Kalkulasi radius ancaman 25 km, spatial buffering, dan korelasi jarak presisi menggunakan geometri geospasial PostgreSQL.',
+            },
+            {
+              icon: <Radio className="w-5 h-5" />,
+              color: 'bg-amber-950/60 text-amber-400 border-amber-500/20',
+              title: 'CAP Inbound & Broadcast',
+              desc: 'Penerimaan dan diseminasi peringatan berstandar Common Alerting Protocol (ITU-T X.1303) dengan deduplikasi in-app.',
+            },
+            {
+              icon: <Cpu className="w-5 h-5" />,
+              color: 'bg-purple-950/60 text-purple-400 border-purple-500/20',
+              title: 'AI Proactive Insights',
+              desc: 'Sintesis bukti bahaya multi-sumber dengan skor keyakinan transparan (High 0.9, Medium 0.7, Low 0.4) dan fallback deterministik.',
+            },
+            {
+              icon: <HeartHandshake className="w-5 h-5" />,
+              color: 'bg-emerald-950/60 text-emerald-400 border-emerald-500/20',
+              title: 'SIAGA PERSONAL Warga',
+              desc: 'Checklist 13 tas siaga BNPB, rencana darurat keluarga dengan titik kumpul privat, dan pemantauan multi-lokasi.',
+            },
+            {
+              icon: <Shield className="w-5 h-5" />,
+              color: 'bg-rose-950/60 text-rose-400 border-rose-500/20',
+              title: 'Verified Shelter Registry',
+              desc: 'Direktori shelter dan titik kumpul tervalidasi BPBD dengan kapasitas, fasilitas sanitasi, dan aksesibilitas lansia.',
+            },
+          ].map((item, idx) => (
+            <motion.div
+              key={item.title}
+              initial={{ opacity: 0, y: 22 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true, margin: '-30px' }}
+              transition={{ duration: 0.45, ease: [0.22, 1, 0.36, 1], delay: (idx % 3) * 0.08 }}
+              whileHover={{ y: -4, transition: { duration: 0.2 } }}
+              className="p-5 rounded-2xl bg-[#141414] border border-[#262626] hover:border-emerald-500/40 shadow-sm space-y-2 transition-colors cursor-default"
+            >
+              <div className={`w-9 h-9 rounded-xl flex items-center justify-center font-bold border ${item.color}`}>
+                {item.icon}
+              </div>
+              <h3 className="text-sm font-bold text-white">{item.title}</h3>
+              <p className="text-xs text-neutral-400 leading-relaxed">{item.desc}</p>
+            </motion.div>
+          ))}
         </div>
       </div>
 

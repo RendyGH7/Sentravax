@@ -1,5 +1,7 @@
 import React, { useState, useEffect, useCallback, useId } from 'react';
 import { Link } from 'react-router-dom';
+import { motion } from 'motion/react';
+import { ScrollWordTitle } from '../../components/shared/ScrollWordTitle';
 import { PATHS } from '../../app/router/paths';
 import { publicService } from '../../services/public-service';
 import type { 
@@ -468,9 +470,12 @@ export const PublicPreparednessPage: React.FC = () => {
               </span>
               <span className="text-xs font-mono text-neutral-400">Cakupan: DKI Jakarta, Jabar, Banten &amp; Nasional</span>
             </div>
-            <h1 id="siaga-hero-heading" className="text-2xl sm:text-3xl font-black text-white tracking-tight">
+            <ScrollWordTitle
+              as="h1"
+              className="text-2xl sm:text-3xl font-black text-white tracking-tight"
+            >
               SIAGA PERSONAL: Cek Risiko &amp; Mitigasi Lokasi
-            </h1>
+            </ScrollWordTitle>
           </div>
 
           <div className="flex items-center gap-2.5 shrink-0">
@@ -495,7 +500,13 @@ export const PublicPreparednessPage: React.FC = () => {
       {/* SECTION 2: LOCATION SELECTOR & INTERACTIVE MAP CONTROLS                   */}
       {/* ========================================================================= */}
       <section aria-labelledby="location-selector-heading" className="space-y-6">
-        <div className="p-6 sm:p-8 rounded-3xl bg-[#121614] border border-neutral-800 space-y-6">
+        <motion.div
+          initial={{ opacity: 0, y: 18 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true }}
+          transition={{ duration: 0.5, ease: [0.22, 1, 0.36, 1] }}
+          className="p-6 sm:p-8 rounded-3xl bg-[#121614] border border-neutral-800 space-y-6"
+        >
           <div>
             <h2 id="location-selector-heading" className="text-base sm:text-lg font-black text-white flex items-center gap-2">
               <MapPin className="w-5 h-5 text-emerald-400" />
@@ -631,7 +642,7 @@ export const PublicPreparednessPage: React.FC = () => {
               </div>
             </div>
           )}
-        </div>
+        </motion.div>
 
         {/* Embedded Interactive Map for Visual Spatial Context */}
         <div className="space-y-2">

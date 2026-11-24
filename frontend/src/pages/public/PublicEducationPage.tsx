@@ -1,5 +1,6 @@
 import React, { useState, useEffect, useMemo } from 'react';
 import { Link } from 'react-router-dom';
+import { motion } from 'motion/react';
 import { PATHS } from '../../app/router/paths';
 import { publicService } from '../../services/public-service';
 import type { EducationContentItem } from '../../types';
@@ -413,7 +414,7 @@ export const PublicEducationPage: React.FC = () => {
           />
         ) : (
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4 items-start">
-            {filteredGuides.map((guide) => {
+            {filteredGuides.map((guide, idx) => {
               const isExpanded = expandedId === guide.id;
               const sections = parseSections(guide.content_body);
               const displaySections = phaseFilter === 'all' 
@@ -421,7 +422,15 @@ export const PublicEducationPage: React.FC = () => {
                 : sections.filter(s => s.title.toLowerCase().includes(phaseFilter));
 
               return (
-                <div key={guide.id} className={`p-5 rounded-2xl bg-[#121614] border transition-all ${isExpanded ? "border-emerald-500 ring-1 ring-emerald-500/30" : "border-neutral-800 hover:border-emerald-500/40"}`}>
+                <motion.div
+                  key={guide.id}
+                  initial={{ opacity: 0, y: 20 }}
+                  whileInView={{ opacity: 1, y: 0 }}
+                  viewport={{ once: true, margin: '-30px' }}
+                  transition={{ duration: 0.42, ease: [0.22, 1, 0.36, 1], delay: (idx % 2) * 0.08 }}
+                  whileHover={{ y: -3, transition: { duration: 0.2 } }}
+                  className={`p-5 rounded-2xl bg-[#121614] border transition-colors ${isExpanded ? "border-emerald-500 ring-1 ring-emerald-500/30" : "border-neutral-800 hover:border-emerald-500/40"}`}
+                >
                   <div className="space-y-3">
                     {/* Top Row: Badges & Controls */}
                     <div className="flex items-center justify-between gap-2">
@@ -499,7 +508,7 @@ export const PublicEducationPage: React.FC = () => {
                       </button>
                     </div>
                   </div>
-                </div>
+                </motion.div>
               );
             })}
           </div>
