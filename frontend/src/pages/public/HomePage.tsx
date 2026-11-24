@@ -1105,51 +1105,57 @@ export const HomePage: React.FC = () => {
           })}
         </div>
 
-        {/* 10 Foto Dokumentasi Grid — Visual-First Cards dengan Animasi Blur Drawer dari Bawah saat Hover */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5 sm:gap-6">
+        {/* 10 Foto Dokumentasi Grid — Visual Portrait (Panjang ke Bawah) dengan Efek Kaca Bening & Transisi Halus */}
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5 sm:gap-6">
           {RESCUE_GALLERY_STORIES.filter((item) =>
             galleryCategory === 'all' ? true : item.category === galleryCategory
           ).map((item) => (
             <div
               key={item.id}
               onClick={() => setSelectedStory(item)}
-              className="group relative rounded-3xl overflow-hidden aspect-[4/3] sm:aspect-[16/11] border border-neutral-800 bg-neutral-950 cursor-pointer shadow-lg hover:border-emerald-500/50 hover:shadow-xl hover:shadow-emerald-950/20 transition-all duration-300 select-none"
+              className="group relative rounded-3xl overflow-hidden aspect-[3/4] border border-neutral-800/80 bg-neutral-950 cursor-pointer shadow-lg hover:border-emerald-500/40 hover:shadow-xl hover:shadow-emerald-950/20 transition-all duration-300 select-none"
             >
-              {/* Foto Dokumentasi Penuh (Default: Benar-benar Hanya Gambar Bersih) */}
+              {/* Foto Dokumentasi Penuh (Panjang ke bawah / Portrait, Bersih tanpa Teks Awal) */}
               <img
                 src={item.image}
                 alt={item.title}
-                className="w-full h-full object-cover transition-transform duration-500 ease-out group-hover:scale-105"
+                className="w-full h-full object-cover object-center transition-transform duration-500 ease-out group-hover:scale-105"
                 loading="lazy"
               />
 
-              {/* Animasi Drawer dari Bawah: Nge-blur dengan warna dan teks singkat saat di-hover, menghilang ke bawah saat tidak di-hover */}
-              <div className="absolute inset-x-0 bottom-0 p-5 bg-gradient-to-t from-black/95 via-black/80 to-black/40 backdrop-blur-md border-t border-white/10 transform translate-y-full opacity-0 group-hover:translate-y-0 group-hover:opacity-100 transition-all duration-300 ease-in-out flex flex-col justify-end space-y-2 pointer-events-none">
+              {/* Animasi Glass Overlay dari Bawah: Efek Kaca Bening (Foto tetap terlihat), Gradien Halus Tanpa Garis Patah */}
+              <div
+                className="absolute inset-x-0 bottom-0 pt-24 pb-5 px-5 sm:px-6 bg-gradient-to-t from-black/75 via-black/35 via-55% to-transparent backdrop-blur-[3px] transform translate-y-6 opacity-0 group-hover:translate-y-0 group-hover:opacity-100 transition-all duration-300 ease-out flex flex-col justify-end space-y-2 pointer-events-none"
+                style={{
+                  WebkitMaskImage: 'linear-gradient(to top, rgba(0,0,0,1) 0%, rgba(0,0,0,0.9) 60%, rgba(0,0,0,0) 100%)',
+                  maskImage: 'linear-gradient(to top, rgba(0,0,0,1) 0%, rgba(0,0,0,0.9) 60%, rgba(0,0,0,0) 100%)',
+                }}
+              >
                 {/* Baris Lokasi & Tag Status Bahaya */}
-                <div className="flex items-center justify-between gap-2">
+                <div className="flex items-center justify-between gap-2 drop-shadow-[0_1px_2px_rgba(0,0,0,0.9)]">
                   <span className="inline-flex items-center gap-1.5 text-xs font-semibold text-emerald-300">
                     <MapPin className="w-3.5 h-3.5 text-emerald-400 shrink-0" />
                     <span>{item.location}</span>
                   </span>
-                  <span className="inline-flex items-center px-2 py-0.5 rounded-md bg-emerald-950/90 border border-emerald-800 text-[10px] font-mono font-bold text-emerald-300 uppercase">
+                  <span className="inline-flex items-center px-2 py-0.5 rounded-md bg-emerald-950/70 border border-emerald-600/60 text-[10px] font-mono font-bold text-emerald-300 uppercase backdrop-blur-xs">
                     {item.hazardType.split(' ')[0]}
                   </span>
                 </div>
 
                 {/* Judul Informasi Singkat */}
-                <h3 className="text-sm font-bold text-white tracking-tight leading-snug line-clamp-1">
+                <h3 className="text-sm font-bold text-white tracking-tight leading-snug line-clamp-2 drop-shadow-[0_1px_2px_rgba(0,0,0,0.9)]">
                   {item.title}
                 </h3>
 
-                {/* Ringkasan Manfaat & Penyelamatan */}
-                <p className="text-xs text-neutral-300 leading-relaxed line-clamp-2 font-normal">
+                {/* Ringkasan Singkat Dampak & Manfaat */}
+                <p className="text-xs text-neutral-200 leading-relaxed line-clamp-2 font-normal drop-shadow-[0_1px_2px_rgba(0,0,0,0.9)]">
                   {item.story}
                 </p>
 
-                {/* Footer Drawer */}
-                <div className="pt-1.5 flex items-center justify-between text-[11px] border-t border-white/10 text-neutral-400 font-medium">
-                  <span className="truncate max-w-[200px]">{item.shelterName.split(' - ')[0]}</span>
-                  <span className="text-emerald-400 font-semibold flex items-center gap-1 shrink-0">
+                {/* Footer Informasi Halus Tanpa Border Kaku */}
+                <div className="pt-1.5 flex items-center justify-between text-[11px] text-neutral-300 font-medium drop-shadow-[0_1px_2px_rgba(0,0,0,0.9)]">
+                  <span className="truncate max-w-[200px] text-neutral-300/90">{item.shelterName.split(' - ')[0]}</span>
+                  <span className="text-emerald-300 font-semibold flex items-center gap-1 shrink-0">
                     Buka Detail <ArrowRight className="w-3 h-3 group-hover:translate-x-0.5 transition-transform" />
                   </span>
                 </div>
