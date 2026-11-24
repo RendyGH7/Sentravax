@@ -774,118 +774,76 @@ export const HomePage: React.FC = () => {
       {/* ========================================================================= */}
       {/* 3. INTEGRASI OTORITAS & STATUS SISTEM NASIONAL (Data Angka & Counter)     */}
       {/* ========================================================================= */}
-      <section className="py-2 sm:py-3">
-        <div className="grid grid-cols-2 lg:grid-cols-4 gap-6 lg:gap-8">
+      <motion.section
+        initial={{ opacity: 0, y: 16 }}
+        whileInView={{ opacity: 1, y: 0 }}
+        viewport={{ once: true, margin: '-20px' }}
+        transition={{ duration: 0.6, ease: [0.16, 1, 0.3, 1] }}
+        className="py-8 sm:py-10 border-y border-neutral-800/60"
+      >
+        <div className="grid grid-cols-2 lg:grid-cols-4 gap-8 lg:gap-0">
           {/* Kolom 1: Cakupan Wilayah Nasional */}
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true, margin: '-20px' }}
-            transition={{ duration: 0.5, delay: 0.05 }}
-            whileHover={{ y: -3, transition: { duration: 0.2 } }}
-            className="space-y-1 p-3.5 rounded-2xl bg-neutral-900/30 border border-neutral-800/40 hover:border-neutral-700/60 hover:bg-neutral-900/50 transition-colors cursor-default"
-          >
-            <div className="text-[10px] font-mono font-bold tracking-wider uppercase text-sky-400">
-              CAKUPAN WILAYAH
-            </div>
-            <div className="pt-0.5">
-              <AnimatedCounter
-                end={514}
-                duration={2600}
-                className="text-2xl sm:text-3xl lg:text-[34px] font-mono font-bold text-white tracking-tight"
-              />
-            </div>
-            <div className="text-xs sm:text-sm font-semibold text-neutral-200 tracking-tight">
+          <div className="flex flex-col justify-center lg:pr-8 lg:border-r border-neutral-800/60">
+            <AnimatedCounter
+              end={514}
+              duration={2400}
+              className="text-3xl sm:text-4xl lg:text-5xl font-mono font-black text-white tracking-tight"
+            />
+            <div className="mt-2 text-sm sm:text-base font-semibold text-neutral-200">
               Kabupaten &amp; Kota
             </div>
-            <div className="text-[11px] sm:text-xs text-sky-400 font-medium">
-              38 Provinsi Indonesia
+            <div className="mt-0.5 text-xs text-neutral-500 font-medium">
+              38 Provinsi Terintegrasi
             </div>
-          </motion.div>
+          </div>
 
           {/* Kolom 2: Teritorial Kepulauan */}
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true, margin: '-20px' }}
-            transition={{ duration: 0.5, delay: 0.1 }}
-            whileHover={{ y: -3, transition: { duration: 0.2 } }}
-            className="space-y-1 p-3.5 rounded-2xl bg-neutral-900/30 border border-neutral-800/40 hover:border-neutral-700/60 hover:bg-neutral-900/50 transition-colors cursor-default"
-          >
-            <div className="text-[10px] font-mono font-bold tracking-wider uppercase text-indigo-400">
-              TERITORIAL KEPULAUAN
-            </div>
-            <div className="pt-0.5">
-              <AnimatedCounter
-                end={17508}
-                duration={3200}
-                className="text-2xl sm:text-3xl lg:text-[34px] font-mono font-bold text-white tracking-tight"
-              />
-            </div>
-            <div className="text-xs sm:text-sm font-semibold text-neutral-200 tracking-tight">
+          <div className="flex flex-col justify-center lg:px-8 lg:border-r border-neutral-800/60">
+            <AnimatedCounter
+              end={17508}
+              duration={2800}
+              className="text-3xl sm:text-4xl lg:text-5xl font-mono font-black text-white tracking-tight"
+            />
+            <div className="mt-2 text-sm sm:text-base font-semibold text-neutral-200">
               Pulau Nusantara
             </div>
-            <div className="text-[11px] sm:text-xs text-indigo-300 font-medium">
+            <div className="mt-0.5 text-xs text-neutral-500 font-medium">
               Zona Maritim &amp; Pesisir
             </div>
-          </motion.div>
+          </div>
 
           {/* Kolom 3: Pemetaan Risiko Kecamatan */}
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true, margin: '-20px' }}
-            transition={{ duration: 0.5, delay: 0.15 }}
-            whileHover={{ y: -3, transition: { duration: 0.2 } }}
-            className="space-y-1 p-3.5 rounded-2xl bg-neutral-900/30 border border-neutral-800/40 hover:border-neutral-700/60 hover:bg-neutral-900/50 transition-colors cursor-default"
-          >
-            <div className="text-[10px] font-mono font-bold tracking-wider uppercase text-amber-400">
-              PEMETAAN RISIKO
-            </div>
-            <div className="pt-0.5">
-              <AnimatedCounter
-                end={7288}
-                duration={3000}
-                className="text-2xl sm:text-3xl lg:text-[34px] font-mono font-bold text-amber-400 tracking-tight"
-              />
-            </div>
-            <div className="text-xs sm:text-sm font-semibold text-neutral-200 tracking-tight">
+          <div className="flex flex-col justify-center lg:px-8 lg:border-r border-neutral-800/60">
+            <AnimatedCounter
+              end={7288}
+              duration={2600}
+              className="text-3xl sm:text-4xl lg:text-5xl font-mono font-black text-white tracking-tight"
+            />
+            <div className="mt-2 text-sm sm:text-base font-semibold text-neutral-200">
               Kecamatan Terdata
             </div>
-            <div className="text-[11px] sm:text-xs text-amber-300 font-medium">
-              Multi-Ancaman Geospasial
+            <div className="mt-0.5 text-xs text-neutral-500 font-medium">
+              Pemetaan Multi-Risiko
             </div>
-          </motion.div>
+          </div>
 
-          {/* Kolom 4: Titik Evakuasi & Shelter Terdata (Belasan Ribu) */}
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true, margin: '-20px' }}
-            transition={{ duration: 0.5, delay: 0.2 }}
-            whileHover={{ y: -3, transition: { duration: 0.2 } }}
-            className="space-y-1 p-3.5 rounded-2xl bg-neutral-900/30 border border-neutral-800/40 hover:border-neutral-700/60 hover:bg-neutral-900/50 transition-colors cursor-default"
-          >
-            <div className="text-[10px] font-mono font-bold tracking-wider uppercase text-emerald-400">
-              TITIK EVAKUASI &amp; SHELTER
-            </div>
-            <div className="pt-0.5">
-              <AnimatedCounter
-                end={14850}
-                suffix="+"
-                duration={3200}
-                className="text-2xl sm:text-3xl lg:text-[34px] font-mono font-bold text-emerald-400 tracking-tight"
-              />
-            </div>
-            <div className="text-xs sm:text-sm font-semibold text-neutral-200 tracking-tight">
+          {/* Kolom 4: Titik Evakuasi & Shelter Terdata */}
+          <div className="flex flex-col justify-center lg:pl-8">
+            <AnimatedCounter
+              end={14850}
+              suffix="+"
+              duration={2800}
+              className="text-3xl sm:text-4xl lg:text-5xl font-mono font-black text-white tracking-tight"
+            />
+            <div className="mt-2 text-sm sm:text-base font-semibold text-neutral-200">
               Titik Kumpul &amp; Posko
             </div>
-            <div className="text-[11px] sm:text-xs text-emerald-300 font-medium">
-              Infrastruktur Evakuasi Warga
+            <div className="mt-0.5 text-xs text-neutral-500 font-medium">
+              Infrastruktur Shelter Warga
             </div>
-          </motion.div>
+          </div>
         </div>
-      </section>
+      </motion.section>
 
       {/* ========================================================================= */}
       {/* 4. FITUR UTAMA 1: PETA SITUASI & SHELTER INTERAKTIF (Live Map)            */}
