@@ -5,7 +5,9 @@ namespace App\Http\Controllers\Api\V1\Admin;
 use App\Http\Controllers\Controller;
 use App\Models\EmergencyContact;
 use App\Models\EmergencyContactChannel;
+use App\Models\EmergencyDirectoryAuditLog;
 use App\Models\Region;
+use App\Services\EmergencyDirectory\EmergencyDirectoryAuditService;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
@@ -16,6 +18,10 @@ use Throwable;
 
 class AdminEmergencyDirectoryController extends Controller
 {
+    public function __construct(
+        protected EmergencyDirectoryAuditService $auditService
+    ) {}
+
     /**
      * List all emergency contacts with filtering, pagination, and summary statistics.
      * Accessible by Admin (full) and Intelligence (read-only).
@@ -286,8 +292,11 @@ class AdminEmergencyDirectoryController extends Controller
             }
         }
 
+        $actorId = $request->user()?->id;
+        $ipAddress = $request->ip();
+
         try {
-            $contact = DB::transaction(function () use ($request, $channelsData, $pubStatus, $verStatus) {
+            $contact = DB::transaction(function () use ($request, $channelsData, $pubStatus, $verStatus, $actorId, $ipAddress) {
                 $name = $request->input('name');
                 $slug = $request->filled('slug')
                     ? Str::slug($request->input('slug'))
@@ -305,13 +314,16 @@ class AdminEmergencyDirectoryController extends Controller
                     'description' => $request->input('description'),
                     'verification_status' => $verStatus,
                     'publication_status' => $pubStatus,
-                    'created_by' => $request->user()->id,
-                    'updated_by' => $request->user()->id,
+                    'created_by' => $actorId,
+                    'updated_by' => $actorId,
                 ]);
+
+                // Audit parent contact creation
+                $this->auditService->recordContactCreated($contact, $actorId, $ipAddress);
 
                 foreach ($channelsData as $ch) {
                     $isVerified = ($ch['verification_status'] ?? EmergencyContactChannel::STATUS_UNVERIFIED) === EmergencyContactChannel::STATUS_VERIFIED;
-                    EmergencyContactChannel::create([
+                    $channel = EmergencyContactChannel::create([
                         'emergency_contact_id' => $contact->id,
                         'channel_type' => $ch['channel_type'],
                         'channel_classification' => $ch['channel_classification'],
@@ -328,6 +340,9 @@ class AdminEmergencyDirectoryController extends Controller
                         'sort_order' => $ch['sort_order'] ?? 0,
                         'is_active' => $ch['is_active'] ?? true,
                     ]);
+
+                    // Audit channel creation
+                    $this->auditService->recordChannelCreated($channel, $actorId, $ipAddress);
                 }
 
                 return $contact->load(['region', 'channels']);
@@ -425,15 +440,23 @@ class AdminEmergencyDirectoryController extends Controller
             }
         }
 
+        $actorId = $request->user()?->id;
+        $ipAddress = $request->ip();
+
         try {
-            DB::transaction(function () use ($contact, $request, $newScope, $newRegionId) {
+            DB::transaction(function () use ($contact, $request, $newScope, $newRegionId, $actorId, $ipAddress) {
+                $oldSnapshot = $this->auditService->captureContactSnapshot($contact);
+
                 $contact->fill($request->only([
                     'name', 'slug', 'category', 'address', 'latitude', 'longitude', 'description'
                 ]));
                 $contact->scope = $newScope;
                 $contact->region_id = $newRegionId;
-                $contact->updated_by = $request->user()->id;
+                $contact->updated_by = $actorId;
                 $contact->save();
+
+                // Audit parent contact update (returns null on no-op)
+                $this->auditService->recordContactUpdated($contact, $oldSnapshot, $actorId, $ipAddress);
             });
 
             return response()->json([
@@ -454,7 +477,7 @@ class AdminEmergencyDirectoryController extends Controller
      * Soft delete the specified emergency contact.
      * Strictly restricted to role:admin.
      */
-    public function destroy($id): JsonResponse
+    public function destroy(Request $request, $id): JsonResponse
     {
         $contact = EmergencyContact::find($id);
         if (! $contact) {
@@ -465,7 +488,13 @@ class AdminEmergencyDirectoryController extends Controller
             ], 404);
         }
 
-        $contact->delete();
+        $actorId = $request->user()?->id;
+        $ipAddress = $request->ip();
+
+        DB::transaction(function () use ($contact, $actorId, $ipAddress) {
+            $contact->delete();
+            $this->auditService->recordContactSoftDeleted($contact, $actorId, $ipAddress);
+        });
 
         return response()->json([
             'success' => true,
@@ -505,6 +534,16 @@ class AdminEmergencyDirectoryController extends Controller
         }
 
         $targetStatus = $request->input('publication_status');
+        $oldStatus = $contact->publication_status;
+
+        // No-op check: do not audit or mutate if no change
+        if ($targetStatus === $oldStatus) {
+            return response()->json([
+                'success' => true,
+                'message' => "Status publikasi kontak tidak berubah ('{$targetStatus}').",
+                'data' => $contact->fresh(['channels']),
+            ]);
+        }
 
         // Business rule: Cannot publish if contact unverified or has 0 active verified channels
         if ($targetStatus === EmergencyContact::PUB_PUBLISHED) {
@@ -530,9 +569,16 @@ class AdminEmergencyDirectoryController extends Controller
             }
         }
 
-        $contact->publication_status = $targetStatus;
-        $contact->updated_by = $request->user()->id;
-        $contact->save();
+        $actorId = $request->user()?->id;
+        $ipAddress = $request->ip();
+
+        DB::transaction(function () use ($contact, $targetStatus, $oldStatus, $actorId, $ipAddress) {
+            $contact->publication_status = $targetStatus;
+            $contact->updated_by = $actorId;
+            $contact->save();
+
+            $this->auditService->recordContactPublicationChanged($contact, $oldStatus, $targetStatus, $actorId, $ipAddress);
+        });
 
         return response()->json([
             'success' => true,
@@ -574,17 +620,47 @@ class AdminEmergencyDirectoryController extends Controller
         }
 
         $targetStatus = $request->input('verification_status');
+        $oldStatus = $contact->verification_status;
 
-        DB::transaction(function () use ($contact, $targetStatus, $request) {
+        // No-op check: do not audit or mutate if no change
+        if ($targetStatus === $oldStatus) {
+            return response()->json([
+                'success' => true,
+                'message' => "Status verifikasi kontak tidak berubah ('{$targetStatus}').",
+                'data' => $contact->fresh(['channels']),
+            ]);
+        }
+
+        $actorId = $request->user()?->id;
+        $ipAddress = $request->ip();
+
+        DB::transaction(function () use ($contact, $targetStatus, $oldStatus, $actorId, $ipAddress) {
             $contact->verification_status = $targetStatus;
-            $contact->updated_by = $request->user()->id;
+            $contact->updated_by = $actorId;
 
             // Fail-closed rule: If parent verification is revoked, automatically revert publication to draft
-            if ($targetStatus !== EmergencyContact::STATUS_VERIFIED && $contact->publication_status === EmergencyContact::PUB_PUBLISHED) {
+            $wasAutoDemoted = false;
+            $oldPubStatus = $contact->publication_status;
+            if ($targetStatus !== EmergencyContact::STATUS_VERIFIED && $oldPubStatus === EmergencyContact::PUB_PUBLISHED) {
                 $contact->publication_status = EmergencyContact::PUB_DRAFT;
+                $wasAutoDemoted = true;
             }
 
             $contact->save();
+
+            // Record verification change
+            $this->auditService->recordContactVerificationChanged($contact, $oldStatus, $targetStatus, $actorId, $ipAddress);
+
+            // Record auto-demotion side effect if triggered
+            if ($wasAutoDemoted) {
+                $this->auditService->recordPublicationAutoDemotedDueToVerification(
+                    $contact,
+                    $oldPubStatus,
+                    EmergencyContact::PUB_DRAFT,
+                    $actorId,
+                    $ipAddress
+                );
+            }
         });
 
         return response()->json([
@@ -652,18 +728,27 @@ class AdminEmergencyDirectoryController extends Controller
         $isPrimary = $request->boolean('is_primary', false);
         $isActive = $request->boolean('is_active', true);
         $verificationStatus = $request->input('verification_status', EmergencyContactChannel::STATUS_UNVERIFIED);
+        $actorId = $request->user()?->id;
+        $ipAddress = $request->ip();
 
         try {
-            $channel = DB::transaction(function () use ($contact, $request, $isPrimary, $isActive, $verificationStatus) {
+            $channel = DB::transaction(function () use ($contact, $request, $isPrimary, $isActive, $verificationStatus, $actorId, $ipAddress) {
                 // If setting as active primary, atomically unset any existing active primary channel
                 if ($isPrimary && $isActive) {
-                    EmergencyContactChannel::where('emergency_contact_id', $contact->id)
+                    $existingPrimaries = EmergencyContactChannel::where('emergency_contact_id', $contact->id)
                         ->where('is_primary', true)
-                        ->where('is_active', true)
-                        ->update(['is_primary' => false]);
+                        ->get();
+
+                    foreach ($existingPrimaries as $prevPrimary) {
+                        $prevPrimary->is_primary = false;
+                        $prevPrimary->save();
+
+                        // Audit demotion of previous primary
+                        $this->auditService->recordChannelPrimaryDemoted($prevPrimary, $actorId, $ipAddress);
+                    }
                 }
 
-                return EmergencyContactChannel::create([
+                $channel = EmergencyContactChannel::create([
                     'emergency_contact_id' => $contact->id,
                     'channel_type' => $request->input('channel_type'),
                     'channel_classification' => $request->input('channel_classification'),
@@ -680,6 +765,11 @@ class AdminEmergencyDirectoryController extends Controller
                     'sort_order' => $request->integer('sort_order', 0),
                     'is_active' => $isActive,
                 ]);
+
+                // Audit channel creation
+                $this->auditService->recordChannelCreated($channel, $actorId, $ipAddress);
+
+                return $channel;
             });
 
             return response()->json([
@@ -756,16 +846,28 @@ class AdminEmergencyDirectoryController extends Controller
 
         $newIsPrimary = $request->has('is_primary') ? $request->boolean('is_primary') : $channel->is_primary;
         $newIsActive = $request->has('is_active') ? $request->boolean('is_active') : $channel->is_active;
+        $actorId = $request->user()?->id;
+        $ipAddress = $request->ip();
 
         try {
-            DB::transaction(function () use ($channel, $request, $contactId, $newIsPrimary, $newIsActive) {
+            DB::transaction(function () use ($channel, $request, $contactId, $newIsPrimary, $newIsActive, $actorId, $ipAddress) {
+                $oldSnapshot = $this->auditService->captureChannelSnapshot($channel);
+                $wasPrimary = $channel->is_primary;
+
                 // If making this channel primary and active, atomically unset others
-                if ($newIsPrimary && $newIsActive) {
-                    EmergencyContactChannel::where('emergency_contact_id', $contactId)
+                if ($newIsPrimary && $newIsActive && ! $wasPrimary) {
+                    $otherPrimaries = EmergencyContactChannel::where('emergency_contact_id', $contactId)
                         ->where('id', '!=', $channel->id)
                         ->where('is_primary', true)
-                        ->where('is_active', true)
-                        ->update(['is_primary' => false]);
+                        ->get();
+
+                    foreach ($otherPrimaries as $otherPrimary) {
+                        $otherPrimary->is_primary = false;
+                        $otherPrimary->save();
+
+                        // Audit demotion of previous primary
+                        $this->auditService->recordChannelPrimaryDemoted($otherPrimary, $actorId, $ipAddress);
+                    }
                 }
 
                 $channel->fill($request->only([
@@ -784,6 +886,31 @@ class AdminEmergencyDirectoryController extends Controller
                 }
 
                 $channel->save();
+
+                // Audit channel update (returns null on no-op)
+                $this->auditService->recordChannelUpdated($channel, $oldSnapshot, $actorId, $ipAddress);
+
+                // Side effect check: If parent contact is published, verify active verified channel existence
+                $parent = EmergencyContact::find($contactId);
+                if ($parent && $parent->publication_status === EmergencyContact::PUB_PUBLISHED) {
+                    $hasOtherActiveVerified = EmergencyContactChannel::where('emergency_contact_id', $contactId)
+                        ->where('is_active', true)
+                        ->where('verification_status', EmergencyContactChannel::STATUS_VERIFIED)
+                        ->exists();
+
+                    if (! $hasOtherActiveVerified) {
+                        $parent->publication_status = EmergencyContact::PUB_DRAFT;
+                        $parent->save();
+
+                        $this->auditService->recordPublicationAutoDemotedDueToChannel(
+                            $parent,
+                            EmergencyContact::PUB_PUBLISHED,
+                            EmergencyContact::PUB_DRAFT,
+                            $actorId,
+                            $ipAddress
+                        );
+                    }
+                }
             });
 
             return response()->json([
@@ -804,7 +931,7 @@ class AdminEmergencyDirectoryController extends Controller
      * Deactivate and archive an existing channel (prevents permanent data loss / hard delete).
      * Strictly restricted to role:admin.
      */
-    public function destroyChannel($contactId, $channelId): JsonResponse
+    public function destroyChannel(Request $request, $contactId, $channelId): JsonResponse
     {
         $channel = EmergencyContactChannel::where('emergency_contact_id', $contactId)
             ->where('id', $channelId)
@@ -818,12 +945,18 @@ class AdminEmergencyDirectoryController extends Controller
             ], 404);
         }
 
+        $actorId = $request->user()?->id;
+        $ipAddress = $request->ip();
+
         // Safe deprecation & deactivation instead of permanent hard delete.
         // Preserves historical auditability without requiring a schema change.
-        DB::transaction(function () use ($channel, $contactId) {
+        DB::transaction(function () use ($channel, $contactId, $actorId, $ipAddress) {
             $channel->is_active = false;
             $channel->is_primary = false;
             $channel->save();
+
+            // Audit channel deactivation via delete
+            $this->auditService->recordChannelDeactivatedViaDelete($channel, $actorId, $ipAddress);
 
             // Guard parent publication status: if published parent now has 0 active verified channels,
             // automatically revert parent to draft to prevent published parent without channels
@@ -838,6 +971,15 @@ class AdminEmergencyDirectoryController extends Controller
                 if (! $hasOtherActiveVerified) {
                     $parent->publication_status = EmergencyContact::PUB_DRAFT;
                     $parent->save();
+
+                    // Audit parent publication auto-demotion
+                    $this->auditService->recordPublicationAutoDemotedDueToChannel(
+                        $parent,
+                        EmergencyContact::PUB_PUBLISHED,
+                        EmergencyContact::PUB_DRAFT,
+                        $actorId,
+                        $ipAddress
+                    );
                 }
             }
         });
@@ -867,18 +1009,41 @@ class AdminEmergencyDirectoryController extends Controller
             ], 404);
         }
 
+        // No-op check: if already primary and active, do not create duplicate audit events
+        if ($channel->is_primary && $channel->is_active) {
+            return response()->json([
+                'success' => true,
+                'message' => "Channel '{$channel->label}' ({$channel->value}) sudah merupakan saluran utama (primary).",
+                'data' => $channel,
+            ]);
+        }
+
+        $actorId = $request->user()?->id;
+        $ipAddress = $request->ip();
+
         try {
-            DB::transaction(function () use ($channel, $contactId) {
-                // 1. Unset any other primary channel for this contact
-                EmergencyContactChannel::where('emergency_contact_id', $contactId)
+            DB::transaction(function () use ($channel, $contactId, $actorId, $ipAddress) {
+                // 1. Unset and audit demotion of any other primary channel for this contact
+                $otherPrimaries = EmergencyContactChannel::where('emergency_contact_id', $contactId)
                     ->where('id', '!=', $channel->id)
                     ->where('is_primary', true)
-                    ->update(['is_primary' => false]);
+                    ->get();
+
+                foreach ($otherPrimaries as $otherPrimary) {
+                    $otherPrimary->is_primary = false;
+                    $otherPrimary->save();
+
+                    // Audit demotion of previous primary
+                    $this->auditService->recordChannelPrimaryDemoted($otherPrimary, $actorId, $ipAddress);
+                }
 
                 // 2. Set this channel as primary and active
                 $channel->is_primary = true;
                 $channel->is_active = true;
                 $channel->save();
+
+                // Audit promotion of this channel
+                $this->auditService->recordChannelPrimaryPromoted($channel, $actorId, $ipAddress);
             });
 
             return response()->json([
@@ -913,15 +1078,47 @@ class AdminEmergencyDirectoryController extends Controller
             ], 404);
         }
 
-        $newActive = ! $channel->is_active;
+        $oldActive = (bool) $channel->is_active;
+        $newActive = ! $oldActive;
+        $actorId = $request->user()?->id;
+        $ipAddress = $request->ip();
 
-        DB::transaction(function () use ($channel, $newActive) {
+        DB::transaction(function () use ($channel, $contactId, $oldActive, $newActive, $actorId, $ipAddress) {
             $channel->is_active = $newActive;
             // If deactivating a primary channel, unset primary to prevent ghost primary on inactive channel
             if (! $newActive && $channel->is_primary) {
                 $channel->is_primary = false;
             }
             $channel->save();
+
+            // Audit toggle action
+            $this->auditService->recordChannelToggled($channel, $oldActive, $newActive, $actorId, $ipAddress);
+
+            // If channel was deactivated and was the last active verified channel for a published parent, auto-demote
+            if (! $newActive) {
+                $parent = EmergencyContact::find($contactId);
+                if ($parent && $parent->publication_status === EmergencyContact::PUB_PUBLISHED) {
+                    $hasOtherActiveVerified = EmergencyContactChannel::where('emergency_contact_id', $contactId)
+                        ->where('id', '!=', $channel->id)
+                        ->where('is_active', true)
+                        ->where('verification_status', EmergencyContactChannel::STATUS_VERIFIED)
+                        ->exists();
+
+                    if (! $hasOtherActiveVerified) {
+                        $parent->publication_status = EmergencyContact::PUB_DRAFT;
+                        $parent->save();
+
+                        // Audit publication auto-demotion
+                        $this->auditService->recordPublicationAutoDemotedDueToChannel(
+                            $parent,
+                            EmergencyContact::PUB_PUBLISHED,
+                            EmergencyContact::PUB_DRAFT,
+                            $actorId,
+                            $ipAddress
+                        );
+                    }
+                }
+            }
         });
 
         $statusText = $newActive ? 'diaktifkan' : 'dinonaktifkan';
@@ -930,6 +1127,120 @@ class AdminEmergencyDirectoryController extends Controller
             'success' => true,
             'message' => "Channel '{$channel->label}' berhasil {$statusText}.",
             'data' => $channel->fresh(),
+        ]);
+    }
+
+    /**
+     * List all audit logs with optional filters, deterministic ordering, and pagination.
+     * Strictly restricted to role:admin.
+     */
+    public function auditLogs(Request $request): JsonResponse
+    {
+        $query = EmergencyDirectoryAuditLog::query()
+            ->with([
+                'actor:id,name,email',
+                'parentContact:id,name,slug',
+            ]);
+
+        if ($request->filled('entity_type')) {
+            $query->where('entity_type', $request->query('entity_type'));
+        }
+
+        if ($request->filled('entity_id')) {
+            $query->where('entity_id', $request->integer('entity_id'));
+        }
+
+        if ($request->filled('parent_contact_id')) {
+            $query->where('parent_contact_id', $request->integer('parent_contact_id'));
+        }
+
+        if ($request->filled('actor_id')) {
+            $query->where('actor_id', $request->integer('actor_id'));
+        }
+
+        if ($request->filled('action')) {
+            $query->where('action', $request->query('action'));
+        }
+
+        if ($request->filled('date_from')) {
+            $query->where('created_at', '>=', $request->query('date_from'));
+        }
+
+        if ($request->filled('date_to')) {
+            $query->where('created_at', '<=', $request->query('date_to'));
+        }
+
+        $perPage = min(max($request->integer('per_page', 20), 1), 100);
+
+        // Deterministic ordering: latest first, then ID desc
+        $logs = $query->orderBy('created_at', 'desc')->orderBy('id', 'desc')->paginate($perPage);
+
+        return response()->json([
+            'success' => true,
+            'message' => 'Daftar audit log Emergency Directory berhasil dimuat.',
+            'data' => $logs->items(),
+            'meta' => [
+                'current_page' => $logs->currentPage(),
+                'per_page' => $logs->perPage(),
+                'total' => $logs->total(),
+                'last_page' => $logs->lastPage(),
+            ],
+        ]);
+    }
+
+    /**
+     * List all audit logs for a specific parent contact and its channels.
+     * Strictly restricted to role:admin.
+     */
+    public function contactAuditLogs(Request $request, $id): JsonResponse
+    {
+        $contact = EmergencyContact::withTrashed()->find($id);
+        if (! $contact) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Kontak darurat tidak ditemukan.',
+                'error' => 'NOT_FOUND',
+            ], 404);
+        }
+
+        $query = EmergencyDirectoryAuditLog::query()
+            ->where('parent_contact_id', $contact->id)
+            ->with([
+                'actor:id,name,email',
+                'parentContact:id,name,slug',
+            ]);
+
+        if ($request->filled('action')) {
+            $query->where('action', $request->query('action'));
+        }
+
+        if ($request->filled('entity_type')) {
+            $query->where('entity_type', $request->query('entity_type'));
+        }
+
+        if ($request->filled('date_from')) {
+            $query->where('created_at', '>=', $request->query('date_from'));
+        }
+
+        if ($request->filled('date_to')) {
+            $query->where('created_at', '<=', $request->query('date_to'));
+        }
+
+        $perPage = min(max($request->integer('per_page', 20), 1), 100);
+
+        // Deterministic ordering: latest first, then ID desc
+        $logs = $query->orderBy('created_at', 'desc')->orderBy('id', 'desc')->paginate($perPage);
+
+        return response()->json([
+            'success' => true,
+            'message' => "Audit log untuk kontak '{$contact->name}' berhasil dimuat.",
+            'data' => $logs->items(),
+            'meta' => [
+                'current_page' => $logs->currentPage(),
+                'per_page' => $logs->perPage(),
+                'total' => $logs->total(),
+                'last_page' => $logs->lastPage(),
+            ],
         ]);
     }
 }

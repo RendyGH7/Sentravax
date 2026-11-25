@@ -272,9 +272,18 @@ Route::prefix('admin')->middleware(['auth:sanctum', 'role:admin'])->group(functi
 // ==========================================
 // 5.5 EMERGENCY DIRECTORY MANAGEMENT (Admin: Full CRUD; Intelligence: Read-Only)
 // ==========================================
-Route::prefix('admin/emergency-contacts')->middleware(['auth:sanctum', 'role:admin,intelligence'])->group(function () {
-    Route::get('/', [AdminEmergencyDirectoryController::class, 'index'])->name('api.admin.emergency-contacts.index');
-    Route::get('/{id}', [AdminEmergencyDirectoryController::class, 'show'])->name('api.admin.emergency-contacts.show');
+Route::prefix('admin/emergency-contacts')->middleware('auth:sanctum')->group(function () {
+    // Admin-only Audit Trail Endpoints (declared before /{id} to prevent parameter collision)
+    Route::middleware('role:admin')->group(function () {
+        Route::get('/audit-logs', [AdminEmergencyDirectoryController::class, 'auditLogs'])->name('api.admin.emergency-contacts.audit-logs.index');
+        Route::get('/{id}/audit-logs', [AdminEmergencyDirectoryController::class, 'contactAuditLogs'])->name('api.admin.emergency-contacts.audit-logs.show');
+    });
+
+    // Directory Read Access (Admin & Intelligence)
+    Route::middleware('role:admin,intelligence')->group(function () {
+        Route::get('/', [AdminEmergencyDirectoryController::class, 'index'])->name('api.admin.emergency-contacts.index');
+        Route::get('/{id}', [AdminEmergencyDirectoryController::class, 'show'])->name('api.admin.emergency-contacts.show');
+    });
 
     // Mutating operations strictly restricted to role:admin
     Route::middleware('role:admin')->group(function () {

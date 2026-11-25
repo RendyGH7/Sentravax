@@ -54,6 +54,22 @@ return new class extends Migration
             CREATE OR REPLACE FUNCTION prevent_emergency_directory_audit_log_mutation()
             RETURNS TRIGGER AS \$\$
             BEGIN
+                IF TG_OP = 'UPDATE' THEN
+                    -- Allow foreign key ON DELETE SET NULL when user/actor is deleted
+                    IF (OLD.actor_id IS NOT NULL AND NEW.actor_id IS NULL)
+                       AND (OLD.id = NEW.id)
+                       AND (OLD.entity_type = NEW.entity_type)
+                       AND (OLD.entity_id = NEW.entity_id)
+                       AND (OLD.parent_contact_id = NEW.parent_contact_id)
+                       AND (OLD.action = NEW.action)
+                       AND (OLD.old_values IS NOT DISTINCT FROM NEW.old_values)
+                       AND (OLD.new_values IS NOT DISTINCT FROM NEW.new_values)
+                       AND (OLD.ip_address IS NOT DISTINCT FROM NEW.ip_address)
+                       AND (OLD.created_at = NEW.created_at) THEN
+                        RETURN NEW;
+                    END IF;
+                END IF;
+
                 RAISE EXCEPTION 'emergency_directory_audit_logs table is append-only: UPDATE, DELETE, and TRUNCATE are strictly prohibited.';
             END;
             \$\$ LANGUAGE plpgsql;
