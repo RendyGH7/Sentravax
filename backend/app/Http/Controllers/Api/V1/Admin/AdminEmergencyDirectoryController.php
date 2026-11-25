@@ -887,8 +887,38 @@ class AdminEmergencyDirectoryController extends Controller
 
                 $channel->save();
 
-                // Audit channel update (returns null on no-op)
-                $this->auditService->recordChannelUpdated($channel, $oldSnapshot, $actorId, $ipAddress);
+                // 1. Audit channel verification change if status transitioned
+                $oldVerStatus = $oldSnapshot['verification_status'];
+                $newVerStatus = $channel->verification_status;
+                if ($oldVerStatus !== $newVerStatus) {
+                    $this->auditService->recordChannelVerificationChanged(
+                        $channel,
+                        $oldVerStatus,
+                        $newVerStatus,
+                        $actorId,
+                        $ipAddress
+                    );
+                }
+
+                // 2. Audit channel general attribute updates (excluding verification fields to prevent duplicate events)
+                $otherOld = $oldSnapshot;
+                $otherNew = $this->auditService->captureChannelSnapshot($channel);
+                unset($otherOld['verification_status'], $otherOld['verified_at']);
+                unset($otherNew['verification_status'], $otherNew['verified_at']);
+                $otherDelta = $this->auditService->computeDelta($otherOld, $otherNew);
+
+                if (! empty($otherDelta)) {
+                    $this->auditService->record(
+                        EmergencyDirectoryAuditLog::ENTITY_CHANNEL,
+                        $channel->id,
+                        $channel->emergency_contact_id,
+                        EmergencyDirectoryAuditLog::ACTION_CHANNEL_UPDATED,
+                        $otherDelta['old'],
+                        $otherDelta['new'],
+                        $actorId,
+                        $ipAddress
+                    );
+                }
 
                 // Side effect check: If parent contact is published, verify active verified channel existence
                 $parent = EmergencyContact::find($contactId);
@@ -1136,6 +1166,25 @@ class AdminEmergencyDirectoryController extends Controller
      */
     public function auditLogs(Request $request): JsonResponse
     {
+        $validator = Validator::make($request->all(), [
+            'entity_type' => ['nullable', 'string', Rule::in(EmergencyDirectoryAuditLog::ENTITY_TYPES)],
+            'entity_id' => ['nullable', 'integer', 'min:1'],
+            'parent_contact_id' => ['nullable', 'integer', 'min:1'],
+            'actor_id' => ['nullable', 'integer', 'min:1'],
+            'action' => ['nullable', 'string', 'max:60'],
+            'date_from' => ['nullable', 'date'],
+            'date_to' => ['nullable', 'date', 'after_or_equal:date_from'],
+            'per_page' => ['nullable', 'integer', 'min:1', 'max:100'],
+        ]);
+
+        if ($validator->fails()) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Filter parameter audit log tidak valid.',
+                'errors' => $validator->errors(),
+            ], 422);
+        }
+
         $query = EmergencyDirectoryAuditLog::query()
             ->with([
                 'actor:id,name,email',
@@ -1201,6 +1250,22 @@ class AdminEmergencyDirectoryController extends Controller
                 'message' => 'Kontak darurat tidak ditemukan.',
                 'error' => 'NOT_FOUND',
             ], 404);
+        }
+
+        $validator = Validator::make($request->all(), [
+            'entity_type' => ['nullable', 'string', Rule::in(EmergencyDirectoryAuditLog::ENTITY_TYPES)],
+            'action' => ['nullable', 'string', 'max:60'],
+            'date_from' => ['nullable', 'date'],
+            'date_to' => ['nullable', 'date', 'after_or_equal:date_from'],
+            'per_page' => ['nullable', 'integer', 'min:1', 'max:100'],
+        ]);
+
+        if ($validator->fails()) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Filter parameter audit log tidak valid.',
+                'errors' => $validator->errors(),
+            ], 422);
         }
 
         $query = EmergencyDirectoryAuditLog::query()

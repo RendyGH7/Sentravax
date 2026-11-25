@@ -1013,4 +1013,273 @@ class EmergencyDirectoryAuditTrailTest extends TestCase
 
         $this->assertTrue($failed, 'Expected foreign key constraint violation on parent hard delete (ON DELETE RESTRICT).');
     }
+
+    // ==========================================
+    // 8. CHANNEL VERIFICATION & ADVANCED COV
+    // ==========================================
+
+    public function test_channel_verification_status_changed_records_audit_log(): void
+    {
+        $contact = EmergencyContact::create([
+            'name' => 'Channel Verif Audit Parent',
+            'slug' => 'chan-verif-audit-' . uniqid(),
+            'category' => EmergencyContact::CATEGORY_SAR,
+            'scope' => EmergencyContact::SCOPE_NATIONAL,
+            'verification_status' => EmergencyContact::STATUS_VERIFIED,
+            'publication_status' => EmergencyContact::PUB_DRAFT,
+            'created_by' => $this->adminUser->id,
+            'updated_by' => $this->adminUser->id,
+        ]);
+
+        $channel = EmergencyContactChannel::create([
+            'emergency_contact_id' => $contact->id,
+            'channel_type' => EmergencyContactChannel::TYPE_PHONE,
+            'channel_classification' => EmergencyContactChannel::CLASS_OPERATIONAL_CONTACT,
+            'label' => 'Channel Verif Test',
+            'value' => '021-999888',
+            'verification_status' => EmergencyContactChannel::STATUS_UNVERIFIED,
+            'source_name' => 'Portal',
+            'source_url' => 'https://example.com/source',
+            'is_active' => true,
+        ]);
+
+        // Update ONLY verification_status
+        $response = $this->actingAs($this->adminUser)
+            ->putJson("/api/v1/admin/emergency-contacts/{$contact->id}/channels/{$channel->id}", [
+                'verification_status' => EmergencyContactChannel::STATUS_VERIFIED,
+            ]);
+
+        $response->assertStatus(200);
+
+        // Verify channel_verification_changed was recorded
+        $verifLogs = EmergencyDirectoryAuditLog::where('entity_type', EmergencyDirectoryAuditLog::ENTITY_CHANNEL)
+            ->where('entity_id', $channel->id)
+            ->where('action', EmergencyDirectoryAuditLog::ACTION_CHANNEL_VERIFICATION_CHANGED)
+            ->get();
+
+        $this->assertCount(1, $verifLogs);
+        $this->assertEquals(EmergencyContactChannel::STATUS_UNVERIFIED, $verifLogs[0]->old_values['verification_status']);
+        $this->assertEquals(EmergencyContactChannel::STATUS_VERIFIED, $verifLogs[0]->new_values['verification_status']);
+
+        // Verify channel_updated was NOT recorded (prevent duplicate event)
+        $updateLogs = EmergencyDirectoryAuditLog::where('entity_type', EmergencyDirectoryAuditLog::ENTITY_CHANNEL)
+            ->where('entity_id', $channel->id)
+            ->where('action', EmergencyDirectoryAuditLog::ACTION_CHANNEL_UPDATED)
+            ->get();
+        $this->assertCount(0, $updateLogs);
+    }
+
+    public function test_channel_update_without_verification_records_only_channel_updated(): void
+    {
+        $contact = EmergencyContact::create([
+            'name' => 'Channel Non-Verif Audit Parent',
+            'slug' => 'chan-non-verif-' . uniqid(),
+            'category' => EmergencyContact::CATEGORY_SAR,
+            'scope' => EmergencyContact::SCOPE_NATIONAL,
+            'verification_status' => EmergencyContact::STATUS_VERIFIED,
+            'publication_status' => EmergencyContact::PUB_DRAFT,
+            'created_by' => $this->adminUser->id,
+            'updated_by' => $this->adminUser->id,
+        ]);
+
+        $channel = EmergencyContactChannel::create([
+            'emergency_contact_id' => $contact->id,
+            'channel_type' => EmergencyContactChannel::TYPE_PHONE,
+            'channel_classification' => EmergencyContactChannel::CLASS_OPERATIONAL_CONTACT,
+            'label' => 'Old Label',
+            'value' => '021-123789',
+            'verification_status' => EmergencyContactChannel::STATUS_UNVERIFIED,
+            'source_name' => 'Portal',
+            'source_url' => 'https://example.com/source',
+            'is_active' => true,
+        ]);
+
+        // Update ONLY label
+        $response = $this->actingAs($this->adminUser)
+            ->putJson("/api/v1/admin/emergency-contacts/{$contact->id}/channels/{$channel->id}", [
+                'label' => 'New Dedicated Label',
+            ]);
+
+        $response->assertStatus(200);
+
+        // Verify channel_updated was recorded
+        $updateLogs = EmergencyDirectoryAuditLog::where('entity_type', EmergencyDirectoryAuditLog::ENTITY_CHANNEL)
+            ->where('entity_id', $channel->id)
+            ->where('action', EmergencyDirectoryAuditLog::ACTION_CHANNEL_UPDATED)
+            ->get();
+        $this->assertCount(1, $updateLogs);
+        $this->assertEquals('Old Label', $updateLogs[0]->old_values['label']);
+        $this->assertEquals('New Dedicated Label', $updateLogs[0]->new_values['label']);
+
+        // Verify channel_verification_changed was NOT recorded
+        $verifLogs = EmergencyDirectoryAuditLog::where('entity_type', EmergencyDirectoryAuditLog::ENTITY_CHANNEL)
+            ->where('entity_id', $channel->id)
+            ->where('action', EmergencyDirectoryAuditLog::ACTION_CHANNEL_VERIFICATION_CHANGED)
+            ->get();
+        $this->assertCount(0, $verifLogs);
+    }
+
+    public function test_actor_deletion_exception_blocks_tampering_other_fields(): void
+    {
+        $contact = EmergencyContact::create([
+            'name' => 'Tamper Block Test',
+            'slug' => 'tamper-block-' . uniqid(),
+            'category' => EmergencyContact::CATEGORY_SAR,
+            'scope' => EmergencyContact::SCOPE_NATIONAL,
+            'created_by' => $this->adminUser->id,
+            'updated_by' => $this->adminUser->id,
+        ]);
+
+        $log = EmergencyDirectoryAuditLog::create([
+            'entity_type' => EmergencyDirectoryAuditLog::ENTITY_CONTACT,
+            'entity_id' => $contact->id,
+            'parent_contact_id' => $contact->id,
+            'actor_id' => $this->adminUser->id,
+            'action' => EmergencyDirectoryAuditLog::ACTION_CONTACT_CREATED,
+            'old_values' => null,
+            'new_values' => ['name' => $contact->name],
+            'ip_address' => '127.0.0.1',
+            'created_at' => now(),
+        ]);
+
+        // Attempting to set actor_id = NULL while SIMULTANEOUSLY changing action = 'tampered'
+        $failed = false;
+        try {
+            DB::statement("SAVEPOINT sp_test_tamper");
+            DB::statement("UPDATE emergency_directory_audit_logs SET actor_id = NULL, action = 'tampered' WHERE id = ?", [$log->id]);
+        } catch (\Throwable $e) {
+            DB::statement("ROLLBACK TO SAVEPOINT sp_test_tamper");
+            $failed = true;
+            $this->assertStringContainsString('append-only', $e->getMessage());
+        }
+
+        $this->assertTrue($failed, 'Expected trigger to block UPDATE that sets actor_id = NULL but also tampers with action.');
+    }
+
+    public function test_audit_logs_rejects_invalid_filters_and_date_ranges(): void
+    {
+        // 1. Invalid entity_type -> 422
+        $this->actingAs($this->adminUser)
+            ->getJson('/api/v1/admin/emergency-contacts/audit-logs?entity_type=invalid_table')
+            ->assertStatus(422)
+            ->assertJsonValidationErrors(['entity_type']);
+
+        // 2. date_to earlier than date_from -> 422
+        $this->actingAs($this->adminUser)
+            ->getJson('/api/v1/admin/emergency-contacts/audit-logs?date_from=2026-12-01&date_to=2026-01-01')
+            ->assertStatus(422)
+            ->assertJsonValidationErrors(['date_to']);
+
+        // 3. per_page > 100 -> 422
+        $this->actingAs($this->adminUser)
+            ->getJson('/api/v1/admin/emergency-contacts/audit-logs?per_page=500')
+            ->assertStatus(422)
+            ->assertJsonValidationErrors(['per_page']);
+    }
+
+    public function test_contact_specific_audit_logs_does_not_leak_other_contacts_logs(): void
+    {
+        $contactA = EmergencyContact::create([
+            'name' => 'Contact A',
+            'slug' => 'contact-a-' . uniqid(),
+            'category' => EmergencyContact::CATEGORY_SAR,
+            'scope' => EmergencyContact::SCOPE_NATIONAL,
+            'created_by' => $this->adminUser->id,
+            'updated_by' => $this->adminUser->id,
+        ]);
+
+        $contactB = EmergencyContact::create([
+            'name' => 'Contact B',
+            'slug' => 'contact-b-' . uniqid(),
+            'category' => EmergencyContact::CATEGORY_SAR,
+            'scope' => EmergencyContact::SCOPE_NATIONAL,
+            'created_by' => $this->adminUser->id,
+            'updated_by' => $this->adminUser->id,
+        ]);
+
+        // Create log for A
+        app(EmergencyDirectoryAuditService::class)->record(
+            EmergencyDirectoryAuditLog::ENTITY_CONTACT,
+            $contactA->id,
+            $contactA->id,
+            EmergencyDirectoryAuditLog::ACTION_CONTACT_CREATED,
+            null,
+            ['name' => 'Contact A'],
+            $this->adminUser->id,
+            '127.0.0.1'
+        );
+
+        // Create log for B
+        app(EmergencyDirectoryAuditService::class)->record(
+            EmergencyDirectoryAuditLog::ENTITY_CONTACT,
+            $contactB->id,
+            $contactB->id,
+            EmergencyDirectoryAuditLog::ACTION_CONTACT_CREATED,
+            null,
+            ['name' => 'Contact B'],
+            $this->adminUser->id,
+            '127.0.0.1'
+        );
+
+        $responseA = $this->actingAs($this->adminUser)
+            ->getJson("/api/v1/admin/emergency-contacts/{$contactA->id}/audit-logs");
+
+        $responseA->assertStatus(200);
+        $dataA = $responseA->json('data');
+
+        $this->assertNotEmpty($dataA);
+        foreach ($dataA as $item) {
+            $this->assertEquals($contactA->id, $item['parent_contact_id']);
+            $this->assertNotEquals($contactB->id, $item['parent_contact_id']);
+        }
+    }
+
+    public function test_audit_persistence_and_queryability_after_committed_transaction(): void
+    {
+        $contact = EmergencyContact::create([
+            'name' => 'Committed Contact',
+            'slug' => 'committed-contact-' . uniqid(),
+            'category' => EmergencyContact::CATEGORY_SAR,
+            'scope' => EmergencyContact::SCOPE_NATIONAL,
+            'created_by' => $this->adminUser->id,
+            'updated_by' => $this->adminUser->id,
+        ]);
+
+        $auditService = app(EmergencyDirectoryAuditService::class);
+
+        // Perform operational change + audit in a transaction and commit
+        DB::transaction(function () use ($contact, $auditService) {
+            $contact->description = 'Updated description inside committed transaction';
+            $contact->save();
+
+            $auditService->record(
+                EmergencyDirectoryAuditLog::ENTITY_CONTACT,
+                $contact->id,
+                $contact->id,
+                EmergencyDirectoryAuditLog::ACTION_CONTACT_UPDATED,
+                ['description' => null],
+                ['description' => 'Updated description inside committed transaction'],
+                $this->adminUser->id,
+                '192.168.10.50'
+            );
+        });
+
+        // Query via Eloquent
+        $persistedLog = EmergencyDirectoryAuditLog::where('parent_contact_id', $contact->id)
+            ->where('action', EmergencyDirectoryAuditLog::ACTION_CONTACT_UPDATED)
+            ->first();
+
+        $this->assertNotNull($persistedLog);
+        $this->assertEquals('192.168.10.50', $persistedLog->ip_address);
+        $this->assertEquals('Updated description inside committed transaction', $persistedLog->new_values['description']);
+
+        // Query via raw SQL to confirm PostgreSQL disk persistence
+        $rawRows = DB::select("SELECT * FROM emergency_directory_audit_logs WHERE parent_contact_id = ? AND action = ?", [
+            $contact->id,
+            EmergencyDirectoryAuditLog::ACTION_CONTACT_UPDATED,
+        ]);
+
+        $this->assertCount(1, $rawRows);
+        $this->assertEquals($this->adminUser->id, $rawRows[0]->actor_id);
+    }
 }
