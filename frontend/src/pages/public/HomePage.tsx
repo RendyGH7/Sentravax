@@ -779,67 +779,115 @@ export const HomePage: React.FC = () => {
         whileInView={{ opacity: 1, y: 0 }}
         viewport={{ once: true, margin: '-20px' }}
         transition={{ duration: 0.6, ease: [0.16, 1, 0.3, 1] }}
-        className="py-8 sm:py-10 border-y border-neutral-800/60"
+        className="relative py-8 sm:py-10 border-y border-neutral-800/60 overflow-hidden"
       >
-        <div className="grid grid-cols-2 lg:grid-cols-4 gap-8 lg:gap-0">
+        {/* Subtle accent hairline gradients along the borders */}
+        <div className="absolute top-0 inset-x-0 h-px bg-gradient-to-r from-transparent via-neutral-600/30 to-transparent pointer-events-none" />
+        <div className="absolute bottom-0 inset-x-0 h-px bg-gradient-to-r from-transparent via-neutral-600/30 to-transparent pointer-events-none" />
+
+        <div className="grid grid-cols-2 lg:grid-cols-4 gap-6 lg:gap-0">
           {/* Kolom 1: Cakupan Wilayah Nasional */}
-          <div className="flex flex-col justify-center lg:pr-8 lg:border-r border-neutral-800/60">
-            <AnimatedCounter
-              end={514}
-              duration={2400}
-              className="text-3xl sm:text-4xl lg:text-5xl font-mono font-black text-white tracking-tight"
-            />
-            <div className="mt-2 text-sm sm:text-base font-semibold text-neutral-200">
-              Kabupaten &amp; Kota
+          <div className="group relative p-4 sm:p-6 lg:p-7 rounded-2xl hover:bg-neutral-800/15 transition-all duration-300 lg:border-r border-neutral-800/60 flex flex-col justify-between cursor-default">
+            <div className="absolute -top-4 left-6 w-24 h-24 bg-sky-500/10 blur-[36px] rounded-full opacity-0 group-hover:opacity-100 transition-opacity duration-500 pointer-events-none" />
+            <div className="flex items-center gap-2 mb-3">
+              <span className="text-[11px] font-mono font-medium text-neutral-500 group-hover:text-sky-400 transition-colors">
+                01
+              </span>
+              <span className="w-4 h-px bg-neutral-800 group-hover:w-8 group-hover:bg-sky-400/50 transition-all duration-300" />
             </div>
-            <div className="mt-0.5 text-xs text-neutral-500 font-medium">
-              38 Provinsi Terintegrasi
+            <div className="relative">
+              <AnimatedCounter
+                end={514}
+                duration={2400}
+                className="text-3xl sm:text-4xl lg:text-5xl font-mono font-black tracking-tight text-white group-hover:text-white transition-colors"
+              />
+            </div>
+            <div className="mt-2.5 space-y-0.5">
+              <div className="text-sm sm:text-base font-semibold text-neutral-200 group-hover:text-white transition-colors">
+                Kabupaten &amp; Kota
+              </div>
+              <div className="text-xs text-neutral-500 group-hover:text-neutral-400 transition-colors">
+                38 Provinsi Terintegrasi
+              </div>
             </div>
           </div>
 
           {/* Kolom 2: Teritorial Kepulauan */}
-          <div className="flex flex-col justify-center lg:px-8 lg:border-r border-neutral-800/60">
-            <AnimatedCounter
-              end={17508}
-              duration={2800}
-              className="text-3xl sm:text-4xl lg:text-5xl font-mono font-black text-white tracking-tight"
-            />
-            <div className="mt-2 text-sm sm:text-base font-semibold text-neutral-200">
-              Pulau Nusantara
+          <div className="group relative p-4 sm:p-6 lg:p-7 rounded-2xl hover:bg-neutral-800/15 transition-all duration-300 lg:border-r border-neutral-800/60 flex flex-col justify-between cursor-default">
+            <div className="absolute -top-4 left-6 w-24 h-24 bg-indigo-500/10 blur-[36px] rounded-full opacity-0 group-hover:opacity-100 transition-opacity duration-500 pointer-events-none" />
+            <div className="flex items-center gap-2 mb-3">
+              <span className="text-[11px] font-mono font-medium text-neutral-500 group-hover:text-indigo-400 transition-colors">
+                02
+              </span>
+              <span className="w-4 h-px bg-neutral-800 group-hover:w-8 group-hover:bg-indigo-400/50 transition-all duration-300" />
             </div>
-            <div className="mt-0.5 text-xs text-neutral-500 font-medium">
-              Zona Maritim &amp; Pesisir
+            <div className="relative">
+              <AnimatedCounter
+                end={17508}
+                duration={2800}
+                className="text-3xl sm:text-4xl lg:text-5xl font-mono font-black tracking-tight text-white group-hover:text-white transition-colors"
+              />
+            </div>
+            <div className="mt-2.5 space-y-0.5">
+              <div className="text-sm sm:text-base font-semibold text-neutral-200 group-hover:text-white transition-colors">
+                Pulau Nusantara
+              </div>
+              <div className="text-xs text-neutral-500 group-hover:text-neutral-400 transition-colors">
+                Zona Maritim &amp; Pesisir
+              </div>
             </div>
           </div>
 
           {/* Kolom 3: Pemetaan Risiko Kecamatan */}
-          <div className="flex flex-col justify-center lg:px-8 lg:border-r border-neutral-800/60">
-            <AnimatedCounter
-              end={7288}
-              duration={2600}
-              className="text-3xl sm:text-4xl lg:text-5xl font-mono font-black text-white tracking-tight"
-            />
-            <div className="mt-2 text-sm sm:text-base font-semibold text-neutral-200">
-              Kecamatan Terdata
+          <div className="group relative p-4 sm:p-6 lg:p-7 rounded-2xl hover:bg-neutral-800/15 transition-all duration-300 lg:border-r border-neutral-800/60 flex flex-col justify-between cursor-default">
+            <div className="absolute -top-4 left-6 w-24 h-24 bg-amber-500/10 blur-[36px] rounded-full opacity-0 group-hover:opacity-100 transition-opacity duration-500 pointer-events-none" />
+            <div className="flex items-center gap-2 mb-3">
+              <span className="text-[11px] font-mono font-medium text-neutral-500 group-hover:text-amber-400 transition-colors">
+                03
+              </span>
+              <span className="w-4 h-px bg-neutral-800 group-hover:w-8 group-hover:bg-amber-400/50 transition-all duration-300" />
             </div>
-            <div className="mt-0.5 text-xs text-neutral-500 font-medium">
-              Pemetaan Multi-Risiko
+            <div className="relative">
+              <AnimatedCounter
+                end={7288}
+                duration={2600}
+                className="text-3xl sm:text-4xl lg:text-5xl font-mono font-black tracking-tight text-white group-hover:text-white transition-colors"
+              />
+            </div>
+            <div className="mt-2.5 space-y-0.5">
+              <div className="text-sm sm:text-base font-semibold text-neutral-200 group-hover:text-white transition-colors">
+                Kecamatan Terdata
+              </div>
+              <div className="text-xs text-neutral-500 group-hover:text-neutral-400 transition-colors">
+                Pemetaan Multi-Risiko
+              </div>
             </div>
           </div>
 
           {/* Kolom 4: Titik Evakuasi & Shelter Terdata */}
-          <div className="flex flex-col justify-center lg:pl-8">
-            <AnimatedCounter
-              end={14850}
-              suffix="+"
-              duration={2800}
-              className="text-3xl sm:text-4xl lg:text-5xl font-mono font-black text-white tracking-tight"
-            />
-            <div className="mt-2 text-sm sm:text-base font-semibold text-neutral-200">
-              Titik Kumpul &amp; Posko
+          <div className="group relative p-4 sm:p-6 lg:p-7 rounded-2xl hover:bg-neutral-800/15 transition-all duration-300 flex flex-col justify-between cursor-default">
+            <div className="absolute -top-4 left-6 w-24 h-24 bg-emerald-500/10 blur-[36px] rounded-full opacity-0 group-hover:opacity-100 transition-opacity duration-500 pointer-events-none" />
+            <div className="flex items-center gap-2 mb-3">
+              <span className="text-[11px] font-mono font-medium text-neutral-500 group-hover:text-emerald-400 transition-colors">
+                04
+              </span>
+              <span className="w-4 h-px bg-neutral-800 group-hover:w-8 group-hover:bg-emerald-400/50 transition-all duration-300" />
             </div>
-            <div className="mt-0.5 text-xs text-neutral-500 font-medium">
-              Infrastruktur Shelter Warga
+            <div className="relative">
+              <AnimatedCounter
+                end={14850}
+                suffix="+"
+                duration={2800}
+                className="text-3xl sm:text-4xl lg:text-5xl font-mono font-black tracking-tight text-white group-hover:text-white transition-colors"
+              />
+            </div>
+            <div className="mt-2.5 space-y-0.5">
+              <div className="text-sm sm:text-base font-semibold text-neutral-200 group-hover:text-white transition-colors">
+                Titik Kumpul &amp; Posko
+              </div>
+              <div className="text-xs text-neutral-500 group-hover:text-neutral-400 transition-colors">
+                Infrastruktur Shelter Warga
+              </div>
             </div>
           </div>
         </div>

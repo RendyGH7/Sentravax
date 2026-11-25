@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\Api\V1\Admin\AdminDisasterController;
+use App\Http\Controllers\Api\V1\Admin\AdminEmergencyDirectoryController;
 use App\Http\Controllers\Api\V1\Admin\AdminModerationController;
 use App\Http\Controllers\Api\V1\Admin\AdminOverviewController;
 use App\Http\Controllers\Api\V1\Admin\AdminShelterController;
@@ -9,6 +10,7 @@ use App\Http\Controllers\Api\V1\AuthController;
 use App\Http\Controllers\Api\V1\Intelligence\IntelligenceCenterController;
 use App\Http\Controllers\Api\V1\Notification\NotificationController;
 use App\Http\Controllers\Api\V1\Public\PublicController;
+use App\Http\Controllers\Api\V1\Public\PublicEmergencyDirectoryController;
 use App\Http\Controllers\Api\V1\User\UserPortalController;
 use App\Http\Controllers\Api\V1\User\UserPreparednessController;
 use App\Http\Controllers\Api\V1\User\UserReportController;
@@ -116,6 +118,8 @@ Route::prefix('public')->group(function () {
     Route::get('/data-sources', [PublicController::class, 'dataSources'])->name('api.public.data-sources');
     Route::get('/shelters', [PublicController::class, 'shelters'])->name('api.public.shelters');
     Route::get('/shelters/{id}', [PublicController::class, 'shelterDetail'])->name('api.public.shelters.detail');
+    Route::get('/emergency-contacts', [PublicEmergencyDirectoryController::class, 'index'])->name('api.public.emergency-contacts.index');
+    Route::get('/emergency-contacts/{idOrSlug}', [PublicEmergencyDirectoryController::class, 'show'])->name('api.public.emergency-contacts.show');
     Route::post('/reports', [PublicController::class, 'submitReport'])->middleware(['throttle:public-report'])->name('api.public.reports.submit');
     Route::get('/reports/{id}', [PublicController::class, 'checkReportStatus'])->name('api.public.reports.status');
 });
@@ -263,6 +267,30 @@ Route::prefix('admin')->middleware(['auth:sanctum', 'role:admin'])->group(functi
     Route::put('/shelters/{id}', [AdminShelterController::class, 'update'])->name('api.admin.shelters.update');
     Route::put('/shelters/{id}/status', [AdminShelterController::class, 'updateStatus'])->name('api.admin.shelters.update-status');
     Route::delete('/shelters/{id}', [AdminShelterController::class, 'destroy'])->name('api.admin.shelters.destroy');
+});
+
+// ==========================================
+// 5.5 EMERGENCY DIRECTORY MANAGEMENT (Admin: Full CRUD; Intelligence: Read-Only)
+// ==========================================
+Route::prefix('admin/emergency-contacts')->middleware(['auth:sanctum', 'role:admin,intelligence'])->group(function () {
+    Route::get('/', [AdminEmergencyDirectoryController::class, 'index'])->name('api.admin.emergency-contacts.index');
+    Route::get('/{id}', [AdminEmergencyDirectoryController::class, 'show'])->name('api.admin.emergency-contacts.show');
+
+    // Mutating operations strictly restricted to role:admin
+    Route::middleware('role:admin')->group(function () {
+        Route::post('/', [AdminEmergencyDirectoryController::class, 'store'])->name('api.admin.emergency-contacts.store');
+        Route::put('/{id}', [AdminEmergencyDirectoryController::class, 'update'])->name('api.admin.emergency-contacts.update');
+        Route::delete('/{id}', [AdminEmergencyDirectoryController::class, 'destroy'])->name('api.admin.emergency-contacts.destroy');
+        Route::patch('/{id}/publication', [AdminEmergencyDirectoryController::class, 'updatePublicationStatus'])->name('api.admin.emergency-contacts.publication');
+        Route::patch('/{id}/verification', [AdminEmergencyDirectoryController::class, 'updateVerificationStatus'])->name('api.admin.emergency-contacts.verification');
+
+        // Channel endpoints
+        Route::post('/{contactId}/channels', [AdminEmergencyDirectoryController::class, 'storeChannel'])->name('api.admin.emergency-contacts.channels.store');
+        Route::put('/{contactId}/channels/{channelId}', [AdminEmergencyDirectoryController::class, 'updateChannel'])->name('api.admin.emergency-contacts.channels.update');
+        Route::delete('/{contactId}/channels/{channelId}', [AdminEmergencyDirectoryController::class, 'destroyChannel'])->name('api.admin.emergency-contacts.channels.destroy');
+        Route::patch('/{contactId}/channels/{channelId}/primary', [AdminEmergencyDirectoryController::class, 'setPrimaryChannel'])->name('api.admin.emergency-contacts.channels.primary');
+        Route::patch('/{contactId}/channels/{channelId}/toggle', [AdminEmergencyDirectoryController::class, 'toggleChannelActive'])->name('api.admin.emergency-contacts.channels.toggle');
+    });
 });
 
 // ==========================================
