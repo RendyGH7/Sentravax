@@ -779,116 +779,165 @@ export const HomePage: React.FC = () => {
         whileInView={{ opacity: 1, y: 0 }}
         viewport={{ once: true, margin: '-20px' }}
         transition={{ duration: 0.6, ease: [0.16, 1, 0.3, 1] }}
-        className="relative py-8 sm:py-10 border-y border-neutral-800/60 overflow-hidden"
+        className="relative py-10 sm:py-12 border-y border-neutral-800/70 overflow-hidden"
       >
         {/* Subtle accent hairline gradients along the borders */}
-        <div className="absolute top-0 inset-x-0 h-px bg-gradient-to-r from-transparent via-neutral-600/30 to-transparent pointer-events-none" />
-        <div className="absolute bottom-0 inset-x-0 h-px bg-gradient-to-r from-transparent via-neutral-600/30 to-transparent pointer-events-none" />
+        <div className="absolute top-0 inset-x-0 h-px bg-gradient-to-r from-transparent via-neutral-700/40 to-transparent pointer-events-none" />
+        <div className="absolute bottom-0 inset-x-0 h-px bg-gradient-to-r from-transparent via-neutral-700/40 to-transparent pointer-events-none" />
 
-        <div className="grid grid-cols-2 lg:grid-cols-4 gap-6 lg:gap-0">
+        <div className="grid grid-cols-2 lg:grid-cols-4 gap-8 lg:gap-0">
           {/* Kolom 1: Cakupan Wilayah Nasional */}
-          <div className="group relative p-4 sm:p-6 lg:p-7 rounded-2xl hover:bg-neutral-800/15 transition-all duration-300 lg:border-r border-neutral-800/60 flex flex-col justify-between cursor-default">
-            <div className="absolute -top-4 left-6 w-24 h-24 bg-sky-500/10 blur-[36px] rounded-full opacity-0 group-hover:opacity-100 transition-opacity duration-500 pointer-events-none" />
-            <div className="flex items-center gap-2 mb-3">
-              <span className="text-[11px] font-mono font-medium text-neutral-500 group-hover:text-sky-400 transition-colors">
-                01
+          <div className="group relative px-4 sm:px-6 lg:px-8 py-2 flex flex-col justify-between cursor-default transition-all duration-300">
+            {/* Ambient soft glow */}
+            <div className="absolute -top-6 left-1/2 -translate-x-1/2 w-32 h-20 bg-sky-500/10 blur-[40px] rounded-full opacity-40 group-hover:opacity-80 transition-opacity duration-500 pointer-events-none" />
+            
+            {/* Minimal Creative Accent Pill */}
+            <div className="flex items-center gap-1.5 mb-3">
+              <span className="w-1.5 h-1.5 rounded-full bg-sky-400 shadow-[0_0_8px_rgba(56,189,248,0.8)] animate-pulse" />
+              <span className="text-[10px] sm:text-[11px] font-mono font-semibold tracking-wider uppercase text-sky-400/90">
+                Cakupan Wilayah
               </span>
-              <span className="w-4 h-px bg-neutral-800 group-hover:w-8 group-hover:bg-sky-400/50 transition-all duration-300" />
             </div>
-            <div className="relative">
+
+            {/* Counter Value */}
+            <div className="relative group-hover:-translate-y-0.5 transition-transform duration-300">
               <AnimatedCounter
                 end={514}
                 duration={2400}
-                className="text-3xl sm:text-4xl lg:text-5xl font-mono font-black tracking-tight text-white group-hover:text-white transition-colors"
+                className="text-3xl sm:text-4xl lg:text-5xl font-mono font-black tracking-tight bg-gradient-to-b from-white via-neutral-100 to-sky-200/90 bg-clip-text text-transparent"
               />
             </div>
-            <div className="mt-2.5 space-y-0.5">
+
+            {/* Labels */}
+            <div className="mt-3 space-y-1">
               <div className="text-sm sm:text-base font-semibold text-neutral-200 group-hover:text-white transition-colors">
                 Kabupaten &amp; Kota
               </div>
-              <div className="text-xs text-neutral-500 group-hover:text-neutral-400 transition-colors">
+              <div className="text-xs text-neutral-400 font-medium">
                 38 Provinsi Terintegrasi
               </div>
             </div>
+
+            {/* Bottom accent glow underline */}
+            <div className="mt-4 h-0.5 w-6 rounded-full bg-sky-400/40 opacity-0 group-hover:opacity-100 group-hover:w-12 transition-all duration-300" />
+
+            {/* Elegant vertical separator */}
+            <div className="hidden lg:block absolute right-0 top-1/2 -translate-y-1/2 h-20 w-px bg-gradient-to-b from-transparent via-neutral-800 to-transparent" />
           </div>
 
           {/* Kolom 2: Teritorial Kepulauan */}
-          <div className="group relative p-4 sm:p-6 lg:p-7 rounded-2xl hover:bg-neutral-800/15 transition-all duration-300 lg:border-r border-neutral-800/60 flex flex-col justify-between cursor-default">
-            <div className="absolute -top-4 left-6 w-24 h-24 bg-indigo-500/10 blur-[36px] rounded-full opacity-0 group-hover:opacity-100 transition-opacity duration-500 pointer-events-none" />
-            <div className="flex items-center gap-2 mb-3">
-              <span className="text-[11px] font-mono font-medium text-neutral-500 group-hover:text-indigo-400 transition-colors">
-                02
+          <div className="group relative px-4 sm:px-6 lg:px-8 py-2 flex flex-col justify-between cursor-default transition-all duration-300">
+            {/* Ambient soft glow */}
+            <div className="absolute -top-6 left-1/2 -translate-x-1/2 w-32 h-20 bg-indigo-500/10 blur-[40px] rounded-full opacity-40 group-hover:opacity-80 transition-opacity duration-500 pointer-events-none" />
+            
+            {/* Minimal Creative Accent Pill */}
+            <div className="flex items-center gap-1.5 mb-3">
+              <span className="w-1.5 h-1.5 rounded-full bg-indigo-400 shadow-[0_0_8px_rgba(129,140,248,0.8)] animate-pulse" />
+              <span className="text-[10px] sm:text-[11px] font-mono font-semibold tracking-wider uppercase text-indigo-400/90">
+                Teritorial Bahari
               </span>
-              <span className="w-4 h-px bg-neutral-800 group-hover:w-8 group-hover:bg-indigo-400/50 transition-all duration-300" />
             </div>
-            <div className="relative">
+
+            {/* Counter Value */}
+            <div className="relative group-hover:-translate-y-0.5 transition-transform duration-300">
               <AnimatedCounter
                 end={17508}
                 duration={2800}
-                className="text-3xl sm:text-4xl lg:text-5xl font-mono font-black tracking-tight text-white group-hover:text-white transition-colors"
+                className="text-3xl sm:text-4xl lg:text-5xl font-mono font-black tracking-tight bg-gradient-to-b from-white via-neutral-100 to-indigo-200/90 bg-clip-text text-transparent"
               />
             </div>
-            <div className="mt-2.5 space-y-0.5">
+
+            {/* Labels */}
+            <div className="mt-3 space-y-1">
               <div className="text-sm sm:text-base font-semibold text-neutral-200 group-hover:text-white transition-colors">
                 Pulau Nusantara
               </div>
-              <div className="text-xs text-neutral-500 group-hover:text-neutral-400 transition-colors">
+              <div className="text-xs text-neutral-400 font-medium">
                 Zona Maritim &amp; Pesisir
               </div>
             </div>
+
+            {/* Bottom accent glow underline */}
+            <div className="mt-4 h-0.5 w-6 rounded-full bg-indigo-400/40 opacity-0 group-hover:opacity-100 group-hover:w-12 transition-all duration-300" />
+
+            {/* Elegant vertical separator */}
+            <div className="hidden lg:block absolute right-0 top-1/2 -translate-y-1/2 h-20 w-px bg-gradient-to-b from-transparent via-neutral-800 to-transparent" />
           </div>
 
           {/* Kolom 3: Pemetaan Risiko Kecamatan */}
-          <div className="group relative p-4 sm:p-6 lg:p-7 rounded-2xl hover:bg-neutral-800/15 transition-all duration-300 lg:border-r border-neutral-800/60 flex flex-col justify-between cursor-default">
-            <div className="absolute -top-4 left-6 w-24 h-24 bg-amber-500/10 blur-[36px] rounded-full opacity-0 group-hover:opacity-100 transition-opacity duration-500 pointer-events-none" />
-            <div className="flex items-center gap-2 mb-3">
-              <span className="text-[11px] font-mono font-medium text-neutral-500 group-hover:text-amber-400 transition-colors">
-                03
+          <div className="group relative px-4 sm:px-6 lg:px-8 py-2 flex flex-col justify-between cursor-default transition-all duration-300">
+            {/* Ambient soft glow */}
+            <div className="absolute -top-6 left-1/2 -translate-x-1/2 w-32 h-20 bg-amber-500/10 blur-[40px] rounded-full opacity-40 group-hover:opacity-80 transition-opacity duration-500 pointer-events-none" />
+            
+            {/* Minimal Creative Accent Pill */}
+            <div className="flex items-center gap-1.5 mb-3">
+              <span className="w-1.5 h-1.5 rounded-full bg-amber-400 shadow-[0_0_8px_rgba(251,191,36,0.8)] animate-pulse" />
+              <span className="text-[10px] sm:text-[11px] font-mono font-semibold tracking-wider uppercase text-amber-400/90">
+                Pemetaan Risiko
               </span>
-              <span className="w-4 h-px bg-neutral-800 group-hover:w-8 group-hover:bg-amber-400/50 transition-all duration-300" />
             </div>
-            <div className="relative">
+
+            {/* Counter Value */}
+            <div className="relative group-hover:-translate-y-0.5 transition-transform duration-300">
               <AnimatedCounter
                 end={7288}
                 duration={2600}
-                className="text-3xl sm:text-4xl lg:text-5xl font-mono font-black tracking-tight text-white group-hover:text-white transition-colors"
+                className="text-3xl sm:text-4xl lg:text-5xl font-mono font-black tracking-tight bg-gradient-to-b from-white via-amber-100 to-amber-300/90 bg-clip-text text-transparent"
               />
             </div>
-            <div className="mt-2.5 space-y-0.5">
+
+            {/* Labels */}
+            <div className="mt-3 space-y-1">
               <div className="text-sm sm:text-base font-semibold text-neutral-200 group-hover:text-white transition-colors">
                 Kecamatan Terdata
               </div>
-              <div className="text-xs text-neutral-500 group-hover:text-neutral-400 transition-colors">
-                Pemetaan Multi-Risiko
+              <div className="text-xs text-neutral-400 font-medium">
+                Pusat Analisis Multi-Bahaya
               </div>
             </div>
+
+            {/* Bottom accent glow underline */}
+            <div className="mt-4 h-0.5 w-6 rounded-full bg-amber-400/40 opacity-0 group-hover:opacity-100 group-hover:w-12 transition-all duration-300" />
+
+            {/* Elegant vertical separator */}
+            <div className="hidden lg:block absolute right-0 top-1/2 -translate-y-1/2 h-20 w-px bg-gradient-to-b from-transparent via-neutral-800 to-transparent" />
           </div>
 
           {/* Kolom 4: Titik Evakuasi & Shelter Terdata */}
-          <div className="group relative p-4 sm:p-6 lg:p-7 rounded-2xl hover:bg-neutral-800/15 transition-all duration-300 flex flex-col justify-between cursor-default">
-            <div className="absolute -top-4 left-6 w-24 h-24 bg-emerald-500/10 blur-[36px] rounded-full opacity-0 group-hover:opacity-100 transition-opacity duration-500 pointer-events-none" />
-            <div className="flex items-center gap-2 mb-3">
-              <span className="text-[11px] font-mono font-medium text-neutral-500 group-hover:text-emerald-400 transition-colors">
-                04
+          <div className="group relative px-4 sm:px-6 lg:px-8 py-2 flex flex-col justify-between cursor-default transition-all duration-300">
+            {/* Ambient soft glow */}
+            <div className="absolute -top-6 left-1/2 -translate-x-1/2 w-32 h-20 bg-emerald-500/10 blur-[40px] rounded-full opacity-40 group-hover:opacity-80 transition-opacity duration-500 pointer-events-none" />
+            
+            {/* Minimal Creative Accent Pill */}
+            <div className="flex items-center gap-1.5 mb-3">
+              <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 shadow-[0_0_8px_rgba(52,211,153,0.8)] animate-pulse" />
+              <span className="text-[10px] sm:text-[11px] font-mono font-semibold tracking-wider uppercase text-emerald-400/90">
+                Shelter &amp; Posko
               </span>
-              <span className="w-4 h-px bg-neutral-800 group-hover:w-8 group-hover:bg-emerald-400/50 transition-all duration-300" />
             </div>
-            <div className="relative">
+
+            {/* Counter Value */}
+            <div className="relative group-hover:-translate-y-0.5 transition-transform duration-300">
               <AnimatedCounter
                 end={14850}
                 suffix="+"
                 duration={2800}
-                className="text-3xl sm:text-4xl lg:text-5xl font-mono font-black tracking-tight text-white group-hover:text-white transition-colors"
+                className="text-3xl sm:text-4xl lg:text-5xl font-mono font-black tracking-tight bg-gradient-to-b from-white via-emerald-100 to-emerald-300/90 bg-clip-text text-transparent"
               />
             </div>
-            <div className="mt-2.5 space-y-0.5">
+
+            {/* Labels */}
+            <div className="mt-3 space-y-1">
               <div className="text-sm sm:text-base font-semibold text-neutral-200 group-hover:text-white transition-colors">
                 Titik Kumpul &amp; Posko
               </div>
-              <div className="text-xs text-neutral-500 group-hover:text-neutral-400 transition-colors">
-                Infrastruktur Shelter Warga
+              <div className="text-xs text-neutral-400 font-medium">
+                Infrastruktur Evakuasi Warga
               </div>
             </div>
+
+            {/* Bottom accent glow underline */}
+            <div className="mt-4 h-0.5 w-6 rounded-full bg-emerald-400/40 opacity-0 group-hover:opacity-100 group-hover:w-12 transition-all duration-300" />
           </div>
         </div>
       </motion.section>
