@@ -2,6 +2,7 @@ import React, { useState, useEffect, useCallback, useRef, useMemo, Suspense, laz
 import { Link } from 'react-router-dom';
 import { motion, AnimatePresence } from 'motion/react';
 import { PATHS } from '../../app/router/paths';
+import { useTheme } from '../../app/context/theme-context';
 import { publicService } from '../../services/public-service';
 import { AnimatedCounter } from '../../components/shared/AnimatedCounter';
 import { ScrollWordTitle } from '../../components/shared/ScrollWordTitle';
@@ -431,6 +432,7 @@ const RESCUE_GALLERY_STORIES: RescueStory[] = [
 ];
 
 export const HomePage: React.FC = () => {
+  const { theme } = useTheme();
   // Telemetry & Overview state
   const [overview, setOverview] = useState<PublicOverviewData | null>(null);
   const [overviewLoading, setOverviewLoading] = useState<boolean>(true);
@@ -930,7 +932,7 @@ export const HomePage: React.FC = () => {
             }
           >
             <DisasterMap
-              theme="dark"
+              theme={theme}
               height="520px"
               showFilters={true}
               showLegend={true}
@@ -1495,7 +1497,7 @@ export const HomePage: React.FC = () => {
         {/* Hotline Darurat Nasional (API Synchronized) */}
         <EmergencyHotlineStrip
           variant="bar"
-          theme="dark"
+          theme={theme}
           title="Panggilan Darurat Siaga (1-Klik):"
           subtitle="Saluran darurat nasional terverifikasi resmi"
         />

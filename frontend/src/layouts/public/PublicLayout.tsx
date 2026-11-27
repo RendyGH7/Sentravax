@@ -121,7 +121,7 @@ export const PublicLayout: React.FC = () => {
         transition={{ duration: 0.55, ease: [0.22, 1, 0.36, 1], delay: 0.05 }}
         className="fixed top-0 inset-x-0 z-50 pt-3 sm:pt-4 px-3 sm:px-6 lg:px-8 pointer-events-none transition-all duration-300"
       >
-        <div className="pointer-events-auto max-w-6xl mx-auto h-16 px-4 sm:px-6 rounded-2xl bg-white/90 dark:bg-white/[0.08] hover:bg-white/95 dark:hover:bg-white/[0.12] backdrop-blur-2xl backdrop-saturate-150 border border-neutral-200 dark:border-white/25 shadow-sm dark:shadow-[inset_0_1px_1px_0_rgba(255,255,255,0.4),0_12px_36px_rgba(0,0,0,0.5)] flex items-center justify-between gap-3 transition-all">
+        <div className="pointer-events-auto max-w-6xl mx-auto h-16 px-4 sm:px-6 rounded-2xl bg-white/55 hover:bg-white/65 dark:bg-white/[0.08] dark:hover:bg-white/[0.12] backdrop-blur-2xl backdrop-saturate-150 border border-white/60 dark:border-white/25 shadow-[inset_0_1px_1px_0_rgba(255,255,255,0.85),0_10px_32px_rgba(15,23,42,0.12)] dark:shadow-[inset_0_1px_1px_0_rgba(255,255,255,0.4),0_12px_36px_rgba(0,0,0,0.5)] flex items-center justify-between gap-3 transition-all">
           {/* Brand Logo & Platform Title */}
           <Link to={PATHS.PUBLIC.HOME} className="flex items-center gap-2.5 shrink-0 group">
             <SentravaxLogo size={36} className="transition-transform group-hover:scale-105 shadow-xs" />

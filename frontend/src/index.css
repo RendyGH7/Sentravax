@@ -248,6 +248,11 @@ html.light [class*="bg-\[\#141414\]/"]:not([data-dark-media] *) {
   background-color: #FFFFFF !important;
 }
 
+html.light .from-\[\#111413\] {
+  background-image: none !important;
+  background-color: #F9FAFB !important;
+}
+
 html.light .bg-\[\#181818\]:not([data-dark-media] *),
 html.light .bg-\[\#1e1e1e\]:not([data-dark-media] *),
 html.light .bg-\[\#212121\]:not([data-dark-media] *),
@@ -277,7 +282,7 @@ html.light .border-\[\#222222\] {
   border-color: #E5E7EB !important;
 }
 
-html.light .text-white:not(
+html.light .text-white:not(:where(
   [class*="bg-rose-6"] *,
   [class*="bg-rose-7"] *,
   [class*="bg-rose-6"],
@@ -286,16 +291,18 @@ html.light .text-white:not(
   [class*="bg-\[\#BE123C\]"] *,
   [class*="bg-\[\#DC2626\]"],
   [class*="bg-\[\#DC2626\]"] *,
+  [class*="bg-\[\#111827\]"],
+  [class*="bg-\[\#111827\]"] *,
   [class*="bg-emerald-6"],
   [class*="bg-emerald-7"],
   [class*="bg-red-6"],
   [class*="bg-amber-6"],
   [data-dark-media],
   [data-dark-media] *
-),
-html.light .text-\[\#F5F5F5\]:not([data-dark-media] *),
-html.light .text-neutral-100:not([data-dark-media] *),
-html.light .text-neutral-200:not([data-dark-media] *) {
+)),
+html.light .text-\[\#F5F5F5\]:not(:where([data-dark-media] *)),
+html.light .text-neutral-100:not(:where([data-dark-media] *)),
+html.light .text-neutral-200:not(:where([data-dark-media] *)) {
   color: #111827 !important;
 }
 
@@ -317,6 +324,9 @@ html.light .text-\[\#8A8A8A\]:not([data-dark-media] *) {
 /* Soft crimson/rose pills in Light Mode */
 html.light [class*="bg-rose-950"]:not([data-dark-media] *) {
   background-color: #FFF1F2 !important;
+}
+html.light [class*="text-rose-200"]:not([data-dark-media] *) {
+  color: #9F1239 !important;
 }
 html.light .text-rose-300:not([data-dark-media] *),
 html.light .text-rose-400:not([data-dark-media] *) {
@@ -384,14 +394,22 @@ html.dark .text-\[\#991B1B\] {
   color: #FDA4AF !important;
 }
 
-/* Brand Crimson Page & Section Titles (harmonious in both Light & Dark Mode) */
-html.light main h1:not([data-dark-media] *):not([class*="bg-rose-"] *):not([class*="bg-red-"] *):not([class*="bg-amber-"] *):not([class*="bg-emerald-"] *),
-html.light main h2:not([data-dark-media] *):not([class*="bg-rose-"] *):not([class*="bg-red-"] *):not([class*="bg-amber-"] *):not([class*="bg-emerald-"] *) {
+/* Brand Crimson Page Titles, Section Titles & Subheadings (Light & Dark Mode) */
+html.light #root h1:not(:where([data-dark-media], [data-dark-media] *, [class*="bg-rose-"] *, [class*="bg-red-"] *, [class*="bg-amber-"] *, [class*="bg-emerald-"] *)),
+html.light #root h2:not(:where([data-dark-media], [data-dark-media] *, [class*="bg-rose-"] *, [class*="bg-red-"] *, [class*="bg-amber-"] *, [class*="bg-emerald-"] *)) {
   color: #BE123C !important;
 }
 
-html.dark main h1:not([data-dark-media] *):not([class*="bg-rose-"] *):not([class*="bg-red-"] *):not([class*="bg-amber-"] *):not([class*="bg-emerald-"] *),
-html.dark main h2:not([data-dark-media] *):not([class*="bg-rose-"] *):not([class*="bg-red-"] *):not([class*="bg-amber-"] *):not([class*="bg-emerald-"] *) {
+html.light #root h3:not(:where([data-dark-media], [data-dark-media] *, [class*="bg-rose-"] *, [class*="bg-red-"] *, [class*="bg-amber-"] *, [class*="bg-emerald-"] *)) {
+  color: #9F1239 !important;
+}
+
+html.dark #root h1:not(:where([data-dark-media], [data-dark-media] *, [class*="bg-rose-"] *, [class*="bg-red-"] *, [class*="bg-amber-"] *, [class*="bg-emerald-"] *)),
+html.dark #root h2:not(:where([data-dark-media], [data-dark-media] *, [class*="bg-rose-"] *, [class*="bg-red-"] *, [class*="bg-amber-"] *, [class*="bg-emerald-"] *)) {
   color: #FB7185 !important;
+}
+
+html.dark #root h3:not(:where([data-dark-media], [data-dark-media] *, [class*="bg-rose-"] *, [class*="bg-red-"] *, [class*="bg-amber-"] *, [class*="bg-emerald-"] *)) {
+  color: #FDA4AF !important;
 }
 
