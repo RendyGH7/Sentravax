@@ -13,7 +13,6 @@ import {
   MapPin,
   ChevronRight,
   ChevronLeft,
-  CheckCircle2,
   AlertCircle,
   RefreshCw,
   Layers,
@@ -319,11 +318,7 @@ export const PublicWarningsPage: React.FC = () => {
       <section className="bg-[#0d0f0e] border-b border-neutral-800 pt-8 pb-10 px-4 sm:px-6 lg:px-8">
         <div className="max-w-6xl mx-auto">
           <div className="flex flex-col md:flex-row md:items-end justify-between gap-6">
-            <div className="space-y-3 max-w-3xl">
-              <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-neutral-900 border border-neutral-700 text-amber-400 text-xs font-mono font-bold tracking-wider uppercase">
-                <BellRing className="w-3.5 h-3.5 text-amber-400" />
-                <span>PUSAT INFORMASI PERINGATAN DINI PUBLIK</span>
-              </div>
+            <div className="space-y-2 max-w-3xl">
               <ScrollWordTitle
                 as="h1"
                 className="text-2xl sm:text-3xl lg:text-4xl font-black tracking-tight text-white"
@@ -331,7 +326,7 @@ export const PublicWarningsPage: React.FC = () => {
                 Pusat Peringatan Dini Kebencanaan
               </ScrollWordTitle>
               <p className="text-xs sm:text-sm text-neutral-300 leading-relaxed font-normal">
-                Agregasi peringatan dini resmi dan advisori kewaspadaan bahaya kebencanaan untuk membantu masyarakat mempersiapkan langkah antisipasi dan keselamatan.
+                Peringatan dini resmi dan advisori kewaspadaan bahaya kebencanaan untuk membantu masyarakat mengambil langkah antisipasi.
               </p>
             </div>
 
@@ -342,7 +337,7 @@ export const PublicWarningsPage: React.FC = () => {
                 className="inline-flex items-center gap-2 px-4 py-2.5 rounded-xl bg-neutral-900 border border-neutral-700 text-xs sm:text-sm font-bold text-neutral-200 hover:text-white hover:bg-neutral-800 transition-colors shadow-xs"
               >
                 <Compass className="w-4 h-4 text-rose-400" />
-                <span>Cek Risiko di SIAGA PERSONAL</span>
+                <span>Cek Risiko Lokasi</span>
               </Link>
               <Link
                 to={PATHS.PUBLIC.DISASTERS}
@@ -354,61 +349,22 @@ export const PublicWarningsPage: React.FC = () => {
             </div>
           </div>
 
-          {/* Quick Metrics Bar */}
-          <div className="mt-8 grid grid-cols-2 sm:grid-cols-4 gap-3 sm:gap-4">
-            {[
-              { icon: <BellRing className="w-5 h-5" />, color: 'text-rose-400', label: 'Peringatan Terdata', value: `${totalAlerts} Peringatan` },
-              { icon: <Radio className="w-5 h-5" />, color: 'text-indigo-400', label: 'Cakupan Siaran', value: 'Multi-Tingkat' },
-              { icon: <ShieldAlert className="w-5 h-5" />, color: 'text-amber-400', label: 'Status Peringatan', value: `${alerts.filter((a) => a.is_active || a.status === 'active').length} Peringatan Aktif`, amber: true },
-              { icon: <CheckCircle2 className="w-5 h-5 text-rose-400" />, color: 'text-rose-400', label: 'Sumber Pembaruan', value: 'Sinkronisasi Berkala', mono: true },
-            ].map((item, i) => (
-              <motion.div
-                key={i}
-                initial={{ opacity: 0, y: 16 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                viewport={{ once: true }}
-                transition={{ duration: 0.4, ease: [0.22, 1, 0.36, 1], delay: i * 0.08 }}
-                whileHover={{ y: -3, transition: { duration: 0.18 } }}
-                className="bg-[#121614] p-3.5 sm:p-4 rounded-2xl border border-neutral-800 shadow-xs flex items-center gap-3"
-              >
-                <div className={`w-10 h-10 rounded-xl bg-neutral-900 border border-neutral-700 ${item.color} flex items-center justify-center font-bold shrink-0`}>
-                  {item.icon}
-                </div>
-                <div>
-                  <p className="text-[11px] font-semibold text-neutral-400">{item.label}</p>
-                  <p className={`${item.mono ? 'text-xs sm:text-sm font-mono font-bold text-rose-400' : item.amber ? 'text-sm sm:text-base font-black text-amber-400' : 'text-lg font-black text-white'}`}>{item.value}</p>
-                </div>
-              </motion.div>
-            ))}
-          </div>
-
-          {/* Classification & Provenance Distinction Legend */}
-          <div className="mt-6 p-4 rounded-2xl bg-[#121614] border border-neutral-800 shadow-xs">
-            <p className="text-[11px] font-mono font-bold text-neutral-400 uppercase tracking-wider mb-2.5">
-              Klasifikasi Jenis Data &amp; Asal Informasi:
-            </p>
-            <div className="grid grid-cols-2 sm:grid-cols-5 gap-2 text-xs">
-              <div className="p-3 rounded-xl bg-neutral-900 border border-neutral-800">
-                <span className="font-bold text-rose-300 block text-[11px]">Official Warning (CAP)</span>
-                <span className="text-[10px] text-neutral-400">Peringatan resmi BMKG / BNPB terverifikasi</span>
-              </div>
-              <div className="p-3 rounded-xl bg-neutral-900 border border-neutral-800">
-                <span className="font-bold text-indigo-300 block text-[11px]">SENTRAVAX Insight</span>
-                <span className="text-[10px] text-neutral-400">Analisis inferensi AI &amp; Risk Engine internal</span>
-              </div>
-              <div className="p-3 rounded-xl bg-neutral-900 border border-neutral-800">
-                <span className="font-bold text-teal-300 block text-[11px]">Observed Data</span>
-                <span className="text-[10px] text-neutral-400">Sensor &amp; telemetri fisik pengamatan langsung</span>
-              </div>
-              <div className="p-3 rounded-xl bg-neutral-900 border border-neutral-800">
-                <span className="font-bold text-amber-300 block text-[11px]">Community Report</span>
-                <span className="text-[10px] text-neutral-400">Laporan warga lapangan terverifikasi</span>
-              </div>
-              <div className="p-3 rounded-xl bg-neutral-900 border border-neutral-800">
-                <span className="font-bold text-neutral-300 block text-[11px]">Simulated Data</span>
-                <span className="text-[10px] text-neutral-400">Data gladi simulasi pengujian kedaruratan</span>
-              </div>
-            </div>
+          {/* Compact Status Bar */}
+          <div className="mt-5 flex flex-wrap items-center gap-4 text-xs text-neutral-400">
+            <span className="inline-flex items-center gap-1.5">
+              <BellRing className="w-3.5 h-3.5 text-rose-400" />
+              <span><strong className="text-white">{totalAlerts}</strong> Peringatan Terdata</span>
+            </span>
+            <span className="text-neutral-700">•</span>
+            <span className="inline-flex items-center gap-1.5">
+              <ShieldAlert className="w-3.5 h-3.5 text-amber-400" />
+              <span><strong className="text-white">{alerts.filter((a) => a.is_active || a.status === 'active').length}</strong> Aktif Berlaku</span>
+            </span>
+            <span className="text-neutral-700">•</span>
+            <span className="inline-flex items-center gap-1.5">
+              <Radio className="w-3.5 h-3.5 text-neutral-400" />
+              <span>Sumber Resmi BMKG / BNPB &amp; Analisis Platform</span>
+            </span>
           </div>
         </div>
       </section>
@@ -490,7 +446,7 @@ export const PublicWarningsPage: React.FC = () => {
                 }}
                 className={`px-3 py-1.5 rounded-xl font-bold whitespace-nowrap transition-all flex items-center gap-1.5 border ${
                   selectedHazardType === 'all'
-                    ? 'bg-amber-700 text-white border-amber-600 shadow-xs'
+                    ? 'bg-rose-700 text-white border-rose-600 shadow-xs'
                     : 'bg-neutral-900 text-neutral-300 border-neutral-700 hover:bg-neutral-800 hover:text-white'
                 }`}
               >
@@ -510,7 +466,7 @@ export const PublicWarningsPage: React.FC = () => {
                     }}
                     className={`px-3 py-1.5 rounded-xl font-bold whitespace-nowrap transition-all flex items-center gap-1.5 border ${
                       isSelected
-                        ? 'bg-amber-700 text-white border-amber-600 shadow-xs'
+                        ? 'bg-rose-700 text-white border-rose-600 shadow-xs'
                         : 'bg-neutral-900 text-neutral-300 border-neutral-700 hover:bg-neutral-800 hover:text-white'
                     }`}
                   >

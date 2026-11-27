@@ -1,4 +1,5 @@
 @import "tailwindcss";
+@custom-variant dark (&:where(.dark, .dark *));
 
 @layer base {
   :root {
@@ -59,6 +60,11 @@
     background-color: #0d0f11;
   }
 
+  html.light {
+    color-scheme: light;
+    background-color: #F9FAFB;
+  }
+
   body {
     margin: 0;
     padding: 0;
@@ -68,6 +74,12 @@
     font-family: var(--font-public);
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
+    transition: background-color 0.2s ease, color 0.2s ease;
+  }
+
+  html.light body {
+    background-color: #F9FAFB;
+    color: #111827;
   }
 
   #root {
@@ -200,5 +212,149 @@ body,
 .font-ops {
   font-family: var(--font-ops);
   font-feature-settings: "cv02", "cv03", "cv04", "cv11";
+}
+
+/* ========================================================================= */
+/* ADAPTIVE LIGHT & DARK MODE SURFACE SYSTEM                                 */
+/* ========================================================================= */
+
+/* Light Mode adaptation for dark-first pages (Public, Auth, Admin, Intel) */
+html.light .bg-\[\#0d0f11\],
+html.light .bg-\[\#0d0f0e\],
+html.light .bg-\[\#0C0C0C\],
+html.light .bg-\[\#0e1110\],
+html.light .bg-\[\#0a0c0b\],
+html.light .bg-\[\#0a0a0a\],
+html.light .bg-\[\#0d0d0d\] {
+  background-color: #F9FAFB !important;
+}
+
+html.light .bg-\[\#121614\],
+html.light .bg-\[\#111413\],
+html.light .bg-\[\#141414\],
+html.light .bg-\[\#161616\],
+html.light .bg-\[\#121212\] {
+  background-color: #FFFFFF !important;
+}
+
+html.light .bg-\[\#181818\],
+html.light .bg-\[\#1e1e1e\],
+html.light .bg-\[\#212121\],
+html.light .bg-\[\#1C1C1C\],
+html.light .bg-neutral-900,
+html.light .bg-neutral-950 {
+  background-color: #F3F4F6 !important;
+}
+
+html.light .border-neutral-800,
+html.light .border-neutral-800\/80,
+html.light .border-neutral-800\/70,
+html.light .border-neutral-800\/60,
+html.light .border-neutral-700,
+html.light .border-neutral-700\/80,
+html.light .border-\[\#262626\],
+html.light .border-\[\#2a2a2a\],
+html.light .border-\[\#2C2C2C\],
+html.light .border-\[\#343434\],
+html.light .border-\[\#383838\],
+html.light .border-\[\#222222\] {
+  border-color: #E5E7EB !important;
+}
+
+html.light .text-white:not(
+  [class*="bg-rose-6"] *,
+  [class*="bg-rose-7"] *,
+  [class*="bg-rose-6"],
+  [class*="bg-rose-7"],
+  [class*="bg-\[\#BE123C\]"],
+  [class*="bg-\[\#BE123C\]"] *,
+  [class*="bg-\[\#DC2626\]"],
+  [class*="bg-\[\#DC2626\]"] *,
+  [class*="bg-emerald-6"],
+  [class*="bg-emerald-7"],
+  [class*="bg-red-6"],
+  [class*="bg-amber-6"]
+),
+html.light .text-\[\#F5F5F5\],
+html.light .text-neutral-100,
+html.light .text-neutral-200 {
+  color: #111827 !important;
+}
+
+html.light .text-neutral-300,
+html.light .text-\[\#D4D4D4\] {
+  color: #374151 !important;
+}
+
+html.light .text-neutral-400,
+html.light .text-\[\#A3A3A3\] {
+  color: #4B5563 !important;
+}
+
+html.light .text-neutral-500,
+html.light .text-\[\#8A8A8A\] {
+  color: #6B7280 !important;
+}
+
+/* Soft crimson/rose pills in Light Mode */
+html.light [class*="bg-rose-950"] {
+  background-color: #FFF1F2 !important;
+}
+html.light .text-rose-300,
+html.light .text-rose-400 {
+  color: #BE123C !important;
+}
+html.light [class*="border-rose-800"],
+html.light [class*="border-rose-900"],
+html.light [class*="border-rose-500"] {
+  border-color: #FECDD3 !important;
+}
+
+/* Scrollbar in Light Mode */
+html.light,
+html.light body,
+html.light * {
+  scrollbar-color: rgba(17, 24, 39, 0.22) #F3F4F6;
+}
+html.light ::-webkit-scrollbar-track,
+html.light ::-webkit-scrollbar-corner {
+  background: #F3F4F6;
+}
+html.light ::-webkit-scrollbar-thumb {
+  background-color: rgba(17, 24, 39, 0.22);
+  border-color: #F3F4F6;
+}
+
+/* Dark Mode adaptation for light-first User Portal */
+html.dark .bg-\[\#F9FAFB\] {
+  background-color: #0C0C0C !important;
+}
+html.dark .bg-\[\#FFFFFF\] {
+  background-color: #161616 !important;
+}
+html.dark .bg-\[\#F3F4F6\] {
+  background-color: #212121 !important;
+}
+html.dark .text-\[\#111827\] {
+  color: #F5F5F5 !important;
+}
+html.dark .text-\[\#4B5563\] {
+  color: #D4D4D4 !important;
+}
+html.dark .text-\[\#6B7280\] {
+  color: #A3A3A3 !important;
+}
+html.dark .border-\[\#E5E7EB\] {
+  border-color: #2C2C2C !important;
+}
+html.dark .bg-\[\#FEF2F2\] {
+  background-color: rgba(136, 19, 55, 0.2) !important;
+}
+html.dark .border-\[\#FECACA\],
+html.dark .border-\[\#FCA5A5\] {
+  border-color: rgba(190, 18, 60, 0.45) !important;
+}
+html.dark .text-\[\#991B1B\] {
+  color: #FDA4AF !important;
 }
 

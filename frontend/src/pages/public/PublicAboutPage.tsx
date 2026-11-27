@@ -22,12 +22,6 @@ export const PublicAboutPage: React.FC = () => {
       {/* 1. TOP HEADER & HOTLINE BAR */}
       <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 pb-4 border-b border-[#262626]">
         <div>
-          <div className="flex items-center gap-2">
-            <span className="w-2.5 h-2.5 rounded-full bg-rose-400 animate-pulse" />
-            <span className="text-[11px] font-mono uppercase text-rose-400 font-bold">
-              ARSITEKTUR & FITUR PLATFORM
-            </span>
-          </div>
           <ScrollWordTitle
             as="h1"
             className="text-2xl sm:text-3xl font-extrabold text-white tracking-tight"
@@ -74,39 +68,33 @@ export const PublicAboutPage: React.FC = () => {
           {[
             {
               icon: <Compass className="w-5 h-5" />,
-              color: 'bg-rose-950/60 text-rose-400 border-rose-500/20',
-              title: 'Emergency Zero-Barrier',
-              desc: 'Pelaporan kejadian darurat publik tanpa hambatan login, dilengkapi deteksi GPS instan dan clustering spasial otomatis.',
+              title: 'Pelaporan Zero-Barrier',
+              desc: 'Pelaporan kejadian darurat publik tanpa login, lengkap dengan deteksi lokasi otomatis.',
             },
             {
               icon: <Layers className="w-5 h-5" />,
-              color: 'bg-blue-950/60 text-blue-400 border-blue-500/20',
-              title: 'PostGIS Spatial Engine',
-              desc: 'Kalkulasi radius ancaman 25 km, spatial buffering, dan korelasi jarak presisi menggunakan geometri geospasial PostgreSQL.',
+              title: 'Pemetaan Risiko Spasial',
+              desc: 'Kalkulasi radius ancaman dan korelasi jarak presisi berbasis PostGIS.',
             },
             {
               icon: <Radio className="w-5 h-5" />,
-              color: 'bg-amber-950/60 text-amber-400 border-amber-500/20',
-              title: 'CAP Inbound & Broadcast',
-              desc: 'Penerimaan dan diseminasi peringatan berstandar Common Alerting Protocol (ITU-T X.1303) dengan deduplikasi in-app.',
+              title: 'Peringatan Dini CAP',
+              desc: 'Diseminasi peringatan resmi berstandar Common Alerting Protocol (ITU-T X.1303).',
             },
             {
               icon: <Cpu className="w-5 h-5" />,
-              color: 'bg-purple-950/60 text-purple-400 border-purple-500/20',
-              title: 'AI Proactive Insights',
-              desc: 'Sintesis bukti bahaya multi-sumber dengan skor keyakinan transparan (High 0.9, Medium 0.7, Low 0.4) dan fallback deterministik.',
+              title: 'Analisis Risiko Berbasis Bukti',
+              desc: 'Sintesis bahaya multi-sumber dengan skor keyakinan transparan dan terukur.',
             },
             {
               icon: <HeartHandshake className="w-5 h-5" />,
-              color: 'bg-rose-950/60 text-rose-400 border-rose-500/20',
               title: 'SIAGA PERSONAL Warga',
-              desc: 'Checklist 13 tas siaga BNPB, rencana darurat keluarga dengan titik kumpul privat, dan pemantauan multi-lokasi.',
+              desc: 'Checklist tas siaga BNPB, kontak darurat keluarga, dan pemantauan wilayah.',
             },
             {
               icon: <Shield className="w-5 h-5" />,
-              color: 'bg-rose-950/60 text-rose-400 border-rose-500/20',
-              title: 'Verified Shelter Registry',
-              desc: 'Direktori shelter dan titik kumpul tervalidasi BPBD dengan kapasitas, fasilitas sanitasi, dan aksesibilitas lansia.',
+              title: 'Direktori Shelter Resmi',
+              desc: 'Katalog shelter dan titik kumpul tervalidasi dengan informasi kapasitas dan aksesibilitas.',
             },
           ].map((item, idx) => (
             <motion.div
@@ -116,9 +104,9 @@ export const PublicAboutPage: React.FC = () => {
               viewport={{ once: true, margin: '-30px' }}
               transition={{ duration: 0.45, ease: [0.22, 1, 0.36, 1], delay: (idx % 3) * 0.08 }}
               whileHover={{ y: -4, transition: { duration: 0.2 } }}
-              className="p-5 rounded-2xl bg-[#141414] border border-[#262626] hover:border-rose-500/40 shadow-sm space-y-2 transition-colors cursor-default"
+              className="p-5 rounded-2xl bg-[#141414] border border-[#262626] hover:border-rose-500/40 shadow-sm space-y-2.5 transition-colors cursor-default"
             >
-              <div className={`w-9 h-9 rounded-xl flex items-center justify-center font-bold border ${item.color}`}>
+              <div className="w-9 h-9 rounded-xl flex items-center justify-center bg-neutral-900 border border-neutral-800 text-rose-400">
                 {item.icon}
               </div>
               <h3 className="text-sm font-bold text-white">{item.title}</h3>

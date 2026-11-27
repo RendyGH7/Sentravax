@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { Outlet, Link, useLocation, useNavigate } from 'react-router-dom';
 import { PATHS } from '../../app/router/paths';
 import { useAuth } from '../../app/context/useAuth';
+import { ThemeToggle } from '../../components/shared/ThemeToggle';
 import { 
   ShieldAlert, 
   LayoutDashboard, 
@@ -170,6 +171,7 @@ export const AdminLayout: React.FC = () => {
           </div>
 
           <div className="flex items-center gap-3">
+            <ThemeToggle />
             <div className="hidden md:flex items-center gap-2 text-xs font-mono text-[#D4D4D4] bg-[#212121] px-3.5 py-1.5 rounded-lg border border-[#2C2C2C]">
               <Cpu className="w-3.5 h-3.5 text-[#10B981]" />
               <span>Sistem: PostGIS Aktif (Latensi 42ms)</span>

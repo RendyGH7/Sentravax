@@ -4,6 +4,7 @@ import { PATHS } from '../../app/router/paths';
 import { useAuth } from '../../app/context/useAuth';
 import { notificationService } from '../../services/notification-service';
 import { SentravaxLogo } from '../../components/shared/SentravaxLogo';
+import { ThemeToggle } from '../../components/shared/ThemeToggle';
 import { 
   LayoutDashboard, 
   FileText, 
@@ -182,6 +183,7 @@ export const UserLayout: React.FC = () => {
           </div>
 
           <div className="flex items-center gap-3">
+            <ThemeToggle />
             <Link
               to={PATHS.USER.NOTIFICATIONS}
               className="relative p-2 text-[#4B5563] hover:text-[#111827] rounded-lg hover:bg-[#F3F4F6]"

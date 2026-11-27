@@ -256,10 +256,6 @@ export const PublicEducationPage: React.FC = () => {
       <section className="space-y-4">
         <div className="flex flex-col md:flex-row md:items-end justify-between gap-4">
           <div className="space-y-1">
-            <div className="flex items-center gap-2">
-              <span className="text-[10px] font-mono font-bold px-2.5 py-0.5 rounded-md bg-rose-950/80 text-rose-300 border border-rose-800/60">SIAP SIAGA</span>
-              <span className="text-[10px] font-mono font-bold px-2.5 py-0.5 rounded-md bg-neutral-900 text-neutral-300 border border-neutral-700">STANDAR BNPB &amp; BMKG</span>
-            </div>
             <h1 className="text-2xl sm:text-3xl font-black text-white tracking-tight">
               Pusat Edukasi & Mitigasi Multi-Hazard
             </h1>
@@ -301,7 +297,7 @@ export const PublicEducationPage: React.FC = () => {
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
                 placeholder="Cari panduan keselamatan (contoh: gempa, listrik, tas siaga, banjir)..."
-                className="w-full pl-10 pr-4 py-2 text-xs sm:text-sm rounded-xl border border-neutral-700 bg-rose-700 text-white placeholder:text-neutral-500 focus:border-rose-500 focus:ring-1 focus:ring-rose-500 outline-none transition-colors"
+                className="w-full pl-10 pr-4 py-2.5 text-xs sm:text-sm rounded-xl border border-neutral-700 bg-[#0a0c0b] text-white placeholder:text-neutral-500 focus:border-rose-500 focus:ring-1 focus:ring-rose-500/40 outline-none transition-colors"
               />
               {searchQuery && (
                 <button

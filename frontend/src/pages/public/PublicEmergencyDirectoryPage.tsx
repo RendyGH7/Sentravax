@@ -54,46 +54,46 @@ const SCOPE_OPTIONS: Array<{ value: EmergencyDirectoryScope | 'all'; label: stri
 const CATEGORY_META: Record<EmergencyDirectoryCategory, { label: string; badgeClass: string }> = {
   disaster_management: {
     label: 'Penanggulangan Bencana',
-    badgeClass: 'bg-rose-950/80 text-rose-300 border-rose-800/60',
+    badgeClass: 'bg-rose-950/50 text-rose-300 border-rose-900/50',
   },
   sar: {
     label: 'Pencarian & Pertolongan (SAR)',
-    badgeClass: 'bg-amber-950/80 text-amber-300 border-amber-800/60',
+    badgeClass: 'bg-rose-950/50 text-rose-300 border-rose-900/50',
   },
   police: {
     label: 'Kepolisian & Keamanan',
-    badgeClass: 'bg-blue-950/80 text-blue-300 border-blue-800/60',
+    badgeClass: 'bg-rose-950/50 text-rose-300 border-rose-900/50',
   },
   medical: {
     label: 'Gawat Darurat Medis',
-    badgeClass: 'bg-rose-950/80 text-rose-300 border-rose-800/60',
+    badgeClass: 'bg-rose-950/50 text-rose-300 border-rose-900/50',
   },
   fire: {
     label: 'Pemadam Kebakaran',
-    badgeClass: 'bg-orange-950/80 text-orange-300 border-orange-800/60',
+    badgeClass: 'bg-rose-950/50 text-rose-300 border-rose-900/50',
   },
   red_cross: {
     label: 'Palang Merah & Donor',
-    badgeClass: 'bg-red-950/80 text-red-300 border-red-800/60',
+    badgeClass: 'bg-rose-950/50 text-rose-300 border-rose-900/50',
   },
   other: {
     label: 'Layanan Darurat Lainnya',
-    badgeClass: 'bg-neutral-800 text-neutral-300 border-neutral-700',
+    badgeClass: 'bg-neutral-900 text-neutral-300 border-neutral-700',
   },
 };
 
 const SCOPE_META: Record<EmergencyDirectoryScope, { label: string; badgeClass: string }> = {
   national: {
     label: 'Nasional',
-    badgeClass: 'bg-purple-950/70 text-purple-300 border-purple-800/50',
+    badgeClass: 'bg-neutral-900 text-neutral-300 border-neutral-700',
   },
   provincial: {
     label: 'Provinsi',
-    badgeClass: 'bg-sky-950/70 text-sky-300 border-sky-800/50',
+    badgeClass: 'bg-neutral-900 text-neutral-300 border-neutral-700',
   },
   regency: {
     label: 'Kabupaten/Kota',
-    badgeClass: 'bg-teal-950/70 text-teal-300 border-teal-800/50',
+    badgeClass: 'bg-neutral-900 text-neutral-300 border-neutral-700',
   },
 };
 
@@ -468,41 +468,13 @@ export const PublicEmergencyDirectoryPage: React.FC = () => {
       {/* ========================================================================= */}
       {/* 1. HERO & DIRECTORY TITLE                                                 */}
       {/* ========================================================================= */}
-      <section aria-labelledby="directory-heading" className="space-y-4">
-        <div className="flex flex-wrap items-center gap-2">
-          <span className="text-[10px] font-mono font-bold px-2.5 py-0.5 rounded-md bg-rose-950/80 text-rose-300 border border-rose-800/60 uppercase tracking-wider flex items-center gap-1.5">
-            <ShieldCheck className="w-3.5 h-3.5 text-rose-400" />
-            DIREKTORI RESMI OTORITAS
-          </span>
-          <span className="text-[10px] font-mono text-neutral-400 px-2 py-0.5 rounded-md bg-neutral-900 border border-neutral-800">
-            Terverifikasi Backend
-          </span>
-        </div>
-
-        <div className="space-y-2">
-          <ScrollWordTitle as="h1" className="text-2xl sm:text-4xl font-black text-white tracking-tight">
-            Direktori Kontak Darurat &amp; Tanggap Bencana
-          </ScrollWordTitle>
-          <p className="text-xs sm:text-sm text-neutral-300 max-w-3xl leading-relaxed">
-            Daftar resmi kontak siaga darurat, pusat komando operasi penanggulangan bencana, pencarian dan pertolongan
-            (SAR), medis, dan kepolisian di Indonesia yang telah terverifikasi secara resmi oleh otoritas platform.
-          </p>
-        </div>
-
-        {/* Verification Guarantee Alert Note */}
-        <div className="p-3.5 rounded-2xl bg-[#121614] border border-neutral-800 text-xs text-neutral-300 flex items-start gap-3">
-          <div className="w-7 h-7 rounded-lg bg-rose-950/80 border border-rose-800/60 flex items-center justify-center text-rose-400 shrink-0 mt-0.5">
-            <CheckCircle2 className="w-4 h-4" />
-          </div>
-          <div className="space-y-0.5">
-            <span className="font-bold text-white block">Jaminan Kredibilitas Informasi:</span>
-            <p className="text-[11px] text-neutral-400 leading-relaxed">
-              Seluruh nomor, tautan, dan kanal komunikasi dalam direktori ini diperoleh langsung dari basis data resmi
-              SENTRAVAX yang lolos uji verifikasi. Data draf, tidak aktif, atau tidak lolos verifikasi tidak pernah
-              ditampilkan.
-            </p>
-          </div>
-        </div>
+      <section aria-labelledby="directory-heading" className="space-y-2">
+        <ScrollWordTitle as="h1" className="text-2xl sm:text-4xl font-black text-white tracking-tight">
+          Direktori Kontak Darurat &amp; Tanggap Bencana
+        </ScrollWordTitle>
+        <p className="text-xs sm:text-sm text-neutral-400 max-w-2xl leading-relaxed">
+          Daftar resmi kontak siaga darurat, SAR, medis, dan kepolisian yang terverifikasi oleh otoritas platform.
+        </p>
       </section>
 
       {/* ========================================================================= */}
@@ -754,7 +726,7 @@ export const PublicEmergencyDirectoryPage: React.FC = () => {
                               <div key={ch.id} className="flex items-center gap-1.5">
                                 {renderChannelAction(ch)}
                                 {ch.is_toll_free && (
-                                  <span className="text-[9px] font-mono px-1.5 py-0.5 rounded bg-rose-950 text-rose-400 border border-rose-800/50">
+                                  <span className="text-[10px] font-mono px-2 py-0.5 rounded bg-emerald-950/40 text-emerald-400 border border-emerald-800/40">
                                     Bebas Pulsa
                                   </span>
                                 )}
