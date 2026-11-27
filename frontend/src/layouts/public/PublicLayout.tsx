@@ -158,9 +158,8 @@ export const PublicLayout: React.FC = () => {
             ))}
           </nav>
 
-          {/* Right Action Tools: Theme, Lapor & Auth */}
+          {/* Right Action Tools: Lapor & Auth */}
           <div className="flex items-center gap-2 shrink-0">
-            <ThemeToggle />
             {/* Quick Report Tool */}
             <Link
               to={PATHS.PUBLIC.REPORT}
@@ -284,6 +283,12 @@ export const PublicLayout: React.FC = () => {
                     <Radio className="w-3.5 h-3.5 text-rose-400" />
                     <span>Intelligence Center</span>
                   </Link>
+
+                  <div className="pt-1 my-1 border-t border-[#262626]" />
+                  <div className="text-[10px] font-bold text-neutral-400 uppercase tracking-wider px-3 py-1">
+                    Tampilan
+                  </div>
+                  <ThemeToggle variant="menu-item" />
                 </div>
               </div>
             </div>

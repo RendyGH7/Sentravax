@@ -33,7 +33,6 @@ import {
   MapPin,
   ShieldCheck,
   Radio,
-  LayoutGrid,
   X,
   Copy,
   Check,
@@ -700,7 +699,7 @@ export const HomePage: React.FC = () => {
       {/* ========================================================================= */}
       {/* 1. HERO: Full-Bleed Edge-to-Edge Cinematic Experience                      */}
       {/* ========================================================================= */}
-      <section className="relative w-full min-h-screen flex flex-col justify-center items-center text-center px-4 sm:px-6 lg:px-8 overflow-hidden bg-[#0d0f11] text-white">
+      <section data-dark-media="true" className="relative w-full min-h-screen flex flex-col justify-center items-center text-center px-4 sm:px-6 lg:px-8 overflow-hidden bg-[#0d0f11] text-white">
         {/* Full-bleed background image with smooth entrance scale */}
         <motion.img
           initial={{ scale: 1.15, opacity: 0 }}
@@ -1141,10 +1140,6 @@ export const HomePage: React.FC = () => {
       {/* ========================================================================= */}
       <section id="galeri-warga" className="space-y-8 pt-6 border-t border-neutral-800">
         <div className="text-center max-w-3xl mx-auto space-y-3">
-          <div className="inline-flex items-center gap-1.5 px-3.5 py-1 rounded-full text-xs font-mono font-bold text-rose-400 bg-neutral-900 border border-neutral-700 uppercase tracking-wider">
-            <LayoutGrid className="w-3.5 h-3.5 text-rose-400" />
-            <span>DOKUMENTASI KESELAMATAN WARGA</span>
-          </div>
           <ScrollWordTitle
             as="h2"
             className="text-2xl sm:text-4xl font-black text-white tracking-tight"
@@ -1221,6 +1216,7 @@ export const HomePage: React.FC = () => {
                   transition: { duration: 0.25, ease: 'easeOut' },
                 }}
                 whileTap={{ scale: 0.99 }}
+                data-dark-media="true"
                 className={`group relative rounded-3xl overflow-hidden ${cardClasses} border border-neutral-800/80 bg-neutral-950 cursor-pointer shadow-lg hover:border-rose-500/40 hover:shadow-xl hover:shadow-rose-950/20 transition-all duration-300 select-none`}
               >
                 {/* Foto Dokumentasi Penuh (Bersih tanpa Teks Awal) */}
@@ -1506,10 +1502,6 @@ export const HomePage: React.FC = () => {
 
         {/* Section Header */}
         <div className="text-center max-w-2xl mx-auto space-y-2.5">
-          <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full text-[11px] font-mono font-bold tracking-wider uppercase bg-rose-950/60 border border-rose-800/60 text-rose-300">
-            <Mail className="w-3.5 h-3.5 text-rose-400" />
-            <span>PUSAT LAYANAN &amp; KOORDINASI PUBLIK</span>
-          </div>
           <ScrollWordTitle
             as="h2"
             className="text-2xl sm:text-3xl font-black text-white tracking-tight"
@@ -1814,33 +1806,41 @@ export const HomePage: React.FC = () => {
       {/* 9. PENUTUP & AJAKAN KESIAPSIAGAAN (Friendly Final Call to Action)          */}
       {/* ========================================================================= */}
       <motion.section
+        data-dark-media="true"
         initial={{ opacity: 0, y: 24 }}
         whileInView={{ opacity: 1, y: 0 }}
         viewport={{ once: true, margin: '-40px' }}
         transition={{ duration: 0.6 }}
-        className="rounded-3xl bg-[#0f1713] border border-neutral-800 text-white p-8 sm:p-12 text-center space-y-6"
+        className="relative overflow-hidden rounded-3xl bg-neutral-950 border border-neutral-800 text-white p-8 sm:p-14 text-center space-y-6"
       >
-        <div className="max-w-2xl mx-auto space-y-3">
-          <span className="inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-full bg-neutral-900 text-rose-300 text-xs font-bold border border-neutral-700">
-            <Shield className="w-3.5 h-3.5 text-rose-400" />
-            <span>Keluarga Indonesia Siaga &amp; Tangguh</span>
-          </span>
+        <img
+          src="/images/cta-preparedness-bg.jpg"
+          alt="Relawan dan kesiapsiagaan darurat bencana"
+          loading="lazy"
+          className="absolute inset-0 w-full h-full object-cover object-center scale-[1.02]"
+        />
+        <div
+          aria-hidden="true"
+          className="absolute inset-0 bg-gradient-to-b from-black/65 via-black/55 to-black/75"
+        />
+
+        <div className="relative z-10 max-w-2xl mx-auto space-y-3">
           <ScrollWordTitle
             as="h2"
-            className="text-2xl sm:text-4xl font-black tracking-tight"
+            className="text-2xl sm:text-4xl font-black tracking-tight text-white drop-shadow-sm"
           >
             Kesiapsiagaan Dimulai dari Langkah Kecil Hari Ini
           </ScrollWordTitle>
-          <p className="text-xs sm:text-sm text-neutral-200 leading-relaxed font-normal">
+          <p className="text-xs sm:text-sm text-neutral-100 leading-relaxed font-normal drop-shadow-sm">
             Jangan tunggu hingga sirine berbunyi. Mulai buat rencana darurat keluarga Anda sekarang juga—bebas biaya, terpercaya, dan dirancang khusus untuk Anda.
           </p>
         </div>
 
-        <div className="flex flex-wrap items-center justify-center gap-3 pt-2">
+        <div className="relative z-10 flex flex-wrap items-center justify-center gap-3 pt-2">
           <motion.div whileHover={{ scale: 1.03 }} whileTap={{ scale: 0.97 }}>
             <Link
               to={PATHS.PUBLIC.PREPAREDNESS}
-              className="inline-flex items-center gap-2 px-6 py-3.5 rounded-2xl bg-rose-700 hover:bg-rose-600 text-white text-xs font-bold transition-colors cursor-pointer shadow-xs"
+              className="inline-flex items-center gap-2 px-6 py-3.5 rounded-2xl bg-rose-700 hover:bg-rose-600 text-white text-xs font-bold transition-colors cursor-pointer shadow-sm"
             >
               <span>Buka Panduan Siaga 72 Jam</span>
               <ArrowRight className="w-3.5 h-3.5" />
@@ -1849,7 +1849,7 @@ export const HomePage: React.FC = () => {
           <motion.div whileHover={{ scale: 1.03 }} whileTap={{ scale: 0.97 }}>
             <Link
               to={PATHS.PUBLIC.REGISTER}
-              className="inline-flex items-center gap-2 px-6 py-3.5 rounded-2xl bg-neutral-900 hover:bg-neutral-800 border border-neutral-700 text-white text-xs font-bold transition-colors cursor-pointer"
+              className="inline-flex items-center gap-2 px-6 py-3.5 rounded-2xl bg-neutral-900/85 hover:bg-neutral-800 backdrop-blur-sm border border-white/20 text-white text-xs font-bold transition-colors cursor-pointer"
             >
               <span>Daftar Akun Warga Siaga</span>
             </Link>
