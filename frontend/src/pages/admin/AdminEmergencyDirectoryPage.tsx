@@ -9,7 +9,6 @@ import {
   RefreshCw,
   AlertCircle,
   MapPin,
-  CheckCircle2,
   Clock,
   ChevronLeft,
   ChevronRight,
@@ -21,6 +20,8 @@ import { adminService } from '../../services/admin-service';
 import { publicService } from '../../services/public-service';
 import { getApiErrorMessage, isRequestCanceled } from '../../lib/api-error';
 import { Modal } from '../../components/ui/Modal';
+import { useAuth } from '../../app/context/useAuth';
+import { AdminEmergencyChannelsSection } from '../../components/admin/AdminEmergencyChannelsSection';
 import type {
   AdminEmergencyContact,
   AdminEmergencyDirectoryStats,
@@ -169,6 +170,9 @@ export const AdminEmergencyDirectoryPage: React.FC = () => {
   const [provinceRegions, setProvinceRegions] = useState<RegionItem[]>([]);
   const [regencyRegions, setRegencyRegions] = useState<RegionItem[]>([]);
 
+  const { user } = useAuth();
+  const canMutateChannels = user?.role === 'admin';
+
   // Detail Modal State
   const [detailContact, setDetailContact] = useState<AdminEmergencyContact | null>(null);
   const [detailLoading, setDetailLoading] = useState<boolean>(false);
@@ -301,6 +305,31 @@ export const AdminEmergencyDirectoryPage: React.FC = () => {
     } catch (err: unknown) {
       if (!isRequestCanceled(err)) {
         setDetailError(getApiErrorMessage(err, 'Gagal memuat detail kontak dari server.'));
+      }
+    } finally {
+      if (!controller.signal.aborted) {
+        setDetailLoading(false);
+      }
+    }
+  };
+
+  const handleRefreshDetailContact = async () => {
+    if (!detailContact) return;
+    setDetailLoading(true);
+    setDetailError(null);
+    detailAbortRef.current?.abort();
+    const controller = new AbortController();
+    detailAbortRef.current = controller;
+
+    try {
+      const fresh = await adminService.getEmergencyContactDetail(detailContact.id, controller.signal);
+      if (!controller.signal.aborted) {
+        setDetailContact(fresh);
+        setRefreshNonce((n) => n + 1);
+      }
+    } catch (err: unknown) {
+      if (!isRequestCanceled(err)) {
+        setDetailError(getApiErrorMessage(err, 'Gagal menyegarkan data kanal kontak dari server.'));
       }
     } finally {
       if (!controller.signal.aborted) {
@@ -877,7 +906,7 @@ export const AdminEmergencyDirectoryPage: React.FC = () => {
         onClose={() => setDetailContact(null)}
         title={detailContact?.name || 'Detail Kontak Darurat'}
         description={detailContact ? `ID #${detailContact.id} · ${detailContact.slug}` : undefined}
-        size="lg"
+        size="xl"
         theme="dark"
         footer={
           <button
@@ -961,11 +990,14 @@ export const AdminEmergencyDirectoryPage: React.FC = () => {
               </div>
             )}
 
-            <div className="p-3 rounded-lg bg-[#161616] border border-[#2C2C2C] flex flex-wrap items-center justify-between gap-2 text-[11px] text-[#8A8A8A]">
-              <span className="flex items-center gap-1.5">
-                <CheckCircle2 className="w-3.5 h-3.5 text-[#34D399]" />
-                Kanal terdaftar: <strong className="text-[#F5F5F5]">{detailContact.channels?.length ?? 0}</strong> (read-only pada fase ini)
-              </span>
+            <AdminEmergencyChannelsSection
+              contact={detailContact}
+              canMutate={canMutateChannels}
+              loading={detailLoading}
+              onRefreshContact={handleRefreshDetailContact}
+            />
+
+            <div className="p-2.5 rounded-lg bg-[#161616] border border-[#2C2C2C] flex items-center justify-end text-[11px] text-[#8A8A8A]">
               <span className="flex items-center gap-1.5">
                 <Clock className="w-3.5 h-3.5" />
                 Diperbarui: {formatDateTime(detailContact.updated_at)}

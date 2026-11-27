@@ -180,3 +180,44 @@ export interface AdminEmergencyContactParentPayload {
   longitude: number | null;
   description: string | null;
 }
+
+// ============================================================================
+// ADMIN EMERGENCY CONTACT CHANNELS TYPES (Phase 6.6.4.5)
+// ============================================================================
+
+export interface AdminEmergencyChannelCreatePayload {
+  channel_type: EmergencyDirectoryChannelType;
+  channel_classification: EmergencyDirectoryChannelClassification;
+  label: string;
+  value: string;
+  is_toll_free?: boolean;
+  is_primary?: boolean;
+  operating_hours?: string | null;
+  verification_status?: EmergencyDirectoryVerificationStatus;
+  source_name: string;
+  source_url: string;
+  verification_notes?: string | null;
+  sort_order?: number;
+  is_active?: boolean;
+}
+
+export interface AdminEmergencyChannelUpdatePayload {
+  channel_type?: EmergencyDirectoryChannelType;
+  channel_classification?: EmergencyDirectoryChannelClassification;
+  label?: string;
+  value?: string;
+  is_toll_free?: boolean;
+  is_primary?: boolean;
+  operating_hours?: string | null;
+  source_name?: string;
+  source_url?: string;
+  sort_order?: number;
+  is_active?: boolean;
+}
+
+export interface AdminEmergencyChannelVerifyPayload {
+  verification_status: EmergencyDirectoryVerificationStatus;
+  source_name: string;
+  source_url: string;
+  verification_notes?: string | null;
+}

@@ -19,6 +19,10 @@ import type {
   AdminEmergencyDirectoryQueryParams,
   AdminEmergencyDirectoryListResponse,
   AdminEmergencyContactParentPayload,
+  AdminEmergencyContactChannel,
+  AdminEmergencyChannelCreatePayload,
+  AdminEmergencyChannelUpdatePayload,
+  AdminEmergencyChannelVerifyPayload,
 } from '../types/emergency-directory';
 
 export interface AdminOverviewApiResponse {
@@ -634,6 +638,126 @@ export const adminService = {
       throw new Error(res.data?.message || 'Gagal mengarsipkan (soft delete) kontak darurat.');
     }
     return { message: res.data.message || 'Kontak darurat berhasil diarsipkan.' };
+  },
+
+  // --------------------------------------------------------------------------
+  // Emergency Contact Channel Management (Phase 6.6.4.5)
+  // --------------------------------------------------------------------------
+
+  /**
+   * Create a new channel under a parent emergency contact.
+   * Endpoint: POST /api/v1/admin/emergency-contacts/{contactId}/channels
+   */
+  async createEmergencyChannel(
+    contactId: number,
+    payload: AdminEmergencyChannelCreatePayload
+  ): Promise<AdminEmergencyContactChannel> {
+    const res = await apiClient.post<ApiResponse<AdminEmergencyContactChannel>>(
+      `/admin/emergency-contacts/${contactId}/channels`,
+      payload
+    );
+    if (!res.data || res.data.success !== true || !res.data.data) {
+      throw new Error(res.data?.message || 'Gagal menambahkan channel kontak darurat.');
+    }
+    return res.data.data;
+  },
+
+  /**
+   * Update operational/content attributes of an existing channel.
+   * Endpoint: PUT /api/v1/admin/emergency-contacts/{contactId}/channels/{channelId}
+   */
+  async updateEmergencyChannel(
+    contactId: number,
+    channelId: number,
+    payload: AdminEmergencyChannelUpdatePayload
+  ): Promise<AdminEmergencyContactChannel> {
+    const res = await apiClient.put<ApiResponse<AdminEmergencyContactChannel>>(
+      `/admin/emergency-contacts/${contactId}/channels/${channelId}`,
+      payload
+    );
+    if (!res.data || res.data.success !== true || !res.data.data) {
+      throw new Error(res.data?.message || 'Gagal memperbarui channel kontak darurat.');
+    }
+    return res.data.data;
+  },
+
+  /**
+   * Dedicated channel verification status transition with source evidence.
+   * Endpoint: PUT /api/v1/admin/emergency-contacts/{contactId}/channels/{channelId}
+   */
+  async verifyEmergencyChannel(
+    contactId: number,
+    channelId: number,
+    payload: AdminEmergencyChannelVerifyPayload
+  ): Promise<AdminEmergencyContactChannel> {
+    const res = await apiClient.put<ApiResponse<AdminEmergencyContactChannel>>(
+      `/admin/emergency-contacts/${contactId}/channels/${channelId}`,
+      payload
+    );
+    if (!res.data || res.data.success !== true || !res.data.data) {
+      throw new Error(res.data?.message || 'Gagal memperbarui status verifikasi channel.');
+    }
+    return res.data.data;
+  },
+
+  /**
+   * Toggle active/inactive status of a channel.
+   * Endpoint: PATCH /api/v1/admin/emergency-contacts/{contactId}/channels/{channelId}/toggle
+   */
+  async toggleEmergencyChannelActive(
+    contactId: number,
+    channelId: number
+  ): Promise<{ channel: AdminEmergencyContactChannel; message: string }> {
+    const res = await apiClient.patch<ApiResponse<AdminEmergencyContactChannel>>(
+      `/admin/emergency-contacts/${contactId}/channels/${channelId}/toggle`
+    );
+    if (!res.data || res.data.success !== true || !res.data.data) {
+      throw new Error(res.data?.message || 'Gagal mengubah status aktif channel.');
+    }
+    return {
+      channel: res.data.data,
+      message: res.data.message || 'Status aktif channel berhasil diperbarui.',
+    };
+  },
+
+  /**
+   * Atomically promote a channel to primary active channel.
+   * Endpoint: PATCH /api/v1/admin/emergency-contacts/{contactId}/channels/{channelId}/primary
+   */
+  async setPrimaryEmergencyChannel(
+    contactId: number,
+    channelId: number
+  ): Promise<{ channel: AdminEmergencyContactChannel; message: string }> {
+    const res = await apiClient.patch<ApiResponse<AdminEmergencyContactChannel>>(
+      `/admin/emergency-contacts/${contactId}/channels/${channelId}/primary`
+    );
+    if (!res.data || res.data.success !== true || !res.data.data) {
+      throw new Error(res.data?.message || 'Gagal menetapkan channel sebagai saluran utama.');
+    }
+    return {
+      channel: res.data.data,
+      message: res.data.message || 'Channel berhasil ditetapkan sebagai saluran utama.',
+    };
+  },
+
+  /**
+   * Safely deactivate and archive a channel (preserves audit history).
+   * Endpoint: DELETE /api/v1/admin/emergency-contacts/{contactId}/channels/{channelId}
+   */
+  async deactivateEmergencyChannel(
+    contactId: number,
+    channelId: number
+  ): Promise<{ channel: AdminEmergencyContactChannel; message: string }> {
+    const res = await apiClient.delete<ApiResponse<AdminEmergencyContactChannel>>(
+      `/admin/emergency-contacts/${contactId}/channels/${channelId}`
+    );
+    if (!res.data || res.data.success !== true || !res.data.data) {
+      throw new Error(res.data?.message || 'Gagal menonaktifkan dan mengarsipkan channel.');
+    }
+    return {
+      channel: res.data.data,
+      message: res.data.message || 'Channel berhasil dinonaktifkan dan diarsipkan.',
+    };
   },
 };
 
