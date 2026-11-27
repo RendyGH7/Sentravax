@@ -98,7 +98,7 @@ class UserPortalApiTest extends TestCase
         $resContact = $this->actingAs($this->user)->postJson('/api/v1/user/preparedness/contacts', [
             'name' => 'Posko BPBD Wilayah',
             'relationship' => 'Otoritas Darurat',
-            'phone_number' => '112',
+            'phone_number' => '+6281234567890',
             'is_primary' => true,
         ]);
         $resContact->assertStatus(201)->assertJson(['success' => true]);

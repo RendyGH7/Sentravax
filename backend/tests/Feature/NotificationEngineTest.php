@@ -17,11 +17,13 @@ use App\Models\UserNotificationPreference;
 use App\Models\UserSavedRegion;
 use App\Services\Notification\NotificationService;
 use Database\Seeders\SentravaxMasterSeeder;
+use Illuminate\Foundation\Testing\DatabaseTransactions;
 use Illuminate\Support\Facades\DB;
 use Tests\TestCase;
 
 class NotificationEngineTest extends TestCase
 {
+    use DatabaseTransactions;
     protected User $admin;
     protected User $intel;
     protected User $user;
@@ -612,7 +614,9 @@ class NotificationEngineTest extends TestCase
         ]);
         $deliveredHigh = $service->notifyPublishedInsight($insightHigh);
         $this->assertGreaterThan(0, $deliveredHigh);
-        $notifHigh = UserNotification::where('related_id', $insightHigh->id)->first();
+        $notifHigh = UserNotification::where('related_type', 'ai_insight')
+            ->where('related_id', $insightHigh->id)
+            ->first();
         $this->assertNotNull($notifHigh);
         $this->assertEquals(UserNotification::URGENCY_HIGH, $notifHigh->urgency);
         $this->assertEquals('HIGH', $notifHigh->payload['evidence_strength']);
@@ -631,7 +635,9 @@ class NotificationEngineTest extends TestCase
         ]);
         $delivered899 = $service->notifyPublishedInsight($insight899);
         $this->assertGreaterThan(0, $delivered899);
-        $notif899 = UserNotification::where('related_id', $insight899->id)->first();
+        $notif899 = UserNotification::where('related_type', 'ai_insight')
+            ->where('related_id', $insight899->id)
+            ->first();
         $this->assertNotNull($notif899);
         $this->assertEquals(UserNotification::URGENCY_MEDIUM, $notif899->urgency);
         $this->assertEquals('MEDIUM', $notif899->payload['evidence_strength']);
@@ -650,7 +656,9 @@ class NotificationEngineTest extends TestCase
         ]);
         $delivered700 = $service->notifyPublishedInsight($insight700);
         $this->assertGreaterThan(0, $delivered700);
-        $notif700 = UserNotification::where('related_id', $insight700->id)->first();
+        $notif700 = UserNotification::where('related_type', 'ai_insight')
+            ->where('related_id', $insight700->id)
+            ->first();
         $this->assertNotNull($notif700);
         $this->assertEquals(UserNotification::URGENCY_MEDIUM, $notif700->urgency);
         $this->assertEquals('MEDIUM', $notif700->payload['evidence_strength']);

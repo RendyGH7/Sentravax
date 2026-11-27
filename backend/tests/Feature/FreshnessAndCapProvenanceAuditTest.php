@@ -280,17 +280,20 @@ XML;
 </alert>
 XML;
 
-        // 1. First ingestion: Creates new active alert -> Triggers 1 notification
-        $alert1 = $capAdapter->parseAndPersistCapXml($activeCapXml, $liveSource);
-        $this->assertNotNull($alert1);
-        $this->assertEquals('active', $alert1->status);
+        $this->travelTo(\Illuminate\Support\Carbon::parse('2026-11-20T10:30:00+07:00'));
 
-        // 2. Second ingestion of identical XML: Existing active alert with same status/severity -> Must NOT notify
-        $alert2 = $capAdapter->parseAndPersistCapXml($activeCapXml, $liveSource);
-        $this->assertEquals($alert1->id, $alert2->id);
+        try {
+            // 1. First ingestion: Creates new active alert -> Triggers 1 notification
+            $alert1 = $capAdapter->parseAndPersistCapXml($activeCapXml, $liveSource);
+            $this->assertNotNull($alert1);
+            $this->assertEquals('active', $alert1->status);
 
-        // 3. Ingestion of Cancel message -> Must cancel alert and NOT notify
-        $cancelCapXml = <<<'XML'
+            // 2. Second ingestion of identical XML: Existing active alert with same status/severity -> Must NOT notify
+            $alert2 = $capAdapter->parseAndPersistCapXml($activeCapXml, $liveSource);
+            $this->assertEquals($alert1->id, $alert2->id);
+
+            // 3. Ingestion of Cancel message -> Must cancel alert and NOT notify
+            $cancelCapXml = <<<'XML'
 <?xml version="1.0" encoding="UTF-8"?>
 <alert xmlns="urn:oasis:names:tc:emergency:cap:1.2">
     <identifier>BMKG-CANCEL-TEST-001</identifier>
@@ -303,12 +306,15 @@ XML;
 </alert>
 XML;
 
-        $cancelledAlert = $capAdapter->parseAndPersistCapXml($cancelCapXml, $liveSource);
-        $this->assertNotNull($cancelledAlert);
-        $this->assertEquals('cancelled', $cancelledAlert->fresh()->status);
+            $cancelledAlert = $capAdapter->parseAndPersistCapXml($cancelCapXml, $liveSource);
+            $this->assertNotNull($cancelledAlert);
+            $this->assertEquals('cancelled', $cancelledAlert->fresh()->status);
 
-        // Clean up
-        $alert1->delete();
+            // Clean up
+            $alert1->delete();
+        } finally {
+            $this->travelBack();
+        }
     }
 
     /**
