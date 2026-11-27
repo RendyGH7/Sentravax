@@ -25,6 +25,7 @@ import {
   FileText
 } from 'lucide-react';
 import { toast } from 'sonner';
+import { MiniLocationMap } from '../../components/map/MiniLocationMap';
 
 export const UserCreateReportPage: React.FC = () => {
   const navigate = useNavigate();
@@ -52,6 +53,8 @@ export const UserCreateReportPage: React.FC = () => {
   const [description, setDescription] = useState('');
   const [latitude, setLatitude] = useState<number>(-6.1754);
   const [longitude, setLongitude] = useState<number>(106.8272);
+  const [gpsAccuracy, setGpsAccuracy] = useState<number | null>(null);
+  const [isGpsLocked, setIsGpsLocked] = useState<boolean>(false);
   const [photo, setPhoto] = useState<File | null>(null);
   const [photoPreview, setPhotoPreview] = useState<string | null>(null);
 
@@ -166,6 +169,8 @@ export const UserCreateReportPage: React.FC = () => {
         const lon = parseFloat(pos.coords.longitude.toFixed(6));
         setLatitude(lat);
         setLongitude(lon);
+        setGpsAccuracy(pos.coords.accuracy ?? null);
+        setIsGpsLocked(true);
         toast.success(`Koordinat GPS tersimpan: ${lat}, ${lon}`);
       },
       (err) => {
@@ -686,6 +691,18 @@ export const UserCreateReportPage: React.FC = () => {
                 />
               </div>
             </div>
+
+            <MiniLocationMap
+              latitude={latitude}
+              longitude={longitude}
+              accuracyMeters={gpsAccuracy}
+              isGpsLocked={isGpsLocked}
+              onChangePosition={(lat, lon) => {
+                setLatitude(lat);
+                setLongitude(lon);
+                setGpsAccuracy(null);
+              }}
+            />
           </div>
 
           {/* 4. Description */}

@@ -7,10 +7,8 @@ use Laravel\Fortify\Features;
 
 abstract class TestCase extends BaseTestCase
 {
-    protected function setUp(): void
+    protected function setUpTraits(): array
     {
-        parent::setUp();
-
         if (app()->environment('testing')) {
             $connection = config('database.default');
             $dbName = config("database.connections.{$connection}.database");
@@ -20,6 +18,8 @@ abstract class TestCase extends BaseTestCase
                 );
             }
         }
+
+        return parent::setUpTraits();
     }
 
     protected function skipUnlessFortifyHas(string $feature, ?string $message = null): void
