@@ -32,7 +32,7 @@ export const AdminDisastersPage: React.FC = () => {
   const [isModalOpen, setIsModalOpen] = useState<boolean>(false);
   const [editingEvent, setEditingEvent] = useState<AdminEventItem | null>(null);
   const [submittingForm, setSubmittingForm] = useState<boolean>(false);
-  const [formData, setFormData] = useState<Partial<AdminEventItem>>({
+  const [formData, setFormData] = useState<Partial<AdminEventItem>>(() => ({
     title: '',
     description: '',
     hazard_type_id: 1,
@@ -43,7 +43,7 @@ export const AdminDisastersPage: React.FC = () => {
     longitude: 106.85,
     radius_km: 5,
     started_at: new Date().toISOString().slice(0, 16),
-  });
+  }));
 
   // Delete Modal State
   const [deletingEvent, setDeletingEvent] = useState<AdminEventItem | null>(null);
@@ -74,7 +74,9 @@ export const AdminDisastersPage: React.FC = () => {
   }, [statusFilter, hazardFilter]);
 
   useEffect(() => {
-    loadData();
+    queueMicrotask(() => {
+      void loadData();
+    });
   }, [loadData]);
 
   // Derived statistics

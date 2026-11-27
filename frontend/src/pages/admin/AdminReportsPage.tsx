@@ -67,7 +67,9 @@ export const AdminReportsPage: React.FC = () => {
   }, [statusFilter, hazardFilter]);
 
   useEffect(() => {
-    loadData();
+    queueMicrotask(() => {
+      void loadData();
+    });
   }, [loadData]);
 
   // Derived moderation statistics

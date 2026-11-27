@@ -174,7 +174,6 @@ export const PublicDisastersPage: React.FC = () => {
   // Load Filter Options (Hazard Types & Regions) once on mount
   useEffect(() => {
     let isMounted = true;
-    setIsOptionsLoading(true);
 
     Promise.all([publicService.getHazardTypes(), publicService.getRegions()])
       .then(([typesData, regionsData]) => {

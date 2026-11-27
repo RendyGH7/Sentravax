@@ -542,4 +542,16 @@ class OperationalMonitoringTest extends TestCase
         $this->assertNull(DB::table('failed_jobs')->where('id', $jobId)->first());
         $this->assertEquals($syncRunsCountBefore, DataSourceSyncRun::count(), 'Sync run history must remain preserved upon job dismiss.');
     }
+
+    public function test_monitoring_route_deduplication_preserves_aliases_and_removes_unused_legacy_routes(): void
+    {
+        $this->actingAs($this->admin)->getJson('/api/v1/admin/monitoring/system-health')->assertStatus(200);
+        $this->actingAs($this->admin)->getJson('/api/v1/admin/monitoring/health')->assertStatus(200);
+        $this->actingAs($this->admin)->getJson('/api/v1/admin/monitoring/failed-jobs')->assertStatus(200);
+        $this->actingAs($this->admin)->getJson('/api/v1/admin/monitoring/jobs/failed')->assertStatus(200);
+
+        $this->actingAs($this->admin)->postJson('/api/v1/admin/monitoring/jobs/1/retry')->assertStatus(404);
+        $this->actingAs($this->admin)->postJson('/api/v1/admin/monitoring/jobs/1/dismiss')->assertStatus(404);
+        $this->actingAs($this->admin)->deleteJson('/api/v1/admin/monitoring/jobs/1')->assertStatus(404);
+    }
 }

@@ -582,11 +582,13 @@ export const HomePage: React.FC = () => {
   }, []);
 
   useEffect(() => {
-    fetchOverview();
-    fetchEvents();
-    fetchAlerts();
-    fetchShelters();
-    publicService.getRegions().then((r) => setRegions(r)).catch(() => {});
+    queueMicrotask(() => {
+      void fetchOverview();
+      void fetchEvents();
+      void fetchAlerts();
+      void fetchShelters();
+      publicService.getRegions().then((r) => setRegions(r)).catch(() => {});
+    });
   }, [fetchOverview, fetchEvents, fetchAlerts, fetchShelters]);
 
   // GPS Risk Check

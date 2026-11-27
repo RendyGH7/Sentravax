@@ -152,7 +152,9 @@ export const AdminSheltersPage: React.FC = () => {
   ]);
 
   useEffect(() => {
-    loadShelters();
+    queueMicrotask(() => {
+      void loadShelters();
+    });
   }, [loadShelters]);
 
   // Open Create Modal

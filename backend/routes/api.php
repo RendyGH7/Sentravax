@@ -213,18 +213,16 @@ Route::prefix('admin')->middleware(['auth:sanctum', 'role:admin'])->group(functi
     Route::post('/data-sources/{id}/sync', [AdminOverviewController::class, 'triggerSync'])->name('api.admin.data-sources.sync');
 
     // Operational Infrastructure Health & Queue Monitoring
+    // Compatibility aliases (/health, /jobs/failed*) are retained alongside primary routes (/system-health, /failed-jobs*) for existing test/client consumers.
     Route::prefix('monitoring')->group(function () {
-        Route::get('/health', [AdminOverviewController::class, 'systemHealth'])->name('api.admin.monitoring.health');
         Route::get('/system-health', [AdminOverviewController::class, 'systemHealth'])->name('api.admin.monitoring.system-health');
-        Route::get('/jobs/failed', [AdminOverviewController::class, 'failedJobs'])->name('api.admin.monitoring.jobs.failed');
+        Route::get('/health', [AdminOverviewController::class, 'systemHealth'])->name('api.admin.monitoring.health');
         Route::get('/failed-jobs', [AdminOverviewController::class, 'failedJobs'])->name('api.admin.monitoring.failed-jobs');
-        Route::post('/jobs/{id}/retry', [AdminOverviewController::class, 'retryFailedJob'])->name('api.admin.monitoring.jobs.retry');
-        Route::post('/jobs/failed/{id}/retry', [AdminOverviewController::class, 'retryFailedJob'])->name('api.admin.monitoring.jobs.failed.retry');
+        Route::get('/jobs/failed', [AdminOverviewController::class, 'failedJobs'])->name('api.admin.monitoring.jobs.failed');
         Route::post('/failed-jobs/{id}/retry', [AdminOverviewController::class, 'retryFailedJob'])->name('api.admin.monitoring.failed-jobs.retry');
-        Route::post('/jobs/{id}/dismiss', [AdminOverviewController::class, 'dismissFailedJob'])->name('api.admin.monitoring.jobs.dismiss');
-        Route::delete('/jobs/{id}', [AdminOverviewController::class, 'dismissFailedJob'])->name('api.admin.monitoring.jobs.delete');
-        Route::delete('/jobs/failed/{id}', [AdminOverviewController::class, 'dismissFailedJob'])->name('api.admin.monitoring.jobs.failed.delete');
+        Route::post('/jobs/failed/{id}/retry', [AdminOverviewController::class, 'retryFailedJob'])->name('api.admin.monitoring.jobs.failed.retry');
         Route::delete('/failed-jobs/{id}', [AdminOverviewController::class, 'dismissFailedJob'])->name('api.admin.monitoring.failed-jobs.delete');
+        Route::delete('/jobs/failed/{id}', [AdminOverviewController::class, 'dismissFailedJob'])->name('api.admin.monitoring.jobs.failed.delete');
     });
 
     // User Management (strictly 3 roles)

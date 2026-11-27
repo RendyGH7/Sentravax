@@ -146,7 +146,9 @@ export const UserPreparednessPage: React.FC = () => {
   }, [user]);
 
   useEffect(() => {
-    loadData();
+    queueMicrotask(() => {
+      void loadData();
+    });
   }, [loadData]);
 
   // Handle Plan Save

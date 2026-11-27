@@ -36,8 +36,8 @@ export const IntelligenceAlertOperationsPage: React.FC = () => {
   const [message, setMessage] = useState('');
   const [alertClass, setAlertClass] = useState<IntelligenceAlertClass>('warning');
   const [broadcastLevel, setBroadcastLevel] = useState<IntelligenceBroadcastLevel>('regional');
-  const [startsAt, setStartsAt] = useState<string>(new Date().toISOString().slice(0, 16));
-  const [expiresAt, setExpiresAt] = useState<string>(
+  const [startsAt, setStartsAt] = useState<string>(() => new Date().toISOString().slice(0, 16));
+  const [expiresAt, setExpiresAt] = useState<string>(() =>
     new Date(Date.now() + 24 * 60 * 60 * 1000).toISOString().slice(0, 16)
   );
 
@@ -70,7 +70,9 @@ export const IntelligenceAlertOperationsPage: React.FC = () => {
   }, [hazardTypeId, regionId]);
 
   useEffect(() => {
-    loadOperationalData();
+    queueMicrotask(() => {
+      void loadOperationalData();
+    });
   }, [loadOperationalData]);
 
   // If preselected event changed, auto-fill hazard type and region if available
@@ -78,15 +80,17 @@ export const IntelligenceAlertOperationsPage: React.FC = () => {
     if (eventId && events.length > 0) {
       const found = events.find((e) => e.id === Number(eventId));
       if (found) {
-        if (found.hazard_type?.id) {
-          setHazardTypeId(found.hazard_type.id);
-        }
-        if (found.region?.id) {
-          setRegionId(found.region.id);
-        }
-        if (!title) {
-          setTitle(`PERINGATAN DINI: ${found.title}`);
-        }
+        queueMicrotask(() => {
+          if (found.hazard_type?.id) {
+            setHazardTypeId(found.hazard_type.id);
+          }
+          if (found.region?.id) {
+            setRegionId(found.region.id);
+          }
+          if (!title) {
+            setTitle(`PERINGATAN DINI: ${found.title}`);
+          }
+        });
       }
     }
   }, [eventId, events, title]);

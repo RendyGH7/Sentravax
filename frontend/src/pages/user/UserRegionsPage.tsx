@@ -53,7 +53,9 @@ export const UserRegionsPage: React.FC = () => {
   }, []);
 
   useEffect(() => {
-    loadData();
+    queueMicrotask(() => {
+      void loadData();
+    });
   }, [loadData]);
 
   const handleAddRegion = async (e: React.FormEvent) => {

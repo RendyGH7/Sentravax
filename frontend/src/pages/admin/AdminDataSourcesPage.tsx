@@ -90,12 +90,16 @@ export const AdminDataSourcesPage: React.FC = () => {
   }, []);
 
   useEffect(() => {
-    loadDataSources();
+    queueMicrotask(() => {
+      void loadDataSources();
+    });
   }, [loadDataSources]);
 
   useEffect(() => {
     if (activeTab === 'health' || activeTab === 'failed_jobs') {
-      loadSystemHealth();
+      queueMicrotask(() => {
+        void loadSystemHealth();
+      });
     }
   }, [activeTab, loadSystemHealth]);
 

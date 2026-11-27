@@ -81,7 +81,9 @@ export const AdminEducationPage: React.FC = () => {
   }, []);
 
   useEffect(() => {
-    loadData();
+    queueMicrotask(() => {
+      void loadData();
+    });
   }, [loadData]);
 
   const filteredArticles = useMemo(() => {

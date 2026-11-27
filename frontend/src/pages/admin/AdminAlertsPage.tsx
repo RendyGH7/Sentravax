@@ -27,7 +27,7 @@ export const AdminAlertsPage: React.FC = () => {
   // Form Modal State (Publish CAP Alert)
   const [isModalOpen, setIsModalOpen] = useState<boolean>(false);
   const [submittingForm, setSubmittingForm] = useState<boolean>(false);
-  const [formData, setFormData] = useState<Partial<AdminAlertItem>>({
+  const [formData, setFormData] = useState<Partial<AdminAlertItem>>(() => ({
     title: '',
     alert_class: 'warning',
     severity: 'Severe',
@@ -40,7 +40,7 @@ export const AdminAlertsPage: React.FC = () => {
     instruction: 'Segera lakukan evakuasi mandiri ke titik kumpul terverifikasi.',
     effective_at: new Date().toISOString().slice(0, 16),
     expires_at: new Date(Date.now() + 24 * 60 * 60 * 1000).toISOString().slice(0, 16),
-  });
+  }));
 
   // Delete Modal State
   const [deletingAlert, setDeletingAlert] = useState<AdminAlertItem | null>(null);
@@ -64,7 +64,9 @@ export const AdminAlertsPage: React.FC = () => {
   }, [statusFilter]);
 
   useEffect(() => {
-    loadAlerts();
+    queueMicrotask(() => {
+      void loadAlerts();
+    });
   }, [loadAlerts]);
 
   // Derived statistics

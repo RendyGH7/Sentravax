@@ -106,11 +106,15 @@ export const UserNotificationsPage: React.FC = () => {
   };
 
   useEffect(() => {
-    loadNotifications();
+    queueMicrotask(() => {
+      void loadNotifications();
+    });
   }, [loadNotifications]);
 
   useEffect(() => {
-    loadPreferences();
+    queueMicrotask(() => {
+      void loadPreferences();
+    });
   }, []);
 
   // Mark single as read

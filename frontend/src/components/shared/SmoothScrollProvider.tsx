@@ -1,15 +1,12 @@
-import React, { createContext, useContext, useEffect, useRef, useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import Lenis from 'lenis';
 import gsap from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
+import { LenisContext } from '../../app/context/lenis-context';
 
 if (typeof window !== 'undefined') {
   gsap.registerPlugin(ScrollTrigger);
 }
-
-const LenisContext = createContext<Lenis | null>(null);
-
-export const useLenis = () => useContext(LenisContext);
 
 interface SmoothScrollProviderProps {
   children: React.ReactNode;
@@ -44,7 +41,7 @@ export const SmoothScrollProvider: React.FC<SmoothScrollProviderProps> = ({ chil
     });
 
     lenisRef.current = lenis;
-    setLenisInstance(lenis);
+    queueMicrotask(() => setLenisInstance(lenis));
 
     // Synchronize Lenis scroll updates with GSAP ScrollTrigger
     lenis.on('scroll', ScrollTrigger.update);

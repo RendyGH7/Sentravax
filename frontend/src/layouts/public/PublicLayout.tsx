@@ -1,7 +1,8 @@
 import React, { useState } from 'react';
 import { Outlet, Link, useLocation } from 'react-router-dom';
 import { motion, AnimatePresence } from 'motion/react';
-import { SmoothScrollProvider, useLenis } from '../../components/shared/SmoothScrollProvider';
+import { SmoothScrollProvider } from '../../components/shared/SmoothScrollProvider';
+import { useLenis } from '../../app/context/lenis-context';
 import { SentravaxLogo } from '../../components/shared/SentravaxLogo';
 import { ThemeToggle } from '../../components/shared/ThemeToggle';
 import { PATHS } from '../../app/router/paths';
