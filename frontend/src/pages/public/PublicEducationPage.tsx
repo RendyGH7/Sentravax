@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useMemo } from 'react';
+import React, { useState, useEffect, useMemo, useCallback } from 'react';
 import { Link } from 'react-router-dom';
 import { motion } from 'motion/react';
 import { PATHS } from '../../app/router/paths';
@@ -6,188 +6,64 @@ import { publicService } from '../../services/public-service';
 import type { EducationContentItem } from '../../types';
 import { EmptyState } from '../../components/ui/EmptyState';
 import { EmergencyHotlineStrip } from '../../components/shared/EmergencyHotlineStrip';
-import { 
-  Search, 
-  ShieldAlert, 
-  ChevronDown, 
-  ChevronUp, 
-  CheckCircle2, 
-  Copy, 
-  Printer, 
-  Waves, 
-  Activity, 
-  Flame, 
+import {
+  Search,
+  ShieldAlert,
+  ChevronDown,
+  ChevronUp,
+  CheckCircle2,
+  Copy,
+  Printer,
+  Waves,
+  Activity,
+  Flame,
   Wind,
   Layers,
-  ArrowRight
+  ArrowRight,
+  AlertCircle,
+  RefreshCw,
 } from 'lucide-react';
 import { toast } from 'sonner';
 
-// Fallback BNPB safety guides in case API returns minimal records
-const FALLBACK_GUIDES: EducationContentItem[] = [
-  {
-    id: 101,
-    title: 'Protokol Drop, Cover, Hold On Gempa Bumi',
-    slug: 'protokol-gempa-bumi-drop-cover-hold',
-    category: 'kesiapsiagaan',
-    summary: 'Refleks penyelamatan diri efektif di dalam gedung, rumah, maupun area terbuka saat getaran seismik tektonik.',
-    content_body: `## Sebelum Bencana
-- Identifikasi area aman di setiap ruangan (di bawah meja kokoh, dekat pilar utama).
-- Amankan lemari tinggi, bingkai foto, dan lampu gantung dengan baut penahan ke dinding.
-- Siapkan Tas Siaga Bencana (Go-Bag) di dekat pintu keluar utama keluarga.
-
-## Saat Bencana
-- DROP: Rendahkan posisi tubuh berlutut agar tidak terjatuh saat lantai berguncang.
-- COVER: Lindungi kepala dan leher di bawah meja kokoh atau menggunakan bantal/tas.
-- HOLD ON: Pegang kaki meja erat-erat sampai guncangan benar-benar reda.
-- Jangan gunakan lift dan jauhi jendela kaca atau fasad bangunan luar.
-
-## Setelah Bencana
-- Matikan sekering listrik utama dan cabut regulator tabung gas untuk mencegah kebakaran.
-- Evakuasi keluar gedung tertib melalui tangga darurat menuju Titik Kumpul (Assembly Point).
-- Pantau pembaruan info gempa susulan dan potensi tsunami dari BMKG via SENTRAVAX.`,
-    is_published: true,
-    sort_order: 1,
-    hazard_type: {
-      id: 4,
-      slug: 'earthquake',
-      name: 'Gempa Bumi',
-      category: 'geological',
-      description: 'Getaran seismik tektonik kerak bumi.',
-      icon: 'activity',
-      is_active: true,
-    },
-  },
-  {
-    id: 102,
-    title: 'Mitigasi Banjir Luapan & Genangan Ekstrem',
-    slug: 'mitigasi-banjir-luapan-ekstrem',
-    category: 'mitigasi',
-    summary: 'Langkah protektif aset dan evakuasi mandiri saat curah hujan intensif atau debit bendungan meluap.',
-    content_body: `## Sebelum Bencana
-- Simpan sertifikat, buku nikah, dan arsip legal dalam plastik zipper kedap air.
-- Ketahui letak sakelar listrik utama (MCB) dan amankan stopkontak ke posisi tinggi.
-- Ketahui rute posko pengungsian dan jalur evakuasi resmi terdekat di kelurahan.
-
-## Saat Bencana
-- Segera matikan aliran listrik dari meteran utama bila air mulai memasuki teras rumah.
-- Bawa Go-Bag dan segera evakuasi ke tempat tinggi sebelum kedalaman air melampaui 30 cm.
-- Hindari melintasi jalanan dengan arus deras (arus 15 cm mampu merobohkan manusia).
-
-## Setelah Bencana
-- Waspadai kabel listrik yang terendam atau hewan berbisa yang mencari tempat kering.
-- Semprot lantai dan perabotan dengan cairan disinfektan sebelum dihuni kembali.`,
-    is_published: true,
-    sort_order: 2,
-    hazard_type: {
-      id: 1,
-      slug: 'flood',
-      name: 'Banjir & Luapan',
-      category: 'hydrometeorological',
-      description: 'Luapan sungai dan genangan air permukaan kawasan perkotaan.',
-      icon: 'waves',
-      is_active: true,
-    },
-  },
-  {
-    id: 103,
-    title: 'Antisipasi Longsoran Lereng & Gerakan Tanah',
-    slug: 'antisipasi-longsoran-lereng-tebing',
-    category: 'kesiapsiagaan',
-    summary: 'Tanda-tanda dini retakan tanah lereng dan tindakan evakuasi cepat masyarakat kawasan perbukitan.',
-    content_body: `## Sebelum Bencana
-- Jangan membangun rumah tepat di bawah tebing curam tanpa terasering dan dinding penahan.
-- Periksa kemunculan retakan baru di tanah, fondasi miring, atau pohon yang condong.
-- Jaga kelancaran drainase lereng agar air hujan tidak meresap berlebihan membebani tanah.
-
-## Saat Bencana
-- Bila mendengar gemuruh lereng atau air sungai mendadak keruh pekat bercampur lumpur, segera evakuasi menyamping (tegak lurus arah longsoran).
-- Jangan berlari searah alur lembah longsoran.
-
-## Setelah Bencana
-- Jangan langsung mendekati area runtuhan tebing karena potensi longsor susulan masih sangat tinggi.
-- Laporkan korban yang tertimbun ke pos komando BPBD atau layanan pencarian dan pertolongan (SAR) resmi.`,
-    is_published: true,
-    sort_order: 3,
-    hazard_type: {
-      id: 2,
-      slug: 'landslide',
-      name: 'Tanah Longsor',
-      category: 'geological',
-      description: 'Gerakan massa batuan dan tanah pada lereng kritis.',
-      icon: 'mountain',
-      is_active: true,
-    },
-  },
-  {
-    id: 104,
-    title: 'Proteksi Diri Terhadap Cuaca Ekstrem & Angin Kencang',
-    slug: 'proteksi-cuaca-ekstrem-angin-kencang',
-    category: 'kesiapsiagaan',
-    summary: 'Prosedur keselamatan menghadapi puting beliung, badai petir, dan pohon tumbang.',
-    content_body: `## Sebelum Bencana
-- Pangkas dahan pohon rimbun di dekat atap rumah dan amankan atap seng/asbes yang longgar.
-- Cek saluran drainase dan hindari memarkir kendaraan tepat di bawah baliho atau pohon tua.
-
-## Saat Bencana
-- Segera berlindung di dalam bangunan permanen, jauhi dinding kaca dan pintu terbuka.
-- Bila berada di luar saat badai petir, jangan berteduh di bawah pohon tunggal atau menara logam.
-- Bila melihat pusaran angin puting beliung, cari ceruk rendah atau ruangan tengah tanpa jendela.
-
-## Setelah Bencana
-- Waspadai kawat listrik yang putus bergelantungan di jalanan.
-- Bantu warga lansia atau rentan yang rumahnya mengalami kerusakan atap.`,
-    is_published: true,
-    sort_order: 4,
-    hazard_type: {
-      id: 3,
-      slug: 'extreme-weather',
-      name: 'Cuaca Ekstrem',
-      category: 'hydrometeorological',
-      description: 'Angin kencang, puting beliung, dan petir intensitas tinggi.',
-      icon: 'wind',
-      is_active: true,
-    },
-  },
-];
+const formatPublishedDate = (isoDate?: string | null): string | null => {
+  if (!isoDate) return null;
+  const parsed = new Date(isoDate);
+  if (Number.isNaN(parsed.getTime())) return null;
+  return parsed.toLocaleDateString('id-ID', {
+    day: 'numeric',
+    month: 'short',
+    year: 'numeric',
+  });
+};
 
 export const PublicEducationPage: React.FC = () => {
   const [guides, setGuides] = useState<EducationContentItem[]>([]);
   const [loading, setLoading] = useState<boolean>(true);
+  const [error, setError] = useState<string | null>(null);
   const [searchQuery, setSearchQuery] = useState<string>('');
   const [selectedHazard, setSelectedHazard] = useState<string>('all');
   const [expandedId, setExpandedId] = useState<number | null>(null);
   const [phaseFilter, setPhaseFilter] = useState<'all' | 'sebelum' | 'saat' | 'setelah'>('all');
 
-  useEffect(() => {
-    let isMounted = true;
-    const fetchGuides = async () => {
-      setLoading(true);
-      try {
-        const res = await publicService.getEducation({ per_page: 20 });
-        if (!isMounted) return;
-        const apiGuides = res?.data || [];
-        // Merge API guides with fallback guides to provide rich multi-hazard catalog
-        const combined = [...apiGuides];
-        for (const fb of FALLBACK_GUIDES) {
-          if (!combined.some(c => c.slug === fb.slug || c.title === fb.title)) {
-            combined.push(fb);
-          }
-        }
-        setGuides(combined);
-      } catch {
-        if (!isMounted) return;
-        setGuides(FALLBACK_GUIDES);
-      } finally {
-        if (isMounted) setLoading(false);
-      }
-    };
-
-    fetchGuides();
-    return () => {
-      isMounted = false;
-    };
+  const fetchGuides = useCallback(async () => {
+    setLoading(true);
+    setError(null);
+    try {
+      const res = await publicService.getEducation({ per_page: 20 });
+      const apiGuides = Array.isArray(res?.data) ? res.data : [];
+      const publishedGuides = apiGuides.filter((item) => item.is_published !== false);
+      setGuides(publishedGuides);
+    } catch {
+      setGuides([]);
+      setError('Gagal memuat panduan edukasi dari server. Periksa koneksi Anda lalu coba lagi.');
+    } finally {
+      setLoading(false);
+    }
   }, []);
+
+  useEffect(() => {
+    void fetchGuides();
+  }, [fetchGuides]);
 
   // Filtered list
   const filteredGuides = useMemo(() => {
@@ -198,10 +74,13 @@ export const PublicEducationPage: React.FC = () => {
 
       // Search query
       const query = searchQuery.trim().toLowerCase();
-      const matchesSearch = !query || 
-        guide.title.toLowerCase().includes(query) || 
-        guide.summary.toLowerCase().includes(query) ||
-        guide.content_body.toLowerCase().includes(query);
+      const summaryText = (guide.summary ?? '').toLowerCase();
+      const bodyText = (guide.content_body ?? '').toLowerCase();
+      const matchesSearch =
+        !query ||
+        guide.title.toLowerCase().includes(query) ||
+        summaryText.includes(query) ||
+        bodyText.includes(query);
 
       return matchesHazard && matchesSearch;
     });
@@ -212,7 +91,12 @@ export const PublicEducationPage: React.FC = () => {
   };
 
   const handleCopyGuide = (guide: EducationContentItem) => {
-    const text = `${guide.title}\n\n${guide.summary}\n\n${guide.content_body}\n\nSumber: SENTRAVAX - Portal Mitigasi Multi-Hazard`;
+    const summaryText = guide.summary ? `${guide.summary}\n\n` : '';
+    const publishedLabel = formatPublishedDate(guide.published_at);
+    const metaFooter = publishedLabel
+      ? `Dipublikasikan: ${publishedLabel} (SENTRAVAX)`
+      : 'Materi Edukasi SENTRAVAX (Sumber eksternal tidak tercantum)';
+    const text = `${guide.title}\n\n${summaryText}${guide.content_body ?? ''}\n\n${metaFooter}`;
     navigator.clipboard.writeText(text);
     toast.success('Panduan berhasil disalin ke clipboard');
   };
@@ -372,20 +256,64 @@ export const PublicEducationPage: React.FC = () => {
               <div key={i} className="h-44 rounded-2xl bg-[#121614] border border-neutral-800 animate-pulse p-5"></div>
             ))}
           </div>
+        ) : error ? (
+          <div
+            role="alert"
+            className="p-8 rounded-2xl bg-[#121614] border border-rose-900/60 text-center space-y-4"
+          >
+            <div className="w-11 h-11 rounded-2xl bg-rose-950/80 border border-rose-800/60 text-rose-400 flex items-center justify-center mx-auto">
+              <AlertCircle className="w-5 h-5" />
+            </div>
+            <div className="space-y-1 max-w-md mx-auto">
+              <h2 className="text-base font-bold text-white">Panduan Edukasi Tidak Dapat Dimuat</h2>
+              <p className="text-xs text-neutral-400 leading-relaxed">{error}</p>
+            </div>
+            <button
+              type="button"
+              onClick={() => void fetchGuides()}
+              className="inline-flex items-center gap-2 px-4 py-2 rounded-xl bg-rose-700 hover:bg-rose-600 text-white text-xs font-bold transition-colors cursor-pointer"
+            >
+              <RefreshCw className="w-3.5 h-3.5" />
+              <span>Coba Lagi</span>
+            </button>
+          </div>
+        ) : guides.length === 0 ? (
+          <EmptyState
+            title="Belum Ada Panduan Edukasi Terpublikasi"
+            description="Saat ini belum ada materi edukasi mitigasi yang dipublikasikan oleh server."
+            className="py-12 bg-[#121614] rounded-2xl border border-neutral-800 text-neutral-300"
+            action={{
+              label: 'Muat Ulang',
+              onClick: () => void fetchGuides(),
+              variant: 'secondary',
+              icon: <RefreshCw className="w-3.5 h-3.5" />,
+            }}
+          />
         ) : filteredGuides.length === 0 ? (
           <EmptyState
             title="Tidak Ada Panduan Sesuai Pencarian"
             description="Coba ubah kata kunci pencarian atau pilih kategori bahaya lainnya."
             className="py-12 bg-[#121614] rounded-2xl border border-neutral-800 text-neutral-300"
+            action={{
+              label: 'Reset Filter',
+              onClick: () => {
+                setSearchQuery('');
+                setSelectedHazard('all');
+                setPhaseFilter('all');
+              },
+              variant: 'secondary',
+            }}
           />
         ) : (
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4 items-start">
             {filteredGuides.map((guide, idx) => {
               const isExpanded = expandedId === guide.id;
-              const sections = parseSections(guide.content_body);
-              const displaySections = phaseFilter === 'all' 
-                ? sections 
-                : sections.filter(s => s.title.toLowerCase().includes(phaseFilter));
+              const sections = parseSections(guide.content_body ?? '');
+              const displaySections =
+                phaseFilter === 'all'
+                  ? sections
+                  : sections.filter((s) => s.title.toLowerCase().includes(phaseFilter));
+              const publishedDate = formatPublishedDate(guide.published_at);
 
               return (
                 <motion.div
@@ -432,42 +360,52 @@ export const PublicEducationPage: React.FC = () => {
                       <h2 className="text-base font-bold text-white leading-snug">
                         {guide.title}
                       </h2>
-                      <p className="text-xs text-neutral-300 mt-1 leading-relaxed font-normal">
-                        {guide.summary}
-                      </p>
+                      {guide.summary && (
+                        <p className="text-xs text-neutral-300 mt-1 leading-relaxed font-normal">
+                          {guide.summary}
+                        </p>
+                      )}
                     </div>
 
                     {/* Collapsible Action Checklist */}
                     {isExpanded && (
                       <div className="pt-3 border-t border-neutral-800 space-y-3">
-                        {displaySections.map((sec, idx) => (
-                          <div key={idx} className="p-3 rounded-xl bg-neutral-900 border border-neutral-800 space-y-2">
-                            <h3 className="text-xs font-bold text-white flex items-center gap-1.5">
-                              <CheckCircle2 className="w-3.5 h-3.5 text-[#BE123C]" />
-                              <span>{sec.title}</span>
-                            </h3>
-                            <ul className="space-y-1.5 text-xs text-neutral-300">
-                              {sec.content.map((c, cIdx) => (
-                                <li key={cIdx} className="flex items-start gap-2 leading-relaxed">
-                                  <span className="w-1.5 h-1.5 rounded-full bg-rose-400 shrink-0 mt-1.5" />
-                                  <span>{c}</span>
-                                </li>
-                              ))}
-                            </ul>
-                          </div>
-                        ))}
+                        {displaySections.length === 0 ? (
+                          <p className="text-xs text-neutral-400 italic">
+                            Tidak ada bagian yang cocok dengan filter fase ini.
+                          </p>
+                        ) : (
+                          displaySections.map((sec, sIdx) => (
+                            <div key={sIdx} className="p-3 rounded-xl bg-neutral-900 border border-neutral-800 space-y-2">
+                              <h3 className="text-xs font-bold text-white flex items-center gap-1.5">
+                                <CheckCircle2 className="w-3.5 h-3.5 text-[#BE123C]" />
+                                <span>{sec.title}</span>
+                              </h3>
+                              <ul className="space-y-1.5 text-xs text-neutral-300">
+                                {sec.content.map((c, cIdx) => (
+                                  <li key={cIdx} className="flex items-start gap-2 leading-relaxed">
+                                    <span className="w-1.5 h-1.5 rounded-full bg-rose-400 shrink-0 mt-1.5" />
+                                    <span>{c}</span>
+                                  </li>
+                                ))}
+                              </ul>
+                            </div>
+                          ))
+                        )}
                       </div>
                     )}
 
                     {/* Bottom Action Footer */}
-                    <div className="pt-2 border-t border-neutral-800 flex items-center justify-between">
+                    <div className="pt-2 border-t border-neutral-800 flex items-center justify-between gap-2">
                       <span className="text-[11px] text-neutral-500 font-mono">
-                        Standar BNPB 2026
+                        {publishedDate
+                          ? `Terbit ${publishedDate} • Sumber eksternal tidak tercantum`
+                          : 'Materi Edukasi • Sumber eksternal tidak tercantum'}
                       </span>
                       <button
                         type="button"
                         onClick={() => toggleExpand(guide.id)}
-                        className="inline-flex items-center gap-1 text-xs font-bold text-rose-400 hover:text-rose-300 transition-colors"
+                        className="inline-flex items-center gap-1 text-xs font-bold text-rose-400 hover:text-rose-300 transition-colors shrink-0"
                       >
                         <span>{isExpanded ? 'Tutup Detail' : 'Buka Tindakan Lengkap'}</span>
                         {isExpanded ? <ChevronUp className="w-3.5 h-3.5" /> : <ChevronDown className="w-3.5 h-3.5" />}

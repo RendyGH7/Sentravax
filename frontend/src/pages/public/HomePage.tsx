@@ -527,12 +527,6 @@ export const HomePage: React.FC = () => {
     };
   }, []);
 
-  // Contact Form state
-  const [contactName, setContactName] = useState<string>('');
-  const [contactEmail, setContactEmail] = useState<string>('');
-  const [contactCategory, setContactCategory] = useState<string>('pertanyaan');
-  const [contactMessage, setContactMessage] = useState<string>('');
-  const [isSubmittingContact, setIsSubmittingContact] = useState<boolean>(false);
   const [copiedField, setCopiedField] = useState<string | null>(null);
 
   const handleCopy = (text: string, fieldName: string) => {
@@ -644,21 +638,10 @@ export const HomePage: React.FC = () => {
     }
   };
 
-  // Contact form submission handler
+  // Contact form submission handler (disabled until backend public contact endpoint is available)
   const handleContactSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    if (!contactName.trim() || !contactEmail.trim() || !contactMessage.trim()) {
-      toast.error('Mohon lengkapi nama, email, dan pesan Anda.');
-      return;
-    }
-    setIsSubmittingContact(true);
-    setTimeout(() => {
-      setIsSubmittingContact(false);
-      toast.success('Terima kasih! Pesan dan masukan Anda telah terkirim ke Tim Layanan SENTRAVAX.');
-      setContactName('');
-      setContactEmail('');
-      setContactMessage('');
-    }, 900);
+    toast.info('Pengiriman formulir pesan online belum tersedia. Gunakan kanal email/WhatsApp resmi atau halaman Lapor Bencana untuk pelaporan darurat.');
   };
 
   const activeSheltersCount = shelters.length;
@@ -1660,21 +1643,42 @@ export const HomePage: React.FC = () => {
               </div>
             </div>
 
-            {/* Right Column: Refined Interactive Feedback & Inquiry Form (7 cols) */}
+            {/* Right Column: Honest Notice & Disabled Inquiry Form (7 cols) */}
             <div className="lg:col-span-7 p-6 sm:p-8 space-y-6 bg-[#0e1110]">
               <div className="space-y-1">
-                <div className="flex items-center justify-between">
+                <div className="flex items-center justify-between gap-2 flex-wrap">
                   <h3 className="text-sm sm:text-base font-bold text-white">
                     Formulir Komunikasi &amp; Partisipasi Warga
                   </h3>
-                  <span className="text-[11px] text-neutral-400 font-medium">Tanggapan Resmi</span>
+                  <span className="text-[11px] px-2.5 py-0.5 rounded-full bg-amber-950/60 text-amber-300 border border-amber-800/60 font-medium">
+                    Belum Tersedia
+                  </span>
                 </div>
                 <p className="text-xs text-neutral-400 leading-relaxed">
                   Kirimkan pertanyaan, verifikasi laporan kebencanaan, atau usulkan titik shelter baru di lingkungan Anda.
                 </p>
               </div>
 
-              <form onSubmit={handleContactSubmit} className="space-y-4">
+              <div
+                role="status"
+                className="p-4 rounded-2xl bg-amber-950/30 border border-amber-800/50 text-xs text-amber-200 flex items-start gap-3"
+              >
+                <AlertCircle className="w-4 h-4 text-amber-400 shrink-0 mt-0.5" />
+                <div className="space-y-1.5 leading-relaxed">
+                  <p className="font-bold text-amber-100">
+                    Pengiriman pesan langsung melalui formulir web belum tersedia.
+                  </p>
+                  <p className="text-amber-200/90">
+                    Layanan penerimaan pesan publik pada backend belum diaktifkan, sehingga formulir ini dinonaktifkan dan tidak mengumpulkan atau mengirimkan data pribadi Anda. Untuk komunikasi, silakan gunakan kanal email/WhatsApp resmi di sebelah kiri, atau gunakan{' '}
+                    <Link to={PATHS.PUBLIC.REPORT} className="text-white font-bold underline hover:text-amber-100">
+                      Halaman Lapor Bencana
+                    </Link>{' '}
+                    untuk melaporkan kejadian darurat lapangan.
+                  </p>
+                </div>
+              </div>
+
+              <form onSubmit={handleContactSubmit} className="space-y-4 opacity-60" aria-disabled="true">
                 {/* Topic Selector Pills */}
                 <div className="space-y-2">
                   <label className="text-[11px] font-mono font-bold text-neutral-400 block uppercase tracking-wider">
@@ -1686,25 +1690,16 @@ export const HomePage: React.FC = () => {
                       { id: 'usulan_shelter', label: 'Usulan Shelter' },
                       { id: 'verifikasi', label: 'Verifikasi Data' },
                       { id: 'kerjasama', label: 'Relawan & Mitra' },
-                    ].map((topic) => {
-                      const isActive = contactCategory === topic.id;
-                      return (
-                        <motion.button
-                          key={topic.id}
-                          type="button"
-                          whileHover={{ scale: 1.03 }}
-                          whileTap={{ scale: 0.97 }}
-                          onClick={() => setContactCategory(topic.id)}
-                          className={`px-3 py-2 rounded-xl text-xs font-semibold text-center transition-all cursor-pointer border ${
-                            isActive
-                              ? 'bg-rose-950/80 text-rose-300 border-rose-600/80 shadow-xs'
-                              : 'bg-neutral-900/60 text-neutral-400 border-neutral-800 hover:text-white hover:border-neutral-700'
-                          }`}
-                        >
-                          {topic.label}
-                        </motion.button>
-                      );
-                    })}
+                    ].map((topic) => (
+                      <button
+                        key={topic.id}
+                        type="button"
+                        disabled
+                        className="px-3 py-2 rounded-xl text-xs font-semibold text-center border bg-neutral-900/60 text-neutral-500 border-neutral-800 cursor-not-allowed"
+                      >
+                        {topic.label}
+                      </button>
+                    ))}
                   </div>
                 </div>
 
@@ -1712,72 +1707,66 @@ export const HomePage: React.FC = () => {
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                   <div className="space-y-1.5">
                     <label htmlFor="input-name" className="text-xs font-bold text-neutral-300 block">
-                      Nama Lengkap Anda <span className="text-rose-400">*</span>
+                      Nama Lengkap Anda
                     </label>
                     <input
                       id="input-name"
                       type="text"
-                      required
-                      value={contactName}
-                      onChange={(e) => setContactName(e.target.value)}
-                      placeholder="Contoh: Budi Santoso"
-                      className="w-full px-4 py-2.5 rounded-xl border border-neutral-800 bg-neutral-900/70 text-xs sm:text-sm text-white placeholder-neutral-500 outline-none focus:border-rose-500 focus:ring-1 focus:ring-rose-500/20 transition-all"
+                      disabled
+                      value=""
+                      readOnly
+                      placeholder="Formulir belum aktif"
+                      className="w-full px-4 py-2.5 rounded-xl border border-neutral-800 bg-neutral-900/50 text-xs sm:text-sm text-neutral-500 placeholder-neutral-600 outline-none cursor-not-allowed"
                     />
                   </div>
 
                   <div className="space-y-1.5">
                     <label htmlFor="input-email" className="text-xs font-bold text-neutral-300 block">
-                      Alamat Email Aktif <span className="text-rose-400">*</span>
+                      Alamat Email Aktif
                     </label>
                     <input
                       id="input-email"
                       type="email"
-                      required
-                      value={contactEmail}
-                      onChange={(e) => setContactEmail(e.target.value)}
-                      placeholder="budi@example.com"
-                      className="w-full px-4 py-2.5 rounded-xl border border-neutral-800 bg-neutral-900/70 text-xs sm:text-sm text-white placeholder-neutral-500 outline-none focus:border-rose-500 focus:ring-1 focus:ring-rose-500/20 transition-all"
+                      disabled
+                      value=""
+                      readOnly
+                      placeholder="Formulir belum aktif"
+                      className="w-full px-4 py-2.5 rounded-xl border border-neutral-800 bg-neutral-900/50 text-xs sm:text-sm text-neutral-500 placeholder-neutral-600 outline-none cursor-not-allowed"
                     />
                   </div>
                 </div>
 
                 {/* Message Field */}
                 <div className="space-y-1.5">
-                  <div className="flex items-center justify-between">
-                    <label htmlFor="input-message" className="text-xs font-bold text-neutral-300 block">
-                      Isi Pesan atau Usulan Anda <span className="text-rose-400">*</span>
-                    </label>
-                    <span className="text-[10px] text-neutral-500 font-mono">
-                      {contactMessage.length} karakter
-                    </span>
-                  </div>
+                  <label htmlFor="input-message" className="text-xs font-bold text-neutral-300 block">
+                    Isi Pesan atau Usulan Anda
+                  </label>
                   <textarea
                     id="input-message"
-                    required
                     rows={4}
-                    value={contactMessage}
-                    onChange={(e) => setContactMessage(e.target.value)}
-                    placeholder="Tuliskan pertanyaan, masukan, rincian lokasi usulan shelter, atau kendala lapangan yang Anda alami..."
-                    className="w-full px-4 py-3 rounded-xl border border-neutral-800 bg-neutral-900/70 text-xs sm:text-sm text-white placeholder-neutral-500 outline-none focus:border-rose-500 focus:ring-1 focus:ring-rose-500/20 resize-none transition-all leading-relaxed"
+                    disabled
+                    value=""
+                    readOnly
+                    placeholder="Pengiriman pesan online belum tersedia saat ini..."
+                    className="w-full px-4 py-3 rounded-xl border border-neutral-800 bg-neutral-900/50 text-xs sm:text-sm text-neutral-500 placeholder-neutral-600 outline-none resize-none leading-relaxed cursor-not-allowed"
                   />
                 </div>
 
-                {/* Submit Row & Assurance */}
+                {/* Submit Row & Honest Notice */}
                 <div className="pt-2 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
-                  <motion.button
+                  <button
                     type="submit"
-                    disabled={isSubmittingContact}
-                    whileHover={{ scale: 1.02 }}
-                    whileTap={{ scale: 0.98 }}
-                    className="inline-flex items-center justify-center gap-2 px-7 py-3 rounded-xl bg-rose-600 hover:bg-rose-500 active:bg-rose-700 text-white text-xs sm:text-sm font-bold transition-all disabled:opacity-50 cursor-pointer shadow-md"
+                    disabled
+                    aria-disabled="true"
+                    className="inline-flex items-center justify-center gap-2 px-7 py-3 rounded-xl bg-neutral-800 text-neutral-400 text-xs sm:text-sm font-bold cursor-not-allowed border border-neutral-700"
                   >
                     <Send className="w-4 h-4" />
-                    <span>{isSubmittingContact ? 'Mengirimkan Pesan...' : 'Kirim Pesan Sekarang'}</span>
-                  </motion.button>
+                    <span>Pengiriman Belum Tersedia</span>
+                  </button>
 
                   <div className="flex items-center gap-2 text-[11px] text-neutral-400">
-                    <ShieldCheck className="w-4 h-4 text-rose-400 shrink-0" />
-                    <span>Data terenkripsi dan dijaga kerahasiaannya.</span>
+                    <ShieldCheck className="w-4 h-4 text-neutral-500 shrink-0" />
+                    <span>Formulir dinonaktifkan — tidak ada data yang dikirimkan.</span>
                   </div>
                 </div>
               </form>
