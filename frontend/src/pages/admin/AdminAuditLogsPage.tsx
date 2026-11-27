@@ -1,4 +1,5 @@
 import React, { useState, useEffect, useCallback, useMemo } from 'react';
+import { useLatestRequest, isRequestCanceled } from '../../hooks/useLatestRequest';
 import {
   ShieldAlert,
   Search,
@@ -22,22 +23,29 @@ export const AdminAuditLogsPage: React.FC = () => {
   const [searchTerm, setSearchTerm] = useState<string>('');
   const [selectedLog, setSelectedLog] = useState<AdminAuditLogItem | null>(null);
 
+  const { beginRequest } = useLatestRequest();
+
   const loadLogs = useCallback(async () => {
+    const req = beginRequest();
     try {
       setLoading(true);
       const res = await adminService.getAuditLogs({
         category: categoryFilter === 'all' ? undefined : categoryFilter,
         search: searchTerm.trim() || undefined,
         per_page: 50,
-      });
+      }, req.signal);
+      if (!req.isCurrent()) return;
       setLogs(res.items);
     } catch (err: any) {
+      if (!req.isCurrent() || isRequestCanceled(err)) return;
       console.error('Failed to load audit logs:', err);
       toast.error('Gagal memuat log audit sistem.');
     } finally {
-      setLoading(false);
+      if (req.isCurrent()) {
+        setLoading(false);
+      }
     }
-  }, [categoryFilter, searchTerm]);
+  }, [beginRequest, categoryFilter, searchTerm]);
 
   useEffect(() => {
     let active = true;

@@ -1,4 +1,5 @@
 import React, { useState, useEffect, useCallback } from 'react';
+import { useLatestRequest, isRequestCanceled } from '../../hooks/useLatestRequest';
 import { Link } from 'react-router-dom';
 import { PATHS } from '../../app/router/paths';
 import { publicService } from '../../services/public-service';
@@ -23,7 +24,10 @@ export const IntelligenceEventsPage: React.FC = () => {
   const [selectedHazard, setSelectedHazard] = useState<number | 'all'>('all');
   const [selectedStatus, setSelectedStatus] = useState<string>('all');
 
+  const { beginRequest } = useLatestRequest();
+
   const loadEvents = useCallback(async () => {
+    const req = beginRequest();
     setIsLoading(true);
     try {
       const [eventsRes, hazardsRes] = await Promise.all([
@@ -31,18 +35,22 @@ export const IntelligenceEventsPage: React.FC = () => {
           status: selectedStatus === 'all' ? undefined : (selectedStatus as EventStatus),
           hazard_type_id: selectedHazard === 'all' ? undefined : Number(selectedHazard),
           per_page: 50,
-        }),
-        publicService.getHazardTypes(),
+        }, req.signal),
+        publicService.getHazardTypes(req.signal),
       ]);
+      if (!req.isCurrent()) return;
       setEvents(eventsRes.data);
       setHazardTypes(hazardsRes);
     } catch (err) {
+      if (!req.isCurrent() || isRequestCanceled(err)) return;
       console.error('Failed to load events:', err);
       toast.error('Gagal memuat kejadian bencana.');
     } finally {
-      setIsLoading(false);
+      if (req.isCurrent()) {
+        setIsLoading(false);
+      }
     }
-  }, [selectedStatus, selectedHazard]);
+  }, [beginRequest, selectedStatus, selectedHazard]);
 
   useEffect(() => {
     let active = true;

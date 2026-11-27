@@ -274,17 +274,21 @@ export const PublicEmergencyDirectoryPage: React.FC = () => {
       if (regionId !== 'all') params.region_id = regionId;
 
       const res = await publicService.getEmergencyContacts(params, controller.signal);
+      if (abortControllerRef.current !== controller) return;
       setContacts(res.data);
       setMeta(res.meta);
     } catch (err: any) {
       if (err.name === 'CanceledError' || err.name === 'AbortError' || err.code === 'ERR_CANCELED') {
         return;
       }
+      if (abortControllerRef.current !== controller) return;
       console.error('Failed to load emergency contacts:', err);
       setError('Gagal memuat direktori kontak darurat resmi dari server. Silakan coba lagi.');
       setContacts([]);
     } finally {
-      setLoading(false);
+      if (abortControllerRef.current === controller) {
+        setLoading(false);
+      }
     }
   }, [debouncedQ, category, scope, regionId, page]);
 

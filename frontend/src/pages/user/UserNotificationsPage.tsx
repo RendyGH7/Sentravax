@@ -1,4 +1,5 @@
 import React, { useState, useEffect, useCallback } from 'react';
+import { useLatestRequest, isRequestCanceled } from '../../hooks/useLatestRequest';
 import { Link } from 'react-router-dom';
 import {
   Bell,
@@ -54,8 +55,11 @@ export const UserNotificationsPage: React.FC = () => {
   });
   const [savingPrefs, setSavingPrefs] = useState<boolean>(false);
 
+  const { beginRequest } = useLatestRequest();
+
   // Load notifications
   const loadNotifications = useCallback(async () => {
+    const req = beginRequest();
     setLoading(true);
     setError(null);
     try {
@@ -78,7 +82,8 @@ export const UserNotificationsPage: React.FC = () => {
         params.urgency = urgencyFilter;
       }
 
-      const res = await notificationService.getNotifications(params);
+      const res = await notificationService.getNotifications(params, req.signal);
+      if (!req.isCurrent()) return;
       if (res.success) {
         setNotifications(res.data);
         setUnreadCount(res.meta?.unread_count ?? 0);
@@ -88,12 +93,15 @@ export const UserNotificationsPage: React.FC = () => {
         setError('Gagal memuat daftar notifikasi.');
       }
     } catch (err: any) {
+      if (!req.isCurrent() || isRequestCanceled(err)) return;
       console.error('Failed to load notifications:', err);
       setError(err?.response?.data?.message || 'Terjadi kesalahan saat memuat notifikasi.');
     } finally {
-      setLoading(false);
+      if (req.isCurrent()) {
+        setLoading(false);
+      }
     }
-  }, [page, activeTab, urgencyFilter]);
+  }, [beginRequest, page, activeTab, urgencyFilter]);
 
   // Load preferences
   const loadPreferences = async () => {

@@ -158,9 +158,10 @@ export const userService = {
    * Get list of disaster reports submitted by the authenticated user with status filtering.
    * Endpoint: GET /api/v1/user/reports
    */
-  async getReports(params?: UserReportsQueryParams): Promise<UserReportsResult> {
+  async getReports(params?: UserReportsQueryParams, signal?: AbortSignal): Promise<UserReportsResult> {
     const res = await apiClient.get<ApiResponse<CommunityReportItem[]>>('/user/reports', {
       params,
+      signal,
     });
     return {
       items: res.data.data,

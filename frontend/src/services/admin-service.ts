@@ -213,7 +213,7 @@ export const adminService = {
     with_trashed?: boolean;
     page?: number;
     per_page?: number;
-  }): Promise<{
+  }, signal?: AbortSignal): Promise<{
     data: ShelterItem[];
     stats: AdminShelterStats;
     meta: { current_page: number; last_page: number; total: number; per_page: number };
@@ -224,7 +224,7 @@ export const adminService = {
       last_page: number;
       total: number;
       per_page: number;
-    }> & { stats: AdminShelterStats }>('/admin/shelters', { params });
+    }> & { stats: AdminShelterStats }>('/admin/shelters', { params, signal });
 
     const innerData = res.data.data;
     return {
@@ -314,8 +314,8 @@ export const adminService = {
     search?: string;
     page?: number;
     per_page?: number;
-  }): Promise<{ items: AdminUserItem[]; meta: { current_page: number; last_page: number; total: number } }> {
-    const res = await apiClient.get<ApiResponse<AdminUserItem[]>>('/admin/users', { params });
+  }, signal?: AbortSignal): Promise<{ items: AdminUserItem[]; meta: { current_page: number; last_page: number; total: number } }> {
+    const res = await apiClient.get<ApiResponse<AdminUserItem[]>>('/admin/users', { params, signal });
     return {
       items: res.data.data || [],
       meta: (res.data as any).meta || { current_page: 1, last_page: 1, total: 0 },
@@ -374,8 +374,8 @@ export const adminService = {
     cluster_id?: string;
     page?: number;
     per_page?: number;
-  }): Promise<{ items: AdminReportItem[]; meta: { current_page: number; last_page: number; total: number } }> {
-    const res = await apiClient.get<ApiResponse<AdminReportItem[]>>('/admin/reports', { params });
+  }, signal?: AbortSignal): Promise<{ items: AdminReportItem[]; meta: { current_page: number; last_page: number; total: number } }> {
+    const res = await apiClient.get<ApiResponse<AdminReportItem[]>>('/admin/reports', { params, signal });
     return {
       items: res.data.data || [],
       meta: (res.data as any).meta || { current_page: 1, last_page: 1, total: 0 },
@@ -526,8 +526,8 @@ export const adminService = {
     search?: string;
     page?: number;
     per_page?: number;
-  }): Promise<{ items: AdminAuditLogItem[]; meta: { current_page: number; last_page: number; total: number } }> {
-    const res = await apiClient.get<ApiResponse<AdminAuditLogItem[]>>('/admin/audit-logs', { params });
+  }, signal?: AbortSignal): Promise<{ items: AdminAuditLogItem[]; meta: { current_page: number; last_page: number; total: number } }> {
+    const res = await apiClient.get<ApiResponse<AdminAuditLogItem[]>>('/admin/audit-logs', { params, signal });
     return {
       items: res.data.data || [],
       meta: (res.data as any).meta || { current_page: 1, last_page: 1, total: 0 },

@@ -1,4 +1,5 @@
 import React, { useState, useEffect, useCallback, useMemo } from 'react';
+import { useLatestRequest, isRequestCanceled } from '../../hooks/useLatestRequest';
 import {
   FileText,
   Search,
@@ -44,7 +45,10 @@ export const AdminReportsPage: React.FC = () => {
   const [deletingReport, setDeletingReport] = useState<AdminReportItem | null>(null);
   const [submittingDelete, setSubmittingDelete] = useState<boolean>(false);
 
+  const { beginRequest } = useLatestRequest();
+
   const loadData = useCallback(async () => {
+    const req = beginRequest();
     try {
       setLoading(true);
       const [reportsRes, hazardsRes] = await Promise.all([
@@ -52,19 +56,23 @@ export const AdminReportsPage: React.FC = () => {
           status: statusFilter === 'all' ? undefined : statusFilter,
           hazard_type_id: hazardFilter === 'all' ? undefined : Number(hazardFilter),
           per_page: 50,
-        }),
-        publicService.getHazardTypes(),
+        }, req.signal),
+        publicService.getHazardTypes(req.signal),
       ]);
+      if (!req.isCurrent()) return;
       setReports(reportsRes.items);
       setPaginationMeta(reportsRes.meta);
       setHazardTypes(hazardsRes);
     } catch (err: any) {
+      if (!req.isCurrent() || isRequestCanceled(err)) return;
       console.error('Failed to load moderation reports:', err);
       toast.error('Gagal memuat daftar laporan warga.');
     } finally {
-      setLoading(false);
+      if (req.isCurrent()) {
+        setLoading(false);
+      }
     }
-  }, [statusFilter, hazardFilter]);
+  }, [beginRequest, statusFilter, hazardFilter]);
 
   useEffect(() => {
     let active = true;

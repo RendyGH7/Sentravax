@@ -1,4 +1,5 @@
 import React, { useState, useEffect, useCallback, useMemo } from 'react';
+import { useLatestRequest, isRequestCanceled } from '../../hooks/useLatestRequest';
 import { Link } from 'react-router-dom';
 import { motion } from 'motion/react';
 import { PATHS } from '../../app/router/paths';
@@ -29,22 +30,29 @@ export const PublicSheltersPage: React.FC = () => {
   const [accessibilityOnly, setAccessibilityOnly] = useState<boolean>(false);
   const [selectedShelter, setSelectedShelter] = useState<ShelterDetail | null>(null);
 
+  const { beginRequest } = useLatestRequest();
+
   const loadShelters = useCallback(async () => {
+    const req = beginRequest();
     try {
       setLoading(true);
       const res = await publicService.getShelters({
         facility_type: facilityTypeFilter === 'all' ? undefined : (facilityTypeFilter as FacilityType),
         wheelchair_accessible: accessibilityOnly ? true : undefined,
         per_page: 50,
-      });
+      }, req.signal);
+      if (!req.isCurrent()) return;
       setShelters(res.data || []);
     } catch (err: any) {
+      if (!req.isCurrent() || isRequestCanceled(err)) return;
       console.error('Failed to load public shelters:', err);
       toast.error('Gagal memuat direktori shelter terverifikasi.');
     } finally {
-      setLoading(false);
+      if (req.isCurrent()) {
+        setLoading(false);
+      }
     }
-  }, [facilityTypeFilter, accessibilityOnly]);
+  }, [beginRequest, facilityTypeFilter, accessibilityOnly]);
 
   useEffect(() => {
     let active = true;

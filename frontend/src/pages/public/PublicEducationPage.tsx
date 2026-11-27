@@ -1,4 +1,5 @@
 import React, { useState, useEffect, useMemo, useCallback } from 'react';
+import { useLatestRequest, isRequestCanceled } from '../../hooks/useLatestRequest';
 import { Link } from 'react-router-dom';
 import { motion } from 'motion/react';
 import { PATHS } from '../../app/router/paths';
@@ -45,21 +46,28 @@ export const PublicEducationPage: React.FC = () => {
   const [expandedId, setExpandedId] = useState<number | null>(null);
   const [phaseFilter, setPhaseFilter] = useState<'all' | 'sebelum' | 'saat' | 'setelah'>('all');
 
+  const { beginRequest } = useLatestRequest();
+
   const fetchGuides = useCallback(async () => {
+    const req = beginRequest();
     setLoading(true);
     setError(null);
     try {
-      const res = await publicService.getEducation({ per_page: 20 });
+      const res = await publicService.getEducation({ per_page: 20 }, req.signal);
+      if (!req.isCurrent()) return;
       const apiGuides = Array.isArray(res?.data) ? res.data : [];
       const publishedGuides = apiGuides.filter((item) => item.is_published !== false);
       setGuides(publishedGuides);
-    } catch {
+    } catch (err) {
+      if (!req.isCurrent() || isRequestCanceled(err)) return;
       setGuides([]);
       setError('Gagal memuat panduan edukasi dari server. Periksa koneksi Anda lalu coba lagi.');
     } finally {
-      setLoading(false);
+      if (req.isCurrent()) {
+        setLoading(false);
+      }
     }
-  }, []);
+  }, [beginRequest]);
 
   useEffect(() => {
     let active = true;

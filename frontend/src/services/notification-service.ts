@@ -18,8 +18,8 @@ export const notificationService = {
    * Fetch paginated list of user notifications with filtering.
    * Endpoint: GET /api/v1/notifications
    */
-  async getNotifications(params?: NotificationListParams): Promise<NotificationListResponse> {
-    const res = await apiClient.get<NotificationListResponse>('/notifications', { params });
+  async getNotifications(params?: NotificationListParams, signal?: AbortSignal): Promise<NotificationListResponse> {
+    const res = await apiClient.get<NotificationListResponse>('/notifications', { params, signal });
     return res.data;
   },
 

@@ -1,4 +1,5 @@
 import React, { useState, useEffect, useCallback } from 'react';
+import { useLatestRequest, isRequestCanceled } from '../../hooks/useLatestRequest';
 import {
   Shield,
   Plus,
@@ -117,8 +118,11 @@ export const AdminSheltersPage: React.FC = () => {
     publicService.getRegions().then(setRegions).catch(() => {});
   }, []);
 
+  const { beginRequest } = useLatestRequest();
+
   // Load Shelters
   const loadShelters = useCallback(async () => {
+    const req = beginRequest();
     setIsLoading(true);
     setError(null);
     try {
@@ -131,17 +135,22 @@ export const AdminSheltersPage: React.FC = () => {
         with_trashed: includeArchived,
         page: currentPage,
         per_page: 15,
-      });
+      }, req.signal);
 
+      if (!req.isCurrent()) return;
       setShelters(res.data);
       setStats(res.stats);
       setTotalPages(res.meta.last_page);
     } catch (err) {
+      if (!req.isCurrent() || isRequestCanceled(err)) return;
       setError(getApiErrorMessage(err));
     } finally {
-      setIsLoading(false);
+      if (req.isCurrent()) {
+        setIsLoading(false);
+      }
     }
   }, [
+    beginRequest,
     searchQuery,
     filterType,
     filterOperational,

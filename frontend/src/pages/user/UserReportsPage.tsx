@@ -1,4 +1,5 @@
 import React, { useState, useEffect, useCallback } from 'react';
+import { useLatestRequest, isRequestCanceled } from '../../hooks/useLatestRequest';
 import { Link } from 'react-router-dom';
 import { PATHS } from '../../app/router/paths';
 import { userService } from '../../services/user-service';
@@ -27,21 +28,28 @@ export const UserReportsPage: React.FC = () => {
   const [reportDetail, setReportDetail] = useState<CommunityReportDetail | null>(null);
   const [isLoadingDetail, setIsLoadingDetail] = useState(false);
 
+  const { beginRequest } = useLatestRequest();
+
   const loadReports = useCallback(async () => {
+    const req = beginRequest();
     setIsLoading(true);
     try {
       const res = await userService.getReports({
         status: statusFilter === 'all' ? undefined : statusFilter,
         per_page: 50,
-      });
+      }, req.signal);
+      if (!req.isCurrent()) return;
       setReports(res.items);
     } catch (err) {
+      if (!req.isCurrent() || isRequestCanceled(err)) return;
       console.error('Failed to load user reports:', err);
       toast.error('Gagal memuat riwayat laporan.');
     } finally {
-      setIsLoading(false);
+      if (req.isCurrent()) {
+        setIsLoading(false);
+      }
     }
-  }, [statusFilter]);
+  }, [beginRequest, statusFilter]);
 
   useEffect(() => {
     let active = true;

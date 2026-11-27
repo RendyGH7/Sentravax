@@ -1,4 +1,5 @@
 import React, { useState, useEffect, useCallback, useMemo } from 'react';
+import { useLatestRequest, isRequestCanceled } from '../../hooks/useLatestRequest';
 import {
   Users,
   UserPlus,
@@ -46,23 +47,30 @@ export const AdminUsersPage: React.FC = () => {
   const [deletingUser, setDeletingUser] = useState<AdminUserItem | null>(null);
   const [submittingDelete, setSubmittingDelete] = useState<boolean>(false);
 
+  const { beginRequest } = useLatestRequest();
+
   const loadUsers = useCallback(async () => {
+    const req = beginRequest();
     try {
       setLoading(true);
       const res = await adminService.getUsers({
         role: roleFilter === 'all' ? undefined : roleFilter,
         search: searchTerm.trim() || undefined,
         per_page: 50,
-      });
+      }, req.signal);
+      if (!req.isCurrent()) return;
       setUsers(res.items);
       setPaginationMeta(res.meta);
     } catch (err: any) {
+      if (!req.isCurrent() || isRequestCanceled(err)) return;
       console.error('Failed to load users:', err);
       toast.error('Gagal memuat daftar pengguna.');
     } finally {
-      setLoading(false);
+      if (req.isCurrent()) {
+        setLoading(false);
+      }
     }
-  }, [roleFilter, searchTerm]);
+  }, [beginRequest, roleFilter, searchTerm]);
 
   useEffect(() => {
     let active = true;

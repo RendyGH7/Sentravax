@@ -149,8 +149,8 @@ export const publicService = {
    * Get active hazard categories (earthquake, flood, extreme weather, volcano, forest fire, etc.).
    * Endpoint: GET /api/v1/public/hazard-types
    */
-  async getHazardTypes(): Promise<HazardTypeItem[]> {
-    const res = await apiClient.get<ApiResponse<HazardTypeItem[]>>('/public/hazard-types');
+  async getHazardTypes(signal?: AbortSignal): Promise<HazardTypeItem[]> {
+    const res = await apiClient.get<ApiResponse<HazardTypeItem[]>>('/public/hazard-types', { signal });
     return res.data.data;
   },
 
@@ -170,9 +170,10 @@ export const publicService = {
    * Get paginated disaster mitigation and preparedness educational guides.
    * Endpoint: GET /api/v1/public/education
    */
-  async getEducation(params?: EducationQueryParams): Promise<PaginatedData<EducationContentItem>> {
+  async getEducation(params?: EducationQueryParams, signal?: AbortSignal): Promise<PaginatedData<EducationContentItem>> {
     const res = await apiClient.get<ApiResponse<PaginatedData<EducationContentItem>>>('/public/education', {
       params,
+      signal,
     });
     return res.data.data;
   },
@@ -199,9 +200,10 @@ export const publicService = {
    * Get list of verified emergency shelters and assembly points.
    * Endpoint: GET /api/v1/public/shelters
    */
-  async getShelters(params?: ShelterFilterParams): Promise<ShelterListResponse> {
+  async getShelters(params?: ShelterFilterParams, signal?: AbortSignal): Promise<ShelterListResponse> {
     const res = await apiClient.get<ApiResponse<ShelterListResponse>>('/public/shelters', {
       params,
+      signal,
     });
     return res.data.data;
   },
