@@ -362,36 +362,71 @@ html.light ::-webkit-scrollbar-thumb {
 }
 
 /* Dark Mode adaptation for light-first User Portal */
-html.dark .bg-\[\#F9FAFB\] {
+html.dark .bg-\[\#F9FAFB\],
+html.dark .bg-gray-50 {
   background-color: #0C0C0C !important;
 }
-html.dark .bg-\[\#FFFFFF\] {
+html.dark .bg-\[\#FFFFFF\],
+html.dark .bg-white:not(:where([data-dark-media] *)) {
   background-color: #161616 !important;
 }
-html.dark .bg-\[\#F3F4F6\] {
+html.dark .bg-\[\#F3F4F6\],
+html.dark .bg-gray-100,
+html.dark .bg-gray-200 {
   background-color: #212121 !important;
 }
-html.dark .text-\[\#111827\] {
+html.dark .text-\[\#111827\],
+html.dark .text-gray-900,
+html.dark .text-slate-900 {
   color: #F5F5F5 !important;
 }
-html.dark .text-\[\#4B5563\] {
+html.dark .text-\[\#4B5563\],
+html.dark .text-gray-700,
+html.dark .text-gray-600 {
   color: #D4D4D4 !important;
 }
-html.dark .text-\[\#6B7280\] {
+html.dark .text-\[\#6B7280\],
+html.dark .text-gray-500 {
   color: #A3A3A3 !important;
 }
-html.dark .border-\[\#E5E7EB\] {
+html.dark .border-\[\#E5E7EB\],
+html.dark .border-gray-200,
+html.dark .border-gray-300 {
   border-color: #2C2C2C !important;
 }
-html.dark .bg-\[\#FEF2F2\] {
-  background-color: rgba(136, 19, 55, 0.2) !important;
+html.dark .bg-\[\#FEF2F2\],
+html.dark .bg-\[\#FFF1F2\],
+html.dark .bg-rose-50 {
+  background-color: rgba(190, 18, 60, 0.16) !important;
 }
 html.dark .border-\[\#FECACA\],
-html.dark .border-\[\#FCA5A5\] {
+html.dark .border-\[\#FCA5A5\],
+html.dark .border-\[\#FECDD3\],
+html.dark .border-rose-200 {
   border-color: rgba(190, 18, 60, 0.45) !important;
 }
-html.dark .text-\[\#991B1B\] {
+html.dark .text-\[\#991B1B\],
+html.dark .text-\[\#BE123C\]:not(:where([class*="bg-"] *)) {
   color: #FDA4AF !important;
+}
+html.dark [class*="bg-[#FFF1F2]"] .text-\[\#BE123C\],
+html.dark .bg-\[\#FFF1F2\].text-\[\#BE123C\],
+html.dark .text-\[\#BE123C\] {
+  color: #FDA4AF !important;
+}
+html.dark .bg-amber-50,
+html.dark .bg-yellow-50,
+html.dark .bg-\[\#FEFCE8\] {
+  background-color: rgba(120, 53, 15, 0.25) !important;
+}
+html.dark .border-amber-200,
+html.dark .border-yellow-200 {
+  border-color: rgba(180, 83, 9, 0.45) !important;
+}
+html.dark .text-amber-800,
+html.dark .text-amber-900,
+html.dark .text-yellow-900 {
+  color: #FDE68A !important;
 }
 
 /* Brand Crimson Page Titles (h1), Section Titles (h2), & Subheadings (h3) */
