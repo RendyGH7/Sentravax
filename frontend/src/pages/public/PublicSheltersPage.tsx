@@ -47,9 +47,15 @@ export const PublicSheltersPage: React.FC = () => {
   }, [facilityTypeFilter, accessibilityOnly]);
 
   useEffect(() => {
+    let active = true;
     queueMicrotask(() => {
-      void loadShelters();
+      if (active) {
+        void loadShelters();
+      }
     });
+    return () => {
+      active = false;
+    };
   }, [loadShelters]);
 
   const filteredShelters = useMemo(() => {

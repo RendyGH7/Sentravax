@@ -55,11 +55,11 @@ export const IntelligenceAlertOperationsPage: React.FC = () => {
       setEvents(evList.data);
       setActiveAlerts(alertsRes.data);
 
-      if (hazards.length > 0 && !hazardTypeId) {
-        setHazardTypeId(hazards[0].id);
+      if (hazards.length > 0) {
+        setHazardTypeId((prev) => prev || hazards[0].id);
       }
-      if (regList.length > 0 && !regionId) {
-        setRegionId(regList[0].id);
+      if (regList.length > 0) {
+        setRegionId((prev) => prev || regList[0].id);
       }
     } catch (err) {
       console.error('Failed to load operational alert data:', err);
@@ -67,20 +67,28 @@ export const IntelligenceAlertOperationsPage: React.FC = () => {
     } finally {
       setIsLoading(false);
     }
-  }, [hazardTypeId, regionId]);
+  }, []);
 
   useEffect(() => {
+    let active = true;
     queueMicrotask(() => {
-      void loadOperationalData();
+      if (active) {
+        void loadOperationalData();
+      }
     });
+    return () => {
+      active = false;
+    };
   }, [loadOperationalData]);
 
   // If preselected event changed, auto-fill hazard type and region if available
   useEffect(() => {
+    let active = true;
     if (eventId && events.length > 0) {
       const found = events.find((e) => e.id === Number(eventId));
       if (found) {
         queueMicrotask(() => {
+          if (!active) return;
           if (found.hazard_type?.id) {
             setHazardTypeId(found.hazard_type.id);
           }
@@ -93,6 +101,9 @@ export const IntelligenceAlertOperationsPage: React.FC = () => {
         });
       }
     }
+    return () => {
+      active = false;
+    };
   }, [eventId, events, title]);
 
   const handleDispatch = async (e: React.FormEvent) => {

@@ -44,9 +44,15 @@ export const UserReportsPage: React.FC = () => {
   }, [statusFilter]);
 
   useEffect(() => {
+    let active = true;
     queueMicrotask(() => {
-      void loadReports();
+      if (active) {
+        void loadReports();
+      }
     });
+    return () => {
+      active = false;
+    };
   }, [loadReports]);
 
   const handleOpenDetail = async (id: number) => {

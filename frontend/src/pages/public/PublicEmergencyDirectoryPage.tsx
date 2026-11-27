@@ -289,10 +289,14 @@ export const PublicEmergencyDirectoryPage: React.FC = () => {
   }, [debouncedQ, category, scope, regionId, page]);
 
   useEffect(() => {
+    let active = true;
     queueMicrotask(() => {
-      void fetchContacts();
+      if (active) {
+        void fetchContacts();
+      }
     });
     return () => {
+      active = false;
       if (abortControllerRef.current) {
         abortControllerRef.current.abort();
       }

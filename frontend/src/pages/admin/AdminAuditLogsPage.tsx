@@ -40,9 +40,15 @@ export const AdminAuditLogsPage: React.FC = () => {
   }, [categoryFilter, searchTerm]);
 
   useEffect(() => {
+    let active = true;
     queueMicrotask(() => {
-      void loadLogs();
+      if (active) {
+        void loadLogs();
+      }
     });
+    return () => {
+      active = false;
+    };
   }, [loadLogs]);
 
   // Derived statistics

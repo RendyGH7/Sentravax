@@ -65,9 +65,15 @@ export const AdminUsersPage: React.FC = () => {
   }, [roleFilter, searchTerm]);
 
   useEffect(() => {
+    let active = true;
     queueMicrotask(() => {
-      void loadUsers();
+      if (active) {
+        void loadUsers();
+      }
     });
+    return () => {
+      active = false;
+    };
   }, [loadUsers]);
 
   // Derived user statistics

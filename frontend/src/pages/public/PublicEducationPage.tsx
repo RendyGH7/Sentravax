@@ -62,9 +62,15 @@ export const PublicEducationPage: React.FC = () => {
   }, []);
 
   useEffect(() => {
+    let active = true;
     queueMicrotask(() => {
-      void fetchGuides();
+      if (active) {
+        void fetchGuides();
+      }
     });
+    return () => {
+      active = false;
+    };
   }, [fetchGuides]);
 
   // Filtered list

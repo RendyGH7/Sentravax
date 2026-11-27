@@ -45,9 +45,15 @@ export const IntelligenceEventsPage: React.FC = () => {
   }, [selectedStatus, selectedHazard]);
 
   useEffect(() => {
+    let active = true;
     queueMicrotask(() => {
-      void loadEvents();
+      if (active) {
+        void loadEvents();
+      }
     });
+    return () => {
+      active = false;
+    };
   }, [loadEvents]);
 
   const filteredEvents = events.filter((ev) => {

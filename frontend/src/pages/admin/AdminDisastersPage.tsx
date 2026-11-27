@@ -74,9 +74,15 @@ export const AdminDisastersPage: React.FC = () => {
   }, [statusFilter, hazardFilter]);
 
   useEffect(() => {
+    let active = true;
     queueMicrotask(() => {
-      void loadData();
+      if (active) {
+        void loadData();
+      }
     });
+    return () => {
+      active = false;
+    };
   }, [loadData]);
 
   // Derived statistics

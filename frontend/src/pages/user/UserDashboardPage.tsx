@@ -48,9 +48,15 @@ export const UserDashboardPage: React.FC = () => {
   };
 
   useEffect(() => {
+    let active = true;
     queueMicrotask(() => {
-      void loadDashboard();
+      if (active) {
+        void loadDashboard();
+      }
     });
+    return () => {
+      active = false;
+    };
   }, []);
 
   const getStatusBadge = (status: string) => {

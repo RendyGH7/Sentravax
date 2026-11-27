@@ -21,6 +21,8 @@ export const SmoothScrollProvider: React.FC<SmoothScrollProviderProps> = ({ chil
   const lenisRef = useRef<Lenis | null>(null);
 
   useEffect(() => {
+    let active = true;
+
     // Respect system reduced-motion preferences
     const prefersReducedMotion =
       typeof window !== 'undefined' &&
@@ -41,7 +43,11 @@ export const SmoothScrollProvider: React.FC<SmoothScrollProviderProps> = ({ chil
     });
 
     lenisRef.current = lenis;
-    queueMicrotask(() => setLenisInstance(lenis));
+    queueMicrotask(() => {
+      if (active) {
+        setLenisInstance(lenis);
+      }
+    });
 
     // Synchronize Lenis scroll updates with GSAP ScrollTrigger
     lenis.on('scroll', ScrollTrigger.update);
@@ -76,6 +82,7 @@ export const SmoothScrollProvider: React.FC<SmoothScrollProviderProps> = ({ chil
     document.addEventListener('click', handleAnchorClick);
 
     return () => {
+      active = false;
       document.removeEventListener('click', handleAnchorClick);
       gsap.ticker.remove(updateTicker);
       lenis.destroy();

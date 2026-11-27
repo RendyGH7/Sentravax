@@ -37,9 +37,15 @@ export const AdminDashboardPage: React.FC = () => {
   }, []);
 
   useEffect(() => {
+    let active = true;
     queueMicrotask(() => {
-      void loadOverview();
+      if (active) {
+        void loadOverview();
+      }
     });
+    return () => {
+      active = false;
+    };
   }, [loadOverview]);
 
   const counts = overviewData?.counts || {

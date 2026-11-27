@@ -57,9 +57,15 @@ export const IntelligenceDataSourcesPage: React.FC = () => {
   }, []);
 
   useEffect(() => {
+    let active = true;
     queueMicrotask(() => {
-      void loadOperationalData();
+      if (active) {
+        void loadOperationalData();
+      }
     });
+    return () => {
+      active = false;
+    };
   }, [loadOperationalData]);
 
   // Unified 3-Dimensional Data Trust Badges

@@ -64,9 +64,15 @@ export const AdminAlertsPage: React.FC = () => {
   }, [statusFilter]);
 
   useEffect(() => {
+    let active = true;
     queueMicrotask(() => {
-      void loadAlerts();
+      if (active) {
+        void loadAlerts();
+      }
     });
+    return () => {
+      active = false;
+    };
   }, [loadAlerts]);
 
   // Derived statistics
