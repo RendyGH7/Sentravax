@@ -145,30 +145,45 @@ class FreshnessClassifierService
             ];
         }
 
-        // 4. Uninitialized or Never Polled Source
-        if (! $dataSource->last_successful_at) {
-            $latestRun = $dataSource->relationLoaded('syncRuns') 
-                ? $dataSource->syncRuns->first() 
-                : $dataSource->syncRuns()->latest()->first();
+        // 4. Check latest sync run for active live-feed disruption even if historical last_successful_at exists
+        $latestRun = $dataSource->relationLoaded('syncRuns')
+            ? $dataSource->syncRuns->sortByDesc('synced_at')->first()
+            : $dataSource->syncRuns()->latest('synced_at')->first();
 
-            $provenance = $this->resolveProvenance($dataSource);
-            $connectivity = $this->resolveConnectivity($dataSource);
+        if ($latestRun && $latestRun->status === 'FAILED') {
+            $failedAtOrAfterLastSuccess = ! $dataSource->last_successful_at
+                || ($latestRun->synced_at && $latestRun->synced_at->gte($dataSource->last_successful_at));
 
-            if ($latestRun && $latestRun->status === 'FAILED') {
+            if ($failedAtOrAfterLastSuccess) {
+                $provenance = $this->resolveProvenance($dataSource);
+                $connectivity = $dataSource->last_successful_at
+                    ? $this->resolveConnectivity($dataSource)
+                    : self::CONNECTIVITY_UNKNOWN;
+
                 return [
-                    'connectivity_state' => self::CONNECTIVITY_UNKNOWN,
+                    'connectivity_state' => $connectivity,
                     'freshness_state' => self::STATE_UNAVAILABLE,
                     'provenance_type' => $provenance,
-                    'observed_at' => null,
+                    'observed_at' => $dataSource->last_observed_at?->toIso8601String(),
                     'fetched_at' => $dataSource->last_fetched_at?->toIso8601String(),
                     'created_at' => $dataSource->created_at?->toIso8601String(),
                     'threshold_fresh_minutes' => 0,
                     'threshold_delayed_minutes' => 0,
                     'is_simulated' => false,
-                    'minutes_since_last_sync' => null,
-                    'explanation' => 'Percobaan sinkronisasi gagal atau endpoint tidak dapat dihubungi.',
+                    'minutes_since_last_sync' => $dataSource->last_successful_at
+                        ? (int) $dataSource->last_successful_at->diffInMinutes(now())
+                        : null,
+                    'explanation' => $latestRun->error_message
+                        ? sprintf('Percobaan sinkronisasi terakhir gagal: %s', $latestRun->error_message)
+                        : 'Percobaan sinkronisasi gagal atau endpoint tidak dapat dihubungi.',
                 ];
             }
+        }
+
+        // 5. Uninitialized or Never Polled Source
+        if (! $dataSource->last_successful_at) {
+            $provenance = $this->resolveProvenance($dataSource);
+            $connectivity = $this->resolveConnectivity($dataSource);
 
             return [
                 'connectivity_state' => $connectivity,

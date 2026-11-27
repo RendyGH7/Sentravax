@@ -116,20 +116,25 @@ class DataSyncService
         ], $res['provenance'] ?? []);
 
         // Update timestamps on data source model
-        // Never claim live observation for curated reference (PVMBG/InSAR) or simulated sources
+        // Never claim live observation for static, curated reference, or simulated sources
         $updatePayload = [
             'last_fetched_at' => now(),
         ];
         if ($status === 'SUCCESS') {
             $nameLower = strtolower($dataSource->name ?? '');
-            $isCuratedReference = in_array($dataSource->id, [4, 5, 6], true)
+            $isNonLiveSource = in_array($dataSource->id, [4, 5, 6], true)
                 || $dataSource->is_simulated
+                || $connectivityState === FreshnessClassifierService::CONNECTIVITY_STATIC
+                || in_array($provenanceType, [
+                    FreshnessClassifierService::PROVENANCE_CURATED_REFERENCE,
+                    FreshnessClassifierService::PROVENANCE_SIMULATED,
+                ], true)
                 || str_contains($nameLower, 'pvmbg')
                 || str_contains($nameLower, 'insar')
                 || str_contains($nameLower, 'sentinel')
-                || in_array($dataSource->source_type, ['curated', 'satellite'], true);
+                || in_array($dataSource->source_type, ['curated', 'satellite', 'stream'], true);
 
-            if (! $isCuratedReference) {
+            if (! $isNonLiveSource) {
                 $updatePayload['last_successful_at'] = now();
             }
             if (isset($res['observed_at'])) {
