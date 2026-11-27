@@ -194,19 +194,19 @@ class DataTrustAndProvenanceTest extends TestCase
         $publicRes->assertStatus(200);
         $publicData = collect($publicRes->json('data'));
 
-        $pvmbgPublic = $publicData->firstWhere('id', 4);
+        $pvmbgPublic = $publicData->first(fn ($d) => str_contains($d['name'], 'PVMBG'));
         $this->assertNotNull($pvmbgPublic);
         $this->assertEquals('STATIC', $pvmbgPublic['connectivity_state']);
         $this->assertEquals('UNKNOWN', $pvmbgPublic['freshness_state']);
         $this->assertEquals('CURATED_REFERENCE', $pvmbgPublic['provenance_type']);
 
-        $insarPublic = $publicData->firstWhere('id', 5);
+        $insarPublic = $publicData->first(fn ($d) => str_contains($d['name'], 'InSAR'));
         $this->assertNotNull($insarPublic);
         $this->assertEquals('STATIC', $insarPublic['connectivity_state']);
         $this->assertEquals('UNKNOWN', $insarPublic['freshness_state']);
         $this->assertEquals('CURATED_REFERENCE', $insarPublic['provenance_type']);
 
-        $demoPublic = $publicData->firstWhere('id', 6);
+        $demoPublic = $publicData->first(fn ($d) => str_contains($d['name'], 'Terkurasi SENTRAVAX'));
         $this->assertNotNull($demoPublic);
         $this->assertEquals('OFFLINE', $demoPublic['connectivity_state']);
         $this->assertEquals('UNKNOWN', $demoPublic['freshness_state']);
@@ -217,7 +217,8 @@ class DataTrustAndProvenanceTest extends TestCase
         $adminRes->assertStatus(200);
         $adminData = collect($adminRes->json('data'));
 
-        $pvmbgAdmin = $adminData->firstWhere('id', 4);
+        $pvmbgAdmin = $adminData->first(fn ($d) => str_contains($d['name'], 'PVMBG'));
+        $this->assertNotNull($pvmbgAdmin);
         $this->assertEquals('STATIC', $pvmbgAdmin['connectivity_state']);
         $this->assertEquals('UNKNOWN', $pvmbgAdmin['freshness_state']);
         $this->assertEquals('CURATED_REFERENCE', $pvmbgAdmin['provenance_type']);
@@ -227,7 +228,8 @@ class DataTrustAndProvenanceTest extends TestCase
         $intelRes->assertStatus(200);
         $intelData = collect($intelRes->json('data'));
 
-        $insarIntel = $intelData->firstWhere('id', 5);
+        $insarIntel = $intelData->first(fn ($d) => str_contains($d['name'], 'InSAR'));
+        $this->assertNotNull($insarIntel);
         $this->assertEquals('STATIC', $insarIntel['connectivity_state']);
         $this->assertEquals('UNKNOWN', $insarIntel['freshness_state']);
         $this->assertEquals('CURATED_REFERENCE', $insarIntel['provenance_type']);

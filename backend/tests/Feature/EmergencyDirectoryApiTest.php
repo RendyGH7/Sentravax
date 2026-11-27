@@ -194,6 +194,8 @@ class EmergencyDirectoryApiTest extends TestCase
 
     public function test_intelligence_has_read_only_access_to_admin_directory(): void
     {
+        $contact = EmergencyContact::orderBy('id')->firstOrFail();
+
         // Intelligence can read list & detail
         $this->actingAs($this->intelligenceUser, 'sanctum')
             ->getJson('/api/v1/admin/emergency-contacts')
@@ -201,24 +203,28 @@ class EmergencyDirectoryApiTest extends TestCase
             ->assertJson(['success' => true]);
 
         $this->actingAs($this->intelligenceUser, 'sanctum')
-            ->getJson('/api/v1/admin/emergency-contacts/1')
+            ->getJson("/api/v1/admin/emergency-contacts/{$contact->id}")
             ->assertStatus(200)
             ->assertJson(['success' => true]);
 
-        // Intelligence CANNOT mutate (POST, PUT, DELETE, PATCH)
+        // Intelligence CANNOT mutate (POST, PUT, DELETE, PATCH) or read admin audit logs
         $this->actingAs($this->intelligenceUser, 'sanctum')
             ->postJson('/api/v1/admin/emergency-contacts', [
                 'name' => 'Unauthorized Post',
             ])->assertStatus(403);
 
         $this->actingAs($this->intelligenceUser, 'sanctum')
-            ->deleteJson('/api/v1/admin/emergency-contacts/1')
+            ->deleteJson("/api/v1/admin/emergency-contacts/{$contact->id}")
             ->assertStatus(403);
 
         $this->actingAs($this->intelligenceUser, 'sanctum')
-            ->patchJson('/api/v1/admin/emergency-contacts/1/publication', [
+            ->patchJson("/api/v1/admin/emergency-contacts/{$contact->id}/publication", [
                 'publication_status' => 'draft',
             ])->assertStatus(403);
+
+        $this->actingAs($this->intelligenceUser, 'sanctum')
+            ->getJson('/api/v1/admin/emergency-contacts/audit-logs')
+            ->assertStatus(403);
     }
 
     // ==========================================
@@ -423,10 +429,27 @@ class EmergencyDirectoryApiTest extends TestCase
 
     public function test_database_baseline_counts_remain_unaltered_after_api_operations(): void
     {
-        $this->assertEquals(32, User::count(), 'User count altered!');
-        $this->assertEquals(5, Shelter::count(), 'Shelter count altered!');
-        $this->assertEquals(5, CommunityReport::count(), 'Report count altered!');
-        $this->assertEquals(6, DataSource::count(), 'DataSource count altered!');
-        $this->assertEquals(1, AiInsight::count(), 'AiInsight count altered!');
+        $before = [
+            'users' => User::count(),
+            'shelters' => Shelter::count(),
+            'reports' => CommunityReport::count(),
+            'data_sources' => DataSource::count(),
+            'ai_insights' => AiInsight::count(),
+            'contacts' => EmergencyContact::count(),
+            'channels' => EmergencyContactChannel::count(),
+        ];
+
+        $this->getJson('/api/v1/public/emergency-contacts')->assertStatus(200);
+        $this->actingAs($this->adminUser, 'sanctum')
+            ->getJson('/api/v1/admin/emergency-contacts')
+            ->assertStatus(200);
+
+        $this->assertEquals($before['users'], User::count(), 'User count altered!');
+        $this->assertEquals($before['shelters'], Shelter::count(), 'Shelter count altered!');
+        $this->assertEquals($before['reports'], CommunityReport::count(), 'Report count altered!');
+        $this->assertEquals($before['data_sources'], DataSource::count(), 'DataSource count altered!');
+        $this->assertEquals($before['ai_insights'], AiInsight::count(), 'AiInsight count altered!');
+        $this->assertEquals($before['contacts'], EmergencyContact::count(), 'EmergencyContact count altered!');
+        $this->assertEquals($before['channels'], EmergencyContactChannel::count(), 'EmergencyContactChannel count altered!');
     }
 }

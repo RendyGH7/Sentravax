@@ -316,11 +316,24 @@ class EmergencyDirectoryDatabaseTest extends TestCase
      */
     public function test_baseline_database_counts_remain_intact(): void
     {
-        $this->assertEquals(32, User::count(), 'Users baseline count altered!');
-        $this->assertEquals(5, Shelter::count(), 'Shelters baseline count altered!');
-        $this->assertEquals(5, CommunityReport::count(), 'Reports baseline count altered!');
-        $this->assertEquals(6, DataSource::count(), 'DataSources baseline count altered!');
-        $this->assertEquals(1, AiInsight::count(), 'AiInsights baseline count altered!');
+        $before = [
+            'users' => User::count(),
+            'shelters' => Shelter::count(),
+            'reports' => CommunityReport::count(),
+            'data_sources' => DataSource::count(),
+            'ai_insights' => AiInsight::count(),
+        ];
+
+        // Re-running idempotent EmergencyDirectorySeeder must not alter any unrelated domain tables or duplicate manifest records
+        $this->seed(\Database\Seeders\EmergencyDirectorySeeder::class);
+
+        $this->assertEquals($before['users'], User::count(), 'Users baseline count altered!');
+        $this->assertEquals($before['shelters'], Shelter::count(), 'Shelters baseline count altered!');
+        $this->assertEquals($before['reports'], CommunityReport::count(), 'Reports baseline count altered!');
+        $this->assertEquals($before['data_sources'], DataSource::count(), 'DataSources baseline count altered!');
+        $this->assertEquals($before['ai_insights'], AiInsight::count(), 'AiInsights baseline count altered!');
+        $this->assertEquals(7, EmergencyContact::count(), 'Emergency contacts manifest count altered!');
+        $this->assertEquals(12, EmergencyContactChannel::count(), 'Emergency channels manifest count altered!');
     }
 
     /**

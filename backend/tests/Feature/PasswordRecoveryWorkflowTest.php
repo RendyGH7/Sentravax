@@ -633,13 +633,15 @@ class PasswordRecoveryWorkflowTest extends TestCase
      */
     public function test_29_database_baseline_integrity_remains_unmodified_after_recovery_suite(): void
     {
-        $this->assertGreaterThanOrEqual(5, CommunityReport::count());
+        // SentravaxMasterSeeder seeds 2 baseline community reports (id=1, id=9), >=1 AI insight, 6 data sources, 5 shelters
+        $this->assertGreaterThanOrEqual(2, CommunityReport::count());
         $this->assertGreaterThanOrEqual(1, AiInsight::count());
         $this->assertGreaterThanOrEqual(6, DataSource::count());
         $this->assertGreaterThanOrEqual(5, Shelter::count());
 
         // Verify key baseline records still exist
         $this->assertNotNull(CommunityReport::find(1));
+        $this->assertNotNull(CommunityReport::find(9));
         $this->assertNotNull(DataSource::find(2));
         $this->assertNotNull(Shelter::find(1));
     }
