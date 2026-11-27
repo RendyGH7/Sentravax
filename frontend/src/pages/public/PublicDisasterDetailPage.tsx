@@ -21,7 +21,6 @@ import {
   AlertCircle,
   RefreshCw,
   Share2,
-  PhoneCall,
   ExternalLink,
   ChevronRight,
   BookOpen,
@@ -29,6 +28,7 @@ import {
 } from 'lucide-react';
 
 import { publicService } from '../../services/public-service';
+import { EmergencyHotlineStrip } from '../../components/shared/EmergencyHotlineStrip';
 import { PATHS } from '../../app/router/paths';
 import { TILE_LAYERS } from '../../components/map/map-config';
 import type {
@@ -903,46 +903,12 @@ export const PublicDisasterDetailPage: React.FC = () => {
             )}
 
             {/* 4. EMERGENCY HOTLINES QUICK CALL */}
-            <section className="bg-gradient-to-br from-rose-50 to-orange-50 border border-rose-200 rounded-2xl p-6 shadow-xs space-y-3">
-              <div className="flex items-center gap-2 text-rose-800">
-                <PhoneCall className="w-5 h-5 text-rose-600" />
-                <h3 className="font-bold text-sm">Nomor Kontak Darurat Nasional</h3>
-              </div>
-              <p className="text-xs text-rose-700">
-                Akses cepat ke kontak layanan darurat instansi pemerintah di Indonesia:
-              </p>
-
-              <div className="grid grid-cols-2 gap-2 pt-1 text-xs font-bold">
-                <a
-                  href="tel:112"
-                  className="bg-[#121614] p-2.5 rounded-xl border border-rose-200 text-center hover:bg-rose-100 transition-colors text-rose-900 block"
-                >
-                  <p className="text-[10px] text-rose-600 font-semibold">Panggilan Darurat</p>
-                  <p className="text-base font-extrabold">112</p>
-                </a>
-                <a
-                  href="tel:115"
-                  className="bg-[#121614] p-2.5 rounded-xl border border-rose-200 text-center hover:bg-rose-100 transition-colors text-rose-900 block"
-                >
-                  <p className="text-[10px] text-rose-600 font-semibold">BASARNAS (SAR)</p>
-                  <p className="text-base font-extrabold">115</p>
-                </a>
-                <a
-                  href="tel:119"
-                  className="bg-[#121614] p-2.5 rounded-xl border border-rose-200 text-center hover:bg-rose-100 transition-colors text-rose-900 block"
-                >
-                  <p className="text-[10px] text-rose-600 font-semibold">Kemenkes / Medis</p>
-                  <p className="text-base font-extrabold">119</p>
-                </a>
-                <a
-                  href="tel:117"
-                  className="bg-[#121614] p-2.5 rounded-xl border border-rose-200 text-center hover:bg-rose-100 transition-colors text-rose-900 block"
-                >
-                  <p className="text-[10px] text-rose-600 font-semibold">Pusdalops BNPB</p>
-                  <p className="text-base font-extrabold">117</p>
-                </a>
-              </div>
-            </section>
+            <EmergencyHotlineStrip
+              variant="grid"
+              theme="light-rose"
+              title="Nomor Kontak Darurat Nasional"
+              subtitle="Akses cepat ke kontak layanan darurat instansi pemerintah terverifikasi:"
+            />
           </div>
         </div>
       </div>

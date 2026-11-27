@@ -13,6 +13,7 @@ import { Skeleton } from '../../components/ui/Skeleton';
 import { EmptyState } from '../../components/ui/EmptyState';
 import { DisasterMap } from '../../components/map/DisasterMap';
 import { ProvenanceBadge } from '../../components/shared/DataTrustBadges';
+import { EmergencyHotlineStrip } from '../../components/shared/EmergencyHotlineStrip';
 import { useAuth } from '../../app/context/useAuth';
 import { userService } from '../../services/user-service';
 import { guestPreparednessSyncService } from '../../services/guest-preparedness-sync-service';
@@ -31,8 +32,7 @@ import {
   ArrowRight, 
   Crosshair, 
   Radio, 
-  BarChart3, 
-  PhoneCall 
+  BarChart3
 } from 'lucide-react';
 
 function formatDate(dateString?: string): string {
@@ -422,38 +422,12 @@ export const PublicPreparednessPage: React.FC = () => {
   return (
     <div className="space-y-10 py-6 px-4 sm:px-6 lg:px-8 max-w-6xl mx-auto text-neutral-100">
       {/* 0. 1-CLICK EMERGENCY HOTLINE SPEED-DIAL BAR */}
-      <section aria-label="Kontak Darurat Cepat" className="p-4 rounded-2xl bg-[#121614] border border-neutral-800 shadow-xs">
-        <div className="flex flex-col md:flex-row md:items-center justify-between gap-3 text-xs">
-          <div className="flex items-center gap-2.5">
-            <div className="w-8 h-8 rounded-xl bg-neutral-900 border border-neutral-700 text-rose-400 flex items-center justify-center font-bold shrink-0">
-              <PhoneCall className="w-4 h-4" />
-            </div>
-            <div>
-              <span className="text-sm font-bold text-white block">Panggilan Darurat Siaga (1-Klik):</span>
-              <span className="text-[11px] text-neutral-400">Bebas pulsa nasional 24/7 untuk tanggap darurat</span>
-            </div>
-          </div>
-
-          <div className="flex flex-wrap items-center gap-2">
-            {[
-              { name: 'BNPB', number: '117' },
-              { name: 'Basarnas', number: '115' },
-              { name: 'Ambulans', number: '119' },
-              { name: 'Damkar', number: '113' },
-              { name: 'Polisi', number: '110' },
-            ].map((h) => (
-              <a
-                key={h.number}
-                href={`tel:${h.number}`}
-                className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-neutral-900 hover:bg-neutral-800 border border-neutral-700 text-xs font-bold text-neutral-200 transition-colors"
-              >
-                <span className="text-rose-400 font-mono font-bold">{h.number}</span>
-                <span className="text-[11px] text-neutral-400">{h.name}</span>
-              </a>
-            ))}
-          </div>
-        </div>
-      </section>
+      <EmergencyHotlineStrip
+        variant="bar"
+        theme="dark"
+        title="Panggilan Darurat Siaga (1-Klik):"
+        subtitle="Kontak darurat nasional terverifikasi resmi"
+      />
 
       {/* ========================================================================= */}
       {/* SECTION 1: HERO & SCOPE TRANSPARENCY                                     */}

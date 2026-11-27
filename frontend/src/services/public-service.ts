@@ -22,6 +22,9 @@ import type {
   CreateReportPayload,
   CreateReportResult,
   CommunityReportDetail,
+  PublicEmergencyContact,
+  PublicEmergencyDirectoryQueryParams,
+  PublicEmergencyDirectoryResponse,
 } from '../types';
 import type {
   ShelterDetail,
@@ -155,9 +158,10 @@ export const publicService = {
    * Search and list Indonesian monitored administrative regions (provinces, regencies) with center points.
    * Endpoint: GET /api/v1/public/regions
    */
-  async getRegions(params?: RegionsQueryParams): Promise<RegionItem[]> {
+  async getRegions(params?: RegionsQueryParams, signal?: AbortSignal): Promise<RegionItem[]> {
     const res = await apiClient.get<ApiResponse<RegionItem[]>>('/public/regions', {
       params,
+      signal,
     });
     return res.data.data;
   },
@@ -261,6 +265,64 @@ export const publicService = {
    */
   async checkReportStatus(id: number | string): Promise<CommunityReportDetail & { tracking_code: string }> {
     const res = await apiClient.get<ApiResponse<CommunityReportDetail & { tracking_code: string }>>(`/public/reports/${id}`);
+    return res.data.data;
+  },
+
+  /**
+   * Get public emergency directory contacts.
+   * Endpoint: GET /api/v1/public/emergency-contacts
+   */
+  async getEmergencyContacts(
+    params?: PublicEmergencyDirectoryQueryParams,
+    signal?: AbortSignal
+  ): Promise<PublicEmergencyDirectoryResponse> {
+    const res = await apiClient.get<ApiResponse<PublicEmergencyContact[]>>('/public/emergency-contacts', {
+      params,
+      signal,
+    });
+
+    const payload = res.data;
+    if (!payload || payload.success !== true || !Array.isArray(payload.data)) {
+      throw new Error('Respons direktori kontak darurat tidak sesuai kontrak (data bukan array valid).');
+    }
+
+    const meta = payload.meta;
+    if (
+      !meta ||
+      typeof meta.current_page !== 'number' ||
+      !Number.isFinite(meta.current_page) ||
+      typeof meta.per_page !== 'number' ||
+      !Number.isFinite(meta.per_page) ||
+      typeof meta.total !== 'number' ||
+      !Number.isFinite(meta.total) ||
+      typeof meta.last_page !== 'number' ||
+      !Number.isFinite(meta.last_page)
+    ) {
+      throw new Error('Metadata paginasi direktori kontak darurat tidak valid atau tidak lengkap.');
+    }
+
+    return {
+      data: payload.data,
+      meta: {
+        current_page: meta.current_page,
+        per_page: meta.per_page,
+        total: meta.total,
+        last_page: meta.last_page,
+      },
+    };
+  },
+
+  /**
+   * Get public emergency contact detail by ID or slug.
+   * Endpoint: GET /api/v1/public/emergency-contacts/{idOrSlug}
+   */
+  async getEmergencyContactDetail(
+    idOrSlug: number | string,
+    signal?: AbortSignal
+  ): Promise<PublicEmergencyContact> {
+    const res = await apiClient.get<ApiResponse<PublicEmergencyContact>>(`/public/emergency-contacts/${idOrSlug}`, {
+      signal,
+    });
     return res.data.data;
   },
 };

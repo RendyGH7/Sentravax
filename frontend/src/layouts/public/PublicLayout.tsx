@@ -19,7 +19,8 @@ import {
   Radio,
   Smartphone,
   QrCode,
-  CheckCircle2
+  CheckCircle2,
+  Phone,
 } from 'lucide-react';
 import { toast } from 'sonner';
 
@@ -235,6 +236,13 @@ export const PublicLayout: React.FC = () => {
                     <span>Pusat Edukasi</span>
                   </Link>
                   <Link
+                    to={PATHS.PUBLIC.EMERGENCY_DIRECTORY}
+                    className="flex items-center gap-2.5 px-3 py-2 rounded-xl text-xs font-medium text-neutral-300 hover:bg-white/10 hover:text-white transition-colors"
+                  >
+                    <Phone className="w-3.5 h-3.5 text-rose-400" />
+                    <span>Direktori Kontak Darurat</span>
+                  </Link>
+                  <Link
                     to={PATHS.PUBLIC.ABOUT}
                     className="flex items-center gap-2.5 px-3 py-2 rounded-xl text-xs font-medium text-neutral-300 hover:bg-white/10 hover:text-white transition-colors"
                   >
@@ -437,7 +445,7 @@ export const PublicLayout: React.FC = () => {
               </div>
               <div className="flex items-center gap-1.5">
                 <CheckCircle2 className="w-3.5 h-3.5 text-emerald-400 shrink-0" />
-                <span>1-Tap Telepon Darurat 112</span>
+                <span>Akses Cepat Kontak Darurat</span>
               </div>
               <div className="flex items-center gap-1.5">
                 <CheckCircle2 className="w-3.5 h-3.5 text-emerald-400 shrink-0" />
@@ -503,6 +511,7 @@ export const PublicLayout: React.FC = () => {
               <li><Link to={PATHS.PUBLIC.WARNINGS} className="hover:text-emerald-400 transition-colors">Peringatan Dini Resmi</Link></li>
               <li><Link to={PATHS.PUBLIC.PREPAREDNESS} className="hover:text-emerald-400 transition-colors">Panduan Tanggap Darurat</Link></li>
               <li><Link to={PATHS.PUBLIC.SHELTERS} className="hover:text-emerald-400 transition-colors">Direktori Shelter</Link></li>
+              <li><Link to={PATHS.PUBLIC.EMERGENCY_DIRECTORY} className="hover:text-emerald-400 transition-colors">Direktori Kontak Darurat</Link></li>
             </ul>
           </div>
 

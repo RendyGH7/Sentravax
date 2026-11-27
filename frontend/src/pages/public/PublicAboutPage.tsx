@@ -3,12 +3,12 @@ import { Link } from 'react-router-dom';
 import { motion } from 'motion/react';
 import { PATHS } from '../../app/router/paths';
 import { ScrollWordTitle } from '../../components/shared/ScrollWordTitle';
+import { EmergencyHotlineStrip } from '../../components/shared/EmergencyHotlineStrip';
 import { 
   Shield, 
   Map, 
   Activity, 
   Radio, 
-  PhoneCall, 
   Database, 
   Cpu, 
   Compass, 
@@ -58,29 +58,11 @@ export const PublicAboutPage: React.FC = () => {
       </div>
 
       {/* 2. EMERGENCY SPEED-DIAL HOTLINE */}
-      <div className="p-4 rounded-2xl bg-rose-950/20 border border-rose-500/30 flex flex-wrap items-center justify-between gap-3 text-xs shadow-sm">
-        <div className="flex items-center gap-2 text-rose-300 font-bold">
-          <PhoneCall className="w-4 h-4 text-rose-400" />
-          <span>Hotline Darurat Nasional (Bebas Pulsa):</span>
-        </div>
-        <div className="flex flex-wrap items-center gap-2">
-          {[
-            { num: '117', label: 'BNPB (Bencana)' },
-            { num: '115', label: 'Basarnas (SAR)' },
-            { num: '118', label: 'Ambulans' },
-            { num: '113', label: 'Damkar' },
-            { num: '110', label: 'Polisi' },
-          ].map((h) => (
-            <a
-              key={h.num}
-              href={`tel:${h.num}`}
-              className="px-3 py-1.5 rounded-lg bg-[#141414] border border-rose-500/40 hover:bg-rose-950/40 text-rose-300 text-xs font-bold transition-colors shadow-2xs"
-            >
-              {h.num} <span className="font-normal text-neutral-400">({h.label})</span>
-            </a>
-          ))}
-        </div>
-      </div>
+      <EmergencyHotlineStrip
+        variant="bar"
+        theme="dark-rose"
+        title="Hotline Darurat Nasional:"
+      />
 
       {/* 3. CAPABILITIES GRID (FEATURE-DENSE) */}
       <div className="space-y-3">

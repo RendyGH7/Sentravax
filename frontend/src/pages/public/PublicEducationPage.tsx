@@ -5,9 +5,9 @@ import { PATHS } from '../../app/router/paths';
 import { publicService } from '../../services/public-service';
 import type { EducationContentItem } from '../../types';
 import { EmptyState } from '../../components/ui/EmptyState';
+import { EmergencyHotlineStrip } from '../../components/shared/EmergencyHotlineStrip';
 import { 
   Search, 
-  PhoneCall, 
   ShieldAlert, 
   ChevronDown, 
   ChevronUp, 
@@ -22,15 +22,6 @@ import {
   ArrowRight
 } from 'lucide-react';
 import { toast } from 'sonner';
-
-// Emergency speed dial hotlines
-const EMERGENCY_HOTLINES = [
-  { name: 'BNPB Bencana', number: '117', desc: 'Pusat Krisis' },
-  { name: 'Basarnas SAR', number: '115', desc: 'Pencarian & Penyelamatan' },
-  { name: 'Ambulans Kemenkes', number: '119', desc: 'Gawat Darurat Medis' },
-  { name: 'Pemadam Kebakaran', number: '113', desc: 'Evakuasi & Damkar' },
-  { name: 'Kepolisian RI', number: '110', desc: 'Keamanan & Ketertiban' },
-];
 
 // Fallback BNPB safety guides in case API returns minimal records
 const FALLBACK_GUIDES: EducationContentItem[] = [
@@ -115,7 +106,7 @@ const FALLBACK_GUIDES: EducationContentItem[] = [
 
 ## Setelah Bencana
 - Jangan langsung mendekati area runtuhan tebing karena potensi longsor susulan masih sangat tinggi.
-- Laporkan korban yang tertimbun ke pos komando BPBD atau Basarnas di 115.`,
+- Laporkan korban yang tertimbun ke pos komando BPBD atau layanan pencarian dan pertolongan (SAR) resmi.`,
     is_published: true,
     sort_order: 3,
     hazard_type: {
@@ -254,33 +245,12 @@ export const PublicEducationPage: React.FC = () => {
   return (
     <div className="space-y-6 max-w-6xl mx-auto py-6 px-4 sm:px-6 lg:px-8 text-neutral-100">
       {/* 1. TOP EMERGENCY HOTLINE SPEED-DIAL BAR */}
-      <section aria-label="Kontak Darurat Cepat" className="p-4 rounded-2xl bg-[#121614] border border-neutral-800 shadow-xs">
-        <div className="flex flex-col md:flex-row md:items-center justify-between gap-3">
-          <div className="flex items-center gap-2">
-            <div className="w-8 h-8 rounded-xl bg-neutral-900 border border-neutral-700 text-rose-400 flex items-center justify-center font-bold shrink-0">
-              <PhoneCall className="w-4 h-4 animate-pulse" />
-            </div>
-            <div>
-              <span className="text-sm font-bold text-white block">Panggilan Darurat Siaga (1-Klik):</span>
-              <span className="text-[11px] text-neutral-400">Bebas pulsa nasional 24/7 untuk tanggap darurat</span>
-            </div>
-          </div>
-
-          <div className="flex flex-wrap items-center gap-2">
-            {EMERGENCY_HOTLINES.map((h) => (
-              <a
-                key={h.number}
-                href={`tel:${h.number}`}
-                className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-neutral-900 hover:bg-neutral-800 border border-neutral-700 text-xs font-bold text-neutral-200 transition-colors"
-                title={`${h.name} - ${h.desc}`}
-              >
-                <span className="text-rose-400 font-mono font-bold">{h.number}</span>
-                <span className="text-[11px] text-neutral-400 hidden sm:inline">{h.name.split(' ')[0]}</span>
-              </a>
-            ))}
-          </div>
-        </div>
-      </section>
+      <EmergencyHotlineStrip
+        variant="bar"
+        theme="dark"
+        title="Panggilan Darurat Siaga (1-Klik):"
+        subtitle="Kontak darurat nasional terverifikasi resmi"
+      />
 
       {/* 2. HEADER & SEARCH BAR */}
       <section className="space-y-4">

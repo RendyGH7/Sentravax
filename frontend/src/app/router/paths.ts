@@ -9,6 +9,7 @@ export const PATHS = {
     PREPAREDNESS: '/preparedness',
     SHELTERS: '/shelters',
     EDUCATION: '/education',
+    EMERGENCY_DIRECTORY: '/emergency-directory',
     REPORT: '/report',
     ABOUT: '/about',
     LOGIN: '/login',

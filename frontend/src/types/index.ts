@@ -4,6 +4,7 @@ export * from './siaga';
 export * from './admin';
 export * from './intelligence';
 export * from './notification';
+export * from './emergency-directory';
 
 export interface ApiResponse<T = unknown> {
   success: boolean;

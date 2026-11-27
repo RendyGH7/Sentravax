@@ -16,7 +16,6 @@ import {
   AlertCircle,
   RefreshCw,
   Share2,
-  PhoneCall,
   ChevronRight,
   BookOpen,
   Activity,
@@ -27,6 +26,7 @@ import {
 } from 'lucide-react';
 
 import { publicService } from '../../services/public-service';
+import { EmergencyHotlineStrip } from '../../components/shared/EmergencyHotlineStrip';
 import { PATHS } from '../../app/router/paths';
 import { TILE_LAYERS } from '../../components/map/map-config';
 import type {
@@ -775,54 +775,12 @@ export const PublicWarningDetailPage: React.FC = () => {
             </section>
 
             {/* 2. EMERGENCY HOTLINES */}
-            <section className="bg-[#121614] border border-neutral-800 rounded-2xl p-6 shadow-xs space-y-3">
-              <div className="flex items-center gap-2 text-white">
-                <PhoneCall className="w-5 h-5 text-rose-500" />
-                <h3 className="font-bold text-sm">Nomor Kontak Darurat Nasional</h3>
-              </div>
-              <p className="text-xs text-neutral-300 leading-relaxed">
-                Akses cepat ke kontak layanan darurat instansi berwenang di Indonesia:
-              </p>
-
-              <div className="grid grid-cols-2 gap-2 pt-1 text-xs font-bold">
-                <a
-                  href="tel:112"
-                  className="bg-neutral-900 p-2.5 rounded-xl border border-neutral-800 text-center hover:border-rose-500/40 transition-colors text-white block"
-                >
-                  <p className="text-[10px] text-rose-400 font-semibold">Panggilan Darurat Terpadu</p>
-                  <p className="text-base font-extrabold text-white">112</p>
-                  <p className="text-[9px] text-neutral-400 font-normal mt-0.5">Pemda Penyelenggara</p>
-                </a>
-                <a
-                  href="tel:115"
-                  className="bg-neutral-900 p-2.5 rounded-xl border border-neutral-800 text-center hover:border-rose-500/40 transition-colors text-white block"
-                >
-                  <p className="text-[10px] text-rose-400 font-semibold">BASARNAS</p>
-                  <p className="text-base font-extrabold text-white">115</p>
-                  <p className="text-[9px] text-neutral-400 font-normal mt-0.5">Pencarian &amp; Pertolongan</p>
-                </a>
-                <a
-                  href="tel:119"
-                  className="bg-neutral-900 p-2.5 rounded-xl border border-neutral-800 text-center hover:border-rose-500/40 transition-colors text-white block"
-                >
-                  <p className="text-[10px] text-rose-400 font-semibold">PSC Darurat Medis</p>
-                  <p className="text-base font-extrabold text-white">119</p>
-                  <p className="text-[9px] text-neutral-400 font-normal mt-0.5">Layanan Kesehatan</p>
-                </a>
-                <a
-                  href="tel:117"
-                  className="bg-neutral-900 p-2.5 rounded-xl border border-neutral-800 text-center hover:border-rose-500/40 transition-colors text-white block"
-                >
-                  <p className="text-[10px] text-rose-400 font-semibold">Pusdalops BNPB</p>
-                  <p className="text-base font-extrabold text-white">117</p>
-                  <p className="text-[9px] text-neutral-400 font-normal mt-0.5">Call Center Penanggulangan</p>
-                </a>
-              </div>
-
-              <p className="text-[11px] text-neutral-400 leading-relaxed pt-1 border-t border-neutral-800">
-                <span className="font-semibold text-neutral-300">Catatan Layanan:</span> Panggilan nomor 112 diselenggarakan secara bertahap oleh pemerintah daerah kabupaten/kota terkait. Ketersediaan layanan darurat bergantung pada kesiapan implementasi pemda dan cakupan operator telekomunikasi di wilayah setempat.
-              </p>
-            </section>
+            <EmergencyHotlineStrip
+              variant="grid"
+              theme="dark"
+              title="Nomor Kontak Darurat Nasional"
+              subtitle="Akses cepat ke kontak layanan darurat instansi berwenang terverifikasi:"
+            />
 
             {/* 3. RELATED PLATFORM LINKS */}
             <section className="bg-[#121614] border border-neutral-800 rounded-2xl p-5 shadow-xs space-y-3">

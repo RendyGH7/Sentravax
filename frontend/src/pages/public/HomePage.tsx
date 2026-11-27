@@ -5,6 +5,7 @@ import { PATHS } from '../../app/router/paths';
 import { publicService } from '../../services/public-service';
 import { AnimatedCounter } from '../../components/shared/AnimatedCounter';
 import { ScrollWordTitle } from '../../components/shared/ScrollWordTitle';
+import { EmergencyHotlineStrip } from '../../components/shared/EmergencyHotlineStrip';
 import type {
   PublicOverviewData,
   HazardEventItem,
@@ -20,7 +21,6 @@ import {
   Compass,
   RefreshCw,
   ExternalLink,
-  PhoneCall,
   Star,
   Mail,
   MessageSquare,
@@ -1496,45 +1496,13 @@ export const HomePage: React.FC = () => {
       {/* 8. KONTAK & PUSAT BANTUAN RESMI (Layanan Terpadu & Saluran Darurat)        */}
       {/* ========================================================================= */}
       <section id="kontak-resmi" className="space-y-8 pt-8 border-t border-neutral-800">
-        {/* Hotline Darurat Nasional (Bebas Pulsa 1-Tap Dial) */}
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true, margin: '-30px' }}
-          transition={{ duration: 0.5 }}
-          className="p-4 rounded-2xl bg-[#121614] border border-neutral-800 flex flex-col md:flex-row md:items-center justify-between gap-4 text-xs"
-        >
-          <div className="flex items-center gap-3">
-            <div className="w-8 h-8 rounded-xl bg-rose-950/80 border border-rose-800/60 flex items-center justify-center text-rose-400 shrink-0">
-              <PhoneCall className="w-4 h-4 animate-pulse" />
-            </div>
-            <div>
-              <span className="text-sm font-bold text-white block">Panggilan Darurat Siaga (1-Klik):</span>
-              <span className="text-[11px] text-neutral-400">Saluran bebas pulsa nasional 24/7 bagi kondisi mendesak</span>
-            </div>
-          </div>
-          <div className="flex flex-wrap items-center gap-2">
-            {[
-              { num: '112', label: 'Darurat Terpadu' },
-              { num: '117', label: 'BNPB' },
-              { num: '115', label: 'Basarnas' },
-              { num: '119', label: 'Ambulans' },
-              { num: '113', label: 'Damkar' },
-            ].map((h) => (
-              <motion.a
-                key={h.num}
-                href={`tel:${h.num}`}
-                whileHover={{ scale: 1.05 }}
-                whileTap={{ scale: 0.95 }}
-                className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-neutral-900 hover:bg-neutral-800 text-neutral-200 hover:text-white font-mono text-xs font-bold transition-all border border-neutral-700 shadow-xs cursor-pointer"
-                title={`Hubungi ${h.label} (${h.num})`}
-              >
-                <span className="text-rose-400 font-bold">{h.num}</span>
-                <span className="text-[11px] text-neutral-400 font-sans font-medium">{h.label}</span>
-              </motion.a>
-            ))}
-          </div>
-        </motion.div>
+        {/* Hotline Darurat Nasional (API Synchronized) */}
+        <EmergencyHotlineStrip
+          variant="bar"
+          theme="dark"
+          title="Panggilan Darurat Siaga (1-Klik):"
+          subtitle="Saluran darurat nasional terverifikasi resmi"
+        />
 
         {/* Section Header */}
         <div className="text-center max-w-2xl mx-auto space-y-2.5">
@@ -1705,7 +1673,11 @@ export const HomePage: React.FC = () => {
                   <div className="space-y-1">
                     <span className="font-bold text-white block">Situasi Bahaya Mengancam Jiwa?</span>
                     <p className="text-[11px] text-rose-200/90 leading-relaxed font-normal">
-                      Segera hubungi hotline darurat nasional: <strong className="text-white">112</strong> (Panggilan Darurat) atau <strong className="text-white">115</strong> (Basarnas SAR).
+                      Segera hubungi layanan darurat resmi yang terverifikasi pada{' '}
+                      <Link to={PATHS.PUBLIC.EMERGENCY_DIRECTORY} className="text-white font-bold underline hover:text-rose-100">
+                        Direktori Kontak Darurat
+                      </Link>{' '}
+                      atau gunakan tombol panggilan darurat di atas.
                     </p>
                   </div>
                 </div>

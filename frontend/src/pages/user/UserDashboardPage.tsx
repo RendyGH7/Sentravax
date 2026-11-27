@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { PATHS } from '../../app/router/paths';
 import { userService } from '../../services/user-service';
+import { EmergencyHotlineStrip } from '../../components/shared/EmergencyHotlineStrip';
 import type { UserDashboardData, CommunityReportItem, EmergencyContactItem } from '../../types';
 import { 
   PlusCircle, 
@@ -14,7 +15,6 @@ import {
   PackageCheck,
   Phone,
   PhoneCall,
-  ShieldAlert,
   Layers,
   RefreshCw,
   ExternalLink,
@@ -120,31 +120,11 @@ export const UserDashboardPage: React.FC = () => {
       </div>
 
       {/* 2. EMERGENCY HOTLINE SPEED-DIAL STRIP */}
-      <div className="p-3.5 rounded-xl bg-[#FEF2F2] border border-[#FECACA] flex flex-wrap items-center justify-between gap-3 text-xs">
-        <div className="flex items-center gap-2 text-[#991B1B] font-bold">
-          <ShieldAlert className="w-4 h-4 text-[#DC2626]" />
-          <span>Hotline Darurat 1-Klik:</span>
-        </div>
-        <div className="flex flex-wrap items-center gap-2">
-          {[
-            { num: '117', label: 'BNPB (Bencana)' },
-            { num: '115', label: 'Basarnas (SAR)' },
-            { num: '118', label: 'Ambulans' },
-            { num: '113', label: 'Damkar' },
-            { num: '110', label: 'Polisi' },
-          ].map((item) => (
-            <a
-              key={item.num}
-              href={`tel:${item.num}`}
-              className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-white border border-[#FCA5A5] hover:bg-[#FEE2E2] text-[#991B1B] font-bold text-[11px] transition-colors shadow-2xs"
-            >
-              <PhoneCall className="w-3 h-3 text-[#DC2626]" />
-              <span>{item.num}</span>
-              <span className="hidden md:inline font-normal text-gray-600">({item.label})</span>
-            </a>
-          ))}
-        </div>
-      </div>
+      <EmergencyHotlineStrip
+        variant="bar"
+        theme="light"
+        title="Hotline Darurat 1-Klik:"
+      />
 
       {/* 3. DENSE METRIC WIDGETS GRID */}
       <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
