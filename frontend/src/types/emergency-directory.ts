@@ -221,3 +221,49 @@ export interface AdminEmergencyChannelVerifyPayload {
   source_url: string;
   verification_notes?: string | null;
 }
+
+// ============================================================================
+// ADMIN EMERGENCY DIRECTORY AUDIT LOG TYPES (Phase 6.6.4.6)
+// ============================================================================
+
+export type EmergencyDirectoryAuditEntityType =
+  | 'emergency_contact'
+  | 'emergency_contact_channel';
+
+export interface AdminEmergencyAuditParentRef {
+  id: number;
+  name: string;
+  slug: string;
+}
+
+export interface AdminEmergencyAuditLogItem {
+  id: number;
+  entity_type: EmergencyDirectoryAuditEntityType;
+  entity_id: number;
+  parent_contact_id: number;
+  actor_id: number | null;
+  actor?: AdminEmergencyContactActor | null;
+  parent_contact?: AdminEmergencyAuditParentRef | null;
+  action: string;
+  old_values: Record<string, unknown> | null;
+  new_values: Record<string, unknown> | null;
+  ip_address?: string | null;
+  created_at: string;
+}
+
+export interface AdminEmergencyAuditQueryParams {
+  entity_type?: EmergencyDirectoryAuditEntityType;
+  entity_id?: number;
+  parent_contact_id?: number;
+  actor_id?: number;
+  action?: string;
+  date_from?: string;
+  date_to?: string;
+  per_page?: number;
+  page?: number;
+}
+
+export interface AdminEmergencyAuditListResponse {
+  data: AdminEmergencyAuditLogItem[];
+  meta: PublicEmergencyDirectoryPaginationMeta;
+}

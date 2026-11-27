@@ -23,6 +23,10 @@ import type {
   AdminEmergencyChannelCreatePayload,
   AdminEmergencyChannelUpdatePayload,
   AdminEmergencyChannelVerifyPayload,
+  EmergencyDirectoryVerificationStatus,
+  EmergencyDirectoryPublicationStatus,
+  AdminEmergencyAuditQueryParams,
+  AdminEmergencyAuditListResponse,
 } from '../types/emergency-directory';
 
 export interface AdminOverviewApiResponse {
@@ -758,6 +762,93 @@ export const adminService = {
       channel: res.data.data,
       message: res.data.message || 'Channel berhasil dinonaktifkan dan diarsipkan.',
     };
+  },
+
+  // --------------------------------------------------------------------------
+  // Parent Verification, Publication & Audit History (Phase 6.6.4.6)
+  // --------------------------------------------------------------------------
+
+  /**
+   * Transition parent emergency contact verification status.
+   * Endpoint: PATCH /api/v1/admin/emergency-contacts/{id}/verification
+   */
+  async updateEmergencyContactVerification(
+    id: number,
+    verificationStatus: EmergencyDirectoryVerificationStatus
+  ): Promise<{ contact: AdminEmergencyContact; message: string }> {
+    const res = await apiClient.patch<ApiResponse<AdminEmergencyContact>>(
+      `/admin/emergency-contacts/${id}/verification`,
+      { verification_status: verificationStatus }
+    );
+    if (!res.data || res.data.success !== true || !res.data.data) {
+      throw new Error(res.data?.message || 'Gagal memperbarui status verifikasi kontak.');
+    }
+    return {
+      contact: res.data.data,
+      message: res.data.message || 'Status verifikasi kontak berhasil diperbarui.',
+    };
+  },
+
+  /**
+   * Transition parent emergency contact publication status.
+   * Endpoint: PATCH /api/v1/admin/emergency-contacts/{id}/publication
+   */
+  async updateEmergencyContactPublication(
+    id: number,
+    publicationStatus: EmergencyDirectoryPublicationStatus
+  ): Promise<{ contact: AdminEmergencyContact; message: string }> {
+    const res = await apiClient.patch<ApiResponse<AdminEmergencyContact>>(
+      `/admin/emergency-contacts/${id}/publication`,
+      { publication_status: publicationStatus }
+    );
+    if (!res.data || res.data.success !== true || !res.data.data) {
+      throw new Error(res.data?.message || 'Gagal memperbarui status publikasi kontak.');
+    }
+    return {
+      contact: res.data.data,
+      message: res.data.message || 'Status publikasi kontak berhasil diperbarui.',
+    };
+  },
+
+  /**
+   * Fetch global Emergency Directory audit logs with server-side filters & pagination.
+   * Endpoint: GET /api/v1/admin/emergency-contacts/audit-logs
+   */
+  async getEmergencyDirectoryAuditLogs(
+    params?: AdminEmergencyAuditQueryParams,
+    signal?: AbortSignal
+  ): Promise<AdminEmergencyAuditListResponse> {
+    const res = await apiClient.get<ApiResponse<AdminEmergencyAuditListResponse['data']>>(
+      '/admin/emergency-contacts/audit-logs',
+      { params, signal }
+    );
+    const payload = res.data;
+    const meta = (payload as unknown as { meta?: AdminEmergencyAuditListResponse['meta'] })?.meta;
+    if (!payload || payload.success !== true || !Array.isArray(payload.data) || !meta) {
+      throw new Error('Respons audit log Emergency Directory tidak valid.');
+    }
+    return { data: payload.data, meta };
+  },
+
+  /**
+   * Fetch contact-specific audit logs (parent + its channels).
+   * Endpoint: GET /api/v1/admin/emergency-contacts/{id}/audit-logs
+   */
+  async getEmergencyContactAuditLogs(
+    contactId: number,
+    params?: Omit<AdminEmergencyAuditQueryParams, 'entity_id' | 'parent_contact_id'>,
+    signal?: AbortSignal
+  ): Promise<AdminEmergencyAuditListResponse> {
+    const res = await apiClient.get<ApiResponse<AdminEmergencyAuditListResponse['data']>>(
+      `/admin/emergency-contacts/${contactId}/audit-logs`,
+      { params, signal }
+    );
+    const payload = res.data;
+    const meta = (payload as unknown as { meta?: AdminEmergencyAuditListResponse['meta'] })?.meta;
+    if (!payload || payload.success !== true || !Array.isArray(payload.data) || !meta) {
+      throw new Error('Respons audit log kontak darurat tidak valid.');
+    }
+    return { data: payload.data, meta };
   },
 };
 

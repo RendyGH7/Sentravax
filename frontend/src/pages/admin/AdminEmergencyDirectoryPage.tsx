@@ -14,6 +14,7 @@ import {
   ChevronRight,
   Info,
   Building2,
+  History,
 } from 'lucide-react';
 import { toast } from 'sonner';
 import { adminService } from '../../services/admin-service';
@@ -22,6 +23,8 @@ import { getApiErrorMessage, isRequestCanceled } from '../../lib/api-error';
 import { Modal } from '../../components/ui/Modal';
 import { useAuth } from '../../app/context/useAuth';
 import { AdminEmergencyChannelsSection } from '../../components/admin/AdminEmergencyChannelsSection';
+import { AdminEmergencyGovernanceBar } from '../../components/admin/AdminEmergencyGovernanceBar';
+import { AdminEmergencyAuditHistoryPanel } from '../../components/admin/AdminEmergencyAuditHistoryPanel';
 import type {
   AdminEmergencyContact,
   AdminEmergencyDirectoryStats,
@@ -172,6 +175,8 @@ export const AdminEmergencyDirectoryPage: React.FC = () => {
 
   const { user } = useAuth();
   const canMutateChannels = user?.role === 'admin';
+  const [activeTab, setActiveTab] = useState<'contacts' | 'audit'>('contacts');
+  const [auditRefreshNonce, setAuditRefreshNonce] = useState<number>(0);
 
   // Detail Modal State
   const [detailContact, setDetailContact] = useState<AdminEmergencyContact | null>(null);
@@ -326,6 +331,7 @@ export const AdminEmergencyDirectoryPage: React.FC = () => {
       if (!controller.signal.aborted) {
         setDetailContact(fresh);
         setRefreshNonce((n) => n + 1);
+        setAuditRefreshNonce((n) => n + 1);
       }
     } catch (err: unknown) {
       if (!isRequestCanceled(err)) {
@@ -536,8 +542,7 @@ export const AdminEmergencyDirectoryPage: React.FC = () => {
             Manajemen Kontak Darurat Nasional &amp; Daerah
           </h1>
           <p className="text-xs text-[#A3A3A3] mt-1">
-            Kelola entitas induk instansi dan lembaga tanggap darurat. Pengelolaan kanal, verifikasi, dan publikasi
-            dikelola terpisah.
+            Kelola entitas induk, kanal komunikasi, verifikasi, publikasi, dan riwayat audit Emergency Directory.
           </p>
         </div>
 
@@ -551,6 +556,41 @@ export const AdminEmergencyDirectoryPage: React.FC = () => {
         </button>
       </div>
 
+      {/* Tab Switcher: Contacts vs Global Audit */}
+      <div className="flex flex-wrap items-center gap-2 border-b border-[#262626] pb-3">
+        <button
+          type="button"
+          onClick={() => setActiveTab('contacts')}
+          className={`inline-flex items-center gap-1.5 px-3.5 py-2 rounded-lg text-xs font-semibold transition-colors cursor-pointer ${
+            activeTab === 'contacts'
+              ? 'bg-[#BE123C] text-white'
+              : 'bg-[#161616] text-[#A3A3A3] hover:text-[#F5F5F5] border border-[#2C2C2C]'
+          }`}
+        >
+          <Building2 className="w-3.5 h-3.5" />
+          <span>Direktori Kontak</span>
+        </button>
+        <button
+          type="button"
+          onClick={() => setActiveTab('audit')}
+          className={`inline-flex items-center gap-1.5 px-3.5 py-2 rounded-lg text-xs font-semibold transition-colors cursor-pointer ${
+            activeTab === 'audit'
+              ? 'bg-[#BE123C] text-white'
+              : 'bg-[#161616] text-[#A3A3A3] hover:text-[#F5F5F5] border border-[#2C2C2C]'
+          }`}
+        >
+          <History className="w-3.5 h-3.5" />
+          <span>Riwayat Audit Global</span>
+        </button>
+      </div>
+
+      {activeTab === 'audit' ? (
+        <AdminEmergencyAuditHistoryPanel
+          canViewAudit={canMutateChannels}
+          refreshTrigger={auditRefreshNonce}
+        />
+      ) : (
+        <>
       {/* Summary Stats */}
       {stats && (
         <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-3">
@@ -897,6 +937,8 @@ export const AdminEmergencyDirectoryPage: React.FC = () => {
           )}
         </div>
       )}
+        </>
+      )}
 
       {/* =================================================================== */}
       {/* DETAIL MODAL                                                        */}
@@ -990,11 +1032,23 @@ export const AdminEmergencyDirectoryPage: React.FC = () => {
               </div>
             )}
 
+            <AdminEmergencyGovernanceBar
+              contact={detailContact}
+              canMutate={canMutateChannels}
+              onRefreshContact={handleRefreshDetailContact}
+            />
+
             <AdminEmergencyChannelsSection
               contact={detailContact}
               canMutate={canMutateChannels}
               loading={detailLoading}
               onRefreshContact={handleRefreshDetailContact}
+            />
+
+            <AdminEmergencyAuditHistoryPanel
+              contactId={detailContact.id}
+              canViewAudit={canMutateChannels}
+              refreshTrigger={auditRefreshNonce}
             />
 
             <div className="p-2.5 rounded-lg bg-[#161616] border border-[#2C2C2C] flex items-center justify-end text-[11px] text-[#8A8A8A]">
