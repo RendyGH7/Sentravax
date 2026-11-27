@@ -7,6 +7,21 @@ use Laravel\Fortify\Features;
 
 abstract class TestCase extends BaseTestCase
 {
+    protected function setUp(): void
+    {
+        parent::setUp();
+
+        if (app()->environment('testing')) {
+            $connection = config('database.default');
+            $dbName = config("database.connections.{$connection}.database");
+            if (empty($dbName) || $dbName === 'sentravax_db') {
+                throw new \RuntimeException(
+                    "SAFETY GUARD: PHPUnit refuses to run against primary database [{$dbName}]. Configure a dedicated test database (e.g. sentravax_test)."
+                );
+            }
+        }
+    }
+
     protected function skipUnlessFortifyHas(string $feature, ?string $message = null): void
     {
         if (! Features::enabled($feature)) {

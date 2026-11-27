@@ -394,22 +394,28 @@ html.dark .text-\[\#991B1B\] {
   color: #FDA4AF !important;
 }
 
-/* Brand Crimson Page Titles, Section Titles & Subheadings (Light & Dark Mode) */
-html.light #root h1:not(:where([data-dark-media], [data-dark-media] *, [class*="bg-rose-"] *, [class*="bg-red-"] *, [class*="bg-amber-"] *, [class*="bg-emerald-"] *)),
-html.light #root h2:not(:where([data-dark-media], [data-dark-media] *, [class*="bg-rose-"] *, [class*="bg-red-"] *, [class*="bg-amber-"] *, [class*="bg-emerald-"] *)) {
-  color: #BE123C !important;
+/* Brand Crimson Page Titles (h1), Section Titles (h2), & Subheadings (h3) */
+html.light #root h1:not(:where([data-dark-media], [data-dark-media] *)) {
+  color: #881337 !important;
 }
 
-html.light #root h3:not(:where([data-dark-media], [data-dark-media] *, [class*="bg-rose-"] *, [class*="bg-red-"] *, [class*="bg-amber-"] *, [class*="bg-emerald-"] *)) {
+html.light #root h2:not(:where([data-dark-media], [data-dark-media] *)) {
+  color: #E11D48 !important;
+}
+
+html.light #root h3:not(:where([data-dark-media], [data-dark-media] *)) {
   color: #9F1239 !important;
 }
 
-html.dark #root h1:not(:where([data-dark-media], [data-dark-media] *, [class*="bg-rose-"] *, [class*="bg-red-"] *, [class*="bg-amber-"] *, [class*="bg-emerald-"] *)),
-html.dark #root h2:not(:where([data-dark-media], [data-dark-media] *, [class*="bg-rose-"] *, [class*="bg-red-"] *, [class*="bg-amber-"] *, [class*="bg-emerald-"] *)) {
-  color: #FB7185 !important;
+html.dark #root h1:not(:where([data-dark-media], [data-dark-media] *)) {
+  color: #FDA4AF !important;
 }
 
-html.dark #root h3:not(:where([data-dark-media], [data-dark-media] *, [class*="bg-rose-"] *, [class*="bg-red-"] *, [class*="bg-amber-"] *, [class*="bg-emerald-"] *)) {
-  color: #FDA4AF !important;
+html.dark #root h2:not(:where([data-dark-media], [data-dark-media] *)) {
+  color: #F43F5E !important;
+}
+
+html.dark #root h3:not(:where([data-dark-media], [data-dark-media] *)) {
+  color: #FB7185 !important;
 }
 

@@ -79,8 +79,8 @@ export const LoginPage: React.FC = () => {
         loading="eager"
       />
 
-      {/* Multi-layered dark cinematic gradient overlays */}
-      <div className="absolute inset-0 bg-black/90 pointer-events-none" />
+      {/* Theme-aware atmospheric gradient overlay */}
+      <div className="absolute inset-0 bg-[#F9FAFB]/92 dark:bg-black/90 pointer-events-none" />
 
       {/* Main Container: Split Two-Column Grid */}
       <div className="max-w-6xl w-full mx-auto relative z-10 grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-14 items-center">

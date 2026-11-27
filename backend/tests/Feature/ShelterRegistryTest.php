@@ -294,4 +294,61 @@ class ShelterRegistryTest extends TestCase
         $guestRes = $this->postJson('/api/v1/admin/shelters', ['name' => 'Ilegal Shelter']);
         $this->assertContains($guestRes->status(), [401, 403]);
     }
+
+    /**
+     * F-01 Regression: Public shelter list must never expose unverified/pending/rejected shelters
+     * regardless of query parameters (all, PENDING_VERIFICATION, unknown values).
+     */
+    public function test_public_shelters_never_exposes_unverified_via_query_parameters(): void
+    {
+        $pending = Shelter::create([
+            'name' => 'Shelter Uji Pending F01',
+            'facility_type' => 'school',
+            'address' => 'Jl. Uji Pending No. 1',
+            'region_id' => $this->pilotRegion->id,
+            'capacity' => 100,
+            'current_occupancy' => 0,
+            'operational_status' => 'open',
+            'verification_status' => 'PENDING_VERIFICATION',
+        ]);
+
+        $inactive = Shelter::create([
+            'name' => 'Shelter Uji Inactive F01',
+            'facility_type' => 'school',
+            'address' => 'Jl. Uji Inactive No. 2',
+            'region_id' => $this->pilotRegion->id,
+            'capacity' => 100,
+            'current_occupancy' => 0,
+            'operational_status' => 'open',
+            'verification_status' => 'INACTIVE',
+        ]);
+
+        foreach ([
+            '/api/v1/public/shelters',
+            '/api/v1/public/shelters?verification_status=all',
+            '/api/v1/public/shelters?verification_status=PENDING_VERIFICATION',
+            '/api/v1/public/shelters?verification_status=INACTIVE',
+            '/api/v1/public/shelters?verification_status=MALFORMED_STATUS',
+        ] as $url) {
+            $res = $this->getJson($url);
+            $res->assertOk();
+            $ids = collect($res->json('data.data'))->pluck('id')->all();
+            $this->assertNotContains($pending->id, $ids, "Pending shelter leaked on {$url}");
+            $this->assertNotContains($inactive->id, $ids, "Inactive shelter leaked on {$url}");
+            foreach ($res->json('data.data') as $row) {
+                $this->assertEquals('VERIFIED', $row['verification_status']);
+                $this->assertTrue($row['is_verified']);
+            }
+        }
+
+        // Detail endpoint remains consistent
+        $this->getJson("/api/v1/public/shelters/{$pending->id}")->assertNotFound();
+        $this->getJson("/api/v1/public/shelters/{$inactive->id}")->assertNotFound();
+
+        // Admin retains full visibility of unverified shelters
+        $adminRes = $this->actingAs($this->adminUser)->getJson('/api/v1/admin/shelters?per_page=100');
+        $adminRes->assertOk();
+        $adminIds = collect($adminRes->json('data.data'))->pluck('id')->all();
+        $this->assertContains($pending->id, $adminIds);
+    }
 }

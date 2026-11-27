@@ -53,12 +53,8 @@ export const ForgotPasswordPage: React.FC = () => {
         loading="eager"
       />
 
-      {/* Multi-layered dark cinematic gradient overlays */}
-      <div className="absolute inset-0 bg-gradient-to-b from-black/95 via-black/85 to-black pointer-events-none" />
-      <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_center,_var(--tw-gradient-stops))] from-rose-950/30 via-black/90 to-black pointer-events-none" />
-
-      {/* Full dark cinematic background */}
-      <div className="absolute inset-0 bg-black/90 pointer-events-none" />
+      {/* Theme-aware atmospheric gradient overlay */}
+      <div className="absolute inset-0 bg-[#F9FAFB]/92 dark:bg-black/90 pointer-events-none" />
 
       <div className="max-w-md w-full relative z-10">
         <div className="bg-[#121614] border border-neutral-800 rounded-3xl p-6 sm:p-8 space-y-6 relative overflow-hidden">

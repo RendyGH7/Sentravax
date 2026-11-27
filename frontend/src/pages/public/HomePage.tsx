@@ -45,46 +45,6 @@ const DisasterMap = lazy(() =>
   import('../../components/map').then((mod) => ({ default: mod.DisasterMap }))
 );
 
-// Fallback data for verified shelters in case API returns zero records
-const FALLBACK_SHELTERS: Partial<ShelterItem>[] = [
-  {
-    id: 1,
-    name: 'GOR Gelanggang Olahraga Remaja Rawamangun',
-    facility_type: 'stadium',
-    address: 'Jl. Pemuda No. 10, Rawamangun, Pulo Gadung, Jakarta Timur',
-    capacity: 1200,
-    current_occupancy: 150,
-    operational_status: 'open',
-    wheelchair_accessible: true,
-    has_sanitation: true,
-    elderly_friendly: true,
-  },
-  {
-    id: 2,
-    name: 'Balai Pertemuan Warga RW 07 Kebon Pala',
-    facility_type: 'community_hall',
-    address: 'Jl. Cipinang Asem No. 14, Makasar, Jakarta Timur',
-    capacity: 350,
-    current_occupancy: 80,
-    operational_status: 'open',
-    wheelchair_accessible: true,
-    has_sanitation: true,
-    elderly_friendly: false,
-  },
-  {
-    id: 3,
-    name: 'Posko Pengungsian Terpadu Lapangan Karebosi',
-    facility_type: 'tent_camp',
-    address: 'Jl. Jenderal Sudirman, Ujung Pandang, Kota Makassar',
-    capacity: 2500,
-    current_occupancy: 0,
-    operational_status: 'standby',
-    wheelchair_accessible: true,
-    has_sanitation: true,
-    elderly_friendly: true,
-  },
-];
-
 interface Testimonial {
   id: string;
   name: string;
@@ -439,6 +399,8 @@ export const HomePage: React.FC = () => {
   const [events, setEvents] = useState<HazardEventItem[]>([]);
   const [alerts, setAlerts] = useState<AlertItem[]>([]);
   const [shelters, setShelters] = useState<ShelterItem[]>([]);
+  const [sheltersLoading, setSheltersLoading] = useState<boolean>(true);
+  const [sheltersError, setSheltersError] = useState<string | null>(null);
 
   // Core Feature 1: Location Risk Checker state
   const [regions, setRegions] = useState<RegionItem[]>([]);
@@ -612,11 +574,16 @@ export const HomePage: React.FC = () => {
   }, []);
 
   const fetchShelters = useCallback(async () => {
+    setSheltersLoading(true);
+    setSheltersError(null);
     try {
       const res = await publicService.getShelters({ per_page: 12 });
       setShelters(res.data || []);
     } catch {
-      // Graceful fallback
+      setShelters([]);
+      setSheltersError('Gagal memuat data shelter');
+    } finally {
+      setSheltersLoading(false);
     }
   }, []);
 
@@ -694,7 +661,7 @@ export const HomePage: React.FC = () => {
     }, 900);
   };
 
-  const activeSheltersCount = shelters.length > 0 ? shelters.length : FALLBACK_SHELTERS.length;
+  const activeSheltersCount = shelters.length;
 
   return (
     <div className="w-full">
@@ -968,8 +935,23 @@ export const HomePage: React.FC = () => {
               <Shield className="w-3.5 h-3.5 text-rose-400 shrink-0" />
               Shelter Terbuka:
             </span>
-            <span className="font-bold text-rose-400 text-sm tracking-tight">
-              {activeSheltersCount} Lokasi
+            <span className="font-bold text-rose-400 text-sm tracking-tight flex items-center gap-1.5">
+              {sheltersLoading ? (
+                '...'
+              ) : sheltersError ? (
+                <>
+                  <span>Tidak tersedia</span>
+                  <button
+                    type="button"
+                    onClick={fetchShelters}
+                    className="text-[10px] underline text-rose-300 hover:text-rose-200 cursor-pointer"
+                  >
+                    Coba lagi
+                  </button>
+                </>
+              ) : (
+                `${activeSheltersCount} Lokasi`
+              )}
             </span>
           </div>
           <div className="p-3.5 rounded-2xl bg-[#101618] border border-neutral-800 flex items-center justify-between">

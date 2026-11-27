@@ -854,7 +854,6 @@ class PublicController extends Controller
             'q' => ['nullable', 'string', 'max:100'],
             'facility_type' => ['nullable', 'string', 'max:50'],
             'operational_status' => ['nullable', 'string', Rule::in(['open', 'standby', 'full', 'closed', 'all'])],
-            'verification_status' => ['nullable', 'string', Rule::in(['VERIFIED', 'PENDING_VERIFICATION', 'INACTIVE', 'UNKNOWN', 'SIMULATED', 'all'])],
             'region_id' => ['nullable', 'integer', 'exists:regions,id'],
             'wheelchair_accessible' => ['nullable', 'boolean'],
             'elderly_friendly' => ['nullable', 'boolean'],
@@ -881,11 +880,8 @@ class PublicController extends Controller
 
         $query = Shelter::query()->with('region:id,code,name,level');
 
-        // Verification Status Filter: Default to VERIFIED for public safety unless 'all' or explicit requested
-        $verStatus = $request->query('verification_status', 'VERIFIED');
-        if ($verStatus !== 'all') {
-            $query->where('verification_status', $verStatus);
-        }
+        // Public safety enforcement: always restrict public shelter listings to VERIFIED records only
+        $query->where('verification_status', 'VERIFIED');
 
         // Operational Status Filter: Default to open/standby/full unless explicit
         if ($request->filled('operational_status') && $request->query('operational_status') !== 'all') {
