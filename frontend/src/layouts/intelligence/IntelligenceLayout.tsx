@@ -42,7 +42,7 @@ export const IntelligenceLayout: React.FC = () => {
   ];
 
   return (
-    <div className="min-h-screen bg-[#0C0C0C] text-[#F5F5F5] flex selection:bg-[#2E2208] selection:text-[#F59E0B]">
+    <div className="font-ops min-h-screen bg-[#0C0C0C] text-[#F5F5F5] flex selection:bg-[#2E2208] selection:text-[#F59E0B]">
       {/* Mobile backdrop */}
       {sidebarOpen && (
         <div 

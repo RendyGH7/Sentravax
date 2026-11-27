@@ -96,3 +96,87 @@ export interface PublicEmergencyDirectoryResponse {
 }
 
 export type PublicEmergencyContactDetailResponse = PublicEmergencyContact;
+
+// ============================================================================
+// ADMIN EMERGENCY DIRECTORY TYPES (Phase 6.6.4.4 — Parent Contact Management)
+// ============================================================================
+
+export interface AdminEmergencyContactActor {
+  id: number;
+  name: string;
+  email: string;
+}
+
+export interface AdminEmergencyContactChannel extends PublicEmergencyContactChannel {
+  emergency_contact_id: number;
+  verification_status: EmergencyDirectoryVerificationStatus;
+  verification_notes: string | null;
+  is_active: boolean;
+  created_at: string;
+  updated_at: string;
+}
+
+export interface AdminEmergencyContact {
+  id: number;
+  name: string;
+  slug: string;
+  category: EmergencyDirectoryCategory;
+  scope: EmergencyDirectoryScope;
+  region_id: number | null;
+  region: PublicEmergencyContactRegion | null;
+  address: string | null;
+  latitude: number | null;
+  longitude: number | null;
+  description: string | null;
+  verification_status: EmergencyDirectoryVerificationStatus;
+  publication_status: EmergencyDirectoryPublicationStatus;
+  created_by: number | null;
+  updated_by: number | null;
+  creator?: AdminEmergencyContactActor | null;
+  updater?: AdminEmergencyContactActor | null;
+  channels?: AdminEmergencyContactChannel[];
+  created_at: string;
+  updated_at: string;
+  deleted_at: string | null;
+}
+
+export interface AdminEmergencyDirectoryStats {
+  total: number;
+  verified: number;
+  unverified: number;
+  published: number;
+  draft: number;
+  archived: number;
+  total_channels: number;
+  active_channels: number;
+}
+
+export interface AdminEmergencyDirectoryQueryParams {
+  q?: string;
+  category?: EmergencyDirectoryCategory;
+  scope?: EmergencyDirectoryScope;
+  verification_status?: EmergencyDirectoryVerificationStatus;
+  publication_status?: EmergencyDirectoryPublicationStatus;
+  region_id?: number;
+  with_trashed?: boolean;
+  per_page?: number;
+  page?: number;
+}
+
+export interface AdminEmergencyDirectoryListResponse {
+  data: AdminEmergencyContact[];
+  meta: PublicEmergencyDirectoryPaginationMeta;
+  stats: AdminEmergencyDirectoryStats;
+}
+
+export interface AdminEmergencyContactParentPayload {
+  name: string;
+  slug?: string;
+  category: EmergencyDirectoryCategory;
+  scope: EmergencyDirectoryScope;
+  region_id: number | null;
+  address: string | null;
+  latitude: number | null;
+  longitude: number | null;
+  description: string | null;
+}

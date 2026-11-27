@@ -414,11 +414,11 @@ export const PublicWarningDetailPage: React.FC = () => {
       <div className="bg-[#0d0f0e] border-b border-neutral-800 py-3.5 px-4 sm:px-6 lg:px-8">
         <div className="max-w-6xl mx-auto flex items-center justify-between text-xs">
           <nav className="flex items-center gap-1.5 text-neutral-400 truncate" aria-label="Breadcrumb">
-            <Link to={PATHS.PUBLIC.HOME} className="hover:text-[#047857] transition-colors shrink-0">
+            <Link to={PATHS.PUBLIC.HOME} className="hover:text-[#BE123C] transition-colors shrink-0">
               Beranda
             </Link>
             <span>/</span>
-            <Link to={PATHS.PUBLIC.WARNINGS} className="hover:text-[#047857] transition-colors shrink-0">
+            <Link to={PATHS.PUBLIC.WARNINGS} className="hover:text-[#BE123C] transition-colors shrink-0">
               Pusat Peringatan Dini
             </Link>
             <span>/</span>
@@ -487,7 +487,7 @@ export const PublicWarningDetailPage: React.FC = () => {
                 variant="outline"
                 size="sm"
                 onClick={handleCopyLink}
-                leftIcon={isCopied ? <CheckCircle2 className="w-4 h-4 text-emerald-600" /> : <Share2 className="w-4 h-4" />}
+                leftIcon={isCopied ? <CheckCircle2 className="w-4 h-4 text-rose-600" /> : <Share2 className="w-4 h-4" />}
               >
                 {isCopied ? 'Tautan Disalin!' : 'Bagikan Peringatan'}
               </Button>
@@ -562,7 +562,7 @@ export const PublicWarningDetailPage: React.FC = () => {
             {alertDetail.instruction && (
               <section className="bg-[#121614] border border-neutral-800 rounded-2xl p-6 shadow-xs space-y-3">
                 <h2 className="text-base font-bold text-white flex items-center gap-2">
-                  <BookOpen className="w-4 h-4 text-emerald-400" />
+                  <BookOpen className="w-4 h-4 text-rose-400" />
                   <span>Instruksi Keselamatan Resmi (Official CAP Instruction)</span>
                 </h2>
                 <div className="text-sm text-neutral-200 leading-relaxed p-4 bg-neutral-900 rounded-xl border border-neutral-800 font-medium">
@@ -574,7 +574,7 @@ export const PublicWarningDetailPage: React.FC = () => {
             {/* ISSUER & DATA PROVENANCE (STRICT SEMANTIC SEPARATION) */}
             <section className="bg-[#121614] border border-neutral-800 rounded-2xl p-6 shadow-xs space-y-4">
               <h2 className="text-base font-bold text-white flex items-center gap-2">
-                <ShieldCheck className="w-4 h-4 text-[#047857]" />
+                <ShieldCheck className="w-4 h-4 text-[#BE123C]" />
                 <span>Atribusi Penerbit & Sumber Data Kejadian</span>
               </h2>
 
@@ -586,7 +586,7 @@ export const PublicWarningDetailPage: React.FC = () => {
                     <span
                       className={`px-1.5 py-0.5 rounded-md text-[10px] font-bold ${
                         alertDetail.issuer.is_verified
-                          ? 'bg-emerald-50 text-emerald-700 border border-emerald-200'
+                          ? 'bg-rose-50 text-rose-700 border border-rose-200'
                           : 'bg-neutral-900 text-gray-600 border border-gray-200'
                       }`}
                     >
@@ -651,17 +651,17 @@ export const PublicWarningDetailPage: React.FC = () => {
             {/* ASSOCIATED HAZARD EVENT */}
             <section className="bg-[#121614] border border-neutral-800 rounded-2xl p-6 shadow-xs space-y-3">
               <h2 className="text-base font-bold text-white flex items-center gap-2">
-                <Activity className="w-4 h-4 text-[#047857]" />
+                <Activity className="w-4 h-4 text-[#BE123C]" />
                 <span>Kejadian Bencana Terkait</span>
               </h2>
 
               {alertDetail.hazard_event ? (
                 <div className="bg-neutral-900 border border-neutral-800 rounded-xl p-4 space-y-2.5">
                   <div className="flex items-center justify-between text-xs">
-                    <span className="px-2 py-0.5 rounded-md bg-emerald-950/80 text-emerald-300 border border-emerald-800/60 font-bold text-[10px]">
+                    <span className="px-2 py-0.5 rounded-md bg-rose-950/80 text-rose-300 border border-rose-800/60 font-bold text-[10px]">
                       Kejadian #{alertDetail.hazard_event.id}
                     </span>
-                    <span className="text-[11px] text-emerald-400 font-semibold">
+                    <span className="text-[11px] text-rose-400 font-semibold">
                       Tingkat {alertDetail.hazard_event.severity} • Status {alertDetail.hazard_event.status}
                     </span>
                   </div>
@@ -675,7 +675,7 @@ export const PublicWarningDetailPage: React.FC = () => {
 
                     <Link
                       to={`/disasters/${alertDetail.hazard_event.id}`}
-                      className="inline-flex items-center gap-1 font-bold text-emerald-400 hover:text-emerald-300"
+                      className="inline-flex items-center gap-1 font-bold text-rose-400 hover:text-rose-300"
                     >
                       <span>Buka Detail Kejadian</span>
                       <ChevronRight className="w-3.5 h-3.5" />
@@ -790,10 +790,10 @@ export const PublicWarningDetailPage: React.FC = () => {
               <div className="space-y-2 text-xs">
                 <Link
                   to={PATHS.PUBLIC.HOME}
-                  className="flex items-center justify-between p-2.5 rounded-xl hover:bg-neutral-900 text-neutral-200 hover:text-emerald-400 transition-colors border border-transparent hover:border-neutral-800"
+                  className="flex items-center justify-between p-2.5 rounded-xl hover:bg-neutral-900 text-neutral-200 hover:text-rose-400 transition-colors border border-transparent hover:border-neutral-800"
                 >
                   <div className="flex items-center gap-2">
-                    <Compass className="w-4 h-4 text-emerald-400" />
+                    <Compass className="w-4 h-4 text-rose-400" />
                     <span className="font-semibold">SIAGA PERSONAL (Cek Koordinat)</span>
                   </div>
                   <ChevronRight className="w-3.5 h-3.5" />
@@ -801,10 +801,10 @@ export const PublicWarningDetailPage: React.FC = () => {
 
                 <Link
                   to={PATHS.PUBLIC.DISASTERS}
-                  className="flex items-center justify-between p-2.5 rounded-xl hover:bg-neutral-900 text-neutral-200 hover:text-emerald-400 transition-colors border border-transparent hover:border-neutral-800"
+                  className="flex items-center justify-between p-2.5 rounded-xl hover:bg-neutral-900 text-neutral-200 hover:text-rose-400 transition-colors border border-transparent hover:border-neutral-800"
                 >
                   <div className="flex items-center gap-2">
-                    <Activity className="w-4 h-4 text-emerald-400" />
+                    <Activity className="w-4 h-4 text-rose-400" />
                     <span className="font-semibold">Katalog Kejadian Bencana</span>
                   </div>
                   <ChevronRight className="w-3.5 h-3.5" />
@@ -812,10 +812,10 @@ export const PublicWarningDetailPage: React.FC = () => {
 
                 <Link
                   to={PATHS.PUBLIC.EDUCATION}
-                  className="flex items-center justify-between p-2.5 rounded-xl hover:bg-neutral-900 text-neutral-200 hover:text-emerald-400 transition-colors border border-transparent hover:border-neutral-800"
+                  className="flex items-center justify-between p-2.5 rounded-xl hover:bg-neutral-900 text-neutral-200 hover:text-rose-400 transition-colors border border-transparent hover:border-neutral-800"
                 >
                   <div className="flex items-center gap-2">
-                    <BookOpen className="w-4 h-4 text-emerald-400" />
+                    <BookOpen className="w-4 h-4 text-rose-400" />
                     <span className="font-semibold">Panduan Edukasi & Kesiapsiagaan</span>
                   </div>
                   <ChevronRight className="w-3.5 h-3.5" />

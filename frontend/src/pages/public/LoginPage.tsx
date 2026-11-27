@@ -6,6 +6,7 @@ import { Shield, Lock, Mail, ArrowRight, KeyRound, Radio, Activity, AlertTriangl
 import { toast } from 'sonner';
 import { getApiErrorMessage } from '../../lib/api-error';
 import { ErrorMessage } from '../../components/shared/ErrorMessage';
+import { SentravaxLogo } from '../../components/shared/SentravaxLogo';
 
 export const LoginPage: React.FC = () => {
   const [email, setEmail] = useState('');
@@ -87,8 +88,8 @@ export const LoginPage: React.FC = () => {
         <div className="hidden lg:flex lg:col-span-7 flex-col justify-center space-y-6 select-none">
           {/* Status Badge */}
           <div>
-            <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full text-xs font-mono font-bold tracking-wider uppercase bg-neutral-900 border border-neutral-700 text-emerald-400">
-              <Radio className="w-3.5 h-3.5 text-emerald-400 animate-pulse" />
+            <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full text-xs font-mono font-bold tracking-wider uppercase bg-neutral-900 border border-neutral-700 text-rose-400">
+              <Radio className="w-3.5 h-3.5 text-rose-400 animate-pulse" />
               <span>SISTEM PERTAHANAN KEBENCANAAN NASIONAL</span>
             </div>
           </div>
@@ -97,7 +98,7 @@ export const LoginPage: React.FC = () => {
           <div className="space-y-3">
             <h1 className="text-3xl sm:text-4xl lg:text-5xl font-black text-white tracking-tight leading-[1.12]">
               Satu Akses Terpadu.
-              <span className="block mt-2 text-emerald-400">
+              <span className="block mt-2 text-rose-400">
                 Kesiapsiagaan Cepat Menyelamatkan Jiwa.
               </span>
             </h1>
@@ -110,8 +111,8 @@ export const LoginPage: React.FC = () => {
           <div className="p-6 rounded-3xl bg-[#121614] border border-neutral-800 space-y-4 relative overflow-hidden">
             {/* Top Telemetry Beacon Row */}
             <div className="flex items-center justify-between border-b border-neutral-800 pb-3 text-xs font-mono">
-              <span className="text-emerald-400 font-bold flex items-center gap-2">
-                <span className="w-2.5 h-2.5 rounded-full bg-emerald-400 animate-ping" />
+              <span className="text-rose-400 font-bold flex items-center gap-2">
+                <span className="w-2.5 h-2.5 rounded-full bg-rose-400 animate-ping" />
                 STATUS: RADAR AKTIF 24/7
               </span>
               <span className="text-neutral-400 text-[11px]">
@@ -122,8 +123,8 @@ export const LoginPage: React.FC = () => {
             {/* 3 Graphic Value Highlight Cards */}
             <div className="space-y-2.5">
               <div className="p-3.5 rounded-2xl bg-[#0d100f] border border-neutral-800 flex items-start gap-3">
-                <div className="w-8 h-8 rounded-xl bg-neutral-900 border border-neutral-800 text-emerald-400 flex items-center justify-center shrink-0 mt-0.5">
-                  <Shield className="w-4 h-4 text-emerald-400" />
+                <div className="w-8 h-8 rounded-xl bg-neutral-900 border border-neutral-800 text-rose-400 flex items-center justify-center shrink-0 mt-0.5">
+                  <Shield className="w-4 h-4 text-rose-400" />
                 </div>
                 <div>
                   <h4 className="text-xs font-bold text-white">Portal Warga Siaga 72 Jam</h4>
@@ -161,7 +162,7 @@ export const LoginPage: React.FC = () => {
             {/* Endorsement Footnote */}
             <div className="pt-2 flex items-center justify-between text-[11px] text-neutral-400 font-mono">
               <span>JARINGAN DATA RESMI:</span>
-              <span className="text-emerald-400 font-bold">BMKG • BNPB • BASARNAS • PVMBG</span>
+              <span className="text-rose-400 font-bold">BMKG • BNPB • BASARNAS • PVMBG</span>
             </div>
           </div>
         </div>
@@ -171,9 +172,7 @@ export const LoginPage: React.FC = () => {
           <div className="bg-[#121614] border border-neutral-800 rounded-3xl p-6 sm:p-8 space-y-6 relative overflow-hidden">
             {/* Form Header */}
             <div className="text-center">
-              <div className="w-12 h-12 rounded-2xl bg-emerald-700 flex items-center justify-center mx-auto mb-3 text-white shadow-xs">
-                <Shield className="w-6 h-6 text-white" />
-              </div>
+              <SentravaxLogo size={48} className="mx-auto mb-3 shadow-sm" />
               <h2 className="text-2xl font-black text-white tracking-tight">Masuk ke SENTRAVAX</h2>
               <p className="text-xs text-neutral-300 mt-1 leading-relaxed">
                 Akses terintegrasi portal warga, konsol admin, dan intelijen geospasial.
@@ -226,14 +225,14 @@ export const LoginPage: React.FC = () => {
               <div className="space-y-1.5">
                 <label className="block text-xs font-bold text-neutral-200">Alamat Email Terdaftar</label>
                 <div className="relative">
-                  <Mail className="w-4 h-4 text-emerald-400 absolute left-3.5 top-3" />
+                  <Mail className="w-4 h-4 text-rose-400 absolute left-3.5 top-3" />
                   <input
                     type="email"
                     value={email}
                     onChange={(e) => setEmail(e.target.value)}
                     placeholder="nama@email.com"
                     required
-                    className="w-full pl-10 pr-4 py-2.5 rounded-xl bg-[#0d100f] border border-neutral-700 text-white placeholder-neutral-500 text-xs sm:text-sm focus:outline-none focus:border-emerald-600 focus:ring-1 focus:ring-emerald-600 transition-colors font-medium"
+                    className="w-full pl-10 pr-4 py-2.5 rounded-xl bg-[#0d100f] border border-neutral-700 text-white placeholder-neutral-500 text-xs sm:text-sm focus:outline-none focus:border-rose-600 focus:ring-1 focus:ring-rose-600 transition-colors font-medium"
                   />
                 </div>
               </div>
@@ -241,19 +240,19 @@ export const LoginPage: React.FC = () => {
               <div className="space-y-1.5">
                 <div className="flex items-center justify-between">
                   <label className="block text-xs font-bold text-neutral-200">Kata Sandi</label>
-                  <Link to={PATHS.PUBLIC.FORGOT_PASSWORD} className="text-xs text-emerald-400 hover:text-emerald-300 font-bold hover:underline transition-colors">
+                  <Link to={PATHS.PUBLIC.FORGOT_PASSWORD} className="text-xs text-rose-400 hover:text-rose-300 font-bold hover:underline transition-colors">
                     Lupa sandi?
                   </Link>
                 </div>
                 <div className="relative">
-                  <Lock className="w-4 h-4 text-emerald-400 absolute left-3.5 top-3" />
+                  <Lock className="w-4 h-4 text-rose-400 absolute left-3.5 top-3" />
                   <input
                     type="password"
                     value={password}
                     onChange={(e) => setPassword(e.target.value)}
                     placeholder="••••••••"
                     required
-                    className="w-full pl-10 pr-4 py-2.5 rounded-xl bg-[#0d100f] border border-neutral-700 text-white placeholder-neutral-500 text-xs sm:text-sm focus:outline-none focus:border-emerald-600 focus:ring-1 focus:ring-emerald-600 transition-colors font-medium"
+                    className="w-full pl-10 pr-4 py-2.5 rounded-xl bg-[#0d100f] border border-neutral-700 text-white placeholder-neutral-500 text-xs sm:text-sm focus:outline-none focus:border-rose-600 focus:ring-1 focus:ring-rose-600 transition-colors font-medium"
                   />
                 </div>
               </div>
@@ -262,7 +261,7 @@ export const LoginPage: React.FC = () => {
                 <button
                   type="submit"
                   disabled={isSubmitting}
-                  className="w-full flex items-center justify-center gap-2 py-3.5 px-4 rounded-xl bg-emerald-700 hover:bg-emerald-600 text-white font-bold text-xs sm:text-sm transition-colors disabled:opacity-50 cursor-pointer shadow-xs"
+                  className="w-full flex items-center justify-center gap-2 py-3.5 px-4 rounded-xl bg-rose-700 hover:bg-rose-600 text-white font-bold text-xs sm:text-sm transition-colors disabled:opacity-50 cursor-pointer shadow-xs"
                 >
                   <span>{isSubmitting ? 'Memproses Masuk...' : 'Masuk ke Akun'}</span>
                   <ArrowRight className="w-4 h-4 text-white" />
@@ -272,7 +271,7 @@ export const LoginPage: React.FC = () => {
 
             <div className="text-center text-xs text-neutral-300 pt-3 border-t border-neutral-800">
               Belum punya akun warga?{' '}
-              <Link to={PATHS.PUBLIC.REGISTER} className="text-emerald-400 hover:text-emerald-300 font-bold hover:underline transition-colors">
+              <Link to={PATHS.PUBLIC.REGISTER} className="text-rose-400 hover:text-rose-300 font-bold hover:underline transition-colors">
                 Daftar akun warga baru
               </Link>
             </div>

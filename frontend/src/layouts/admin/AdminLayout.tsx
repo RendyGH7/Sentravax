@@ -10,6 +10,7 @@ import {
   Flame, 
   AlertTriangle, 
   Shield,
+  PhoneCall,
   BookOpen, 
   Database, 
   ScrollText, 
@@ -42,13 +43,14 @@ export const AdminLayout: React.FC = () => {
     { name: 'Data Kejadian', path: PATHS.ADMIN.DISASTERS, icon: Flame },
     { name: 'Peringatan Dini', path: PATHS.ADMIN.ALERTS, icon: AlertTriangle },
     { name: 'Shelter & Evakuasi', path: PATHS.ADMIN.SHELTERS, icon: Shield },
+    { name: 'Kontak Darurat', path: PATHS.ADMIN.EMERGENCY_DIRECTORY, icon: PhoneCall },
     { name: 'Konten Edukasi', path: PATHS.ADMIN.EDUCATION, icon: BookOpen },
     { name: 'Sumber Data API', path: PATHS.ADMIN.DATA_SOURCES, icon: Database },
     { name: 'Audit dan Log Sistem', path: PATHS.ADMIN.AUDIT_LOGS, icon: ScrollText },
   ];
 
   return (
-    <div className="min-h-screen bg-[#0C0C0C] text-[#F5F5F5] flex selection:bg-[#2E2208] selection:text-[#F59E0B]">
+    <div className="font-ops min-h-screen bg-[#0C0C0C] text-[#F5F5F5] flex selection:bg-[#2E2208] selection:text-[#F59E0B]">
       {/* Mobile backdrop */}
       {sidebarOpen && (
         <div 

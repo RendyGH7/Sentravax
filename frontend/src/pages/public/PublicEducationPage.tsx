@@ -257,7 +257,7 @@ export const PublicEducationPage: React.FC = () => {
         <div className="flex flex-col md:flex-row md:items-end justify-between gap-4">
           <div className="space-y-1">
             <div className="flex items-center gap-2">
-              <span className="text-[10px] font-mono font-bold px-2.5 py-0.5 rounded-md bg-emerald-950/80 text-emerald-300 border border-emerald-800/60">SIAP SIAGA</span>
+              <span className="text-[10px] font-mono font-bold px-2.5 py-0.5 rounded-md bg-rose-950/80 text-rose-300 border border-rose-800/60">SIAP SIAGA</span>
               <span className="text-[10px] font-mono font-bold px-2.5 py-0.5 rounded-md bg-neutral-900 text-neutral-300 border border-neutral-700">STANDAR BNPB &amp; BMKG</span>
             </div>
             <h1 className="text-2xl sm:text-3xl font-black text-white tracking-tight">
@@ -273,7 +273,7 @@ export const PublicEducationPage: React.FC = () => {
             <Link to={PATHS.PUBLIC.PREPAREDNESS}>
               <button
                 type="button"
-                className="inline-flex items-center gap-1.5 px-3.5 py-2 rounded-xl bg-emerald-700 hover:bg-emerald-600 text-white text-xs font-bold transition-all shadow-xs"
+                className="inline-flex items-center gap-1.5 px-3.5 py-2 rounded-xl bg-rose-700 hover:bg-rose-600 text-white text-xs font-bold transition-all shadow-xs"
               >
                 <span>Cek Risiko Lokasi</span>
                 <ArrowRight className="w-3.5 h-3.5" />
@@ -301,7 +301,7 @@ export const PublicEducationPage: React.FC = () => {
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
                 placeholder="Cari panduan keselamatan (contoh: gempa, listrik, tas siaga, banjir)..."
-                className="w-full pl-10 pr-4 py-2 text-xs sm:text-sm rounded-xl border border-neutral-700 bg-emerald-700 text-white placeholder:text-neutral-500 focus:border-emerald-500 focus:ring-1 focus:ring-emerald-500 outline-none transition-colors"
+                className="w-full pl-10 pr-4 py-2 text-xs sm:text-sm rounded-xl border border-neutral-700 bg-rose-700 text-white placeholder:text-neutral-500 focus:border-rose-500 focus:ring-1 focus:ring-rose-500 outline-none transition-colors"
               />
               {searchQuery && (
                 <button
@@ -323,7 +323,7 @@ export const PublicEducationPage: React.FC = () => {
                   onClick={() => setPhaseFilter(p)}
                   className={`px-2.5 py-1.5 rounded-lg text-xs font-bold capitalize transition-all ${
                     phaseFilter === p
-                      ? 'bg-emerald-700 text-white'
+                      ? 'bg-rose-700 text-white'
                       : 'bg-neutral-900 text-neutral-400 border border-neutral-800 hover:text-white'
                   }`}
                 >
@@ -355,7 +355,7 @@ export const PublicEducationPage: React.FC = () => {
                   onClick={() => setSelectedHazard(h.id)}
                   className={`inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl font-bold whitespace-nowrap transition-all ${
                     isSelected
-                      ? 'bg-[#047857] text-white shadow-xs'
+                      ? 'bg-[#BE123C] text-white shadow-xs'
                       : 'bg-neutral-900 text-neutral-400 border border-neutral-800 hover:text-white'
                   }`}
                 >
@@ -399,13 +399,13 @@ export const PublicEducationPage: React.FC = () => {
                   viewport={{ once: true, margin: '-30px' }}
                   transition={{ duration: 0.42, ease: [0.22, 1, 0.36, 1], delay: (idx % 2) * 0.08 }}
                   whileHover={{ y: -3, transition: { duration: 0.2 } }}
-                  className={`p-5 rounded-2xl bg-[#121614] border transition-colors ${isExpanded ? "border-emerald-500 ring-1 ring-emerald-500/30" : "border-neutral-800 hover:border-emerald-500/40"}`}
+                  className={`p-5 rounded-2xl bg-[#121614] border transition-colors ${isExpanded ? "border-rose-500 ring-1 ring-rose-500/30" : "border-neutral-800 hover:border-rose-500/40"}`}
                 >
                   <div className="space-y-3">
                     {/* Top Row: Badges & Controls */}
                     <div className="flex items-center justify-between gap-2">
                       <div className="flex items-center gap-1.5 flex-wrap">
-                        <span className="text-[10px] font-mono font-bold px-2 py-0.5 rounded-md bg-emerald-950/80 text-emerald-300 border border-emerald-800/60">{guide.hazard_type?.name || "Multi-Hazard"}</span>
+                        <span className="text-[10px] font-mono font-bold px-2 py-0.5 rounded-md bg-rose-950/80 text-rose-300 border border-rose-800/60">{guide.hazard_type?.name || "Multi-Hazard"}</span>
                         <span className="text-[10px] font-mono font-bold px-2 py-0.5 rounded-md bg-neutral-900 text-neutral-300 border border-neutral-700">{guide.category.toUpperCase()}</span>
                       </div>
 
@@ -447,13 +447,13 @@ export const PublicEducationPage: React.FC = () => {
                         {displaySections.map((sec, idx) => (
                           <div key={idx} className="p-3 rounded-xl bg-neutral-900 border border-neutral-800 space-y-2">
                             <h3 className="text-xs font-bold text-white flex items-center gap-1.5">
-                              <CheckCircle2 className="w-3.5 h-3.5 text-[#047857]" />
+                              <CheckCircle2 className="w-3.5 h-3.5 text-[#BE123C]" />
                               <span>{sec.title}</span>
                             </h3>
                             <ul className="space-y-1.5 text-xs text-neutral-300">
                               {sec.content.map((c, cIdx) => (
                                 <li key={cIdx} className="flex items-start gap-2 leading-relaxed">
-                                  <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 shrink-0 mt-1.5" />
+                                  <span className="w-1.5 h-1.5 rounded-full bg-rose-400 shrink-0 mt-1.5" />
                                   <span>{c}</span>
                                 </li>
                               ))}
@@ -471,7 +471,7 @@ export const PublicEducationPage: React.FC = () => {
                       <button
                         type="button"
                         onClick={() => toggleExpand(guide.id)}
-                        className="inline-flex items-center gap-1 text-xs font-bold text-emerald-400 hover:text-emerald-300 transition-colors"
+                        className="inline-flex items-center gap-1 text-xs font-bold text-rose-400 hover:text-rose-300 transition-colors"
                       >
                         <span>{isExpanded ? 'Tutup Detail' : 'Buka Tindakan Lengkap'}</span>
                         {isExpanded ? <ChevronUp className="w-3.5 h-3.5" /> : <ChevronDown className="w-3.5 h-3.5" />}

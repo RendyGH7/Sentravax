@@ -28,7 +28,7 @@ export const Card = React.forwardRef<HTMLDivElement, CardProps>(
     const interactiveStyles = interactive
       ? isDark
         ? 'hover:border-[#3D3D3D] hover:bg-[#1C1C1C] cursor-pointer transition-all duration-150 active:scale-[0.99] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#F59E0B]'
-        : 'hover:border-[#D1D5DB] hover:shadow-xs cursor-pointer transition-all duration-150 active:scale-[0.99] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#047857]'
+        : 'hover:border-[#D1D5DB] hover:shadow-xs cursor-pointer transition-all duration-150 active:scale-[0.99] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#BE123C]'
       : '';
 
     return (

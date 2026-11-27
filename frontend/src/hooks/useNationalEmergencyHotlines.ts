@@ -16,9 +16,22 @@ export interface NationalEmergencyHotlineItem {
   sortOrder: number;
 }
 
+interface HotlineState {
+  hotlines: NationalEmergencyHotlineItem[];
+  loading: boolean;
+  error: string | null;
+}
+
 const CACHE_TTL_MS = 60_000;
 let cachedHotlines: NationalEmergencyHotlineItem[] | null = null;
 let cacheTimestamp = 0;
+
+function getFreshCache(): NationalEmergencyHotlineItem[] | null {
+  if (cachedHotlines !== null && Date.now() - cacheTimestamp < CACHE_TTL_MS) {
+    return cachedHotlines;
+  }
+  return null;
+}
 
 function validateDialableValue(value: string, channelType: string): string | null {
   if (!value) return null;
@@ -83,24 +96,70 @@ function extractNationalHotlines(contacts: PublicEmergencyContact[]): NationalEm
   });
 }
 
-export function useNationalEmergencyHotlines() {
-  const hasFreshCache = cachedHotlines !== null && Date.now() - cacheTimestamp < CACHE_TTL_MS;
-
-  const [hotlines, setHotlines] = useState<NationalEmergencyHotlineItem[]>(
-    hasFreshCache && cachedHotlines ? cachedHotlines : []
+async function fetchAndCacheHotlines(signal: AbortSignal): Promise<NationalEmergencyHotlineItem[]> {
+  const res = await publicService.getEmergencyContacts(
+    { scope: 'national', per_page: 50 },
+    signal
   );
-  const [loading, setLoading] = useState<boolean>(!hasFreshCache);
-  const [error, setError] = useState<string | null>(null);
+  const extracted = extractNationalHotlines(res.data);
+  cachedHotlines = extracted;
+  cacheTimestamp = Date.now();
+  return extracted;
+}
+
+function isCancellationError(err: any, signal: AbortSignal): boolean {
+  return (
+    signal.aborted ||
+    err?.name === 'CanceledError' ||
+    err?.name === 'AbortError' ||
+    err?.code === 'ERR_CANCELED'
+  );
+}
+
+export function useNationalEmergencyHotlines() {
+  const [state, setState] = useState<HotlineState>(() => {
+    const fresh = getFreshCache();
+    return fresh !== null
+      ? { hotlines: fresh, loading: false, error: null }
+      : { hotlines: [], loading: true, error: null };
+  });
 
   const abortRef = useRef<AbortController | null>(null);
 
-  const loadHotlines = useCallback(async (bypassCache = false) => {
-    if (!bypassCache && cachedHotlines !== null && Date.now() - cacheTimestamp < CACHE_TTL_MS) {
-      setHotlines(cachedHotlines);
-      setLoading(false);
-      setError(null);
+  useEffect(() => {
+    if (getFreshCache() !== null) {
       return;
     }
+
+    const controller = new AbortController();
+    abortRef.current = controller;
+
+    fetchAndCacheHotlines(controller.signal)
+      .then((extracted) => {
+        if (!controller.signal.aborted) {
+          setState({ hotlines: extracted, loading: false, error: null });
+        }
+      })
+      .catch((err: any) => {
+        if (isCancellationError(err, controller.signal)) {
+          return;
+        }
+        console.error('Failed to synchronize national emergency hotlines:', err);
+        setState({
+          hotlines: [],
+          loading: false,
+          error: 'Gagal memuat hotline darurat resmi dari server.',
+        });
+      });
+
+    return () => {
+      controller.abort();
+    };
+  }, []);
+
+  const retry = useCallback(() => {
+    cachedHotlines = null;
+    cacheTimestamp = 0;
 
     if (abortRef.current) {
       abortRef.current.abort();
@@ -108,44 +167,31 @@ export function useNationalEmergencyHotlines() {
     const controller = new AbortController();
     abortRef.current = controller;
 
-    setLoading(true);
-    setError(null);
+    setState({ hotlines: [], loading: true, error: null });
 
-    try {
-      const res = await publicService.getEmergencyContacts(
-        { scope: 'national', per_page: 50 },
-        controller.signal
-      );
-      const extracted = extractNationalHotlines(res.data);
-      cachedHotlines = extracted;
-      cacheTimestamp = Date.now();
-      setHotlines(extracted);
-    } catch (err: any) {
-      if (err.name === 'CanceledError' || err.name === 'AbortError' || err.code === 'ERR_CANCELED') {
-        return;
-      }
-      console.error('Failed to synchronize national emergency hotlines:', err);
-      setHotlines([]);
-      setError('Gagal memuat hotline darurat resmi dari server.');
-    } finally {
-      setLoading(false);
-    }
+    fetchAndCacheHotlines(controller.signal)
+      .then((extracted) => {
+        if (!controller.signal.aborted) {
+          setState({ hotlines: extracted, loading: false, error: null });
+        }
+      })
+      .catch((err: any) => {
+        if (isCancellationError(err, controller.signal)) {
+          return;
+        }
+        console.error('Failed to synchronize national emergency hotlines:', err);
+        setState({
+          hotlines: [],
+          loading: false,
+          error: 'Gagal memuat hotline darurat resmi dari server.',
+        });
+      });
   }, []);
 
-  useEffect(() => {
-    loadHotlines(false);
-    return () => {
-      if (abortRef.current) {
-        abortRef.current.abort();
-      }
-    };
-  }, [loadHotlines]);
-
-  const retry = useCallback(() => {
-    cachedHotlines = null;
-    cacheTimestamp = 0;
-    loadHotlines(true);
-  }, [loadHotlines]);
-
-  return { hotlines, loading, error, retry };
+  return {
+    hotlines: state.hotlines,
+    loading: state.loading,
+    error: state.error,
+    retry,
+  };
 }

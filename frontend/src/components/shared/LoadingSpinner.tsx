@@ -22,7 +22,7 @@ export const LoadingSpinner: React.FC<LoadingSpinnerProps> = ({
   const spinnerColor =
     theme === 'dark'
       ? 'border-[#F59E0B] border-t-transparent'
-      : 'border-[#047857] border-t-transparent';
+      : 'border-[#BE123C] border-t-transparent';
 
   const labelColor = theme === 'dark' ? 'text-[#A3A3A3]' : 'text-[#6B7280]';
 

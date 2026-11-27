@@ -3,8 +3,8 @@ import { Outlet, Link, useLocation, useNavigate } from 'react-router-dom';
 import { PATHS } from '../../app/router/paths';
 import { useAuth } from '../../app/context/useAuth';
 import { notificationService } from '../../services/notification-service';
+import { SentravaxLogo } from '../../components/shared/SentravaxLogo';
 import { 
-  Shield, 
   LayoutDashboard, 
   FileText, 
   PlusCircle, 
@@ -66,7 +66,7 @@ export const UserLayout: React.FC = () => {
   ];
 
   return (
-    <div className="min-h-screen bg-[#F9FAFB] text-[#111827] flex selection:bg-[#ECFDF5] selection:text-[#047857]">
+    <div className="font-public min-h-screen bg-[#F9FAFB] text-[#111827] flex selection:bg-[#FFF1F2] selection:text-[#BE123C]">
       {/* Mobile backdrop */}
       {sidebarOpen && (
         <div 
@@ -83,12 +83,10 @@ export const UserLayout: React.FC = () => {
         {/* Brand Header */}
         <div className="h-16 flex items-center justify-between px-5 border-b border-[#E5E7EB] bg-[#FFFFFF]">
           <Link to={PATHS.USER.DASHBOARD} className="flex items-center gap-2.5">
-            <div className="w-8 h-8 rounded-lg bg-[#047857] flex items-center justify-center text-white shadow-xs">
-              <Shield className="w-4 h-4" />
-            </div>
+            <SentravaxLogo size={32} />
             <div>
               <span className="font-bold text-sm tracking-tight text-[#111827]">SENTRAVAX</span>
-              <span className="block text-[10px] font-mono uppercase text-[#047857] font-bold">Portal Warga</span>
+              <span className="block text-[10px] font-mono uppercase text-[#BE123C] font-bold">Portal Warga</span>
             </div>
           </Link>
           <button 
@@ -102,14 +100,14 @@ export const UserLayout: React.FC = () => {
         </div>
 
         {/* User Mini Profile Card */}
-        <div className="p-3.5 mx-3 my-3 rounded-xl bg-[#ECFDF5] border border-[#A7F3D0]">
+        <div className="p-3.5 mx-3 my-3 rounded-xl bg-[#FFF1F2] border border-[#FECDD3]">
           <div className="flex items-center gap-3">
-            <div className="w-9 h-9 rounded-full bg-[#047857] text-white flex items-center justify-center font-bold text-xs shadow-xs">
+            <div className="w-9 h-9 rounded-full bg-[#BE123C] text-white flex items-center justify-center font-bold text-xs shadow-xs">
               {initials}
             </div>
             <div className="overflow-hidden">
               <h4 className="text-xs font-bold text-[#111827] truncate">{user?.name || 'Warga Terverifikasi'}</h4>
-              <p className="text-[11px] text-[#047857] flex items-center gap-1 font-semibold">
+              <p className="text-[11px] text-[#BE123C] flex items-center gap-1 font-semibold">
                 <UserCheck className="w-3.5 h-3.5" /> Role: {user?.role || 'user'}
               </p>
             </div>
@@ -128,11 +126,11 @@ export const UserLayout: React.FC = () => {
                 onClick={() => setSidebarOpen(false)}
                 className={`flex items-center gap-3 px-3 py-2.5 rounded-xl text-xs font-medium transition-all ${
                   isActive
-                    ? 'bg-[#ECFDF5] text-[#047857] font-bold border border-[#A7F3D0]'
+                    ? 'bg-[#FFF1F2] text-[#BE123C] font-bold border border-[#FECDD3]'
                     : 'text-[#4B5563] hover:text-[#111827] hover:bg-[#F3F4F6]'
                 }`}
               >
-                <Icon className={`w-4 h-4 ${isActive ? 'text-[#047857]' : 'text-[#6B7280]'}`} />
+                <Icon className={`w-4 h-4 ${isActive ? 'text-[#BE123C]' : 'text-[#6B7280]'}`} />
                 <span className="flex-1">{item.name}</span>
                 {item.path === PATHS.USER.NOTIFICATIONS && unreadNotifs > 0 && (
                   <span className="px-1.5 py-0.5 rounded-full text-[10px] font-black bg-[#EF4444] text-white">
@@ -178,7 +176,7 @@ export const UserLayout: React.FC = () => {
               <Menu className="w-5 h-5" />
             </button>
             <div className="flex items-center gap-2">
-              <span className="w-2.5 h-2.5 rounded-full bg-[#10B981]"></span>
+              <span className="w-2.5 h-2.5 rounded-full bg-[#F43F5E]"></span>
               <h2 className="text-sm font-bold text-[#111827] tracking-tight">Portal Warga SENTRAVAX</h2>
             </div>
           </div>
@@ -198,7 +196,7 @@ export const UserLayout: React.FC = () => {
             </Link>
             <Link
               to={PATHS.USER.CREATE_REPORT}
-              className="inline-flex items-center gap-1.5 px-4 py-2 rounded-lg text-xs font-bold bg-[#047857] hover:bg-[#065F46] text-white shadow-xs transition-colors"
+              className="inline-flex items-center gap-1.5 px-4 py-2 rounded-lg text-xs font-bold bg-[#BE123C] hover:bg-[#9F1239] text-white shadow-xs transition-colors"
             >
               <PlusCircle className="w-3.5 h-3.5" />
               Lapor Bencana

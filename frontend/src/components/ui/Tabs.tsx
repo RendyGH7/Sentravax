@@ -97,7 +97,7 @@ export const Tabs: React.FC<TabsProps> = ({
     if (isActive) {
       return isDark
         ? 'border-b-2 border-[#F59E0B] text-[#F59E0B] font-bold pb-2.5 -mb-px'
-        : 'border-b-2 border-[#047857] text-[#047857] font-bold pb-2.5 -mb-px';
+        : 'border-b-2 border-[#BE123C] text-[#BE123C] font-bold pb-2.5 -mb-px';
     }
     return isDark
       ? 'border-b-2 border-transparent text-[#8A8A8A] hover:text-[#D4D4D4] hover:border-[#3D3D3D] pb-2.5 -mb-px'
@@ -130,7 +130,7 @@ export const Tabs: React.FC<TabsProps> = ({
               onKeyDown={(e) => handleKeyDown(e, idx)}
               className={cn(
                 'inline-flex items-center gap-2 px-3 sm:px-4 py-2 text-xs sm:text-sm transition-all rounded-lg select-none cursor-pointer focus-visible:outline-none focus-visible:ring-2 shrink-0',
-                isDark ? 'focus-visible:ring-[#F59E0B]' : 'focus-visible:ring-[#047857]',
+                isDark ? 'focus-visible:ring-[#F59E0B]' : 'focus-visible:ring-[#BE123C]',
                 getTabStyles(tab, isActive)
               )}
             >
@@ -143,7 +143,7 @@ export const Tabs: React.FC<TabsProps> = ({
                     isActive
                       ? isDark
                         ? 'bg-[#F59E0B]/20 text-[#F59E0B]'
-                        : 'bg-[#ECFDF5] text-[#047857]'
+                        : 'bg-[#FFF1F2] text-[#BE123C]'
                       : isDark
                       ? 'bg-[#222222] text-[#A3A3A3]'
                       : 'bg-[#E5E7EB] text-[#374151]'

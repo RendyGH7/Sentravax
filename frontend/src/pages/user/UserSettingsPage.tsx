@@ -163,7 +163,7 @@ export const UserSettingsPage: React.FC = () => {
       {/* Top Header */}
       <div className="pb-4 border-b border-[#E5E7EB]">
         <h1 className="text-xl sm:text-2xl font-extrabold text-[#111827] tracking-tight flex items-center gap-2">
-          <Settings className="w-6 h-6 text-[#047857]" />
+          <Settings className="w-6 h-6 text-[#BE123C]" />
           Pengaturan Akun & Profil Warga
         </h1>
         <p className="text-xs text-[#6B7280] mt-1">
@@ -183,7 +183,7 @@ export const UserSettingsPage: React.FC = () => {
               <h2 className="text-sm font-bold text-[#111827] uppercase tracking-wider">
                 Informasi Akun Warga
               </h2>
-              <span className="inline-flex items-center gap-1 text-[11px] font-bold px-2.5 py-0.5 rounded-full bg-[#ECFDF5] text-[#047857] border border-[#A7F3D0]">
+              <span className="inline-flex items-center gap-1 text-[11px] font-bold px-2.5 py-0.5 rounded-full bg-[#FFF1F2] text-[#BE123C] border border-[#FECDD3]">
                 <ShieldCheck className="w-3.5 h-3.5" />
                 Peran: {role.toUpperCase()}
               </span>
@@ -202,7 +202,7 @@ export const UserSettingsPage: React.FC = () => {
                     onChange={(e) => setName(e.target.value)}
                     required
                     disabled={isLoading || isSubmitting}
-                    className="w-full pl-9 pr-3.5 py-2.5 rounded-xl bg-[#FFFFFF] border border-[#E5E7EB] text-xs font-medium text-[#111827] focus:outline-none focus:border-[#047857] focus:ring-1 focus:ring-[#047857] disabled:bg-[#F9FAFB]"
+                    className="w-full pl-9 pr-3.5 py-2.5 rounded-xl bg-[#FFFFFF] border border-[#E5E7EB] text-xs font-medium text-[#111827] focus:outline-none focus:border-[#BE123C] focus:ring-1 focus:ring-[#BE123C] disabled:bg-[#F9FAFB]"
                   />
                 </div>
               </div>
@@ -230,7 +230,7 @@ export const UserSettingsPage: React.FC = () => {
               <button
                 type="submit"
                 disabled={isSubmitting || isLoading}
-                className="inline-flex items-center gap-2 px-5 py-2.5 rounded-xl bg-[#047857] hover:bg-[#065F46] text-white text-xs font-bold transition-all shadow-xs disabled:opacity-50"
+                className="inline-flex items-center gap-2 px-5 py-2.5 rounded-xl bg-[#BE123C] hover:bg-[#9F1239] text-white text-xs font-bold transition-all shadow-xs disabled:opacity-50"
               >
                 {isSubmitting ? (
                   <>
@@ -254,7 +254,7 @@ export const UserSettingsPage: React.FC = () => {
           >
             <div className="flex items-center justify-between pb-3 border-b border-[#E5E7EB]">
               <div className="flex items-center gap-2">
-                <KeyRound className="w-4 h-4 text-[#047857]" />
+                <KeyRound className="w-4 h-4 text-[#BE123C]" />
                 <h2 className="text-sm font-bold text-[#111827] uppercase tracking-wider">
                   Ubah Kata Sandi Akun
                 </h2>
@@ -287,7 +287,7 @@ export const UserSettingsPage: React.FC = () => {
                     className={`w-full pl-9 pr-10 py-2.5 rounded-xl bg-[#FFFFFF] border text-xs font-medium text-[#111827] focus:outline-none focus:ring-1 transition-all disabled:bg-[#F9FAFB] ${
                       passwordErrors.current_password
                         ? 'border-[#EF4444] focus:border-[#EF4444] focus:ring-[#EF4444]'
-                        : 'border-[#E5E7EB] focus:border-[#047857] focus:ring-[#047857]'
+                        : 'border-[#E5E7EB] focus:border-[#BE123C] focus:ring-[#BE123C]'
                     }`}
                   />
                   <button
@@ -327,7 +327,7 @@ export const UserSettingsPage: React.FC = () => {
                     className={`w-full pl-9 pr-10 py-2.5 rounded-xl bg-[#FFFFFF] border text-xs font-medium text-[#111827] focus:outline-none focus:ring-1 transition-all disabled:bg-[#F9FAFB] ${
                       passwordErrors.password
                         ? 'border-[#EF4444] focus:border-[#EF4444] focus:ring-[#EF4444]'
-                        : 'border-[#E5E7EB] focus:border-[#047857] focus:ring-[#047857]'
+                        : 'border-[#E5E7EB] focus:border-[#BE123C] focus:ring-[#BE123C]'
                     }`}
                   />
                   <button
@@ -367,7 +367,7 @@ export const UserSettingsPage: React.FC = () => {
                     className={`w-full pl-9 pr-10 py-2.5 rounded-xl bg-[#FFFFFF] border text-xs font-medium text-[#111827] focus:outline-none focus:ring-1 transition-all disabled:bg-[#F9FAFB] ${
                       passwordErrors.password_confirmation
                         ? 'border-[#EF4444] focus:border-[#EF4444] focus:ring-[#EF4444]'
-                        : 'border-[#E5E7EB] focus:border-[#047857] focus:ring-[#047857]'
+                        : 'border-[#E5E7EB] focus:border-[#BE123C] focus:ring-[#BE123C]'
                     }`}
                   />
                   <button
@@ -393,7 +393,7 @@ export const UserSettingsPage: React.FC = () => {
               <button
                 type="submit"
                 disabled={isChangingPassword || isLoading}
-                className="inline-flex items-center gap-2 px-5 py-2.5 rounded-xl bg-[#047857] hover:bg-[#065F46] text-white text-xs font-bold transition-all shadow-xs disabled:opacity-50"
+                className="inline-flex items-center gap-2 px-5 py-2.5 rounded-xl bg-[#BE123C] hover:bg-[#9F1239] text-white text-xs font-bold transition-all shadow-xs disabled:opacity-50"
               >
                 {isChangingPassword ? (
                   <>
@@ -413,7 +413,7 @@ export const UserSettingsPage: React.FC = () => {
           {/* Privacy & Role Boundary Notice */}
           <div className="p-5 rounded-2xl bg-[#FFFFFF] border border-[#E5E7EB] shadow-xs space-y-3">
             <h3 className="text-sm font-bold text-[#111827] flex items-center gap-2">
-              <Lock className="w-4 h-4 text-[#047857]" />
+              <Lock className="w-4 h-4 text-[#BE123C]" />
               Kebijakan Privasi & Batasan Data Warga
             </h3>
             <p className="text-xs text-[#4B5563] leading-relaxed">
@@ -421,11 +421,11 @@ export const UserSettingsPage: React.FC = () => {
             </p>
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 pt-2 text-[11px] text-[#374151]">
               <div className="p-2.5 rounded-xl bg-[#F9FAFB] border border-[#E5E7EB] flex items-center gap-2">
-                <CheckCircle2 className="w-4 h-4 text-[#047857] flex-shrink-0" />
+                <CheckCircle2 className="w-4 h-4 text-[#BE123C] flex-shrink-0" />
                 <span>Enkripsi kata sandi standar Argon2/Bcrypt</span>
               </div>
               <div className="p-2.5 rounded-xl bg-[#F9FAFB] border border-[#E5E7EB] flex items-center gap-2">
-                <CheckCircle2 className="w-4 h-4 text-[#047857] flex-shrink-0" />
+                <CheckCircle2 className="w-4 h-4 text-[#BE123C] flex-shrink-0" />
                 <span>Isolasi hak akses multi-role (RBAC)</span>
               </div>
             </div>
@@ -442,25 +442,25 @@ export const UserSettingsPage: React.FC = () => {
             <div className="space-y-2">
               <Link
                 to={PATHS.USER.NOTIFICATIONS}
-                className="p-3 rounded-xl border border-[#E5E7EB] hover:border-[#047857] hover:bg-[#F0FDF4] transition-all flex items-center justify-between group"
+                className="p-3 rounded-xl border border-[#E5E7EB] hover:border-[#BE123C] hover:bg-[#F0FDF4] transition-all flex items-center justify-between group"
               >
                 <div className="flex items-center gap-3">
-                  <div className="w-8 h-8 rounded-lg bg-[#ECFDF5] text-[#047857] flex items-center justify-center">
+                  <div className="w-8 h-8 rounded-lg bg-[#FFF1F2] text-[#BE123C] flex items-center justify-center">
                     <Bell className="w-4 h-4" />
                   </div>
                   <div>
-                    <h4 className="text-xs font-bold text-[#111827] group-hover:text-[#047857]">
+                    <h4 className="text-xs font-bold text-[#111827] group-hover:text-[#BE123C]">
                       Preferensi Notifikasi
                     </h4>
                     <p className="text-[11px] text-[#6B7280]">Ambang batas & saluran</p>
                   </div>
                 </div>
-                <ArrowRight className="w-4 h-4 text-[#9CA3AF] group-hover:text-[#047857] group-hover:translate-x-0.5 transition-all" />
+                <ArrowRight className="w-4 h-4 text-[#9CA3AF] group-hover:text-[#BE123C] group-hover:translate-x-0.5 transition-all" />
               </Link>
 
               <Link
                 to={PATHS.USER.SIAGA}
-                className="p-3 rounded-xl border border-[#E5E7EB] hover:border-[#047857] hover:bg-[#F0FDF4] transition-all flex items-center justify-between group"
+                className="p-3 rounded-xl border border-[#E5E7EB] hover:border-[#BE123C] hover:bg-[#F0FDF4] transition-all flex items-center justify-between group"
               >
                 <div className="flex items-center gap-3">
                   <div className="w-8 h-8 rounded-lg bg-[#EFF6FF] text-[#1D4ED8] flex items-center justify-center">
@@ -478,7 +478,7 @@ export const UserSettingsPage: React.FC = () => {
 
               <Link
                 to={PATHS.USER.REGIONS}
-                className="p-3 rounded-xl border border-[#E5E7EB] hover:border-[#047857] hover:bg-[#F0FDF4] transition-all flex items-center justify-between group"
+                className="p-3 rounded-xl border border-[#E5E7EB] hover:border-[#BE123C] hover:bg-[#F0FDF4] transition-all flex items-center justify-between group"
               >
                 <div className="flex items-center gap-3">
                   <div className="w-8 h-8 rounded-lg bg-[#FFFBEB] text-[#D97706] flex items-center justify-center">

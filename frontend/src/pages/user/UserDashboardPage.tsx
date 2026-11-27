@@ -55,7 +55,7 @@ export const UserDashboardPage: React.FC = () => {
     switch (status) {
       case 'verified':
         return (
-          <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-[11px] font-bold bg-[#ECFDF5] text-[#047857] border border-[#A7F3D0]">
+          <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-[11px] font-bold bg-[#FFF1F2] text-[#BE123C] border border-[#FECDD3]">
             <CheckCircle2 className="w-3 h-3" />
             Terverifikasi
           </span>
@@ -86,8 +86,8 @@ export const UserDashboardPage: React.FC = () => {
       <div className="p-5 rounded-2xl bg-[#FFFFFF] border border-[#E5E7EB] shadow-xs flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <div className="space-y-1">
           <div className="flex items-center gap-2">
-            <span className="w-2.5 h-2.5 rounded-full bg-[#10B981] animate-pulse" />
-            <span className="text-[11px] font-mono uppercase text-[#047857] font-bold">
+            <span className="w-2.5 h-2.5 rounded-full bg-[#F43F5E] animate-pulse" />
+            <span className="text-[11px] font-mono uppercase text-[#BE123C] font-bold">
               PORTAL WARGA SIAGA AKTIF
             </span>
             <span className="text-gray-300">•</span>
@@ -111,7 +111,7 @@ export const UserDashboardPage: React.FC = () => {
           </button>
           <Link
             to={PATHS.USER.CREATE_REPORT}
-            className="inline-flex items-center gap-2 px-4 py-2.5 rounded-xl bg-[#047857] hover:bg-[#065F46] text-white font-bold text-xs transition-all shadow-xs"
+            className="inline-flex items-center gap-2 px-4 py-2.5 rounded-xl bg-[#BE123C] hover:bg-[#9F1239] text-white font-bold text-xs transition-all shadow-xs"
           >
             <PlusCircle className="w-4 h-4" />
             <span>Lapor Kejadian</span>
@@ -131,11 +131,11 @@ export const UserDashboardPage: React.FC = () => {
         {/* Metric 1: Tas Siaga Dial */}
         <Link
           to={PATHS.USER.SIAGA}
-          className="p-4 rounded-xl bg-[#FFFFFF] border border-[#E5E7EB] hover:border-[#047857] transition-all shadow-xs flex flex-col justify-between group"
+          className="p-4 rounded-xl bg-[#FFFFFF] border border-[#E5E7EB] hover:border-[#BE123C] transition-all shadow-xs flex flex-col justify-between group"
         >
           <div className="flex items-center justify-between">
             <span className="text-[11px] text-[#6B7280] font-semibold">Tas Siaga (Go-Bag)</span>
-            <PackageCheck className="w-4 h-4 text-[#047857]" />
+            <PackageCheck className="w-4 h-4 text-[#BE123C]" />
           </div>
           <div className="my-2">
             <div className="text-2xl font-extrabold text-[#111827]">
@@ -143,12 +143,12 @@ export const UserDashboardPage: React.FC = () => {
             </div>
             <div className="w-full bg-[#E5E7EB] h-1.5 rounded-full overflow-hidden mt-1.5">
               <div 
-                className="bg-[#047857] h-full transition-all duration-300"
+                className="bg-[#BE123C] h-full transition-all duration-300"
                 style={{ width: `${readinessPercent}%` }}
               />
             </div>
           </div>
-          <span className="text-[11px] font-bold text-[#047857] flex items-center gap-1 group-hover:translate-x-0.5 transition-transform">
+          <span className="text-[11px] font-bold text-[#BE123C] flex items-center gap-1 group-hover:translate-x-0.5 transition-transform">
             Buka Checklist <ChevronRight className="w-3 h-3" />
           </span>
         </Link>
@@ -156,7 +156,7 @@ export const UserDashboardPage: React.FC = () => {
         {/* Metric 2: Wilayah Dipantau */}
         <Link
           to={PATHS.USER.REGIONS}
-          className="p-4 rounded-xl bg-[#FFFFFF] border border-[#E5E7EB] hover:border-[#047857] transition-all shadow-xs flex flex-col justify-between group"
+          className="p-4 rounded-xl bg-[#FFFFFF] border border-[#E5E7EB] hover:border-[#BE123C] transition-all shadow-xs flex flex-col justify-between group"
         >
           <div className="flex items-center justify-between">
             <span className="text-[11px] text-[#6B7280] font-semibold">Wilayah Pantauan</span>
@@ -173,7 +173,7 @@ export const UserDashboardPage: React.FC = () => {
         {/* Metric 3: Kontak Prioritas */}
         <Link
           to={PATHS.USER.SIAGA}
-          className="p-4 rounded-xl bg-[#FFFFFF] border border-[#E5E7EB] hover:border-[#047857] transition-all shadow-xs flex flex-col justify-between group"
+          className="p-4 rounded-xl bg-[#FFFFFF] border border-[#E5E7EB] hover:border-[#BE123C] transition-all shadow-xs flex flex-col justify-between group"
         >
           <div className="flex items-center justify-between">
             <span className="text-[11px] text-[#6B7280] font-semibold">Kontak Keluarga</span>
@@ -190,16 +190,16 @@ export const UserDashboardPage: React.FC = () => {
         {/* Metric 4: Laporan Terverifikasi */}
         <Link
           to={PATHS.USER.REPORTS}
-          className="p-4 rounded-xl bg-[#FFFFFF] border border-[#E5E7EB] hover:border-[#047857] transition-all shadow-xs flex flex-col justify-between group"
+          className="p-4 rounded-xl bg-[#FFFFFF] border border-[#E5E7EB] hover:border-[#BE123C] transition-all shadow-xs flex flex-col justify-between group"
         >
           <div className="flex items-center justify-between">
             <span className="text-[11px] text-[#6B7280] font-semibold">Laporan Terverifikasi</span>
-            <FileText className="w-4 h-4 text-[#059669]" />
+            <FileText className="w-4 h-4 text-[#E11D48]" />
           </div>
           <div className="my-2 text-2xl font-extrabold text-[#111827]">
             {verifiedReportsCount}/{reports.length}
           </div>
-          <span className="text-[11px] font-bold text-[#059669] flex items-center gap-1 group-hover:translate-x-0.5 transition-transform">
+          <span className="text-[11px] font-bold text-[#E11D48] flex items-center gap-1 group-hover:translate-x-0.5 transition-transform">
             Lihat Riwayat <ChevronRight className="w-3 h-3" />
           </span>
         </Link>
@@ -236,12 +236,12 @@ export const UserDashboardPage: React.FC = () => {
         <div className="lg:col-span-7 rounded-2xl bg-[#FFFFFF] border border-[#E5E7EB] shadow-xs overflow-hidden">
           <div className="p-4 border-b border-[#E5E7EB] flex items-center justify-between">
             <h2 className="text-sm font-bold text-[#111827] flex items-center gap-2">
-              <FileText className="w-4 h-4 text-[#047857]" />
+              <FileText className="w-4 h-4 text-[#BE123C]" />
               Laporan Terakhir Anda
             </h2>
             <Link
               to={PATHS.USER.REPORTS}
-              className="text-xs font-bold text-[#047857] hover:text-[#065F46] flex items-center gap-1"
+              className="text-xs font-bold text-[#BE123C] hover:text-[#9F1239] flex items-center gap-1"
             >
               Semua ({reports.length}) <ChevronRight className="w-3.5 h-3.5" />
             </Link>
@@ -257,7 +257,7 @@ export const UserDashboardPage: React.FC = () => {
               <p className="text-xs text-gray-500">Belum ada laporan yang diajukan.</p>
               <Link
                 to={PATHS.USER.CREATE_REPORT}
-                className="inline-block px-3 py-1.5 rounded-lg bg-[#047857] text-white text-xs font-bold"
+                className="inline-block px-3 py-1.5 rounded-lg bg-[#BE123C] text-white text-xs font-bold"
               >
                 Kirim Laporan Pertama
               </Link>
@@ -344,7 +344,7 @@ export const UserDashboardPage: React.FC = () => {
                   </div>
                   <a
                     href={`tel:${c.phone_number}`}
-                    className="p-2 rounded-xl bg-emerald-600 hover:bg-emerald-500 text-white shadow-2xs transition-colors"
+                    className="p-2 rounded-xl bg-rose-600 hover:bg-rose-500 text-white shadow-2xs transition-colors"
                     title={`Panggil ${c.name}`}
                   >
                     <Phone className="w-3.5 h-3.5" />

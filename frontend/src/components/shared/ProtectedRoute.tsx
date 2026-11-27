@@ -38,7 +38,7 @@ export const ProtectedRoute: React.FC<ProtectedRouteProps> = ({ children, requir
           </div>
           <h2 className="text-lg font-bold text-white">Akses Area Dibatasi</h2>
           <p className="text-xs text-[#D4D4D4] leading-relaxed">
-            Akun Anda terdaftar dengan peran <span className="font-mono text-[#F59E0B] font-bold">[{user.role}]</span>. Area ini memerlukan salah satu hak akses berikut: <span className="font-mono text-emerald-400 font-bold">[{requiredRoles.join(', ')}]</span>.
+            Akun Anda terdaftar dengan peran <span className="font-mono text-[#F59E0B] font-bold">[{user.role}]</span>. Area ini memerlukan salah satu hak akses berikut: <span className="font-mono text-rose-400 font-bold">[{requiredRoles.join(', ')}]</span>.
           </p>
           <div className="pt-2 flex justify-center gap-3">
             <Link

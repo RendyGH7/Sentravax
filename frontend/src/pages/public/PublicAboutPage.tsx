@@ -23,8 +23,8 @@ export const PublicAboutPage: React.FC = () => {
       <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 pb-4 border-b border-[#262626]">
         <div>
           <div className="flex items-center gap-2">
-            <span className="w-2.5 h-2.5 rounded-full bg-emerald-400 animate-pulse" />
-            <span className="text-[11px] font-mono uppercase text-emerald-400 font-bold">
+            <span className="w-2.5 h-2.5 rounded-full bg-rose-400 animate-pulse" />
+            <span className="text-[11px] font-mono uppercase text-rose-400 font-bold">
               ARSITEKTUR & FITUR PLATFORM
             </span>
           </div>
@@ -42,7 +42,7 @@ export const PublicAboutPage: React.FC = () => {
         <div className="flex flex-wrap items-center gap-2">
           <Link
             to={PATHS.PUBLIC.MAP}
-            className="inline-flex items-center gap-1.5 px-4 py-2 rounded-xl bg-emerald-600 hover:bg-emerald-500 text-white text-xs font-bold transition-all shadow-xs"
+            className="inline-flex items-center gap-1.5 px-4 py-2 rounded-xl bg-rose-600 hover:bg-rose-500 text-white text-xs font-bold transition-all shadow-xs"
           >
             <Map className="w-3.5 h-3.5" />
             <span>Peta Interaktif</span>
@@ -74,7 +74,7 @@ export const PublicAboutPage: React.FC = () => {
           {[
             {
               icon: <Compass className="w-5 h-5" />,
-              color: 'bg-emerald-950/60 text-emerald-400 border-emerald-500/20',
+              color: 'bg-rose-950/60 text-rose-400 border-rose-500/20',
               title: 'Emergency Zero-Barrier',
               desc: 'Pelaporan kejadian darurat publik tanpa hambatan login, dilengkapi deteksi GPS instan dan clustering spasial otomatis.',
             },
@@ -98,7 +98,7 @@ export const PublicAboutPage: React.FC = () => {
             },
             {
               icon: <HeartHandshake className="w-5 h-5" />,
-              color: 'bg-emerald-950/60 text-emerald-400 border-emerald-500/20',
+              color: 'bg-rose-950/60 text-rose-400 border-rose-500/20',
               title: 'SIAGA PERSONAL Warga',
               desc: 'Checklist 13 tas siaga BNPB, rencana darurat keluarga dengan titik kumpul privat, dan pemantauan multi-lokasi.',
             },
@@ -116,7 +116,7 @@ export const PublicAboutPage: React.FC = () => {
               viewport={{ once: true, margin: '-30px' }}
               transition={{ duration: 0.45, ease: [0.22, 1, 0.36, 1], delay: (idx % 3) * 0.08 }}
               whileHover={{ y: -4, transition: { duration: 0.2 } }}
-              className="p-5 rounded-2xl bg-[#141414] border border-[#262626] hover:border-emerald-500/40 shadow-sm space-y-2 transition-colors cursor-default"
+              className="p-5 rounded-2xl bg-[#141414] border border-[#262626] hover:border-rose-500/40 shadow-sm space-y-2 transition-colors cursor-default"
             >
               <div className={`w-9 h-9 rounded-xl flex items-center justify-center font-bold border ${item.color}`}>
                 {item.icon}
@@ -131,7 +131,7 @@ export const PublicAboutPage: React.FC = () => {
       {/* 4. DATA SOURCES & PROVENANCE TABLE */}
       <div className="p-5 rounded-2xl bg-[#141414] border border-[#262626] shadow-sm space-y-3">
         <h2 className="text-sm font-bold text-white uppercase tracking-wider flex items-center gap-2">
-          <Database className="w-4 h-4 text-emerald-400" />
+          <Database className="w-4 h-4 text-rose-400" />
           Sumber Data & Provenance Otoritatif
         </h2>
 

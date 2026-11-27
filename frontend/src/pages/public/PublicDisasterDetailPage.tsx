@@ -108,8 +108,8 @@ function getSeverityBadge(severity?: string) {
     default:
       return {
         label: 'Tingkat Rendah',
-        badgeClass: 'bg-emerald-50 text-emerald-700 border-emerald-200',
-        dotClass: 'bg-emerald-500',
+        badgeClass: 'bg-rose-50 text-rose-700 border-rose-200',
+        dotClass: 'bg-rose-500',
       };
   }
 }
@@ -199,8 +199,8 @@ const EventMiniMap: React.FC<{
     const popupHtml = `
       <div style="font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; width: 280px; max-width: 90vw; padding: 12px 14px; font-size: 12px; line-height: 1.45; border-radius: 14px; box-sizing: border-box;">
         <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 8px; padding-right: 32px;">
-          <span style="display: inline-flex; align-items: center; gap: 4px; font-size: 10px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.05em; color: #047857; background: #ECFDF5; border: 1px solid #A7F3D0; padding: 2px 8px; border-radius: 9999px;">
-            <span style="width: 5px; height: 5px; border-radius: 50%; background: #059669;"></span>
+          <span style="display: inline-flex; align-items: center; gap: 4px; font-size: 10px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.05em; color: #BE123C; background: #FFF1F2; border: 1px solid #FECDD3; padding: 2px 8px; border-radius: 9999px;">
+            <span style="width: 5px; height: 5px; border-radius: 50%; background: #E11D48;"></span>
             Titik Koordinat Bencana
           </span>
         </div>
@@ -315,7 +315,7 @@ export const PublicDisasterDetailPage: React.FC = () => {
         <div className="pt-2">
           <Link
             to={PATHS.PUBLIC.DISASTERS}
-            className="inline-flex items-center gap-2 px-4 py-2 rounded-xl bg-[#047857] text-white text-sm font-bold shadow-xs hover:bg-[#065F46] transition-colors"
+            className="inline-flex items-center gap-2 px-4 py-2 rounded-xl bg-[#BE123C] text-white text-sm font-bold shadow-xs hover:bg-[#9F1239] transition-colors"
           >
             <ArrowLeft className="w-4 h-4" />
             <span>Kembali ke Katalog Bencana</span>
@@ -365,7 +365,7 @@ export const PublicDisasterDetailPage: React.FC = () => {
         <div className="pt-2 flex items-center justify-center gap-3">
           <Link
             to={PATHS.PUBLIC.DISASTERS}
-            className="inline-flex items-center gap-2 px-4 py-2 rounded-xl bg-[#121614] border border-neutral-700 text-sm font-bold text-white shadow-xs hover:border-[#047857] hover:text-[#047857] transition-all"
+            className="inline-flex items-center gap-2 px-4 py-2 rounded-xl bg-[#121614] border border-neutral-700 text-sm font-bold text-white shadow-xs hover:border-[#BE123C] hover:text-[#BE123C] transition-all"
           >
             <ArrowLeft className="w-4 h-4" />
             <span>Katalog Bencana</span>
@@ -398,11 +398,11 @@ export const PublicDisasterDetailPage: React.FC = () => {
       <div className="bg-[#0d0f0e] border-b border-neutral-800 py-3.5 px-4 sm:px-6 lg:px-8">
         <div className="max-w-6xl mx-auto flex items-center justify-between text-xs">
           <nav className="flex items-center gap-1.5 text-neutral-400 truncate" aria-label="Breadcrumb">
-            <Link to={PATHS.PUBLIC.HOME} className="hover:text-[#047857] transition-colors shrink-0">
+            <Link to={PATHS.PUBLIC.HOME} className="hover:text-[#BE123C] transition-colors shrink-0">
               Beranda
             </Link>
             <span>/</span>
-            <Link to={PATHS.PUBLIC.DISASTERS} className="hover:text-[#047857] transition-colors shrink-0">
+            <Link to={PATHS.PUBLIC.DISASTERS} className="hover:text-[#BE123C] transition-colors shrink-0">
               Katalog Bencana
             </Link>
             <span>/</span>
@@ -413,7 +413,7 @@ export const PublicDisasterDetailPage: React.FC = () => {
 
           <Link
             to={PATHS.PUBLIC.DISASTERS}
-            className="inline-flex items-center gap-1 text-[#047857] hover:text-emerald-800 font-bold shrink-0 ml-2"
+            className="inline-flex items-center gap-1 text-[#BE123C] hover:text-rose-800 font-bold shrink-0 ml-2"
           >
             <ArrowLeft className="w-3.5 h-3.5" />
             <span className="hidden sm:inline">Daftar Bencana</span>
@@ -427,13 +427,13 @@ export const PublicDisasterDetailPage: React.FC = () => {
           <div className="flex flex-col md:flex-row md:items-start justify-between gap-6">
             <div className="flex items-start gap-4 sm:gap-5">
               {/* Large Hazard Icon */}
-              <div className="w-14 h-14 sm:w-16 sm:h-16 rounded-2xl bg-emerald-50 text-[#047857] flex items-center justify-center shrink-0 border border-emerald-100 shadow-xs">
+              <div className="w-14 h-14 sm:w-16 sm:h-16 rounded-2xl bg-rose-50 text-[#BE123C] flex items-center justify-center shrink-0 border border-rose-100 shadow-xs">
                 {renderHazardIcon(eventDetail.hazard_type?.slug, 'w-8 h-8 sm:w-9 sm:h-9')}
               </div>
 
               <div className="space-y-2">
                 <div className="flex items-center gap-2 flex-wrap">
-                  <span className="px-2.5 py-0.5 rounded-md bg-emerald-100 text-[#047857] text-xs font-bold font-mono">
+                  <span className="px-2.5 py-0.5 rounded-md bg-rose-100 text-[#BE123C] text-xs font-bold font-mono">
                     #{eventDetail.id}
                   </span>
                   <span className="text-xs font-bold text-neutral-400 uppercase tracking-wide">
@@ -475,13 +475,13 @@ export const PublicDisasterDetailPage: React.FC = () => {
                 variant="outline"
                 size="sm"
                 onClick={handleCopyLink}
-                leftIcon={isCopied ? <CheckCircle2 className="w-4 h-4 text-emerald-600" /> : <Share2 className="w-4 h-4" />}
+                leftIcon={isCopied ? <CheckCircle2 className="w-4 h-4 text-rose-600" /> : <Share2 className="w-4 h-4" />}
               >
                 {isCopied ? 'Tautan Disalin!' : 'Bagikan Info'}
               </Button>
               <Link
                 to={PATHS.PUBLIC.MAP}
-                className="inline-flex items-center gap-1.5 px-3 py-2 rounded-xl bg-emerald-50 hover:bg-emerald-100 text-[#047857] text-xs font-bold border border-emerald-200 transition-colors"
+                className="inline-flex items-center gap-1.5 px-3 py-2 rounded-xl bg-rose-50 hover:bg-rose-100 text-[#BE123C] text-xs font-bold border border-rose-200 transition-colors"
               >
                 <Compass className="w-4 h-4" />
                 <span>Peta Nasional</span>
@@ -542,7 +542,7 @@ export const PublicDisasterDetailPage: React.FC = () => {
             {/* SITUATION REPORT & DESCRIPTION */}
             <section className="bg-[#121614] border border-neutral-800 rounded-2xl p-6 shadow-xs space-y-3">
               <h2 className="text-base font-bold text-white flex items-center gap-2">
-                <Info className="w-4 h-4 text-[#047857]" />
+                <Info className="w-4 h-4 text-[#BE123C]" />
                 <span>Ringkasan Situasi Kebencanaan</span>
               </h2>
               <div className="text-sm text-neutral-200 leading-relaxed space-y-3">
@@ -558,10 +558,10 @@ export const PublicDisasterDetailPage: React.FC = () => {
               <section className="bg-[#121614] border border-neutral-800 rounded-2xl p-6 shadow-xs space-y-3">
                 <div className="flex items-center justify-between">
                   <h2 className="text-base font-bold text-white flex items-center gap-2">
-                    <MapPin className="w-4 h-4 text-[#047857]" />
+                    <MapPin className="w-4 h-4 text-[#BE123C]" />
                     <span>Peta Lokasi Episentrum / Pusat Kejadian</span>
                   </h2>
-                  <span className="text-xs font-mono font-bold text-[#047857]">
+                  <span className="text-xs font-mono font-bold text-[#BE123C]">
                     {eventDetail.coordinates.latitude}°, {eventDetail.coordinates.longitude}°
                   </span>
                 </div>
@@ -581,7 +581,7 @@ export const PublicDisasterDetailPage: React.FC = () => {
             <section className="bg-[#121614] border border-neutral-800 rounded-2xl p-6 shadow-xs space-y-4">
               <div className="flex items-center justify-between">
                 <h2 className="text-base font-bold text-white flex items-center gap-2">
-                  <Activity className="w-4 h-4 text-[#047857]" />
+                  <Activity className="w-4 h-4 text-[#BE123C]" />
                   <span>Parameter Sensor & Data Telemetri</span>
                 </h2>
                 <span className="text-[11px] font-semibold text-neutral-400">
@@ -648,11 +648,11 @@ export const PublicDisasterDetailPage: React.FC = () => {
 
                   {/* Tsunami Potential */}
                   {eventDetail.source_metadata.Potensi !== undefined && (
-                    <div className="col-span-2 sm:col-span-3 bg-emerald-50/60 p-3.5 rounded-xl border border-emerald-200 flex items-center gap-3">
-                      <ShieldCheck className="w-5 h-5 text-emerald-700 shrink-0" />
+                    <div className="col-span-2 sm:col-span-3 bg-rose-50/60 p-3.5 rounded-xl border border-rose-200 flex items-center gap-3">
+                      <ShieldCheck className="w-5 h-5 text-rose-700 shrink-0" />
                       <div>
-                        <p className="text-[11px] font-bold text-emerald-900">Potensi Bahaya Lanjutan</p>
-                        <p className="text-xs font-semibold text-emerald-800">
+                        <p className="text-[11px] font-bold text-rose-900">Potensi Bahaya Lanjutan</p>
+                        <p className="text-xs font-semibold text-rose-800">
                           {String(eventDetail.source_metadata.Potensi)}
                         </p>
                       </div>
@@ -724,7 +724,7 @@ export const PublicDisasterDetailPage: React.FC = () => {
 
                           <Link
                             to={`/warnings/${alert.id}`}
-                            className="inline-flex items-center gap-1 font-bold text-emerald-400 hover:text-emerald-300"
+                            className="inline-flex items-center gap-1 font-bold text-rose-400 hover:text-rose-300"
                           >
                             <span>Lihat Peringatan</span>
                             <ChevronRight className="w-3.5 h-3.5" />
@@ -744,7 +744,7 @@ export const PublicDisasterDetailPage: React.FC = () => {
             {/* DATA PROVENANCE & INTEGRITY */}
             <section className="bg-[#121614] border border-neutral-800 rounded-2xl p-6 shadow-xs space-y-3">
               <h2 className="text-base font-bold text-white flex items-center gap-2">
-                <ShieldCheck className="w-4 h-4 text-[#047857]" />
+                <ShieldCheck className="w-4 h-4 text-[#BE123C]" />
                 <span>Integritas & Asal Data Sumber</span>
               </h2>
 
@@ -789,7 +789,7 @@ export const PublicDisasterDetailPage: React.FC = () => {
             <section className="bg-[#121614] border border-neutral-800 rounded-2xl p-6 shadow-xs space-y-4">
               <div className="flex items-center justify-between">
                 <h2 className="text-base font-bold text-white flex items-center gap-2">
-                  <Compass className="w-4 h-4 text-[#047857]" />
+                  <Compass className="w-4 h-4 text-[#BE123C]" />
                   <span>Kejadian Terdekat (&le; 50 km)</span>
                 </h2>
                 <span className="text-xs font-semibold text-neutral-400">
@@ -806,19 +806,19 @@ export const PublicDisasterDetailPage: React.FC = () => {
                       <Link
                         key={nearby.id}
                         to={`/disasters/${nearby.id}`}
-                        className="block bg-neutral-900 hover:bg-emerald-50/50 border border-neutral-800 hover:border-[#047857]/40 rounded-xl p-3.5 transition-all group"
+                        className="block bg-neutral-900 hover:bg-rose-50/50 border border-neutral-800 hover:border-[#BE123C]/40 rounded-xl p-3.5 transition-all group"
                       >
                         <div className="flex items-center justify-between text-xs mb-1.5">
-                          <span className="inline-flex items-center gap-1 font-bold text-[#047857]">
+                          <span className="inline-flex items-center gap-1 font-bold text-[#BE123C]">
                             {renderHazardIcon(nearby.hazard_type?.slug, 'w-3.5 h-3.5')}
                             {nearby.hazard_type?.name || 'Kejadian'}
                           </span>
-                          <span className="px-2 py-0.5 rounded-full text-[10px] font-bold bg-emerald-100 text-emerald-800">
+                          <span className="px-2 py-0.5 rounded-full text-[10px] font-bold bg-rose-100 text-rose-800">
                             {nearby.distance_km} km
                           </span>
                         </div>
 
-                        <h4 className="font-bold text-xs sm:text-sm text-white group-hover:text-[#047857] transition-colors line-clamp-2">
+                        <h4 className="font-bold text-xs sm:text-sm text-white group-hover:text-[#BE123C] transition-colors line-clamp-2">
                           {nearby.title}
                         </h4>
 
@@ -826,7 +826,7 @@ export const PublicDisasterDetailPage: React.FC = () => {
                           <span className={`px-1.5 py-0.5 rounded-md font-bold text-[10px] ${nSev.badgeClass}`}>
                             {nSev.label}
                           </span>
-                          <span className="inline-flex items-center gap-1 text-[#047857] font-semibold">
+                          <span className="inline-flex items-center gap-1 text-[#BE123C] font-semibold">
                             Detail <ChevronRight className="w-3 h-3" />
                           </span>
                         </div>
@@ -845,7 +845,7 @@ export const PublicDisasterDetailPage: React.FC = () => {
             {eventDetail.timeline && eventDetail.timeline.length > 0 && (
               <section className="bg-[#121614] border border-neutral-800 rounded-2xl p-6 shadow-xs space-y-4">
                 <h2 className="text-base font-bold text-white flex items-center gap-2">
-                  <Clock className="w-4 h-4 text-[#047857]" />
+                  <Clock className="w-4 h-4 text-[#BE123C]" />
                   <span>Kronologi Kejadian Terverifikasi</span>
                 </h2>
 
@@ -853,10 +853,10 @@ export const PublicDisasterDetailPage: React.FC = () => {
                   {eventDetail.timeline.map((item, idx) => (
                     <div key={idx} className="relative group">
                       {/* Timeline Dot */}
-                      <span className="absolute -left-[1.65rem] top-1 w-3 h-3 rounded-full bg-[#121614] border-2 border-[#047857]" />
+                      <span className="absolute -left-[1.65rem] top-1 w-3 h-3 rounded-full bg-[#121614] border-2 border-[#BE123C]" />
 
                       <div className="space-y-0.5">
-                        <span className="text-[10px] font-bold font-mono text-[#047857]">
+                        <span className="text-[10px] font-bold font-mono text-[#BE123C]">
                           {formatEventDate(item.timestamp)}
                         </span>
                         <h4 className="font-bold text-xs text-white leading-snug">{item.label}</h4>
@@ -872,7 +872,7 @@ export const PublicDisasterDetailPage: React.FC = () => {
             {eventDetail.safety_guidelines && eventDetail.safety_guidelines.length > 0 && (
               <section className="bg-[#121614] border border-neutral-800 rounded-2xl p-6 shadow-xs space-y-3">
                 <h2 className="text-base font-bold text-white flex items-center gap-2">
-                  <BookOpen className="w-4 h-4 text-[#047857]" />
+                  <BookOpen className="w-4 h-4 text-[#BE123C]" />
                   <span>Panduan Keselamatan & Mitigasi</span>
                 </h2>
 
@@ -882,7 +882,7 @@ export const PublicDisasterDetailPage: React.FC = () => {
                       key={guide.id}
                       className="bg-neutral-900 border border-neutral-800 rounded-xl p-3.5 space-y-2"
                     >
-                      <div className="flex items-center justify-between text-[10px] font-bold text-emerald-400 uppercase">
+                      <div className="flex items-center justify-between text-[10px] font-bold text-rose-400 uppercase">
                         <span>{guide.category}</span>
                       </div>
                       <h4 className="font-bold text-xs sm:text-sm text-white">{guide.title}</h4>
@@ -890,7 +890,7 @@ export const PublicDisasterDetailPage: React.FC = () => {
                       <div className="pt-1">
                         <Link
                           to={`/education/${guide.slug}`}
-                          className="inline-flex items-center gap-1 text-xs font-bold text-emerald-400 hover:text-emerald-300"
+                          className="inline-flex items-center gap-1 text-xs font-bold text-rose-400 hover:text-rose-300"
                         >
                           <span>Baca Panduan Lengkap</span>
                           <ExternalLink className="w-3 h-3" />

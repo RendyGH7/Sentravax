@@ -54,7 +54,7 @@ const SCOPE_OPTIONS: Array<{ value: EmergencyDirectoryScope | 'all'; label: stri
 const CATEGORY_META: Record<EmergencyDirectoryCategory, { label: string; badgeClass: string }> = {
   disaster_management: {
     label: 'Penanggulangan Bencana',
-    badgeClass: 'bg-emerald-950/80 text-emerald-300 border-emerald-800/60',
+    badgeClass: 'bg-rose-950/80 text-rose-300 border-rose-800/60',
   },
   sar: {
     label: 'Pencarian & Pertolongan (SAR)',
@@ -395,8 +395,8 @@ export const PublicEmergencyDirectoryPage: React.FC = () => {
             rel="noopener noreferrer"
             className={`inline-flex items-center gap-1.5 rounded-xl font-semibold transition-all ${
               isLarge
-                ? 'px-3.5 py-1.5 text-xs bg-emerald-950/90 hover:bg-emerald-900 border border-emerald-700/70 text-emerald-200'
-                : 'px-2.5 py-1 text-xs bg-emerald-950/60 hover:bg-emerald-900/80 border border-emerald-800/60 text-emerald-300'
+                ? 'px-3.5 py-1.5 text-xs bg-rose-950/90 hover:bg-rose-900 border border-rose-700/70 text-rose-200'
+                : 'px-2.5 py-1 text-xs bg-rose-950/60 hover:bg-rose-900/80 border border-rose-800/60 text-rose-300'
             }`}
             title={`Buka WhatsApp ${channel.value}`}
           >
@@ -470,8 +470,8 @@ export const PublicEmergencyDirectoryPage: React.FC = () => {
       {/* ========================================================================= */}
       <section aria-labelledby="directory-heading" className="space-y-4">
         <div className="flex flex-wrap items-center gap-2">
-          <span className="text-[10px] font-mono font-bold px-2.5 py-0.5 rounded-md bg-emerald-950/80 text-emerald-300 border border-emerald-800/60 uppercase tracking-wider flex items-center gap-1.5">
-            <ShieldCheck className="w-3.5 h-3.5 text-emerald-400" />
+          <span className="text-[10px] font-mono font-bold px-2.5 py-0.5 rounded-md bg-rose-950/80 text-rose-300 border border-rose-800/60 uppercase tracking-wider flex items-center gap-1.5">
+            <ShieldCheck className="w-3.5 h-3.5 text-rose-400" />
             DIREKTORI RESMI OTORITAS
           </span>
           <span className="text-[10px] font-mono text-neutral-400 px-2 py-0.5 rounded-md bg-neutral-900 border border-neutral-800">
@@ -491,7 +491,7 @@ export const PublicEmergencyDirectoryPage: React.FC = () => {
 
         {/* Verification Guarantee Alert Note */}
         <div className="p-3.5 rounded-2xl bg-[#121614] border border-neutral-800 text-xs text-neutral-300 flex items-start gap-3">
-          <div className="w-7 h-7 rounded-lg bg-emerald-950/80 border border-emerald-800/60 flex items-center justify-center text-emerald-400 shrink-0 mt-0.5">
+          <div className="w-7 h-7 rounded-lg bg-rose-950/80 border border-rose-800/60 flex items-center justify-center text-rose-400 shrink-0 mt-0.5">
             <CheckCircle2 className="w-4 h-4" />
           </div>
           <div className="space-y-0.5">
@@ -518,7 +518,7 @@ export const PublicEmergencyDirectoryPage: React.FC = () => {
             onChange={(e) => setSearchInput(e.target.value)}
             placeholder="Cari nama instansi, nomor telepon, atau deskripsi layanan..."
             maxLength={100}
-            className="w-full pl-10 pr-10 py-2.5 rounded-xl bg-[#0a0c0b] border border-neutral-700/80 text-xs text-white placeholder:text-neutral-500 focus:outline-none focus:border-emerald-500/80 focus:ring-1 focus:ring-emerald-500/30 transition-all"
+            className="w-full pl-10 pr-10 py-2.5 rounded-xl bg-[#0a0c0b] border border-neutral-700/80 text-xs text-white placeholder:text-neutral-500 focus:outline-none focus:border-rose-500/80 focus:ring-1 focus:ring-rose-500/30 transition-all"
           />
           {searchInput && (
             <button
@@ -543,7 +543,7 @@ export const PublicEmergencyDirectoryPage: React.FC = () => {
                 setCategory(e.target.value as EmergencyDirectoryCategory | 'all');
                 setPage(1);
               }}
-              className="w-full px-3 py-2 rounded-xl bg-[#0a0c0b] border border-neutral-700/80 text-neutral-200 text-xs focus:outline-none focus:border-emerald-500 cursor-pointer"
+              className="w-full px-3 py-2 rounded-xl bg-[#0a0c0b] border border-neutral-700/80 text-neutral-200 text-xs focus:outline-none focus:border-rose-500 cursor-pointer"
             >
               {CATEGORY_OPTIONS.map((opt) => (
                 <option key={opt.value} value={opt.value}>
@@ -562,7 +562,7 @@ export const PublicEmergencyDirectoryPage: React.FC = () => {
                 setScope(e.target.value as EmergencyDirectoryScope | 'all');
                 setPage(1);
               }}
-              className="w-full px-3 py-2 rounded-xl bg-[#0a0c0b] border border-neutral-700/80 text-neutral-200 text-xs focus:outline-none focus:border-emerald-500 cursor-pointer"
+              className="w-full px-3 py-2 rounded-xl bg-[#0a0c0b] border border-neutral-700/80 text-neutral-200 text-xs focus:outline-none focus:border-rose-500 cursor-pointer"
             >
               {SCOPE_OPTIONS.map((opt) => (
                 <option key={opt.value} value={opt.value}>
@@ -582,7 +582,7 @@ export const PublicEmergencyDirectoryPage: React.FC = () => {
                 setRegionId(val === 'all' ? 'all' : Number(val));
                 setPage(1);
               }}
-              className="w-full px-3 py-2 rounded-xl bg-[#0a0c0b] border border-neutral-700/80 text-neutral-200 text-xs focus:outline-none focus:border-emerald-500 cursor-pointer"
+              className="w-full px-3 py-2 rounded-xl bg-[#0a0c0b] border border-neutral-700/80 text-neutral-200 text-xs focus:outline-none focus:border-rose-500 cursor-pointer"
             >
               <option value="all">Semua Wilayah (Termasuk Nasional)</option>
               {provinceRegions.length > 0 && (
@@ -617,7 +617,7 @@ export const PublicEmergencyDirectoryPage: React.FC = () => {
             <button
               type="button"
               onClick={handleResetFilters}
-              className="text-emerald-400 hover:text-emerald-300 font-semibold cursor-pointer underline underline-offset-2"
+              className="text-rose-400 hover:text-rose-300 font-semibold cursor-pointer underline underline-offset-2"
             >
               Reset Semua Filter
             </button>
@@ -685,7 +685,7 @@ export const PublicEmergencyDirectoryPage: React.FC = () => {
             <button
               type="button"
               onClick={handleResetFilters}
-              className="inline-flex items-center gap-2 px-4 py-2 rounded-xl bg-emerald-600 hover:bg-emerald-500 text-xs font-bold text-white transition-colors cursor-pointer"
+              className="inline-flex items-center gap-2 px-4 py-2 rounded-xl bg-rose-600 hover:bg-rose-500 text-xs font-bold text-white transition-colors cursor-pointer"
             >
               <span>Tampilkan Semua Kontak</span>
             </button>
@@ -731,7 +731,7 @@ export const PublicEmergencyDirectoryPage: React.FC = () => {
 
                     {/* Contact Name & Description */}
                     <div>
-                      <h2 className="text-base font-bold text-white group-hover:text-emerald-300 transition-colors">
+                      <h2 className="text-base font-bold text-white group-hover:text-rose-300 transition-colors">
                         {contact.name}
                       </h2>
                       {contact.description && (
@@ -754,7 +754,7 @@ export const PublicEmergencyDirectoryPage: React.FC = () => {
                               <div key={ch.id} className="flex items-center gap-1.5">
                                 {renderChannelAction(ch)}
                                 {ch.is_toll_free && (
-                                  <span className="text-[9px] font-mono px-1.5 py-0.5 rounded bg-emerald-950 text-emerald-400 border border-emerald-800/50">
+                                  <span className="text-[9px] font-mono px-1.5 py-0.5 rounded bg-rose-950 text-rose-400 border border-rose-800/50">
                                     Bebas Pulsa
                                   </span>
                                 )}
@@ -960,7 +960,7 @@ export const PublicEmergencyDirectoryPage: React.FC = () => {
                             <div className="flex items-center gap-2">
                               <span className="text-xs font-bold text-white">{channel.label}</span>
                               {channel.is_primary && (
-                                <span className="text-[9px] font-mono px-1.5 py-0.5 rounded bg-emerald-950 text-emerald-300 border border-emerald-800">
+                                <span className="text-[9px] font-mono px-1.5 py-0.5 rounded bg-rose-950 text-rose-300 border border-rose-800">
                                   Kanal Utama
                                 </span>
                               )}
@@ -998,8 +998,8 @@ export const PublicEmergencyDirectoryPage: React.FC = () => {
 
                           {/* Bebas Pulsa: Hanya klaim jika boolean true */}
                           {channel.is_toll_free === true ? (
-                            <div className="flex items-center gap-1.5 text-emerald-400">
-                              <CheckCircle2 className="w-3.5 h-3.5 text-emerald-400 shrink-0" />
+                            <div className="flex items-center gap-1.5 text-rose-400">
+                              <CheckCircle2 className="w-3.5 h-3.5 text-rose-400 shrink-0" />
                               <span className="font-semibold">Bebas Pulsa Terverifikasi</span>
                             </div>
                           ) : (
@@ -1012,14 +1012,14 @@ export const PublicEmergencyDirectoryPage: React.FC = () => {
                           {/* Sumber Verifikasi */}
                           {channel.source_name && (
                             <div className="sm:col-span-2 flex flex-wrap items-center gap-1.5 pt-1 text-neutral-400">
-                              <ShieldCheck className="w-3.5 h-3.5 text-emerald-400 shrink-0" />
+                              <ShieldCheck className="w-3.5 h-3.5 text-rose-400 shrink-0" />
                               <span>Sumber:</span>
                               {validSourceUrl ? (
                                 <a
                                   href={validSourceUrl}
                                   target="_blank"
                                   rel="noopener noreferrer"
-                                  className="text-emerald-400 hover:text-emerald-300 underline font-medium inline-flex items-center gap-1"
+                                  className="text-rose-400 hover:text-rose-300 underline font-medium inline-flex items-center gap-1"
                                 >
                                   <span>{channel.source_name}</span>
                                   <ExternalLink className="w-3 h-3" />

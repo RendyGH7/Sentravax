@@ -41,6 +41,7 @@ import { AdminReportsPage } from '../../pages/admin/AdminReportsPage';
 import { AdminDisastersPage } from '../../pages/admin/AdminDisastersPage';
 import { AdminAlertsPage } from '../../pages/admin/AdminAlertsPage';
 import { AdminSheltersPage } from '../../pages/admin/AdminSheltersPage';
+import { AdminEmergencyDirectoryPage } from '../../pages/admin/AdminEmergencyDirectoryPage';
 import { AdminEducationPage } from '../../pages/admin/AdminEducationPage';
 import { AdminDataSourcesPage } from '../../pages/admin/AdminDataSourcesPage';
 import { AdminAuditLogsPage } from '../../pages/admin/AdminAuditLogsPage';
@@ -117,6 +118,7 @@ export const router = createBrowserRouter([
       { path: 'disasters', element: <AdminDisastersPage /> },
       { path: 'alerts', element: <AdminAlertsPage /> },
       { path: 'shelters', element: <AdminSheltersPage /> },
+      { path: 'emergency-contacts', element: <AdminEmergencyDirectoryPage /> },
       { path: 'education', element: <AdminEducationPage /> },
       { path: 'data-sources', element: <AdminDataSourcesPage /> },
       { path: 'audit-logs', element: <AdminAuditLogsPage /> },

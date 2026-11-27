@@ -131,7 +131,7 @@ export const Modal: React.FC<ModalProps> = ({
 
   const closeBtnTheme = isDark
     ? 'text-[#8A8A8A] hover:text-white hover:bg-[#212121] focus-visible:ring-[#F59E0B]'
-    : 'text-[#6B7280] hover:text-[#111827] hover:bg-[#F3F4F6] focus-visible:ring-[#047857]';
+    : 'text-[#6B7280] hover:text-[#111827] hover:bg-[#F3F4F6] focus-visible:ring-[#BE123C]';
 
   return (
     <div

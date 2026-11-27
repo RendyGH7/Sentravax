@@ -225,7 +225,7 @@ export const UserNotificationsPage: React.FC = () => {
       case 'info':
       default:
         return (
-          <span className="px-2 py-0.5 rounded text-[10px] font-medium uppercase tracking-wider bg-emerald-50 text-emerald-700 border border-emerald-200">
+          <span className="px-2 py-0.5 rounded text-[10px] font-medium uppercase tracking-wider bg-rose-50 text-rose-700 border border-rose-200">
             INFO
           </span>
         );
@@ -255,7 +255,7 @@ export const UserNotificationsPage: React.FC = () => {
     return (
       <Link
         to={targetUrl}
-        className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-semibold text-[#047857] bg-[#ECFDF5] hover:bg-[#D1FAE5] border border-[#A7F3D0] transition-colors"
+        className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-semibold text-[#BE123C] bg-[#FFF1F2] hover:bg-[#FFE4E6] border border-[#FECDD3] transition-colors"
       >
         <span>{label}</span>
         <ExternalLink className="w-3.5 h-3.5" />
@@ -269,13 +269,13 @@ export const UserNotificationsPage: React.FC = () => {
       <div className="p-6 rounded-2xl bg-[#FFFFFF] border border-[#E5E7EB] shadow-xs flex flex-col md:flex-row md:items-center justify-between gap-4 min-w-0 max-w-full">
         <div className="space-y-1">
           <div className="flex items-center gap-2">
-            <span className="w-2.5 h-2.5 rounded-full bg-[#10B981] animate-pulse"></span>
-            <span className="text-xs font-mono uppercase text-[#047857] font-bold">
+            <span className="w-2.5 h-2.5 rounded-full bg-[#F43F5E] animate-pulse"></span>
+            <span className="text-xs font-mono uppercase text-[#BE123C] font-bold">
               Notification Engine Active
             </span>
           </div>
           <h1 className="text-xl sm:text-2xl font-extrabold text-[#111827] tracking-tight flex items-center gap-2.5">
-            <Bell className="w-6 h-6 text-[#047857]" />
+            <Bell className="w-6 h-6 text-[#BE123C]" />
             Pusat Notifikasi & Riwayat Peringatan
           </h1>
           <p className="text-xs sm:text-sm text-[#4B5563]">
@@ -290,14 +290,14 @@ export const UserNotificationsPage: React.FC = () => {
             disabled={unreadCount === 0}
             className="inline-flex items-center gap-1.5 px-3.5 py-2 rounded-xl text-xs font-bold border border-[#E5E7EB] bg-[#FFFFFF] hover:bg-[#F9FAFB] text-[#374151] disabled:opacity-50 disabled:cursor-not-allowed shadow-xs transition-colors"
           >
-            <CheckCheck className="w-4 h-4 text-[#047857]" />
+            <CheckCheck className="w-4 h-4 text-[#BE123C]" />
             <span>Tandai Semua Dibaca</span>
           </button>
 
           <button
             type="button"
             onClick={() => setIsPrefModalOpen(true)}
-            className="inline-flex items-center gap-1.5 px-4 py-2 rounded-xl text-xs font-bold bg-[#047857] hover:bg-[#065F46] text-white shadow-xs transition-colors"
+            className="inline-flex items-center gap-1.5 px-4 py-2 rounded-xl text-xs font-bold bg-[#BE123C] hover:bg-[#9F1239] text-white shadow-xs transition-colors"
           >
             <SlidersHorizontal className="w-4 h-4" />
             <span>Preferensi</span>
@@ -314,7 +314,7 @@ export const UserNotificationsPage: React.FC = () => {
             onClick={() => { setActiveTab('all'); setPage(1); }}
             className={`px-3 py-1.5 rounded-lg text-xs font-bold transition-all whitespace-nowrap ${
               activeTab === 'all'
-                ? 'bg-[#047857] text-white shadow-xs'
+                ? 'bg-[#BE123C] text-white shadow-xs'
                 : 'text-[#4B5563] hover:text-[#111827] hover:bg-[#F3F4F6]'
             }`}
           >
@@ -325,14 +325,14 @@ export const UserNotificationsPage: React.FC = () => {
             onClick={() => { setActiveTab('unread'); setPage(1); }}
             className={`px-3 py-1.5 rounded-lg text-xs font-bold transition-all whitespace-nowrap flex items-center gap-1.5 ${
               activeTab === 'unread'
-                ? 'bg-[#047857] text-white shadow-xs'
+                ? 'bg-[#BE123C] text-white shadow-xs'
                 : 'text-[#4B5563] hover:text-[#111827] hover:bg-[#F3F4F6]'
             }`}
           >
             <span>Belum Dibaca</span>
             {unreadCount > 0 && (
               <span className={`px-1.5 py-0.2 rounded-full text-[10px] font-black ${
-                activeTab === 'unread' ? 'bg-white text-[#047857]' : 'bg-[#EF4444] text-white'
+                activeTab === 'unread' ? 'bg-white text-[#BE123C]' : 'bg-[#EF4444] text-white'
               }`}>
                 {unreadCount}
               </span>
@@ -343,7 +343,7 @@ export const UserNotificationsPage: React.FC = () => {
             onClick={() => { setActiveTab('warning'); setPage(1); }}
             className={`px-3 py-1.5 rounded-lg text-xs font-bold transition-all whitespace-nowrap ${
               activeTab === 'warning'
-                ? 'bg-[#047857] text-white shadow-xs'
+                ? 'bg-[#BE123C] text-white shadow-xs'
                 : 'text-[#4B5563] hover:text-[#111827] hover:bg-[#F3F4F6]'
             }`}
           >
@@ -354,7 +354,7 @@ export const UserNotificationsPage: React.FC = () => {
             onClick={() => { setActiveTab('report'); setPage(1); }}
             className={`px-3 py-1.5 rounded-lg text-xs font-bold transition-all whitespace-nowrap ${
               activeTab === 'report'
-                ? 'bg-[#047857] text-white shadow-xs'
+                ? 'bg-[#BE123C] text-white shadow-xs'
                 : 'text-[#4B5563] hover:text-[#111827] hover:bg-[#F3F4F6]'
             }`}
           >
@@ -365,7 +365,7 @@ export const UserNotificationsPage: React.FC = () => {
             onClick={() => { setActiveTab('ai'); setPage(1); }}
             className={`px-3 py-1.5 rounded-lg text-xs font-bold transition-all whitespace-nowrap ${
               activeTab === 'ai'
-                ? 'bg-[#047857] text-white shadow-xs'
+                ? 'bg-[#BE123C] text-white shadow-xs'
                 : 'text-[#4B5563] hover:text-[#111827] hover:bg-[#F3F4F6]'
             }`}
           >
@@ -380,7 +380,7 @@ export const UserNotificationsPage: React.FC = () => {
           <select
             value={urgencyFilter}
             onChange={(e) => { setUrgencyFilter(e.target.value); setPage(1); }}
-            className="text-xs font-semibold bg-[#F9FAFB] border border-[#E5E7EB] rounded-lg px-2.5 py-1.5 text-[#374151] focus:outline-hidden focus:ring-1 focus:ring-[#047857]"
+            className="text-xs font-semibold bg-[#F9FAFB] border border-[#E5E7EB] rounded-lg px-2.5 py-1.5 text-[#374151] focus:outline-hidden focus:ring-1 focus:ring-[#BE123C]"
           >
             <option value="all">Semua Urgensi</option>
             <option value="critical">Kritis</option>
@@ -422,7 +422,7 @@ export const UserNotificationsPage: React.FC = () => {
         </div>
       ) : notifications.length === 0 ? (
         <div className="p-12 rounded-2xl bg-[#FFFFFF] border border-[#E5E7EB] text-center space-y-3 shadow-xs">
-          <div className="w-12 h-12 rounded-full bg-[#ECFDF5] text-[#047857] flex items-center justify-center mx-auto">
+          <div className="w-12 h-12 rounded-full bg-[#FFF1F2] text-[#BE123C] flex items-center justify-center mx-auto">
             <CheckCircle2 className="w-6 h-6" />
           </div>
           <h3 className="text-sm font-bold text-[#111827]">Tidak Ada Notifikasi</h3>
@@ -449,7 +449,7 @@ export const UserNotificationsPage: React.FC = () => {
                 key={item.id}
                 className={`p-5 rounded-2xl border transition-all shadow-xs ${
                   isUnread
-                    ? 'bg-[#FFFFFF] border-[#A7F3D0] ring-1 ring-[#10B981]/20 hover:border-[#34D399]'
+                    ? 'bg-[#FFFFFF] border-[#FECDD3] ring-1 ring-[#F43F5E]/20 hover:border-[#34D399]'
                     : 'bg-[#FFFFFF] border-[#E5E7EB] opacity-90 hover:opacity-100 hover:border-[#D1D5DB]'
                 }`}
               >
@@ -458,7 +458,7 @@ export const UserNotificationsPage: React.FC = () => {
                     {/* Badge Row */}
                     <div className="flex flex-wrap items-center gap-2">
                       {isUnread && (
-                        <span className="w-2 h-2 rounded-full bg-[#10B981] animate-pulse" title="Belum dibaca"></span>
+                        <span className="w-2 h-2 rounded-full bg-[#F43F5E] animate-pulse" title="Belum dibaca"></span>
                       )}
                       {getCategoryBadge(item.category)}
                       {getUrgencyBadge(item.urgency)}
@@ -487,7 +487,7 @@ export const UserNotificationsPage: React.FC = () => {
                       <button
                         type="button"
                         onClick={() => handleMarkAsRead(item.id)}
-                        className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-medium text-[#047857] hover:bg-[#ECFDF5] border border-transparent hover:border-[#A7F3D0] transition-colors"
+                        className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-medium text-[#BE123C] hover:bg-[#FFF1F2] border border-transparent hover:border-[#FECDD3] transition-colors"
                         title="Tandai telah dibaca"
                       >
                         <CheckCircle2 className="w-3.5 h-3.5" />
@@ -543,7 +543,7 @@ export const UserNotificationsPage: React.FC = () => {
             {/* Modal Header */}
             <div className="px-6 py-4 border-b border-[#E5E7EB] flex items-center justify-between bg-[#F9FAFB]">
               <div className="flex items-center gap-2.5">
-                <div className="w-8 h-8 rounded-lg bg-[#ECFDF5] text-[#047857] flex items-center justify-center">
+                <div className="w-8 h-8 rounded-lg bg-[#FFF1F2] text-[#BE123C] flex items-center justify-center">
                   <SlidersHorizontal className="w-4 h-4" />
                 </div>
                 <div>
@@ -564,13 +564,13 @@ export const UserNotificationsPage: React.FC = () => {
             {/* Modal Content */}
             <div className="p-6 space-y-5 max-h-[70vh] overflow-y-auto">
               {/* Master Channel Toggle */}
-              <div className="p-4 rounded-xl bg-[#ECFDF5] border border-[#A7F3D0] flex items-center justify-between">
+              <div className="p-4 rounded-xl bg-[#FFF1F2] border border-[#FECDD3] flex items-center justify-between">
                 <div>
-                  <h4 className="text-xs font-bold text-[#065F46] flex items-center gap-1.5">
-                    <ShieldCheck className="w-4 h-4 text-[#047857]" />
+                  <h4 className="text-xs font-bold text-[#9F1239] flex items-center gap-1.5">
+                    <ShieldCheck className="w-4 h-4 text-[#BE123C]" />
                     Saluran In-App SENTRAVAX
                   </h4>
-                  <p className="text-[11px] text-[#047857]">Notifikasi di dalam portal aplikasi web.</p>
+                  <p className="text-[11px] text-[#BE123C]">Notifikasi di dalam portal aplikasi web.</p>
                 </div>
                 <label className="relative inline-flex items-center cursor-pointer">
                   <input
@@ -579,7 +579,7 @@ export const UserNotificationsPage: React.FC = () => {
                     onChange={(e) => setPreferences({ ...preferences, in_app_enabled: e.target.checked })}
                     className="sr-only peer"
                   />
-                  <div className="w-11 h-6 bg-gray-200 peer-focus:outline-hidden rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-[#047857]"></div>
+                  <div className="w-11 h-6 bg-gray-200 peer-focus:outline-hidden rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-[#BE123C]"></div>
                 </label>
               </div>
 
@@ -602,7 +602,7 @@ export const UserNotificationsPage: React.FC = () => {
                       onChange={(e) => setPreferences({ ...preferences, enable_official_warnings: e.target.checked })}
                       className="sr-only peer"
                     />
-                    <div className="w-9 h-5 bg-gray-200 peer-focus:outline-hidden rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-4 after:w-4 after:transition-all peer-checked:bg-[#047857]"></div>
+                    <div className="w-9 h-5 bg-gray-200 peer-focus:outline-hidden rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-4 after:w-4 after:transition-all peer-checked:bg-[#BE123C]"></div>
                   </label>
                 </div>
 
@@ -619,7 +619,7 @@ export const UserNotificationsPage: React.FC = () => {
                       onChange={(e) => setPreferences({ ...preferences, enable_ai_insights: e.target.checked })}
                       className="sr-only peer"
                     />
-                    <div className="w-9 h-5 bg-gray-200 peer-focus:outline-hidden rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-4 after:w-4 after:transition-all peer-checked:bg-[#047857]"></div>
+                    <div className="w-9 h-5 bg-gray-200 peer-focus:outline-hidden rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-4 after:w-4 after:transition-all peer-checked:bg-[#BE123C]"></div>
                   </label>
                 </div>
 
@@ -636,7 +636,7 @@ export const UserNotificationsPage: React.FC = () => {
                       onChange={(e) => setPreferences({ ...preferences, enable_report_status: e.target.checked })}
                       className="sr-only peer"
                     />
-                    <div className="w-9 h-5 bg-gray-200 peer-focus:outline-hidden rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-4 after:w-4 after:transition-all peer-checked:bg-[#047857]"></div>
+                    <div className="w-9 h-5 bg-gray-200 peer-focus:outline-hidden rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-4 after:w-4 after:transition-all peer-checked:bg-[#BE123C]"></div>
                   </label>
                 </div>
 
@@ -653,7 +653,7 @@ export const UserNotificationsPage: React.FC = () => {
                       onChange={(e) => setPreferences({ ...preferences, enable_disaster_alerts: e.target.checked })}
                       className="sr-only peer"
                     />
-                    <div className="w-9 h-5 bg-gray-200 peer-focus:outline-hidden rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-4 after:w-4 after:transition-all peer-checked:bg-[#047857]"></div>
+                    <div className="w-9 h-5 bg-gray-200 peer-focus:outline-hidden rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-4 after:w-4 after:transition-all peer-checked:bg-[#BE123C]"></div>
                   </label>
                 </div>
 
@@ -670,7 +670,7 @@ export const UserNotificationsPage: React.FC = () => {
                       onChange={(e) => setPreferences({ ...preferences, enable_system: e.target.checked })}
                       className="sr-only peer"
                     />
-                    <div className="w-9 h-5 bg-gray-200 peer-focus:outline-hidden rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-4 after:w-4 after:transition-all peer-checked:bg-[#047857]"></div>
+                    <div className="w-9 h-5 bg-gray-200 peer-focus:outline-hidden rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-4 after:w-4 after:transition-all peer-checked:bg-[#BE123C]"></div>
                   </label>
                 </div>
               </div>
@@ -686,7 +686,7 @@ export const UserNotificationsPage: React.FC = () => {
                 <select
                   value={preferences.min_urgency}
                   onChange={(e) => setPreferences({ ...preferences, min_urgency: e.target.value })}
-                  className="w-full text-xs font-semibold bg-[#F9FAFB] border border-[#E5E7EB] rounded-xl p-2.5 text-[#111827] focus:outline-hidden focus:ring-1 focus:ring-[#047857]"
+                  className="w-full text-xs font-semibold bg-[#F9FAFB] border border-[#E5E7EB] rounded-xl p-2.5 text-[#111827] focus:outline-hidden focus:ring-1 focus:ring-[#BE123C]"
                 >
                   <option value="info">Info (Terima Semua: Info, Sedang, Tinggi, Kritis)</option>
                   <option value="advisory">Advisory / Waspada Ringan</option>
@@ -709,7 +709,7 @@ export const UserNotificationsPage: React.FC = () => {
                 type="button"
                 disabled={savingPrefs}
                 onClick={handleSavePreferences}
-                className="px-5 py-2 rounded-xl text-xs font-bold bg-[#047857] hover:bg-[#065F46] text-white disabled:opacity-50 transition-colors shadow-xs"
+                className="px-5 py-2 rounded-xl text-xs font-bold bg-[#BE123C] hover:bg-[#9F1239] text-white disabled:opacity-50 transition-colors shadow-xs"
               >
                 {savingPrefs ? 'Menyimpan...' : 'Simpan Preferensi'}
               </button>

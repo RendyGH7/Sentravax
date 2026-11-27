@@ -41,7 +41,7 @@ export const Button = forwardRef<HTMLButtonElement, ButtonProps>(
 
     const focusRing = isDark
       ? 'focus-visible:ring-[#F59E0B] focus-visible:ring-offset-[#0C0C0C]'
-      : 'focus-visible:ring-[#047857] focus-visible:ring-offset-[#FFFFFF]';
+      : 'focus-visible:ring-[#BE123C] focus-visible:ring-offset-[#FFFFFF]';
 
     // Size Styles
     const sizeStyles: Record<ButtonSize, string> = {
@@ -70,7 +70,7 @@ export const Button = forwardRef<HTMLButtonElement, ButtonProps>(
       // Light Theme
       switch (variant) {
         case 'primary':
-          return 'bg-[#047857] hover:bg-[#065F46] text-white shadow-xs active:bg-[#064E3B]';
+          return 'bg-[#BE123C] hover:bg-[#9F1239] text-white shadow-xs active:bg-[#064E3B]';
         case 'secondary':
           return 'bg-[#F3F4F6] hover:bg-[#E5E7EB] text-[#111827] border border-[#E5E7EB]';
         case 'outline':

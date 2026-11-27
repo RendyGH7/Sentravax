@@ -45,7 +45,7 @@ export const AreaPlaceholder: React.FC<AreaPlaceholderProps> = ({
             className={`w-12 h-12 rounded-xl flex items-center justify-center border shadow-xs ${
               isDarkFamily
                 ? 'bg-[#212121] border-[#383838] text-[#F59E0B]'
-                : 'bg-[#ECFDF5] border-[#A7F3D0] text-[#047857]'
+                : 'bg-[#FFF1F2] border-[#FECDD3] text-[#BE123C]'
             }`}
           >
             <Icon className="w-6 h-6" />
@@ -56,7 +56,7 @@ export const AreaPlaceholder: React.FC<AreaPlaceholderProps> = ({
                 className={`px-2.5 py-0.5 rounded-full text-[11px] font-mono uppercase font-bold border ${
                   isDarkFamily
                     ? 'bg-[#212121] text-[#F59E0B] border-amber-500/40'
-                    : 'bg-[#ECFDF5] text-[#047857] border-[#A7F3D0]'
+                    : 'bg-[#FFF1F2] text-[#BE123C] border-[#FECDD3]'
                 }`}
               >
                 Area {area}
@@ -140,7 +140,7 @@ export const AreaPlaceholder: React.FC<AreaPlaceholderProps> = ({
             <div className="space-y-3 pt-2">
               <h4
                 className={`text-xs uppercase font-mono tracking-wider font-bold ${
-                  isDarkFamily ? 'text-[#F59E0B]' : 'text-[#047857]'
+                  isDarkFamily ? 'text-[#F59E0B]' : 'text-[#BE123C]'
                 }`}
               >
                 Spesifikasi Modul dan Fungsionalitas
@@ -157,7 +157,7 @@ export const AreaPlaceholder: React.FC<AreaPlaceholderProps> = ({
                   >
                     <CheckCircle2
                       className={`w-4 h-4 shrink-0 mt-0.5 ${
-                        isDarkFamily ? 'text-[#10B981]' : 'text-[#047857]'
+                        isDarkFamily ? 'text-[#F43F5E]' : 'text-[#BE123C]'
                       }`}
                     />
                     <span>{feat}</span>
@@ -178,7 +178,7 @@ export const AreaPlaceholder: React.FC<AreaPlaceholderProps> = ({
                 className={`inline-flex items-center gap-2 px-5 py-2.5 rounded-xl text-xs font-bold transition-all shadow-xs ${
                   isDarkFamily
                     ? 'bg-[#F59E0B] hover:bg-[#D97706] text-[#0C0C0C]'
-                    : 'bg-[#047857] hover:bg-[#065F46] text-white'
+                    : 'bg-[#BE123C] hover:bg-[#9F1239] text-white'
                 }`}
               >
                 <span>{ctaText}</span>

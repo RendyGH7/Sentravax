@@ -13,6 +13,13 @@ import type {
   ShelterFormData,
   AdminShelterStats,
 } from '../types/shelter';
+import type {
+  AdminEmergencyContact,
+  AdminEmergencyDirectoryStats,
+  AdminEmergencyDirectoryQueryParams,
+  AdminEmergencyDirectoryListResponse,
+  AdminEmergencyContactParentPayload,
+} from '../types/emergency-directory';
 
 export interface AdminOverviewApiResponse {
   counts: AdminOverviewStats;
@@ -517,6 +524,116 @@ export const adminService = {
       items: res.data.data || [],
       meta: (res.data as any).meta || { current_page: 1, last_page: 1, total: 0 },
     };
+  },
+
+  // ==========================================
+  // EMERGENCY DIRECTORY (PARENT CONTACTS)
+  // ==========================================
+
+  /**
+   * List emergency contacts for Admin management with strict contract validation.
+   * Endpoint: GET /api/v1/admin/emergency-contacts
+   */
+  async getEmergencyContacts(
+    params?: AdminEmergencyDirectoryQueryParams,
+    signal?: AbortSignal
+  ): Promise<AdminEmergencyDirectoryListResponse> {
+    const res = await apiClient.get<
+      ApiResponse<AdminEmergencyContact[]> & { stats?: AdminEmergencyDirectoryStats }
+    >('/admin/emergency-contacts', {
+      params,
+      signal,
+    });
+
+    const payload = res.data;
+    if (!payload || payload.success !== true || !Array.isArray(payload.data)) {
+      throw new Error('Respons daftar kontak darurat admin tidak sesuai kontrak (data bukan array valid).');
+    }
+
+    const meta = payload.meta;
+    if (
+      !meta ||
+      typeof meta.current_page !== 'number' ||
+      !Number.isFinite(meta.current_page) ||
+      typeof meta.per_page !== 'number' ||
+      !Number.isFinite(meta.per_page) ||
+      typeof meta.total !== 'number' ||
+      !Number.isFinite(meta.total) ||
+      typeof meta.last_page !== 'number' ||
+      !Number.isFinite(meta.last_page)
+    ) {
+      throw new Error('Metadata paginasi kontak darurat admin tidak valid atau tidak lengkap.');
+    }
+
+    const stats = payload.stats;
+    if (!stats || typeof stats.total !== 'number') {
+      throw new Error('Ringkasan statistik kontak darurat admin tidak tersedia pada respons API.');
+    }
+
+    return {
+      data: payload.data,
+      meta: {
+        current_page: meta.current_page,
+        per_page: meta.per_page,
+        total: meta.total,
+        last_page: meta.last_page,
+      },
+      stats,
+    };
+  },
+
+  /**
+   * Fetch single emergency contact detail for Admin view/edit.
+   * Endpoint: GET /api/v1/admin/emergency-contacts/{id}
+   */
+  async getEmergencyContactDetail(id: number, signal?: AbortSignal): Promise<AdminEmergencyContact> {
+    const res = await apiClient.get<ApiResponse<AdminEmergencyContact>>(`/admin/emergency-contacts/${id}`, {
+      signal,
+    });
+    const payload = res.data;
+    if (!payload || payload.success !== true || !payload.data || typeof payload.data.id !== 'number') {
+      throw new Error('Respons detail kontak darurat admin tidak valid.');
+    }
+    return payload.data;
+  },
+
+  /**
+   * Create a new parent emergency contact record (defaults to unverified/draft on backend).
+   * Endpoint: POST /api/v1/admin/emergency-contacts
+   */
+  async createEmergencyContact(payload: AdminEmergencyContactParentPayload): Promise<AdminEmergencyContact> {
+    const res = await apiClient.post<ApiResponse<AdminEmergencyContact>>('/admin/emergency-contacts', payload);
+    if (!res.data || res.data.success !== true || !res.data.data) {
+      throw new Error(res.data?.message || 'Gagal membuat kontak darurat baru.');
+    }
+    return res.data.data;
+  },
+
+  /**
+   * Update parent fields of an existing emergency contact (does not mutate channels).
+   * Endpoint: PUT /api/v1/admin/emergency-contacts/{id}
+   */
+  async updateEmergencyContact(
+    id: number,
+    payload: Partial<AdminEmergencyContactParentPayload>
+  ): Promise<AdminEmergencyContact> {
+    const res = await apiClient.put<ApiResponse<AdminEmergencyContact>>(`/admin/emergency-contacts/${id}`, payload);
+    if (!res.data || res.data.success !== true || !res.data.data) {
+      throw new Error(res.data?.message || 'Gagal memperbarui data kontak darurat.');
+    }
+    return res.data.data;
+  },
+
+  /**
+   * Soft-delete an emergency contact record.
+   * Endpoint: DELETE /api/v1/admin/emergency-contacts/{id}
+   */
+  async deleteEmergencyContact(id: number): Promise<{ message: string }> {
+    const res = await apiClient.delete<ApiResponse<null>>(`/admin/emergency-contacts/${id}`);
+    if (!res.data || res.data.success !== true) {
+      throw new Error(res.data?.message || 'Gagal mengarsipkan (soft delete) kontak darurat.');
+    }
+    return { message: res.data.message || 'Kontak darurat berhasil diarsipkan.' };
   },
 };
 

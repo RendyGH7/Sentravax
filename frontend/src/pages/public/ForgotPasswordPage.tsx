@@ -55,7 +55,7 @@ export const ForgotPasswordPage: React.FC = () => {
 
       {/* Multi-layered dark cinematic gradient overlays */}
       <div className="absolute inset-0 bg-gradient-to-b from-black/95 via-black/85 to-black pointer-events-none" />
-      <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_center,_var(--tw-gradient-stops))] from-emerald-950/30 via-black/90 to-black pointer-events-none" />
+      <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_center,_var(--tw-gradient-stops))] from-rose-950/30 via-black/90 to-black pointer-events-none" />
 
       {/* Full dark cinematic background */}
       <div className="absolute inset-0 bg-black/90 pointer-events-none" />
@@ -64,8 +64,8 @@ export const ForgotPasswordPage: React.FC = () => {
         <div className="bg-[#121614] border border-neutral-800 rounded-3xl p-6 sm:p-8 space-y-6 relative overflow-hidden">
           {isSubmitted ? (
             <div className="text-center space-y-4">
-              <div className="w-14 h-14 rounded-2xl bg-neutral-900 border border-neutral-800 flex items-center justify-center mx-auto text-emerald-400">
-                <CheckCircle2 className="w-8 h-8 text-emerald-400" />
+              <div className="w-14 h-14 rounded-2xl bg-neutral-900 border border-neutral-800 flex items-center justify-center mx-auto text-rose-400">
+                <CheckCircle2 className="w-8 h-8 text-rose-400" />
               </div>
 
               <h1 className="text-2xl font-black text-white tracking-tight">
@@ -73,12 +73,12 @@ export const ForgotPasswordPage: React.FC = () => {
               </h1>
 
               <p className="text-xs text-neutral-300 leading-relaxed">
-                Jika alamat email <strong className="text-emerald-400">{email}</strong> terdaftar di sistem kami,
+                Jika alamat email <strong className="text-rose-400">{email}</strong> terdaftar di sistem kami,
                 tautan pemulihan kata sandi telah dikirimkan ke kotak masuk Anda.
               </p>
 
               <div className="p-4 rounded-2xl bg-[#0d100f] border border-neutral-800 text-xs text-neutral-200 text-left leading-relaxed flex items-start gap-2.5">
-                <Shield className="w-4 h-4 text-emerald-400 shrink-0 mt-0.5" />
+                <Shield className="w-4 h-4 text-rose-400 shrink-0 mt-0.5" />
                 <span>
                   Demi keamanan akun Anda, tautan pemulihan berlaku selama <strong>60 menit</strong>.
                   Periksa juga folder <em>Spam</em> atau <em>Junk</em> jika tidak menemukannya di kotak masuk utama.
@@ -100,7 +100,7 @@ export const ForgotPasswordPage: React.FC = () => {
 
                 <Link
                   to={PATHS.PUBLIC.LOGIN}
-                  className="w-full py-2.5 px-4 rounded-xl bg-emerald-700 hover:bg-emerald-600 text-white font-bold text-xs text-center transition-colors flex items-center justify-center gap-1.5 shadow-xs"
+                  className="w-full py-2.5 px-4 rounded-xl bg-rose-700 hover:bg-rose-600 text-white font-bold text-xs text-center transition-colors flex items-center justify-center gap-1.5 shadow-xs"
                 >
                   <ArrowLeft className="w-4 h-4 text-white" />
                   Kembali ke Halaman Masuk
@@ -110,7 +110,7 @@ export const ForgotPasswordPage: React.FC = () => {
           ) : (
             <>
               <div className="text-center">
-                <div className="w-12 h-12 rounded-2xl bg-emerald-700 flex items-center justify-center mx-auto mb-3 text-white shadow-xs">
+                <div className="w-12 h-12 rounded-2xl bg-rose-700 flex items-center justify-center mx-auto mb-3 text-white shadow-xs">
                   <Shield className="w-6 h-6 text-white" />
                 </div>
                 <h1 className="text-2xl font-black text-white tracking-tight">Lupa Kata Sandi</h1>
@@ -132,7 +132,7 @@ export const ForgotPasswordPage: React.FC = () => {
                     Alamat Email Terdaftar
                   </label>
                   <div className="relative">
-                    <Mail className="w-4 h-4 text-emerald-400 absolute left-3.5 top-3" />
+                    <Mail className="w-4 h-4 text-rose-400 absolute left-3.5 top-3" />
                     <input
                       id="email"
                       type="email"
@@ -144,7 +144,7 @@ export const ForgotPasswordPage: React.FC = () => {
                       placeholder="nama@email.com"
                       autoComplete="email"
                       disabled={isSubmitting}
-                      className="w-full pl-10 pr-4 py-2.5 rounded-xl bg-[#0d100f] border border-neutral-700 text-white placeholder-neutral-500 text-xs sm:text-sm focus:outline-none focus:border-emerald-600 focus:ring-1 focus:ring-emerald-600 disabled:opacity-50 transition-colors font-medium"
+                      className="w-full pl-10 pr-4 py-2.5 rounded-xl bg-[#0d100f] border border-neutral-700 text-white placeholder-neutral-500 text-xs sm:text-sm focus:outline-none focus:border-rose-600 focus:ring-1 focus:ring-rose-600 disabled:opacity-50 transition-colors font-medium"
                     />
                   </div>
                 </div>
@@ -152,7 +152,7 @@ export const ForgotPasswordPage: React.FC = () => {
                 <button
                   type="submit"
                   disabled={isSubmitting}
-                  className="w-full py-3.5 px-4 rounded-xl bg-emerald-700 hover:bg-emerald-600 text-white font-bold text-xs sm:text-sm transition-colors disabled:opacity-50 flex items-center justify-center gap-2 cursor-pointer shadow-xs"
+                  className="w-full py-3.5 px-4 rounded-xl bg-rose-700 hover:bg-rose-600 text-white font-bold text-xs sm:text-sm transition-colors disabled:opacity-50 flex items-center justify-center gap-2 cursor-pointer shadow-xs"
                 >
                   {isSubmitting ? (
                     <>
@@ -166,7 +166,7 @@ export const ForgotPasswordPage: React.FC = () => {
               </form>
 
               <div className="text-center text-xs text-neutral-300 pt-3 border-t border-neutral-800">
-                <Link to={PATHS.PUBLIC.LOGIN} className="inline-flex items-center gap-1.5 text-emerald-400 hover:text-emerald-300 font-bold hover:underline transition-colors">
+                <Link to={PATHS.PUBLIC.LOGIN} className="inline-flex items-center gap-1.5 text-rose-400 hover:text-rose-300 font-bold hover:underline transition-colors">
                   <ArrowLeft className="w-3.5 h-3.5" />
                   Kembali ke Halaman Masuk
                 </Link>

@@ -18,6 +18,12 @@ function formatHotlineTitle(item: NationalEmergencyHotlineItem): string {
   return parts.join(' | ');
 }
 
+function formatCompactLabel(label: string, value: string): string {
+  const escaped = value.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+  const cleaned = label.replace(new RegExp(`\\s*\\b${escaped}\\b\\s*$`), '').trim();
+  return cleaned || label;
+}
+
 export const EmergencyHotlineStrip: React.FC<EmergencyHotlineStripProps> = ({
   variant = 'bar',
   theme = 'dark',
@@ -46,7 +52,7 @@ export const EmergencyHotlineStrip: React.FC<EmergencyHotlineStripProps> = ({
           <Link
             to={PATHS.PUBLIC.EMERGENCY_DIRECTORY}
             className={`text-[11px] font-semibold inline-flex items-center gap-1 hover:underline ${
-              isLightRose ? 'text-rose-700' : 'text-emerald-400'
+              isLightRose ? 'text-rose-700' : 'text-rose-400'
             }`}
           >
             <span>Direktori</span>
@@ -232,43 +238,44 @@ export const EmergencyHotlineStrip: React.FC<EmergencyHotlineStripProps> = ({
 
           {!loading &&
             !error &&
-            hotlines.map((h) => (
-              <a
-                key={h.channelId}
-                href={h.telUri}
-                title={formatHotlineTitle(h)}
-                className={
-                  isLight
-                    ? 'inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-white border border-[#FCA5A5] hover:bg-[#FEE2E2] text-[#991B1B] font-bold text-[11px] transition-colors shadow-2xs'
-                    : isDarkRose
-                    ? 'px-3 py-1.5 rounded-lg bg-[#141414] border border-rose-500/40 hover:bg-rose-950/40 text-rose-300 text-xs font-bold transition-colors shadow-2xs'
-                    : 'inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-neutral-900 hover:bg-neutral-800 border border-neutral-700 text-xs font-bold text-neutral-200 transition-colors'
-                }
-              >
-                {isLight && <PhoneCall className="w-3 h-3 text-[#DC2626]" />}
-                <span className={isLight ? '' : isDarkRose ? '' : 'text-rose-400 font-mono font-bold'}>
-                  {h.value}
-                </span>
-                <span
+            hotlines.map((h) => {
+              const compactLabel = formatCompactLabel(h.label, h.value);
+              return (
+                <a
+                  key={h.channelId}
+                  href={h.telUri}
+                  title={formatHotlineTitle(h)}
                   className={
                     isLight
-                      ? 'hidden md:inline font-normal text-gray-600'
+                      ? 'inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-white border border-[#FCA5A5] hover:bg-[#FEE2E2] text-[#991B1B] font-bold text-[11px] transition-colors shadow-2xs'
                       : isDarkRose
-                      ? 'font-normal text-neutral-400'
-                      : 'text-[11px] text-neutral-400'
+                      ? 'inline-flex items-center gap-2 px-3 py-1.5 rounded-xl bg-[#141414] border border-rose-500/35 hover:border-rose-400/60 hover:bg-rose-950/40 text-xs font-bold transition-colors shadow-2xs'
+                      : 'inline-flex items-center gap-2 px-3 py-1.5 rounded-xl bg-neutral-900 hover:bg-neutral-800 border border-neutral-700 text-xs font-bold text-neutral-200 transition-colors'
                   }
                 >
-                  {isLight ? `(${h.label})` : h.label}
-                </span>
-              </a>
-            ))}
+                  {isLight && <PhoneCall className="w-3 h-3 text-[#DC2626]" />}
+                  <span className={isLight ? 'font-mono font-bold' : 'text-rose-400 font-mono font-bold'}>
+                    {h.value}
+                  </span>
+                  <span
+                    className={
+                      isLight
+                        ? 'hidden md:inline font-normal text-gray-600'
+                        : 'text-[11px] font-medium text-neutral-300'
+                    }
+                  >
+                    {isLight ? `(${compactLabel})` : compactLabel}
+                  </span>
+                </a>
+              );
+            })}
 
           <Link
             to={PATHS.PUBLIC.EMERGENCY_DIRECTORY}
-            className={`inline-flex items-center gap-1 px-2.5 py-1.5 rounded-xl text-[11px] font-semibold transition-colors ${
+            className={`inline-flex items-center gap-1 px-3 py-1.5 rounded-xl text-xs font-semibold transition-colors ${
               isLight
                 ? 'text-[#991B1B] hover:bg-[#FEE2E2] border border-transparent'
-                : 'text-emerald-400 hover:text-emerald-300 hover:bg-neutral-900 border border-neutral-800'
+                : 'text-rose-400 hover:text-rose-300 hover:bg-neutral-900 border border-neutral-800'
             }`}
           >
             <span>Direktori Lengkap</span>

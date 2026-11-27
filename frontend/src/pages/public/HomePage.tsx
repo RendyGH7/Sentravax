@@ -113,7 +113,7 @@ const ReviewerAvatar: React.FC<{
   if (imgError || !src) {
     return (
       <div
-        className={`w-9 h-9 rounded-full ${bg} text-white font-bold flex items-center justify-center text-[11px] shrink-0 ring-1 ring-emerald-500/20 shadow-xs`}
+        className={`w-9 h-9 rounded-full ${bg} text-white font-bold flex items-center justify-center text-[11px] shrink-0 ring-1 ring-rose-500/20 shadow-xs`}
       >
         {fallbackText}
       </div>
@@ -126,7 +126,7 @@ const ReviewerAvatar: React.FC<{
       alt={name}
       loading="lazy"
       onError={() => setImgError(true)}
-      className="w-9 h-9 rounded-full object-cover shrink-0 ring-1 ring-emerald-500/20 shadow-xs"
+      className="w-9 h-9 rounded-full object-cover shrink-0 ring-1 ring-rose-500/20 shadow-xs"
     />
   );
 };
@@ -139,7 +139,7 @@ const CITIZEN_REVIEWS: Testimonial[] = [
     city: 'Cianjur, Jawa Barat',
     avatarUrl: 'https://images.unsplash.com/photo-1544005313-94ddf0286df2?auto=format&fit=crop&q=80&w=160&h=160',
     avatarText: 'RD',
-    avatarBg: 'bg-emerald-600',
+    avatarBg: 'bg-rose-600',
     rating: 5,
     language: 'id',
     category: 'warga',
@@ -714,7 +714,7 @@ export const HomePage: React.FC = () => {
 
         {/* Sophisticated dark cinematic gradient overlay */}
         <div className="absolute inset-0 bg-gradient-to-b from-[#0d0f11]/80 via-[#0d0f11]/45 to-[#0d0f11]" />
-        <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_center,_var(--tw-gradient-stops))] from-emerald-500/10 via-transparent to-transparent pointer-events-none" />
+        <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_center,_var(--tw-gradient-stops))] from-rose-500/10 via-transparent to-transparent pointer-events-none" />
 
         {/* Foreground Content */}
         <div className="relative z-10 max-w-4xl mx-auto space-y-6 sm:space-y-8 pt-28 sm:pt-36 pb-20 px-4">
@@ -725,7 +725,7 @@ export const HomePage: React.FC = () => {
             stagger={0.05}
           >
             Lindungi Keluarga Anda.
-            <span className="block mt-2 text-emerald-400">Siaga Nyata Sebelum Bencana.</span>
+            <span className="block mt-2 text-rose-400">Siaga Nyata Sebelum Bencana.</span>
           </ScrollWordTitle>
 
           {/* Concise, non-slop subtitle with smooth fade-in */}
@@ -748,7 +748,7 @@ export const HomePage: React.FC = () => {
             <motion.div whileHover={{ scale: 1.03 }} whileTap={{ scale: 0.97 }}>
               <a
                 href="#fitur-peta"
-                className="inline-flex items-center gap-2 px-7 py-3.5 rounded-2xl bg-emerald-700 hover:bg-emerald-600 text-white font-bold text-sm transition-colors shadow-sm cursor-pointer"
+                className="inline-flex items-center gap-2 px-7 py-3.5 rounded-2xl bg-rose-700 hover:bg-rose-600 text-white font-bold text-sm transition-colors shadow-sm cursor-pointer"
               >
                 <Map className="w-4 h-4 text-white" />
                 <span>Buka Peta Radar</span>
@@ -760,7 +760,7 @@ export const HomePage: React.FC = () => {
                 href="#fitur-cek-risiko"
                 className="inline-flex items-center gap-2 px-7 py-3.5 rounded-2xl bg-neutral-900/90 hover:bg-neutral-800 border border-neutral-700 text-neutral-100 font-bold text-sm transition-colors cursor-pointer"
               >
-                <Compass className="w-4 h-4 text-emerald-400" />
+                <Compass className="w-4 h-4 text-rose-400" />
                 <span>Cek Risiko Wilayah</span>
               </a>
             </motion.div>
@@ -866,12 +866,12 @@ export const HomePage: React.FC = () => {
 
           {/* Kolom 4: Titik Evakuasi & Shelter Terdata */}
           <div className="group relative p-4 sm:p-6 lg:p-7 rounded-2xl hover:bg-neutral-800/15 transition-all duration-300 flex flex-col justify-between cursor-default">
-            <div className="absolute -top-4 left-6 w-24 h-24 bg-emerald-500/10 blur-[36px] rounded-full opacity-0 group-hover:opacity-100 transition-opacity duration-500 pointer-events-none" />
+            <div className="absolute -top-4 left-6 w-24 h-24 bg-rose-500/10 blur-[36px] rounded-full opacity-0 group-hover:opacity-100 transition-opacity duration-500 pointer-events-none" />
             <div className="flex items-center gap-2 mb-3">
-              <span className="text-[11px] font-mono font-medium text-neutral-500 group-hover:text-emerald-400 transition-colors">
+              <span className="text-[11px] font-mono font-medium text-neutral-500 group-hover:text-rose-400 transition-colors">
                 04
               </span>
-              <span className="w-4 h-px bg-neutral-800 group-hover:w-8 group-hover:bg-emerald-400/50 transition-all duration-300" />
+              <span className="w-4 h-px bg-neutral-800 group-hover:w-8 group-hover:bg-rose-400/50 transition-all duration-300" />
             </div>
             <div className="relative">
               <AnimatedCounter
@@ -914,7 +914,7 @@ export const HomePage: React.FC = () => {
                 className="inline-flex items-center gap-1.5 px-4 py-2.5 rounded-xl bg-neutral-900 hover:bg-neutral-800 border border-neutral-700 text-neutral-200 hover:text-white text-xs font-bold transition-colors cursor-pointer"
               >
                 <span>Buka Peta Layar Penuh</span>
-                <ExternalLink className="w-3.5 h-3.5 text-emerald-400" />
+                <ExternalLink className="w-3.5 h-3.5 text-rose-400" />
               </Link>
             </motion.div>
           </div>
@@ -924,8 +924,8 @@ export const HomePage: React.FC = () => {
         <div className="rounded-3xl border border-neutral-800 overflow-hidden bg-[#0d0f11]">
           <Suspense
             fallback={
-              <div className="h-[520px] w-full flex flex-col items-center justify-center gap-3 bg-[#0a1410] text-xs text-emerald-300">
-                <RefreshCw className="w-6 h-6 animate-spin text-emerald-400" />
+              <div className="h-[520px] w-full flex flex-col items-center justify-center gap-3 bg-[#0a1410] text-xs text-rose-300">
+                <RefreshCw className="w-6 h-6 animate-spin text-rose-400" />
                 <span>Memuat Peta Situasi Siaga Bencana...</span>
               </div>
             }
@@ -964,10 +964,10 @@ export const HomePage: React.FC = () => {
           </div>
           <div className="p-3.5 rounded-2xl bg-[#111714] border border-neutral-800 flex items-center justify-between">
             <span className="text-neutral-300 font-bold flex items-center gap-1.5">
-              <Shield className="w-3.5 h-3.5 text-emerald-400 shrink-0" />
+              <Shield className="w-3.5 h-3.5 text-rose-400 shrink-0" />
               Shelter Terbuka:
             </span>
-            <span className="font-bold text-emerald-400 text-sm tracking-tight">
+            <span className="font-bold text-rose-400 text-sm tracking-tight">
               {activeSheltersCount} Lokasi
             </span>
           </div>
@@ -1014,7 +1014,7 @@ export const HomePage: React.FC = () => {
                   className="inline-flex items-center gap-1.5 px-4 py-2.5 rounded-xl bg-neutral-900 hover:bg-neutral-800 border border-neutral-700 text-white text-xs font-bold transition-colors shrink-0 cursor-pointer"
                 >
                   <span>Buka Rencana Siaga Lengkap</span>
-                  <ArrowRight className="w-3.5 h-3.5 text-emerald-400" />
+                  <ArrowRight className="w-3.5 h-3.5 text-rose-400" />
                 </Link>
               </motion.div>
             </div>
@@ -1034,7 +1034,7 @@ export const HomePage: React.FC = () => {
                   disabled={isQuickChecking}
                   whileHover={{ scale: 1.015 }}
                   whileTap={{ scale: 0.985 }}
-                  className="w-full inline-flex items-center justify-center gap-2 px-4 py-3.5 rounded-xl bg-emerald-700 hover:bg-emerald-600 text-white text-xs font-bold transition-colors disabled:opacity-50 cursor-pointer tracking-wide shadow-xs"
+                  className="w-full inline-flex items-center justify-center gap-2 px-4 py-3.5 rounded-xl bg-rose-700 hover:bg-rose-600 text-white text-xs font-bold transition-colors disabled:opacity-50 cursor-pointer tracking-wide shadow-xs"
                 >
                   <Navigation className="w-4 h-4 text-white shrink-0" />
                   <span>{isQuickChecking ? 'Sedang Mendeteksi Posisi Anda...' : 'Deteksi Lokasi Saya Sekarang (GPS)'}</span>
@@ -1054,7 +1054,7 @@ export const HomePage: React.FC = () => {
                     value={selectedQuickRegion}
                     onChange={handleRegionSelectCheck}
                     disabled={isQuickChecking}
-                    className="w-full px-3.5 py-2.5 rounded-xl border border-neutral-700 bg-[#0d100f] text-xs text-white font-semibold outline-none focus:border-emerald-600 focus:ring-1 focus:ring-emerald-600"
+                    className="w-full px-3.5 py-2.5 rounded-xl border border-neutral-700 bg-[#0d100f] text-xs text-white font-semibold outline-none focus:border-rose-600 focus:ring-1 focus:ring-rose-600"
                   >
                     <option value="" className="bg-[#0d100f] text-white">-- Pilih Wilayah / Kota Anda --</option>
                     {regions.map((r) => (
@@ -1083,8 +1083,8 @@ export const HomePage: React.FC = () => {
                       </h4>
                     </div>
                     <div className="text-right">
-                      <span className="inline-flex items-center gap-1 px-3 py-1.5 rounded-full text-xs font-bold uppercase bg-neutral-900 border border-emerald-800/80 text-emerald-300">
-                        <CheckCircle2 className="w-3.5 h-3.5 text-emerald-400" />
+                      <span className="inline-flex items-center gap-1 px-3 py-1.5 rounded-full text-xs font-bold uppercase bg-neutral-900 border border-rose-800/80 text-rose-300">
+                        <CheckCircle2 className="w-3.5 h-3.5 text-rose-400" />
                         {quickCheckResult.assessment?.risk_label || quickCheckResult.assessment?.risk_level || 'AMAN TERKENDALI'}
                       </span>
                     </div>
@@ -1094,12 +1094,12 @@ export const HomePage: React.FC = () => {
                     <p className="font-bold text-white">Rekomendasi Langkah Kesiapsiagaan:</p>
                     {quickCheckResult.recommendations?.action_steps && quickCheckResult.recommendations.action_steps.length > 0 ? (
                       <div className="p-3.5 rounded-xl bg-[#0d100f] border border-neutral-800 text-xs text-neutral-100 flex items-start gap-2.5">
-                        <CheckCircle2 className="w-4 h-4 text-emerald-400 shrink-0 mt-0.5" />
+                        <CheckCircle2 className="w-4 h-4 text-rose-400 shrink-0 mt-0.5" />
                         <span>{quickCheckResult.recommendations.action_steps[0]}</span>
                       </div>
                     ) : (
                       <div className="p-3.5 rounded-xl bg-[#0d100f] border border-neutral-800 text-xs text-neutral-100 flex items-start gap-2.5">
-                        <CheckCircle2 className="w-4 h-4 text-emerald-400 shrink-0 mt-0.5" />
+                        <CheckCircle2 className="w-4 h-4 text-rose-400 shrink-0 mt-0.5" />
                         <span>Kondisi aman. Siapkan tas siaga keluarga berdurasi 72 jam dan kenali titik kumpul terdekat.</span>
                       </div>
                     )}
@@ -1108,7 +1108,7 @@ export const HomePage: React.FC = () => {
                   <div className="pt-2 flex flex-wrap items-center gap-3">
                     <Link
                       to={`${PATHS.PUBLIC.PREPAREDNESS}?region_id=${quickCheckResult.location?.region?.id || ''}&lat=${quickCheckResult.location?.latitude || ''}&lon=${quickCheckResult.location?.longitude || ''}`}
-                      className="px-4 py-2.5 rounded-xl bg-emerald-700 hover:bg-emerald-600 text-white text-xs font-bold transition-colors cursor-pointer shadow-xs"
+                      className="px-4 py-2.5 rounded-xl bg-rose-700 hover:bg-rose-600 text-white text-xs font-bold transition-colors cursor-pointer shadow-xs"
                     >
                       Buka Rencana Kesiapsiagaan Personal &rarr;
                     </Link>
@@ -1123,7 +1123,7 @@ export const HomePage: React.FC = () => {
               ) : (
                 <div className="p-8 rounded-2xl bg-[#161a18] border border-neutral-800 text-center space-y-3">
                   <div className="w-14 h-14 rounded-2xl bg-neutral-900 border border-neutral-800 text-neutral-300 flex items-center justify-center mx-auto">
-                    <Compass className="w-7 h-7 text-emerald-400" />
+                    <Compass className="w-7 h-7 text-rose-400" />
                   </div>
                   <h4 className="text-base font-black text-white">Belum ada wilayah yang diperiksa</h4>
                   <p className="text-xs text-neutral-300 max-w-md mx-auto leading-relaxed">
@@ -1141,8 +1141,8 @@ export const HomePage: React.FC = () => {
       {/* ========================================================================= */}
       <section id="galeri-warga" className="space-y-8 pt-6 border-t border-neutral-800">
         <div className="text-center max-w-3xl mx-auto space-y-3">
-          <div className="inline-flex items-center gap-1.5 px-3.5 py-1 rounded-full text-xs font-mono font-bold text-emerald-400 bg-neutral-900 border border-neutral-700 uppercase tracking-wider">
-            <LayoutGrid className="w-3.5 h-3.5 text-emerald-400" />
+          <div className="inline-flex items-center gap-1.5 px-3.5 py-1 rounded-full text-xs font-mono font-bold text-rose-400 bg-neutral-900 border border-neutral-700 uppercase tracking-wider">
+            <LayoutGrid className="w-3.5 h-3.5 text-rose-400" />
             <span>DOKUMENTASI KESELAMATAN WARGA</span>
           </div>
           <ScrollWordTitle
@@ -1221,7 +1221,7 @@ export const HomePage: React.FC = () => {
                   transition: { duration: 0.25, ease: 'easeOut' },
                 }}
                 whileTap={{ scale: 0.99 }}
-                className={`group relative rounded-3xl overflow-hidden ${cardClasses} border border-neutral-800/80 bg-neutral-950 cursor-pointer shadow-lg hover:border-emerald-500/40 hover:shadow-xl hover:shadow-emerald-950/20 transition-all duration-300 select-none`}
+                className={`group relative rounded-3xl overflow-hidden ${cardClasses} border border-neutral-800/80 bg-neutral-950 cursor-pointer shadow-lg hover:border-rose-500/40 hover:shadow-xl hover:shadow-rose-950/20 transition-all duration-300 select-none`}
               >
                 {/* Foto Dokumentasi Penuh (Bersih tanpa Teks Awal) */}
                 <img
@@ -1241,11 +1241,11 @@ export const HomePage: React.FC = () => {
                 >
                   {/* Baris Lokasi & Tag Status Bahaya */}
                   <div className="flex items-center justify-between gap-2 drop-shadow-[0_1px_2px_rgba(0,0,0,0.9)]">
-                    <span className="inline-flex items-center gap-1.5 text-xs font-semibold text-emerald-300">
-                      <MapPin className="w-3.5 h-3.5 text-emerald-400 shrink-0" />
+                    <span className="inline-flex items-center gap-1.5 text-xs font-semibold text-rose-300">
+                      <MapPin className="w-3.5 h-3.5 text-rose-400 shrink-0" />
                       <span>{item.location}</span>
                     </span>
-                    <span className="inline-flex items-center px-2 py-0.5 rounded-md bg-emerald-950/70 border border-emerald-600/60 text-[10px] font-mono font-bold text-emerald-300 uppercase backdrop-blur-xs">
+                    <span className="inline-flex items-center px-2 py-0.5 rounded-md bg-rose-950/70 border border-rose-600/60 text-[10px] font-mono font-bold text-rose-300 uppercase backdrop-blur-xs">
                       {item.hazardType.split(' ')[0]}
                     </span>
                   </div>
@@ -1263,7 +1263,7 @@ export const HomePage: React.FC = () => {
                   {/* Footer Informasi Halus Tanpa Border Kaku */}
                   <div className="pt-1.5 flex items-center justify-between text-[11px] text-neutral-300 font-medium drop-shadow-[0_1px_2px_rgba(0,0,0,0.9)]">
                     <span className="truncate max-w-[200px] text-neutral-300/90">{item.shelterName.split(' - ')[0]}</span>
-                    <span className="text-emerald-300 font-semibold flex items-center gap-1 shrink-0">
+                    <span className="text-rose-300 font-semibold flex items-center gap-1 shrink-0">
                       Buka Detail <ArrowRight className="w-3 h-3 group-hover:translate-x-0.5 transition-transform" />
                     </span>
                   </div>
@@ -1308,11 +1308,11 @@ export const HomePage: React.FC = () => {
                 {/* Header Modal */}
                 <div className="space-y-2 pr-12">
                   <div className="flex flex-wrap items-center gap-2">
-                    <span className="inline-flex items-center gap-1 px-3 py-1 rounded-xl bg-emerald-950/80 border border-emerald-800 text-xs font-mono font-bold text-emerald-300 uppercase">
+                    <span className="inline-flex items-center gap-1 px-3 py-1 rounded-xl bg-rose-950/80 border border-rose-800 text-xs font-mono font-bold text-rose-300 uppercase">
                       Warga Selamat
                     </span>
                     <span className="inline-flex items-center gap-1 px-2.5 py-1 rounded-xl bg-neutral-900 border border-neutral-700 text-xs font-semibold text-neutral-200">
-                      <MapPin className="w-3.5 h-3.5 text-emerald-400" />
+                      <MapPin className="w-3.5 h-3.5 text-rose-400" />
                       <span>{selectedStory.location}</span>
                     </span>
                     <span className="text-xs font-mono text-amber-300 bg-amber-950/60 px-2 py-0.5 rounded-md border border-amber-800/80">
@@ -1341,21 +1341,21 @@ export const HomePage: React.FC = () => {
                   <div className="space-y-1">
                     <div className="text-[10px] font-mono text-neutral-400 uppercase">Posko Evakuasi Tujuan</div>
                     <div className="text-xs font-bold text-white flex items-center gap-1.5">
-                      <Building2 className="w-3.5 h-3.5 text-emerald-400 shrink-0" />
+                      <Building2 className="w-3.5 h-3.5 text-rose-400 shrink-0" />
                       <span>{selectedStory.shelterName}</span>
                     </div>
                   </div>
                   <div className="space-y-1">
                     <div className="text-[10px] font-mono text-neutral-400 uppercase">Protokol Penyelamatan</div>
-                    <div className="text-xs font-bold text-emerald-400 flex items-center gap-1.5">
-                      <ShieldCheck className="w-3.5 h-3.5 text-emerald-400 shrink-0" />
+                    <div className="text-xs font-bold text-rose-400 flex items-center gap-1.5">
+                      <ShieldCheck className="w-3.5 h-3.5 text-rose-400 shrink-0" />
                       <span>{selectedStory.protocolBadge}</span>
                     </div>
                   </div>
                   <div className="space-y-1">
                     <div className="text-[10px] font-mono text-neutral-400 uppercase">Hasil Evakuasi</div>
                     <div className="text-xs font-bold text-white flex items-center gap-1.5">
-                      <CheckCircle2 className="w-3.5 h-3.5 text-emerald-400 shrink-0" />
+                      <CheckCircle2 className="w-3.5 h-3.5 text-rose-400 shrink-0" />
                       <span>{selectedStory.stats}</span>
                     </div>
                   </div>
@@ -1378,7 +1378,7 @@ export const HomePage: React.FC = () => {
                   </span>
                   <Link
                     to={PATHS.PUBLIC.SHELTERS}
-                    className="w-full sm:w-auto inline-flex items-center justify-center gap-2 px-5 py-2.5 rounded-xl bg-emerald-600 hover:bg-emerald-500 text-white font-bold text-xs tracking-tight transition-all"
+                    className="w-full sm:w-auto inline-flex items-center justify-center gap-2 px-5 py-2.5 rounded-xl bg-rose-600 hover:bg-rose-500 text-white font-bold text-xs tracking-tight transition-all"
                   >
                     <Building2 className="w-3.5 h-3.5" />
                     <span>Cari Shelter Siaga Terdekat</span>
@@ -1437,7 +1437,7 @@ export const HomePage: React.FC = () => {
             <motion.div
               key={`${rev.id}-${index}`}
               whileHover={{ y: -5, scale: 1.015, transition: { duration: 0.2 } }}
-              className="w-[290px] sm:w-[320px] shrink-0 p-4.5 rounded-2xl bg-[#121614] border border-neutral-800 hover:border-emerald-500/30 hover:shadow-lg hover:shadow-emerald-950/20 flex flex-col justify-between space-y-3.5 select-none transition-colors"
+              className="w-[290px] sm:w-[320px] shrink-0 p-4.5 rounded-2xl bg-[#121614] border border-neutral-800 hover:border-rose-500/30 hover:shadow-lg hover:shadow-rose-950/20 flex flex-col justify-between space-y-3.5 select-none transition-colors"
             >
               <div className="space-y-3">
                 {/* Header: Star rating & verified badge */}
@@ -1455,7 +1455,7 @@ export const HomePage: React.FC = () => {
                         : rev.category === 'international'
                         ? 'text-cyan-400 bg-neutral-900 border-neutral-800'
                         : rev.category === 'pemerintah'
-                        ? 'text-emerald-400 bg-neutral-900 border-neutral-800'
+                        ? 'text-rose-400 bg-neutral-900 border-neutral-800'
                         : rev.category === 'relawan'
                         ? 'text-blue-400 bg-neutral-900 border-neutral-800'
                         : 'text-amber-400 bg-neutral-900 border-neutral-800'
@@ -1483,7 +1483,7 @@ export const HomePage: React.FC = () => {
                   <div className="text-xs font-bold text-white truncate">
                     {rev.name}
                   </div>
-                  <div className="text-[11px] text-emerald-400/90 truncate font-medium">{rev.role}</div>
+                  <div className="text-[11px] text-rose-400/90 truncate font-medium">{rev.role}</div>
                   <div className="text-[10px] text-neutral-400 truncate">{rev.city} • {rev.date}</div>
                 </div>
               </div>
@@ -1506,8 +1506,8 @@ export const HomePage: React.FC = () => {
 
         {/* Section Header */}
         <div className="text-center max-w-2xl mx-auto space-y-2.5">
-          <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full text-[11px] font-mono font-bold tracking-wider uppercase bg-emerald-950/60 border border-emerald-800/60 text-emerald-300">
-            <Mail className="w-3.5 h-3.5 text-emerald-400" />
+          <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full text-[11px] font-mono font-bold tracking-wider uppercase bg-rose-950/60 border border-rose-800/60 text-rose-300">
+            <Mail className="w-3.5 h-3.5 text-rose-400" />
             <span>PUSAT LAYANAN &amp; KOORDINASI PUBLIK</span>
           </div>
           <ScrollWordTitle
@@ -1536,10 +1536,10 @@ export const HomePage: React.FC = () => {
                 <div className="space-y-1">
                   <div className="flex items-center justify-between">
                     <h3 className="text-sm sm:text-base font-bold text-white flex items-center gap-2">
-                      <Building2 className="w-4 h-4 text-emerald-400" />
+                      <Building2 className="w-4 h-4 text-rose-400" />
                       <span>Sekretariat &amp; Komando Layanan</span>
                     </h3>
-                    <span className="text-[10px] font-mono font-bold px-2 py-0.5 rounded-md bg-emerald-950/80 text-emerald-300 border border-emerald-800/60">
+                    <span className="text-[10px] font-mono font-bold px-2 py-0.5 rounded-md bg-rose-950/80 text-rose-300 border border-rose-800/60">
                       RESMI
                     </span>
                   </div>
@@ -1557,7 +1557,7 @@ export const HomePage: React.FC = () => {
                   >
                     <div className="flex items-center justify-between">
                       <div className="flex items-center gap-2.5">
-                        <div className="w-8 h-8 rounded-xl bg-emerald-950/60 border border-emerald-800/50 text-emerald-400 flex items-center justify-center shrink-0">
+                        <div className="w-8 h-8 rounded-xl bg-rose-950/60 border border-rose-800/50 text-rose-400 flex items-center justify-center shrink-0">
                           <Mail className="w-4 h-4" />
                         </div>
                         <div>
@@ -1575,8 +1575,8 @@ export const HomePage: React.FC = () => {
                       >
                         {copiedField === 'Email' ? (
                           <>
-                            <Check className="w-3 h-3 text-emerald-400" />
-                            <span className="text-emerald-400 font-bold">Disalin</span>
+                            <Check className="w-3 h-3 text-rose-400" />
+                            <span className="text-rose-400 font-bold">Disalin</span>
                           </>
                         ) : (
                           <>
@@ -1589,7 +1589,7 @@ export const HomePage: React.FC = () => {
                     <div className="pt-1">
                       <a
                         href="mailto:layanan@sentravax.id"
-                        className="text-xs sm:text-sm font-mono font-bold text-emerald-400 hover:text-emerald-300 transition-colors inline-flex items-center gap-1.5"
+                        className="text-xs sm:text-sm font-mono font-bold text-rose-400 hover:text-rose-300 transition-colors inline-flex items-center gap-1.5"
                       >
                         <span>layanan@sentravax.id</span>
                         <ExternalLink className="w-3 h-3 opacity-70" />
@@ -1604,7 +1604,7 @@ export const HomePage: React.FC = () => {
                   >
                     <div className="flex items-center justify-between">
                       <div className="flex items-center gap-2.5">
-                        <div className="w-8 h-8 rounded-xl bg-emerald-950/60 border border-emerald-800/50 text-emerald-400 flex items-center justify-center shrink-0">
+                        <div className="w-8 h-8 rounded-xl bg-rose-950/60 border border-rose-800/50 text-rose-400 flex items-center justify-center shrink-0">
                           <MessageSquare className="w-4 h-4" />
                         </div>
                         <div>
@@ -1622,8 +1622,8 @@ export const HomePage: React.FC = () => {
                       >
                         {copiedField === 'Nomor WhatsApp' ? (
                           <>
-                            <Check className="w-3 h-3 text-emerald-400" />
-                            <span className="text-emerald-400 font-bold">Disalin</span>
+                            <Check className="w-3 h-3 text-rose-400" />
+                            <span className="text-rose-400 font-bold">Disalin</span>
                           </>
                         ) : (
                           <>
@@ -1638,7 +1638,7 @@ export const HomePage: React.FC = () => {
                         href="https://wa.me/6281123456789"
                         target="_blank"
                         rel="noopener noreferrer"
-                        className="text-xs sm:text-sm font-mono font-bold text-emerald-400 hover:text-emerald-300 transition-colors inline-flex items-center gap-1.5"
+                        className="text-xs sm:text-sm font-mono font-bold text-rose-400 hover:text-rose-300 transition-colors inline-flex items-center gap-1.5"
                       >
                         <span>+62 811-2345-6789</span>
                         <ExternalLink className="w-3 h-3 opacity-70" />
@@ -1655,7 +1655,7 @@ export const HomePage: React.FC = () => {
                       <div className="space-y-1 text-xs">
                         <span className="font-bold text-white block">Jam Operasional Layanan</span>
                         <p className="text-neutral-300 text-[11px] leading-relaxed">
-                          <strong className="text-emerald-400">Monitoring Sensor &amp; Telemetri:</strong> 24 Jam Non-Stop<br />
+                          <strong className="text-rose-400">Monitoring Sensor &amp; Telemetri:</strong> 24 Jam Non-Stop<br />
                           <strong className="text-neutral-200">Layanan Konsultasi Warga:</strong> Senin – Jumat (08.00 – 17.00 WIB)
                         </p>
                       </div>
@@ -1721,7 +1721,7 @@ export const HomePage: React.FC = () => {
                           onClick={() => setContactCategory(topic.id)}
                           className={`px-3 py-2 rounded-xl text-xs font-semibold text-center transition-all cursor-pointer border ${
                             isActive
-                              ? 'bg-emerald-950/80 text-emerald-300 border-emerald-600/80 shadow-xs'
+                              ? 'bg-rose-950/80 text-rose-300 border-rose-600/80 shadow-xs'
                               : 'bg-neutral-900/60 text-neutral-400 border-neutral-800 hover:text-white hover:border-neutral-700'
                           }`}
                         >
@@ -1745,7 +1745,7 @@ export const HomePage: React.FC = () => {
                       value={contactName}
                       onChange={(e) => setContactName(e.target.value)}
                       placeholder="Contoh: Budi Santoso"
-                      className="w-full px-4 py-2.5 rounded-xl border border-neutral-800 bg-neutral-900/70 text-xs sm:text-sm text-white placeholder-neutral-500 outline-none focus:border-emerald-500 focus:ring-1 focus:ring-emerald-500/20 transition-all"
+                      className="w-full px-4 py-2.5 rounded-xl border border-neutral-800 bg-neutral-900/70 text-xs sm:text-sm text-white placeholder-neutral-500 outline-none focus:border-rose-500 focus:ring-1 focus:ring-rose-500/20 transition-all"
                     />
                   </div>
 
@@ -1760,7 +1760,7 @@ export const HomePage: React.FC = () => {
                       value={contactEmail}
                       onChange={(e) => setContactEmail(e.target.value)}
                       placeholder="budi@example.com"
-                      className="w-full px-4 py-2.5 rounded-xl border border-neutral-800 bg-neutral-900/70 text-xs sm:text-sm text-white placeholder-neutral-500 outline-none focus:border-emerald-500 focus:ring-1 focus:ring-emerald-500/20 transition-all"
+                      className="w-full px-4 py-2.5 rounded-xl border border-neutral-800 bg-neutral-900/70 text-xs sm:text-sm text-white placeholder-neutral-500 outline-none focus:border-rose-500 focus:ring-1 focus:ring-rose-500/20 transition-all"
                     />
                   </div>
                 </div>
@@ -1782,7 +1782,7 @@ export const HomePage: React.FC = () => {
                     value={contactMessage}
                     onChange={(e) => setContactMessage(e.target.value)}
                     placeholder="Tuliskan pertanyaan, masukan, rincian lokasi usulan shelter, atau kendala lapangan yang Anda alami..."
-                    className="w-full px-4 py-3 rounded-xl border border-neutral-800 bg-neutral-900/70 text-xs sm:text-sm text-white placeholder-neutral-500 outline-none focus:border-emerald-500 focus:ring-1 focus:ring-emerald-500/20 resize-none transition-all leading-relaxed"
+                    className="w-full px-4 py-3 rounded-xl border border-neutral-800 bg-neutral-900/70 text-xs sm:text-sm text-white placeholder-neutral-500 outline-none focus:border-rose-500 focus:ring-1 focus:ring-rose-500/20 resize-none transition-all leading-relaxed"
                   />
                 </div>
 
@@ -1793,14 +1793,14 @@ export const HomePage: React.FC = () => {
                     disabled={isSubmittingContact}
                     whileHover={{ scale: 1.02 }}
                     whileTap={{ scale: 0.98 }}
-                    className="inline-flex items-center justify-center gap-2 px-7 py-3 rounded-xl bg-emerald-600 hover:bg-emerald-500 active:bg-emerald-700 text-white text-xs sm:text-sm font-bold transition-all disabled:opacity-50 cursor-pointer shadow-md"
+                    className="inline-flex items-center justify-center gap-2 px-7 py-3 rounded-xl bg-rose-600 hover:bg-rose-500 active:bg-rose-700 text-white text-xs sm:text-sm font-bold transition-all disabled:opacity-50 cursor-pointer shadow-md"
                   >
                     <Send className="w-4 h-4" />
                     <span>{isSubmittingContact ? 'Mengirimkan Pesan...' : 'Kirim Pesan Sekarang'}</span>
                   </motion.button>
 
                   <div className="flex items-center gap-2 text-[11px] text-neutral-400">
-                    <ShieldCheck className="w-4 h-4 text-emerald-400 shrink-0" />
+                    <ShieldCheck className="w-4 h-4 text-rose-400 shrink-0" />
                     <span>Data terenkripsi dan dijaga kerahasiaannya.</span>
                   </div>
                 </div>
@@ -1821,8 +1821,8 @@ export const HomePage: React.FC = () => {
         className="rounded-3xl bg-[#0f1713] border border-neutral-800 text-white p-8 sm:p-12 text-center space-y-6"
       >
         <div className="max-w-2xl mx-auto space-y-3">
-          <span className="inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-full bg-neutral-900 text-emerald-300 text-xs font-bold border border-neutral-700">
-            <Shield className="w-3.5 h-3.5 text-emerald-400" />
+          <span className="inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-full bg-neutral-900 text-rose-300 text-xs font-bold border border-neutral-700">
+            <Shield className="w-3.5 h-3.5 text-rose-400" />
             <span>Keluarga Indonesia Siaga &amp; Tangguh</span>
           </span>
           <ScrollWordTitle
@@ -1840,7 +1840,7 @@ export const HomePage: React.FC = () => {
           <motion.div whileHover={{ scale: 1.03 }} whileTap={{ scale: 0.97 }}>
             <Link
               to={PATHS.PUBLIC.PREPAREDNESS}
-              className="inline-flex items-center gap-2 px-6 py-3.5 rounded-2xl bg-emerald-700 hover:bg-emerald-600 text-white text-xs font-bold transition-colors cursor-pointer shadow-xs"
+              className="inline-flex items-center gap-2 px-6 py-3.5 rounded-2xl bg-rose-700 hover:bg-rose-600 text-white text-xs font-bold transition-colors cursor-pointer shadow-xs"
             >
               <span>Buka Panduan Siaga 72 Jam</span>
               <ArrowRight className="w-3.5 h-3.5" />

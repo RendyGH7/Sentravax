@@ -68,10 +68,10 @@ export const ResetPasswordPage: React.FC = () => {
 
       {/* Multi-layered dark cinematic gradient overlays */}
       <div className="absolute inset-0 bg-gradient-to-b from-black/95 via-black/85 to-black pointer-events-none" />
-      <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_center,_var(--tw-gradient-stops))] from-emerald-950/30 via-black/90 to-black pointer-events-none" />
+      <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_center,_var(--tw-gradient-stops))] from-rose-950/30 via-black/90 to-black pointer-events-none" />
 
       {/* Subtle ambient glowing spots */}
-      <div className="absolute -top-32 -right-32 w-96 h-96 bg-emerald-500/10 rounded-full blur-3xl pointer-events-none" />
+      <div className="absolute -top-32 -right-32 w-96 h-96 bg-rose-500/10 rounded-full blur-3xl pointer-events-none" />
       {/* Full dark cinematic background */}
       <div className="absolute inset-0 bg-black/90 pointer-events-none" />
 
@@ -98,7 +98,7 @@ export const ResetPasswordPage: React.FC = () => {
               <div className="pt-2 flex flex-col gap-2.5">
                 <Link
                   to={PATHS.PUBLIC.FORGOT_PASSWORD}
-                  className="w-full py-2.5 px-4 rounded-xl bg-emerald-700 hover:bg-emerald-600 text-white font-bold text-xs text-center transition-colors shadow-xs"
+                  className="w-full py-2.5 px-4 rounded-xl bg-rose-700 hover:bg-rose-600 text-white font-bold text-xs text-center transition-colors shadow-xs"
                 >
                   Minta Tautan Pemulihan Baru
                 </Link>
@@ -112,8 +112,8 @@ export const ResetPasswordPage: React.FC = () => {
             </div>
           ) : isSuccess ? (
             <div className="text-center space-y-4">
-              <div className="w-14 h-14 rounded-2xl bg-neutral-900 border border-neutral-800 flex items-center justify-center mx-auto text-emerald-400">
-                <CheckCircle2 className="w-8 h-8 text-emerald-400" />
+              <div className="w-14 h-14 rounded-2xl bg-neutral-900 border border-neutral-800 flex items-center justify-center mx-auto text-rose-400">
+                <CheckCircle2 className="w-8 h-8 text-rose-400" />
               </div>
 
               <h1 className="text-2xl font-black text-white tracking-tight">
@@ -131,7 +131,7 @@ export const ResetPasswordPage: React.FC = () => {
               <div className="pt-2">
                 <Link
                   to={PATHS.PUBLIC.LOGIN}
-                  className="w-full py-3.5 px-4 rounded-xl bg-emerald-700 hover:bg-emerald-600 text-white font-bold text-xs sm:text-sm text-center transition-colors flex items-center justify-center gap-2 shadow-xs"
+                  className="w-full py-3.5 px-4 rounded-xl bg-rose-700 hover:bg-rose-600 text-white font-bold text-xs sm:text-sm text-center transition-colors flex items-center justify-center gap-2 shadow-xs"
                 >
                   <span>Masuk Sekarang</span>
                   <ArrowRight className="w-4 h-4 text-white" />
@@ -141,12 +141,12 @@ export const ResetPasswordPage: React.FC = () => {
           ) : (
             <>
               <div className="text-center">
-                <div className="w-12 h-12 rounded-2xl bg-emerald-700 flex items-center justify-center mx-auto mb-3 text-white shadow-xs">
+                <div className="w-12 h-12 rounded-2xl bg-rose-700 flex items-center justify-center mx-auto mb-3 text-white shadow-xs">
                   <Lock className="w-6 h-6 text-white" />
                 </div>
                 <h1 className="text-2xl font-black text-white tracking-tight">Atur Kata Sandi Baru</h1>
                 <p className="text-xs text-neutral-300 mt-1.5 leading-relaxed">
-                  Menetapkan kata sandi baru untuk akun <strong className="text-emerald-400">{email}</strong>.
+                  Menetapkan kata sandi baru untuk akun <strong className="text-rose-400">{email}</strong>.
                 </p>
               </div>
 
@@ -158,7 +158,7 @@ export const ResetPasswordPage: React.FC = () => {
                     {errorMessage.toLowerCase().includes('token') && (
                       <Link
                         to={PATHS.PUBLIC.FORGOT_PASSWORD}
-                        className="text-emerald-400 underline font-bold mt-1 inline-block"
+                        className="text-rose-400 underline font-bold mt-1 inline-block"
                       >
                         Minta tautan baru &rarr;
                       </Link>
@@ -173,7 +173,7 @@ export const ResetPasswordPage: React.FC = () => {
                     Kata Sandi Baru
                   </label>
                   <div className="relative">
-                    <Lock className="w-4 h-4 text-emerald-400 absolute left-3.5 top-3" />
+                    <Lock className="w-4 h-4 text-rose-400 absolute left-3.5 top-3" />
                     <input
                       type={showPassword ? 'text' : 'password'}
                       value={password}
@@ -184,14 +184,14 @@ export const ResetPasswordPage: React.FC = () => {
                       placeholder="Minimal 8 karakter"
                       autoComplete="new-password"
                       disabled={isSubmitting}
-                      className="w-full pl-10 pr-10 py-2.5 rounded-xl bg-[#0d100f] border border-neutral-700 text-white placeholder-neutral-500 text-xs sm:text-sm focus:outline-none focus:border-emerald-600 focus:ring-1 focus:ring-emerald-600 disabled:opacity-50 transition-colors font-medium"
+                      className="w-full pl-10 pr-10 py-2.5 rounded-xl bg-[#0d100f] border border-neutral-700 text-white placeholder-neutral-500 text-xs sm:text-sm focus:outline-none focus:border-rose-600 focus:ring-1 focus:ring-rose-600 disabled:opacity-50 transition-colors font-medium"
                     />
                     <button
                       type="button"
                       onClick={() => setShowPassword(!showPassword)}
                       className="absolute right-3 top-2.5 text-neutral-400 hover:text-white"
                     >
-                      {showPassword ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4 text-emerald-400" />}
+                      {showPassword ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4 text-rose-400" />}
                     </button>
                   </div>
                 </div>
@@ -201,7 +201,7 @@ export const ResetPasswordPage: React.FC = () => {
                     Konfirmasi Kata Sandi Baru
                   </label>
                   <div className="relative">
-                    <Lock className="w-4 h-4 text-emerald-400 absolute left-3.5 top-3" />
+                    <Lock className="w-4 h-4 text-rose-400 absolute left-3.5 top-3" />
                     <input
                       type={showConfirmation ? 'text' : 'password'}
                       value={passwordConfirmation}
@@ -212,14 +212,14 @@ export const ResetPasswordPage: React.FC = () => {
                       placeholder="Ulangi kata sandi baru"
                       autoComplete="new-password"
                       disabled={isSubmitting}
-                      className="w-full pl-10 pr-10 py-2.5 rounded-xl bg-[#0d100f] border border-neutral-700 text-white placeholder-neutral-500 text-xs sm:text-sm focus:outline-none focus:border-emerald-600 focus:ring-1 focus:ring-emerald-600 disabled:opacity-50 transition-colors font-medium"
+                      className="w-full pl-10 pr-10 py-2.5 rounded-xl bg-[#0d100f] border border-neutral-700 text-white placeholder-neutral-500 text-xs sm:text-sm focus:outline-none focus:border-rose-600 focus:ring-1 focus:ring-rose-600 disabled:opacity-50 transition-colors font-medium"
                     />
                     <button
                       type="button"
                       onClick={() => setShowConfirmation(!showConfirmation)}
                       className="absolute right-3 top-2.5 text-neutral-400 hover:text-white"
                     >
-                      {showConfirmation ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4 text-emerald-400" />}
+                      {showConfirmation ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4 text-rose-400" />}
                     </button>
                   </div>
                 </div>
@@ -227,10 +227,10 @@ export const ResetPasswordPage: React.FC = () => {
                 <div className="p-3 bg-[#0d100f] rounded-xl border border-neutral-800 text-[11px] text-neutral-300 space-y-1">
                   <p className="font-bold text-white">Ketentuan Kata Sandi:</p>
                   <ul className="list-disc pl-4 space-y-0.5">
-                    <li className={password.length >= 8 ? 'text-emerald-400 font-bold' : ''}>
+                    <li className={password.length >= 8 ? 'text-rose-400 font-bold' : ''}>
                       Minimal 8 karakter
                     </li>
-                    <li className={password && password === passwordConfirmation ? 'text-emerald-400 font-bold' : ''}>
+                    <li className={password && password === passwordConfirmation ? 'text-rose-400 font-bold' : ''}>
                       Konfirmasi kata sandi harus identik
                     </li>
                   </ul>
@@ -239,7 +239,7 @@ export const ResetPasswordPage: React.FC = () => {
                 <button
                   type="submit"
                   disabled={isSubmitting}
-                  className="w-full py-3.5 px-4 rounded-xl bg-emerald-700 hover:bg-emerald-600 text-white font-bold text-xs sm:text-sm transition-colors disabled:opacity-50 flex items-center justify-center gap-2 cursor-pointer shadow-xs"
+                  className="w-full py-3.5 px-4 rounded-xl bg-rose-700 hover:bg-rose-600 text-white font-bold text-xs sm:text-sm transition-colors disabled:opacity-50 flex items-center justify-center gap-2 cursor-pointer shadow-xs"
                 >
                   {isSubmitting ? (
                     <>
@@ -253,7 +253,7 @@ export const ResetPasswordPage: React.FC = () => {
               </form>
 
               <div className="text-center text-xs text-neutral-300 pt-3 border-t border-neutral-800">
-                <Link to={PATHS.PUBLIC.LOGIN} className="text-emerald-400 hover:text-emerald-300 font-bold hover:underline transition-colors">
+                <Link to={PATHS.PUBLIC.LOGIN} className="text-rose-400 hover:text-rose-300 font-bold hover:underline transition-colors">
                   Kembali ke Halaman Masuk
                 </Link>
               </div>

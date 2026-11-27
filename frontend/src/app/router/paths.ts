@@ -34,6 +34,7 @@ export const PATHS = {
     DISASTERS: '/admin/disasters',
     ALERTS: '/admin/alerts',
     SHELTERS: '/admin/shelters',
+    EMERGENCY_DIRECTORY: '/admin/emergency-contacts',
     EDUCATION: '/admin/education',
     DATA_SOURCES: '/admin/data-sources',
     AUDIT_LOGS: '/admin/audit-logs',

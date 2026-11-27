@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { Outlet, Link, useLocation } from 'react-router-dom';
 import { motion, AnimatePresence } from 'motion/react';
 import { SmoothScrollProvider, useLenis } from '../../components/shared/SmoothScrollProvider';
+import { SentravaxLogo } from '../../components/shared/SentravaxLogo';
 import { PATHS } from '../../app/router/paths';
 import { useAuth } from '../../app/context/useAuth';
 import {
@@ -109,7 +110,7 @@ export const PublicLayout: React.FC = () => {
   return (
     <SmoothScrollProvider>
       <ScrollToTopOnNav />
-      <div className="min-h-screen flex flex-col bg-[#0d0f11] text-neutral-100 selection:bg-emerald-500/30 selection:text-emerald-300">
+      <div className="font-public min-h-screen flex flex-col bg-[#0d0f11] text-neutral-100 selection:bg-rose-500/30 selection:text-rose-300">
       {/* ========================================================================= */}
       {/* 1. PROFESSIONAL & ELEGANT FLOATING GLASSMORPHIC NAVBAR                    */}
       {/* ========================================================================= */}
@@ -122,9 +123,7 @@ export const PublicLayout: React.FC = () => {
         <div className="pointer-events-auto max-w-6xl mx-auto h-16 px-4 sm:px-6 rounded-2xl bg-white/[0.08] hover:bg-white/[0.12] backdrop-blur-2xl backdrop-saturate-150 border border-white/25 shadow-[inset_0_1px_1px_0_rgba(255,255,255,0.4),0_12px_36px_rgba(0,0,0,0.5)] flex items-center justify-between gap-3 transition-all">
           {/* Brand Logo & Platform Title */}
           <Link to={PATHS.PUBLIC.HOME} className="flex items-center gap-2.5 shrink-0 group">
-            <div className="w-9 h-9 rounded-xl bg-emerald-700 flex items-center justify-center text-white transition-transform group-hover:scale-105 border border-emerald-600/40">
-              <Shield className="w-5 h-5 text-white" />
-            </div>
+            <SentravaxLogo size={36} className="transition-transform group-hover:scale-105 shadow-xs" />
             <div className="flex flex-col">
               <span className="text-[15px] font-extrabold tracking-tight text-white drop-shadow-sm">
                 SENTRAVAX
@@ -148,7 +147,7 @@ export const PublicLayout: React.FC = () => {
                   to={item.to}
                   className={`px-3.5 py-1.5 rounded-xl text-[13px] transition-all ${
                     item.active
-                      ? 'text-emerald-300 bg-neutral-800/90 border border-neutral-700 font-bold'
+                      ? 'text-rose-300 bg-neutral-800/90 border border-neutral-700 font-bold'
                       : 'text-neutral-200 hover:text-white hover:bg-white/[0.12] font-medium'
                   }`}
                 >
@@ -180,9 +179,9 @@ export const PublicLayout: React.FC = () => {
                       ? PATHS.INTELLIGENCE.OVERVIEW
                       : PATHS.USER.DASHBOARD
                   }
-                  className="inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-xl text-xs font-semibold bg-emerald-950/60 hover:bg-emerald-900/60 text-emerald-200 border border-emerald-800/50 transition-colors"
+                  className="inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-xl text-xs font-semibold bg-rose-950/60 hover:bg-rose-900/60 text-rose-200 border border-rose-800/50 transition-colors"
                 >
-                  <User className="w-3.5 h-3.5 text-emerald-300" />
+                  <User className="w-3.5 h-3.5 text-rose-300" />
                   <span>{user.name.split(' ')[0]}</span>
                 </Link>
                 <button
@@ -198,7 +197,7 @@ export const PublicLayout: React.FC = () => {
             ) : (
               <Link
                 to={PATHS.PUBLIC.LOGIN}
-                className="inline-flex items-center gap-1.5 px-4 py-1.5 rounded-xl text-xs font-bold bg-emerald-700 hover:bg-emerald-600 text-white transition-colors"
+                className="inline-flex items-center gap-1.5 px-4 py-1.5 rounded-xl text-xs font-bold bg-rose-700 hover:bg-rose-600 text-white transition-colors"
               >
                 <LogIn className="w-3.5 h-3.5" />
                 <span>Masuk</span>
@@ -246,7 +245,7 @@ export const PublicLayout: React.FC = () => {
                     to={PATHS.PUBLIC.ABOUT}
                     className="flex items-center gap-2.5 px-3 py-2 rounded-xl text-xs font-medium text-neutral-300 hover:bg-white/10 hover:text-white transition-colors"
                   >
-                    <Info className="w-3.5 h-3.5 text-emerald-400" />
+                    <Info className="w-3.5 h-3.5 text-rose-400" />
                     <span>Tentang Platform</span>
                   </Link>
                   <button
@@ -254,7 +253,7 @@ export const PublicLayout: React.FC = () => {
                     onClick={() => setDownloadModalOpen(true)}
                     className="w-full flex items-center gap-2.5 px-3 py-2 rounded-xl text-xs font-medium text-neutral-300 hover:bg-white/10 hover:text-white transition-colors text-left cursor-pointer"
                   >
-                    <Smartphone className="w-3.5 h-3.5 text-emerald-400" />
+                    <Smartphone className="w-3.5 h-3.5 text-rose-400" />
                     <span>Unduh Aplikasi Mobile</span>
                   </button>
 
@@ -278,9 +277,9 @@ export const PublicLayout: React.FC = () => {
                   </Link>
                   <Link
                     to={PATHS.INTELLIGENCE.OVERVIEW}
-                    className="flex items-center gap-2.5 px-3 py-2 rounded-xl text-xs font-medium text-neutral-300 hover:bg-white/10 hover:text-emerald-400 transition-colors"
+                    className="flex items-center gap-2.5 px-3 py-2 rounded-xl text-xs font-medium text-neutral-300 hover:bg-white/10 hover:text-rose-400 transition-colors"
                   >
-                    <Radio className="w-3.5 h-3.5 text-emerald-400" />
+                    <Radio className="w-3.5 h-3.5 text-rose-400" />
                     <span>Intelligence Center</span>
                   </Link>
                 </div>
@@ -316,20 +315,20 @@ export const PublicLayout: React.FC = () => {
                   onClick={() => setMobileMenuOpen(false)}
                   className={`flex items-center justify-between px-3.5 py-2.5 rounded-xl text-sm font-medium transition-colors ${
                     item.active
-                      ? 'bg-emerald-500/15 text-emerald-400 border border-emerald-500/20 font-bold'
+                      ? 'bg-rose-500/15 text-rose-400 border border-rose-500/20 font-bold'
                       : 'text-neutral-300 hover:bg-white/5 hover:text-white'
                   }`}
                 >
                   <span>{item.label}</span>
-                  {item.active && <span className="w-1.5 h-1.5 rounded-full bg-emerald-400" />}
+                  {item.active && <span className="w-1.5 h-1.5 rounded-full bg-rose-400" />}
                 </Link>
               ))}
             </div>
 
             {/* Mobile Download App Banner Card */}
-            <div className="p-4 rounded-2xl bg-[#181818] border border-emerald-500/20 space-y-3">
+            <div className="p-4 rounded-2xl bg-[#181818] border border-rose-500/20 space-y-3">
               <div className="flex items-center gap-2">
-                <div className="w-7 h-7 rounded-lg bg-emerald-600 text-white flex items-center justify-center">
+                <div className="w-7 h-7 rounded-lg bg-rose-600 text-white flex items-center justify-center">
                   <Smartphone className="w-4 h-4" />
                 </div>
                 <div>
@@ -364,7 +363,7 @@ export const PublicLayout: React.FC = () => {
                 <Link
                   to={PATHS.PUBLIC.LOGIN}
                   onClick={() => setMobileMenuOpen(false)}
-                  className="w-full py-2.5 px-4 rounded-xl text-center text-xs font-bold text-white bg-emerald-600 hover:bg-emerald-500 shadow-xs transition-colors"
+                  className="w-full py-2.5 px-4 rounded-xl text-center text-xs font-bold text-white bg-rose-600 hover:bg-rose-500 shadow-xs transition-colors"
                 >
                   Masuk ke Akun
                 </Link>
@@ -400,7 +399,7 @@ export const PublicLayout: React.FC = () => {
 
             {/* Modal Heading */}
             <div className="text-center space-y-2">
-              <div className="w-12 h-12 rounded-2xl bg-emerald-950/60 text-emerald-400 flex items-center justify-center mx-auto shadow-xs border border-emerald-500/20">
+              <div className="w-12 h-12 rounded-2xl bg-rose-950/60 text-rose-400 flex items-center justify-center mx-auto shadow-xs border border-rose-500/20">
                 <Smartphone className="w-6 h-6" />
               </div>
               <h3 id="modal-download-title" className="text-xl font-extrabold text-white tracking-tight">
@@ -427,8 +426,8 @@ export const PublicLayout: React.FC = () => {
                 <p className="text-[11px] text-neutral-400 leading-relaxed">
                   Arahkan kamera ponsel Anda ke kode QR untuk mengunduh aplikasi secara langsung di Google Play atau App Store.
                 </p>
-                <span className="text-[10px] font-mono text-emerald-400 font-semibold flex items-center gap-1">
-                  <CheckCircle2 className="w-3.5 h-3.5 text-emerald-400" /> Kompatibel Android 8.0+ &amp; iOS 15.0+
+                <span className="text-[10px] font-mono text-rose-400 font-semibold flex items-center gap-1">
+                  <CheckCircle2 className="w-3.5 h-3.5 text-rose-400" /> Kompatibel Android 8.0+ &amp; iOS 15.0+
                 </span>
               </div>
             </div>
@@ -436,19 +435,19 @@ export const PublicLayout: React.FC = () => {
             {/* Key Advantages */}
             <div className="grid grid-cols-2 gap-2 text-[11px] text-neutral-300 border-t border-[#262626] pt-3">
               <div className="flex items-center gap-1.5">
-                <CheckCircle2 className="w-3.5 h-3.5 text-emerald-400 shrink-0" />
+                <CheckCircle2 className="w-3.5 h-3.5 text-rose-400 shrink-0" />
                 <span>Notifikasi Cepat &lt;5 Detik</span>
               </div>
               <div className="flex items-center gap-1.5">
-                <CheckCircle2 className="w-3.5 h-3.5 text-emerald-400 shrink-0" />
+                <CheckCircle2 className="w-3.5 h-3.5 text-rose-400 shrink-0" />
                 <span>Peta Offline &amp; Shelter</span>
               </div>
               <div className="flex items-center gap-1.5">
-                <CheckCircle2 className="w-3.5 h-3.5 text-emerald-400 shrink-0" />
+                <CheckCircle2 className="w-3.5 h-3.5 text-rose-400 shrink-0" />
                 <span>Akses Cepat Kontak Darurat</span>
               </div>
               <div className="flex items-center gap-1.5">
-                <CheckCircle2 className="w-3.5 h-3.5 text-emerald-400 shrink-0" />
+                <CheckCircle2 className="w-3.5 h-3.5 text-rose-400 shrink-0" />
                 <span>100% Gratis &amp; Tanpa Iklan</span>
               </div>
             </div>
@@ -485,9 +484,7 @@ export const PublicLayout: React.FC = () => {
           {/* Brand & Mobile App Info */}
           <div className="space-y-3">
             <div className="flex items-center gap-2">
-              <div className="w-7 h-7 rounded-lg bg-emerald-600 flex items-center justify-center text-white">
-                <Shield className="w-4 h-4" />
-              </div>
+              <SentravaxLogo size={28} />
               <span className="font-extrabold text-white tracking-tight text-sm">SENTRAVAX</span>
             </div>
             <p className="text-neutral-400 leading-relaxed">
@@ -505,23 +502,23 @@ export const PublicLayout: React.FC = () => {
           <div>
             <h4 className="text-white font-bold mb-3 text-xs uppercase tracking-wider">Akses Publik</h4>
             <ul className="space-y-2">
-              <li><Link to={PATHS.PUBLIC.HOME} className="hover:text-emerald-400 transition-colors">Beranda Utama</Link></li>
-              <li><Link to={PATHS.PUBLIC.MAP} className="hover:text-emerald-400 transition-colors">Peta Risiko Interaktif</Link></li>
-              <li><Link to={PATHS.PUBLIC.DISASTERS} className="hover:text-emerald-400 transition-colors">Katalog Bencana Terkini</Link></li>
-              <li><Link to={PATHS.PUBLIC.WARNINGS} className="hover:text-emerald-400 transition-colors">Peringatan Dini Resmi</Link></li>
-              <li><Link to={PATHS.PUBLIC.PREPAREDNESS} className="hover:text-emerald-400 transition-colors">Panduan Tanggap Darurat</Link></li>
-              <li><Link to={PATHS.PUBLIC.SHELTERS} className="hover:text-emerald-400 transition-colors">Direktori Shelter</Link></li>
-              <li><Link to={PATHS.PUBLIC.EMERGENCY_DIRECTORY} className="hover:text-emerald-400 transition-colors">Direktori Kontak Darurat</Link></li>
+              <li><Link to={PATHS.PUBLIC.HOME} className="hover:text-rose-400 transition-colors">Beranda Utama</Link></li>
+              <li><Link to={PATHS.PUBLIC.MAP} className="hover:text-rose-400 transition-colors">Peta Risiko Interaktif</Link></li>
+              <li><Link to={PATHS.PUBLIC.DISASTERS} className="hover:text-rose-400 transition-colors">Katalog Bencana Terkini</Link></li>
+              <li><Link to={PATHS.PUBLIC.WARNINGS} className="hover:text-rose-400 transition-colors">Peringatan Dini Resmi</Link></li>
+              <li><Link to={PATHS.PUBLIC.PREPAREDNESS} className="hover:text-rose-400 transition-colors">Panduan Tanggap Darurat</Link></li>
+              <li><Link to={PATHS.PUBLIC.SHELTERS} className="hover:text-rose-400 transition-colors">Direktori Shelter</Link></li>
+              <li><Link to={PATHS.PUBLIC.EMERGENCY_DIRECTORY} className="hover:text-rose-400 transition-colors">Direktori Kontak Darurat</Link></li>
             </ul>
           </div>
 
           <div>
             <h4 className="text-white font-bold mb-3 text-xs uppercase tracking-wider">Area Operasional</h4>
             <ul className="space-y-2">
-              <li><Link to={PATHS.USER.DASHBOARD} className="hover:text-emerald-400 transition-colors">Portal Warga Terdaftar</Link></li>
-              <li><Link to={PATHS.ADMIN.DASHBOARD} className="hover:text-emerald-400 transition-colors">Konsol Administrator</Link></li>
-              <li><Link to={PATHS.INTELLIGENCE.OVERVIEW} className="hover:text-emerald-400 transition-colors">Disaster Intelligence Center</Link></li>
-              <li><Link to={PATHS.PUBLIC.ABOUT} className="hover:text-emerald-400 transition-colors">Tentang Proyek SENTRAVAX</Link></li>
+              <li><Link to={PATHS.USER.DASHBOARD} className="hover:text-rose-400 transition-colors">Portal Warga Terdaftar</Link></li>
+              <li><Link to={PATHS.ADMIN.DASHBOARD} className="hover:text-rose-400 transition-colors">Konsol Administrator</Link></li>
+              <li><Link to={PATHS.INTELLIGENCE.OVERVIEW} className="hover:text-rose-400 transition-colors">Disaster Intelligence Center</Link></li>
+              <li><Link to={PATHS.PUBLIC.ABOUT} className="hover:text-rose-400 transition-colors">Tentang Proyek SENTRAVAX</Link></li>
             </ul>
           </div>
 

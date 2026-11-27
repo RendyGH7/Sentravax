@@ -96,10 +96,10 @@ function getRiskColorConfig(level: string) {
       return {
         badgeVariant: 'success' as const,
         label: 'Normal (Rendah)',
-        bgClass: 'bg-emerald-500',
-        textClass: 'text-emerald-400',
-        borderClass: 'border-emerald-800/60',
-        bgLight: 'bg-emerald-950/40',
+        bgClass: 'bg-rose-500',
+        textClass: 'text-rose-400',
+        borderClass: 'border-rose-800/60',
+        bgLight: 'bg-rose-950/40',
       };
   }
 }
@@ -113,7 +113,7 @@ function getCategoryIcon(category: string) {
     case 'logistik':
       return <Package className="w-4 h-4 text-amber-400" />;
     default:
-      return <CheckCircle2 className="w-4 h-4 text-emerald-400" />;
+      return <CheckCircle2 className="w-4 h-4 text-rose-400" />;
   }
 }
 
@@ -436,7 +436,7 @@ export const PublicPreparednessPage: React.FC = () => {
         <div className="flex flex-col md:flex-row md:items-center justify-between gap-3">
           <div>
             <div className="flex flex-wrap items-center gap-2 mb-1.5">
-              <span className="text-[10px] font-mono font-bold px-2.5 py-0.5 rounded-md bg-emerald-950/80 text-emerald-300 border border-emerald-800/60">
+              <span className="text-[10px] font-mono font-bold px-2.5 py-0.5 rounded-md bg-rose-950/80 text-rose-300 border border-rose-800/60">
                 SIAGA MANDIRI
               </span>
               <span className="text-[10px] font-mono font-bold px-2.5 py-0.5 rounded-md bg-neutral-900 text-neutral-300 border border-neutral-700">
@@ -462,7 +462,7 @@ export const PublicPreparednessPage: React.FC = () => {
             </Link>
             <Link
               to={`${PATHS.PUBLIC.MAP}?layer=shelters`}
-              className="inline-flex items-center gap-1.5 px-4 py-2 rounded-xl bg-emerald-700 hover:bg-emerald-600 text-xs font-bold text-white transition-colors"
+              className="inline-flex items-center gap-1.5 px-4 py-2 rounded-xl bg-rose-700 hover:bg-rose-600 text-xs font-bold text-white transition-colors"
             >
               <span>Peta Shelter Terverifikasi</span>
             </Link>
@@ -483,7 +483,7 @@ export const PublicPreparednessPage: React.FC = () => {
         >
           <div>
             <h2 id="location-selector-heading" className="text-base sm:text-lg font-black text-white flex items-center gap-2">
-              <MapPin className="w-5 h-5 text-emerald-400" />
+              <MapPin className="w-5 h-5 text-rose-400" />
               <span>Pilih Lokasi untuk Dianalisis</span>
             </h2>
             <p className="text-xs text-neutral-400 mt-1 font-normal">
@@ -504,7 +504,7 @@ export const PublicPreparednessPage: React.FC = () => {
                   onChange={handleRegionChange}
                   disabled={regionsLoading || analyzing}
                   aria-label="Pilih wilayah pilot terpantau"
-                  className="w-full rounded-xl text-xs sm:text-sm px-3.5 py-2.5 transition-all outline-none border font-normal appearance-none cursor-pointer pr-10 bg-neutral-900 text-white border-neutral-700 focus:border-emerald-500 focus:ring-1 focus:ring-emerald-500 disabled:opacity-50"
+                  className="w-full rounded-xl text-xs sm:text-sm px-3.5 py-2.5 transition-all outline-none border font-normal appearance-none cursor-pointer pr-10 bg-neutral-900 text-white border-neutral-700 focus:border-rose-500 focus:ring-1 focus:ring-rose-500 disabled:opacity-50"
                 >
                   <option value="" disabled>-- Pilih Wilayah Pilot --</option>
                   {regions.map((r) => (
@@ -539,7 +539,7 @@ export const PublicPreparednessPage: React.FC = () => {
                     validateCoords(e.target.value, longitude);
                   }}
                   placeholder="-6.2088"
-                  className="w-full rounded-xl text-xs sm:text-sm px-3 py-2 border border-neutral-700 bg-neutral-900 text-white placeholder:text-neutral-500 focus:border-emerald-500 focus:ring-1 focus:ring-emerald-500 outline-none"
+                  className="w-full rounded-xl text-xs sm:text-sm px-3 py-2 border border-neutral-700 bg-neutral-900 text-white placeholder:text-neutral-500 focus:border-rose-500 focus:ring-1 focus:ring-rose-500 outline-none"
                 />
               </div>
               <div className="space-y-1.5">
@@ -558,7 +558,7 @@ export const PublicPreparednessPage: React.FC = () => {
                     validateCoords(latitude, e.target.value);
                   }}
                   placeholder="106.8456"
-                  className="w-full rounded-xl text-xs sm:text-sm px-3 py-2 border border-neutral-700 bg-neutral-900 text-white placeholder:text-neutral-500 focus:border-emerald-500 focus:ring-1 focus:ring-emerald-500 outline-none"
+                  className="w-full rounded-xl text-xs sm:text-sm px-3 py-2 border border-neutral-700 bg-neutral-900 text-white placeholder:text-neutral-500 focus:border-rose-500 focus:ring-1 focus:ring-rose-500 outline-none"
                 />
               </div>
             </div>
@@ -571,7 +571,7 @@ export const PublicPreparednessPage: React.FC = () => {
                 disabled={geoLoading || analyzing}
                 className="w-full justify-center px-4 py-2 rounded-xl bg-neutral-900 hover:bg-neutral-800 border border-neutral-700 text-xs font-bold text-neutral-200 transition-colors flex items-center gap-1.5 disabled:opacity-50"
               >
-                <Navigation className={`w-3.5 h-3.5 text-emerald-400 ${geoLoading ? 'animate-spin' : ''}`} />
+                <Navigation className={`w-3.5 h-3.5 text-rose-400 ${geoLoading ? 'animate-spin' : ''}`} />
                 <span>{geoLoading ? 'Mendeteksi...' : 'Lokasi GPS Saya'}</span>
               </button>
 
@@ -583,7 +583,7 @@ export const PublicPreparednessPage: React.FC = () => {
                   }
                 }}
                 disabled={analyzing || !!coordError}
-                className="w-full justify-center px-4 py-2 rounded-xl bg-emerald-700 hover:bg-emerald-600 text-xs font-bold text-white transition-colors flex items-center gap-1.5 disabled:opacity-50"
+                className="w-full justify-center px-4 py-2 rounded-xl bg-rose-700 hover:bg-rose-600 text-xs font-bold text-white transition-colors flex items-center gap-1.5 disabled:opacity-50"
               >
                 <ShieldCheck className="w-4 h-4" />
                 <span>{analyzing ? 'Menganalisis...' : 'Analisis Risiko'}</span>
@@ -601,7 +601,7 @@ export const PublicPreparednessPage: React.FC = () => {
 
           {geoNotice && (
             <p className="text-xs text-neutral-300 flex items-center gap-1.5 bg-neutral-900 p-3 rounded-xl border border-neutral-800">
-              <Crosshair className="w-3.5 h-3.5 text-emerald-400 shrink-0" />
+              <Crosshair className="w-3.5 h-3.5 text-rose-400 shrink-0" />
               <span>{geoNotice}</span>
             </p>
           )}
@@ -622,10 +622,10 @@ export const PublicPreparednessPage: React.FC = () => {
         <div className="space-y-2">
           <div className="flex items-center justify-between text-xs text-neutral-400">
             <span className="font-bold text-white flex items-center gap-1.5">
-              <Crosshair className="w-4 h-4 text-emerald-400" />
+              <Crosshair className="w-4 h-4 text-rose-400" />
               <span>Klik pada peta untuk memindahkan titik analisis koordinat secara interaktif:</span>
             </span>
-            <span className="font-mono text-[11px] text-emerald-400 font-bold">
+            <span className="font-mono text-[11px] text-rose-400 font-bold">
               Pin Terpilih: [{parseFloat(latitude).toFixed(4)}, {parseFloat(longitude).toFixed(4)}]
             </span>
           </div>
@@ -654,7 +654,7 @@ export const PublicPreparednessPage: React.FC = () => {
       {/* ========================================================================= */}
       <section aria-labelledby="assessment-result-heading" className="space-y-6 pt-4 border-t border-neutral-800">
         <div>
-          <span className="text-xs font-mono uppercase tracking-wider text-emerald-400 font-bold">
+          <span className="text-xs font-mono uppercase tracking-wider text-rose-400 font-bold">
             Hasil Evaluasi Risiko
           </span>
           <h2 id="assessment-result-heading" className="text-xl sm:text-2xl font-black text-white tracking-tight mt-1">
@@ -775,7 +775,7 @@ export const PublicPreparednessPage: React.FC = () => {
                   <div className="space-y-4">
                     <div className="flex items-center justify-between border-b border-neutral-800 pb-3">
                       <div>
-                        <span className="text-[11px] font-mono uppercase text-emerald-400 font-bold">
+                        <span className="text-[11px] font-mono uppercase text-rose-400 font-bold">
                           Wilayah Asosiasi Pilot
                         </span>
                         <div className="flex flex-wrap items-center gap-2 mt-0.5">
@@ -827,9 +827,9 @@ export const PublicPreparednessPage: React.FC = () => {
 
                     <div className="space-y-1.5 text-xs text-neutral-300">
                       <div className="flex items-center gap-2">
-                        <Radio className="w-3.5 h-3.5 text-emerald-400" />
+                        <Radio className="w-3.5 h-3.5 text-rose-400" />
                         <span>Status Telemetri Spasial: </span>
-                        <span className={`text-[10px] font-mono font-bold px-2 py-0.5 rounded-md ${isInsufficientData ? 'bg-amber-950/80 text-amber-300 border border-amber-800/60' : 'bg-emerald-950/80 text-emerald-300 border border-emerald-800/60'}`}>
+                        <span className={`text-[10px] font-mono font-bold px-2 py-0.5 rounded-md ${isInsufficientData ? 'bg-amber-950/80 text-amber-300 border border-amber-800/60' : 'bg-rose-950/80 text-rose-300 border border-rose-800/60'}`}>
                           {isInsufficientData ? 'DI LUAR CAKUPAN PILOT' : (analysisResult.assessment.data_freshness || 'TERHUBUNG')}
                         </span>
                       </div>
@@ -841,7 +841,7 @@ export const PublicPreparednessPage: React.FC = () => {
 
                   <div className="pt-3 border-t border-neutral-800 flex items-center justify-between text-[11px] text-neutral-400">
                     <span>Metodologi:</span>
-                    <span className="font-mono text-emerald-400 font-semibold">
+                    <span className="font-mono text-rose-400 font-semibold">
                       v1.0-deterministic-spatial
                     </span>
                   </div>
@@ -906,7 +906,7 @@ export const PublicPreparednessPage: React.FC = () => {
                           <span className="text-neutral-400">
                             Sumber: <span className="font-semibold text-neutral-200">{t.source_name || 'SENTRAVAX Local Baseline'}</span>
                           </span>
-                          <Link to={`${PATHS.PUBLIC.MAP}?eventId=${t.id}`} className="font-bold text-emerald-400 hover:underline flex items-center gap-0.5">
+                          <Link to={`${PATHS.PUBLIC.MAP}?eventId=${t.id}`} className="font-bold text-rose-400 hover:underline flex items-center gap-0.5">
                             <span>Fokus Peta</span>
                             <ArrowRight className="w-2.5 h-2.5" />
                           </Link>
@@ -921,7 +921,7 @@ export const PublicPreparednessPage: React.FC = () => {
               <div className="p-6 rounded-3xl bg-[#121614] border border-neutral-800 space-y-4 text-neutral-100">
                 <div className="flex items-center justify-between border-b border-neutral-800 pb-2.5">
                   <h3 className="text-sm font-bold text-white flex items-center gap-2">
-                    <BarChart3 className="w-4 h-4 text-emerald-400" />
+                    <BarChart3 className="w-4 h-4 text-rose-400" />
                     <span>Faktor Komponen Pembentuk Risiko</span>
                   </h3>
                   <span className="text-xs text-neutral-400">Bobot Analisis</span>
@@ -932,7 +932,7 @@ export const PublicPreparednessPage: React.FC = () => {
                   <div className="p-3.5 rounded-xl bg-neutral-900 border border-neutral-800 space-y-1">
                     <div className="flex items-center justify-between text-xs">
                       <span className="font-bold text-white">Kerentanan Dasar Tropis (Baseline)</span>
-                      <span className="font-mono text-emerald-400 font-bold">
+                      <span className="font-mono text-rose-400 font-bold">
                         +{Number((analysisResult.assessment.factors?.baseline_vulnerability as { contribution?: number })?.contribution ?? 15).toFixed(1)} pt (Bobot 15%)
                       </span>
                     </div>
@@ -989,7 +989,7 @@ export const PublicPreparednessPage: React.FC = () => {
                   <div className="space-y-4">
                     <div className="border-b border-neutral-800 pb-2.5">
                       <h3 className="text-sm font-bold text-white flex items-center gap-2">
-                        <ShieldCheck className="w-4 h-4 text-emerald-400" />
+                        <ShieldCheck className="w-4 h-4 text-rose-400" />
                         <span>Rekomendasi Kesiapsiagaan Mandiri Keluarga</span>
                       </h3>
                       <p className="text-xs text-neutral-400 mt-1 font-normal">
@@ -1000,7 +1000,7 @@ export const PublicPreparednessPage: React.FC = () => {
                     <ul className="space-y-2.5 text-xs text-neutral-200">
                       {analysisResult.recommendations.action_steps.map((step, idx) => (
                         <li key={idx} className="flex items-start gap-2.5 p-3 rounded-xl bg-neutral-900 border border-neutral-800">
-                          <span className="w-5 h-5 rounded-full bg-emerald-950/80 border border-emerald-800/60 text-emerald-300 flex items-center justify-center font-bold text-[10px] shrink-0 mt-0.5">
+                          <span className="w-5 h-5 rounded-full bg-rose-950/80 border border-rose-800/60 text-rose-300 flex items-center justify-center font-bold text-[10px] shrink-0 mt-0.5">
                             {idx + 1}
                           </span>
                           <span className="leading-relaxed">{step}</span>
@@ -1027,7 +1027,7 @@ export const PublicPreparednessPage: React.FC = () => {
                   <div className="flex items-center justify-between border-b border-neutral-800 pb-2.5">
                     <div>
                       <h3 className="text-sm font-bold text-white flex items-center gap-2">
-                        <Package className="w-4 h-4 text-emerald-400" />
+                        <Package className="w-4 h-4 text-rose-400" />
                         <span>Checklist Tas Siaga Bencana (Standar 13 Item BNPB)</span>
                       </h3>
                       <p className="text-xs text-neutral-400 mt-0.5 font-normal">
@@ -1035,13 +1035,13 @@ export const PublicPreparednessPage: React.FC = () => {
                       </p>
                     </div>
                     <div className="flex items-center gap-2">
-                      <span data-testid="gobag-count" className="text-xs font-mono font-bold text-emerald-400">
+                      <span data-testid="gobag-count" className="text-xs font-mono font-bold text-rose-400">
                         {Object.values(checkedItems).filter(Boolean).length} / {analysisResult.recommendations.recommended_checklist_items.length} Siap
                       </span>
                       <button
                         onClick={handleCheckAllChecklist}
                         type="button"
-                        className="text-[11px] text-emerald-400 hover:underline font-semibold cursor-pointer"
+                        className="text-[11px] text-rose-400 hover:underline font-semibold cursor-pointer"
                       >
                         Tandai Semua
                       </button>
@@ -1067,7 +1067,7 @@ export const PublicPreparednessPage: React.FC = () => {
                         onClick={() => setChecklistFilter(cat)}
                         className={`px-3 py-1 rounded-xl font-bold capitalize transition-all ${
                           checklistFilter === cat
-                            ? 'bg-emerald-700 text-white shadow-xs'
+                            ? 'bg-rose-700 text-white shadow-xs'
                             : 'bg-neutral-900 text-neutral-400 border border-neutral-800 hover:text-white'
                         }`}
                       >
@@ -1088,13 +1088,13 @@ export const PublicPreparednessPage: React.FC = () => {
                           onClick={() => toggleChecklistItem(item.id)}
                           className={`p-3.5 rounded-xl border transition-all cursor-pointer select-none flex items-start gap-3 ${
                             isChecked
-                              ? 'bg-emerald-950/60 border-emerald-800/80 text-emerald-200'
+                              ? 'bg-rose-950/60 border-rose-800/80 text-rose-200'
                               : 'bg-neutral-900 border-neutral-800 hover:border-neutral-700 text-neutral-300'
                           }`}
                         >
                           <div className={`w-5 h-5 rounded-md flex items-center justify-center shrink-0 mt-0.5 border transition-colors ${
                             isChecked
-                              ? 'bg-emerald-600 border-emerald-500 text-white'
+                              ? 'bg-rose-600 border-rose-500 text-white'
                               : 'border-neutral-700 bg-neutral-800'
                           }`}>
                             {isChecked && <CheckCircle2 className="w-3.5 h-3.5 text-white" />}
@@ -1120,12 +1120,12 @@ export const PublicPreparednessPage: React.FC = () => {
 
                   {/* Status / Privacy Microcopy */}
                   {isAuthenticated ? (
-                    <div className="p-3 rounded-xl bg-neutral-900 border border-neutral-800 text-[11px] text-emerald-300 flex items-center justify-between">
+                    <div className="p-3 rounded-xl bg-neutral-900 border border-neutral-800 text-[11px] text-rose-300 flex items-center justify-between">
                       <div className="flex items-center gap-2">
-                        <CheckCircle2 className="w-3.5 h-3.5 text-emerald-400 shrink-0" />
+                        <CheckCircle2 className="w-3.5 h-3.5 text-rose-400 shrink-0" />
                         <span>Tersinkronisasi dengan Akun Anda ({user?.name}). Progres tersimpan aman di server.</span>
                       </div>
-                      <Link to={PATHS.USER.PREPAREDNESS} className="font-bold text-emerald-400 hover:underline flex items-center gap-1 shrink-0">
+                      <Link to={PATHS.USER.PREPAREDNESS} className="font-bold text-rose-400 hover:underline flex items-center gap-1 shrink-0">
                         <span>Siaga Personal</span>
                         <ArrowRight className="w-3 h-3" />
                       </Link>
@@ -1133,13 +1133,13 @@ export const PublicPreparednessPage: React.FC = () => {
                   ) : (
                     <>
                       <div className="p-3 rounded-xl bg-neutral-900 border border-neutral-800 text-[11px] text-neutral-300 flex items-center gap-2">
-                        <ShieldCheck className="w-3.5 h-3.5 text-emerald-400 shrink-0" />
+                        <ShieldCheck className="w-3.5 h-3.5 text-rose-400 shrink-0" />
                         <span>Privasi Terjamin: Status checklist tersimpan secara mandiri pada peramban perangkat Anda (localStorage).</span>
                       </div>
 
                       <div className="p-3 rounded-xl bg-neutral-900 border border-neutral-800 text-[11px] text-neutral-400 flex items-center justify-between">
                         <span>Ingin menyimpan progres dan rencana siaga keluarga ke akun?</span>
-                        <Link to={PATHS.PUBLIC.REGISTER} className="font-bold text-emerald-400 hover:underline flex items-center gap-1">
+                        <Link to={PATHS.PUBLIC.REGISTER} className="font-bold text-rose-400 hover:underline flex items-center gap-1">
                           <span>Daftar Akun Warga</span>
                           <ArrowRight className="w-3 h-3" />
                         </Link>
@@ -1154,7 +1154,7 @@ export const PublicPreparednessPage: React.FC = () => {
             <div className="p-4 rounded-2xl bg-[#121614] border border-neutral-800 space-y-2 text-xs text-neutral-400">
               <div className="flex flex-wrap items-center justify-between gap-2 border-b border-neutral-800 pb-2">
                 <span className="font-bold text-white">Integritas &amp; Sumber Data Analisis:</span>
-                <span className="text-[11px] font-mono text-emerald-400 font-bold">
+                <span className="text-[11px] font-mono text-rose-400 font-bold">
                   {analysisResult.provenance.data_sources.join(' • ')}
                 </span>
               </div>
@@ -1177,10 +1177,10 @@ export const PublicPreparednessPage: React.FC = () => {
 
         <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
           <Link to={PATHS.PUBLIC.MAP} className="block group">
-            <div className="p-5 rounded-2xl bg-[#121614] border border-neutral-800 hover:border-emerald-500/40 transition-all space-y-1.5 h-full">
-              <span className="text-xs font-bold text-white group-hover:text-emerald-300 flex items-center gap-1 transition-colors">
+            <div className="p-5 rounded-2xl bg-[#121614] border border-neutral-800 hover:border-rose-500/40 transition-all space-y-1.5 h-full">
+              <span className="text-xs font-bold text-white group-hover:text-rose-300 flex items-center gap-1 transition-colors">
                 <span>Peta Bencana Nasional</span>
-                <ArrowRight className="w-3.5 h-3.5 text-emerald-400" />
+                <ArrowRight className="w-3.5 h-3.5 text-rose-400" />
               </span>
               <p className="text-xs text-neutral-400 font-normal">
                 Pantau visualisasi sebaran spasial bencana gempa bumi, banjir, dan cuaca ekstrem secara langsung.
@@ -1189,10 +1189,10 @@ export const PublicPreparednessPage: React.FC = () => {
           </Link>
 
           <Link to={PATHS.PUBLIC.WARNINGS} className="block group">
-            <div className="p-5 rounded-2xl bg-[#121614] border border-neutral-800 hover:border-emerald-500/40 transition-all space-y-1.5 h-full">
-              <span className="text-xs font-bold text-white group-hover:text-emerald-300 flex items-center gap-1 transition-colors">
+            <div className="p-5 rounded-2xl bg-[#121614] border border-neutral-800 hover:border-rose-500/40 transition-all space-y-1.5 h-full">
+              <span className="text-xs font-bold text-white group-hover:text-rose-300 flex items-center gap-1 transition-colors">
                 <span>Pusat Peringatan Dini</span>
-                <ArrowRight className="w-3.5 h-3.5 text-emerald-400" />
+                <ArrowRight className="w-3.5 h-3.5 text-rose-400" />
               </span>
               <p className="text-xs text-neutral-400 font-normal">
                 Diseminasi peringatan darurat berstandar CAP dari BMKG dan otoritas penanggulangan bencana.
@@ -1201,10 +1201,10 @@ export const PublicPreparednessPage: React.FC = () => {
           </Link>
 
           <Link to={PATHS.PUBLIC.EDUCATION} className="block group">
-            <div className="p-5 rounded-2xl bg-[#121614] border border-neutral-800 hover:border-emerald-500/40 transition-all space-y-1.5 h-full">
-              <span className="text-xs font-bold text-white group-hover:text-emerald-300 flex items-center gap-1 transition-colors">
+            <div className="p-5 rounded-2xl bg-[#121614] border border-neutral-800 hover:border-rose-500/40 transition-all space-y-1.5 h-full">
+              <span className="text-xs font-bold text-white group-hover:text-rose-300 flex items-center gap-1 transition-colors">
                 <span>Pusat Literasi Edukasi</span>
-                <ArrowRight className="w-3.5 h-3.5 text-emerald-400" />
+                <ArrowRight className="w-3.5 h-3.5 text-rose-400" />
               </span>
               <p className="text-xs text-neutral-400 font-normal">
                 Panduan praktis mitigasi, SOP evakuasi saat sirene berbunyi, dan nomor kontak darurat nasional.

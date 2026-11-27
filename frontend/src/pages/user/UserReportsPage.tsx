@@ -71,7 +71,7 @@ export const UserReportsPage: React.FC = () => {
     switch (status) {
       case 'verified':
         return (
-          <span className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full text-[11px] font-bold bg-[#ECFDF5] text-[#047857] border border-[#A7F3D0]">
+          <span className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full text-[11px] font-bold bg-[#FFF1F2] text-[#BE123C] border border-[#FECDD3]">
             <CheckCircle2 className="w-3.5 h-3.5" />
             Terverifikasi Resmi
           </span>
@@ -100,7 +100,7 @@ export const UserReportsPage: React.FC = () => {
       <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 pb-4 border-b border-[#E5E7EB]">
         <div>
           <h1 className="text-xl sm:text-2xl font-extrabold text-[#111827] tracking-tight flex items-center gap-2">
-            <FileText className="w-6 h-6 text-[#047857]" />
+            <FileText className="w-6 h-6 text-[#BE123C]" />
             Riwayat Laporan Kejadian Warga
           </h1>
           <p className="text-xs text-[#6B7280] mt-1">
@@ -119,7 +119,7 @@ export const UserReportsPage: React.FC = () => {
           </button>
           <Link
             to={PATHS.USER.CREATE_REPORT}
-            className="inline-flex items-center gap-1.5 px-4 py-2.5 rounded-xl bg-[#047857] hover:bg-[#065F46] text-white text-xs font-bold transition-all shadow-xs"
+            className="inline-flex items-center gap-1.5 px-4 py-2.5 rounded-xl bg-[#BE123C] hover:bg-[#9F1239] text-white text-xs font-bold transition-all shadow-xs"
           >
             <Plus className="w-4 h-4" />
             <span>Kirim Laporan Baru</span>
@@ -141,7 +141,7 @@ export const UserReportsPage: React.FC = () => {
             onClick={() => setStatusFilter(tab.key as any)}
             className={`px-3.5 py-1.5 rounded-lg text-xs font-semibold transition-all whitespace-nowrap ${
               statusFilter === tab.key
-                ? 'bg-[#047857] text-white shadow-xs'
+                ? 'bg-[#BE123C] text-white shadow-xs'
                 : 'bg-[#FFFFFF] border border-[#E5E7EB] text-[#4B5563] hover:bg-[#F9FAFB]'
             }`}
           >
@@ -159,7 +159,7 @@ export const UserReportsPage: React.FC = () => {
         </div>
       ) : reports.length === 0 ? (
         <div className="p-12 rounded-2xl bg-[#FFFFFF] border border-[#E5E7EB] text-center space-y-4">
-          <div className="w-14 h-14 rounded-full bg-[#ECFDF5] border border-[#A7F3D0] flex items-center justify-center text-[#047857] mx-auto">
+          <div className="w-14 h-14 rounded-full bg-[#FFF1F2] border border-[#FECDD3] flex items-center justify-center text-[#BE123C] mx-auto">
             <FileText className="w-7 h-7" />
           </div>
           <h2 className="text-base font-bold text-[#111827]">Belum Ada Laporan yang Diajukan</h2>
@@ -171,7 +171,7 @@ export const UserReportsPage: React.FC = () => {
           <div className="pt-2">
             <Link
               to={PATHS.USER.CREATE_REPORT}
-              className="inline-flex items-center gap-1.5 px-4 py-2 rounded-xl bg-[#047857] text-white text-xs font-bold hover:bg-[#065F46] transition-colors"
+              className="inline-flex items-center gap-1.5 px-4 py-2 rounded-xl bg-[#BE123C] text-white text-xs font-bold hover:bg-[#9F1239] transition-colors"
             >
               <Plus className="w-3.5 h-3.5" />
               Kirim Laporan Pertama
@@ -183,7 +183,7 @@ export const UserReportsPage: React.FC = () => {
           {reports.map((report) => (
             <div
               key={report.id}
-              className="p-5 rounded-2xl bg-[#FFFFFF] border border-[#E5E7EB] hover:border-[#A7F3D0] transition-all shadow-xs flex flex-col sm:flex-row sm:items-center justify-between gap-4"
+              className="p-5 rounded-2xl bg-[#FFFFFF] border border-[#E5E7EB] hover:border-[#FECDD3] transition-all shadow-xs flex flex-col sm:flex-row sm:items-center justify-between gap-4"
             >
               <div className="space-y-2 flex-1">
                 <div className="flex flex-wrap items-center gap-2">
@@ -242,7 +242,7 @@ export const UserReportsPage: React.FC = () => {
                 </button>
                 <Link
                   to={`${PATHS.PUBLIC.MAP}?lat=${report.latitude}&lon=${report.longitude}&zoom=14`}
-                  className="p-2 rounded-xl bg-[#F9FAFB] hover:bg-[#F3F4F6] border border-[#E5E7EB] text-[#4B5563] hover:text-[#047857] transition-colors"
+                  className="p-2 rounded-xl bg-[#F9FAFB] hover:bg-[#F3F4F6] border border-[#E5E7EB] text-[#4B5563] hover:text-[#BE123C] transition-colors"
                   title="Lihat di Peta"
                 >
                   <ExternalLink className="w-4 h-4" />
@@ -326,7 +326,7 @@ export const UserReportsPage: React.FC = () => {
                   {reportDetail.verified_at && (
                     <div className="flex justify-between">
                       <span className="text-[#6B7280]">Waktu Verifikasi:</span>
-                      <span className="font-semibold text-[#047857]">
+                      <span className="font-semibold text-[#BE123C]">
                         {new Date(reportDetail.verified_at).toLocaleString('id-ID')}
                       </span>
                     </div>
@@ -349,7 +349,7 @@ export const UserReportsPage: React.FC = () => {
                   <button
                     type="button"
                     onClick={handleCloseDetail}
-                    className="px-4 py-2 rounded-xl bg-[#047857] text-white text-xs font-bold hover:bg-[#065F46] transition-colors"
+                    className="px-4 py-2 rounded-xl bg-[#BE123C] text-white text-xs font-bold hover:bg-[#9F1239] transition-colors"
                   >
                     Tutup
                   </button>

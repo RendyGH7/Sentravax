@@ -160,21 +160,19 @@ Palet awal:
 | `--light-text-secondary` | `#596168` | Teks sekunder |
 | `--light-text-muted` | `#737C83` | Metadata yang tidak kritis |
 | `--light-border` | `#E2E5E8` | Border dan divider |
-| `--light-primary` | `#245B78` | Aksi utama dan link |
-| `--light-primary-hover` | `#1D4B64` | Hover aksi utama |
-| `--light-primary-soft` | `#EAF1F5` | Permukaan aksen lembut |
-| `--light-success` | `#28734D` | Status berhasil |
-| `--light-warning` | `#8A5A13` | Status peringatan |
-| `--light-danger` | `#B33A35` | Status kritis/error |
-| `--light-info` | `#315F86` | Status informasi |
+| `--light-primary` | `#BE123C` | Aksi utama, brand Crimson, dan link |
+| `--light-primary-hover` | `#9F1239` | Hover aksi utama (Deep Maroon) |
+| `--light-primary-soft` | `#FFF1F2` | Permukaan aksen lembut (Soft Rose Blush) |
+| `--light-success` | `#059669` | Status berhasil / aman (semantik) |
+| `--light-warning` | `#D97706` | Status peringatan |
+| `--light-danger` | `#DC2626` | Status kritis/error (Scarlet) |
+| `--light-info` | `#4B5563` | Status informasi netral |
 
 Ketentuan:
-- Putih menjadi warna dominan, bukan abu-abu gelap.
-- Gunakan abu-abu netral untuk pembagian area dan hierarki.
-- Aksen biru baja yang solid digunakan seperlunya untuk aksi utama, bukan untuk dekorasi.
-- Jangan mewarnai semua link, ikon, border, dan heading dengan aksen sekaligus.
-- Hindari tampilan yang terlalu pucat. Pastikan teks, kontrol, dan batas komponen tetap jelas.
-- User Portal tidak boleh tiba-tiba berubah menjadi dark mode.
+- Putih (`#FFFFFF`) dan abu-abu sangat terang (`#F9FAFB`) menjadi latar dominan di Portal Warga, dipadukan dengan Crimson (`#BE123C`) dan Deep Maroon (`#9F1239`) sebagai warna brand utama agar terasa tegas, hangat, profesional, dan nyaman dipandang semua kalangan tanpa menyilaukan mata.
+- Pada Public Website berlatar gelap netral (`#0d0f11` / `#121614`), gunakan aksen lembut `rose-300` (`#FDA4AF`) / `rose-400` (`#FB7185`) untuk teks/ikon aktif dan `rose-950/60` (`#4C0519`) untuk latar pill agar kontras tetap tinggi dan bebas kelelahan visual.
+- Jangan mewarnai semua link, ikon, border, dan heading dengan merah sekaligus; jaga >80% permukaan tetap netral.
+- Pisahkan warna brand Crimson/Maroon (`#BE123C` / `#9F1239`) dari warna semantik status aman (`#059669`) dan bahaya kritis (`#DC2626` / `#EF4444` disertai ikon eksplisit).
 
 ### 3.2 Keluarga gelap — Admin Dashboard dan Intelligence Center
 
@@ -245,10 +243,11 @@ Aturan:
 
 Tipografi harus jelas, modern, profesional, dan nyaman dibaca. Gunakan satu keluarga font utama yang konsisten; font tambahan hanya jika ada alasan desain yang kuat.
 
-Rekomendasi:
-- UI dan isi: Inter atau font sans-serif sistem yang ringan.
-- Heading: gunakan keluarga yang sama dengan bobot berbeda, kecuali referensi desain menunjukkan kebutuhan yang jelas.
-- Self-host font bila memungkinkan. Gunakan `font-display: swap`.
+Rekomendasi & Penetapan Resmi:
+- **Public Website & User Portal**: **Plus Jakarta Sans** (`--font-public`) — modern, ramah, terbuka, dan nyaman dibaca di berbagai ukuran layar oleh masyarakat umum.
+- **Admin Dashboard & Intelligence Center**: **Inter** (`--font-ops`) — presisi tinggi, padat informasi, dan sangat terbaca untuk tabel, angka telemetri, serta operasional analitis.
+- Heading menggunakan keluarga font yang sama dengan bobot berbeda (`700`–`800`).
+- Gunakan `font-display: swap` saat memuat font.
 
 Skala awal:
 | Token | Ukuran | Penggunaan |

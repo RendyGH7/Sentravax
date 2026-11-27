@@ -113,7 +113,7 @@ export const Input = forwardRef<HTMLInputElement, InputProps>(
 
     const colorStyles = isDark
       ? 'bg-[#1C1C1C] text-[#F5F5F5] border-[#2C2C2C] focus:border-[#F59E0B] focus:ring-2 focus:ring-[#F59E0B]/20'
-      : 'bg-white text-[#111827] border-[#D1D5DB] focus:border-[#047857] focus:ring-2 focus:ring-[#047857]/20';
+      : 'bg-white text-[#111827] border-[#D1D5DB] focus:border-[#BE123C] focus:ring-2 focus:ring-[#BE123C]/20';
 
     const errorStyles = error
       ? isDark
@@ -220,7 +220,7 @@ export const Select = forwardRef<HTMLSelectElement, SelectProps>(
 
     const colorStyles = isDark
       ? 'bg-[#1C1C1C] text-[#F5F5F5] border-[#2C2C2C] focus:border-[#F59E0B] focus:ring-2 focus:ring-[#F59E0B]/20'
-      : 'bg-white text-[#111827] border-[#D1D5DB] focus:border-[#047857] focus:ring-2 focus:ring-[#047857]/20';
+      : 'bg-white text-[#111827] border-[#D1D5DB] focus:border-[#BE123C] focus:ring-2 focus:ring-[#BE123C]/20';
 
     const errorStyles = error ? 'border-red-500 focus:border-red-500 focus:ring-red-500/20' : '';
 
@@ -313,7 +313,7 @@ export const Textarea = forwardRef<HTMLTextAreaElement, TextareaProps>(
 
     const colorStyles = isDark
       ? 'bg-[#1C1C1C] text-[#F5F5F5] border-[#2C2C2C] focus:border-[#F59E0B] focus:ring-2 focus:ring-[#F59E0B]/20'
-      : 'bg-white text-[#111827] border-[#D1D5DB] focus:border-[#047857] focus:ring-2 focus:ring-[#047857]/20';
+      : 'bg-white text-[#111827] border-[#D1D5DB] focus:border-[#BE123C] focus:ring-2 focus:ring-[#BE123C]/20';
 
     const errorStyles = error ? 'border-red-500 focus:border-red-500 focus:ring-red-500/20' : '';
 
@@ -380,7 +380,7 @@ export const Checkbox = forwardRef<HTMLInputElement, CheckboxProps>(
               'w-4 h-4 rounded-md transition-all cursor-pointer disabled:cursor-not-allowed disabled:opacity-50',
               isDark
                 ? 'bg-[#1C1C1C] border-[#343434] text-[#F59E0B] focus:ring-[#F59E0B]/30'
-                : 'bg-white border-[#D1D5DB] text-[#047857] focus:ring-[#047857]/30',
+                : 'bg-white border-[#D1D5DB] text-[#BE123C] focus:ring-[#BE123C]/30',
               className
             )}
             {...props}
@@ -434,7 +434,7 @@ export const Radio = forwardRef<HTMLInputElement, RadioProps>(
               'w-4 h-4 transition-all cursor-pointer disabled:cursor-not-allowed disabled:opacity-50',
               isDark
                 ? 'bg-[#1C1C1C] border-[#343434] text-[#F59E0B] focus:ring-[#F59E0B]/30'
-                : 'bg-white border-[#D1D5DB] text-[#047857] focus:ring-[#047857]/30',
+                : 'bg-white border-[#D1D5DB] text-[#BE123C] focus:ring-[#BE123C]/30',
               className
             )}
             {...props}

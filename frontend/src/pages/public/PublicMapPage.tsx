@@ -33,7 +33,7 @@ export const PublicMapPage: React.FC = () => {
         <Suspense
           fallback={
             <div className="h-[680px] w-full bg-[#121212] flex flex-col items-center justify-center p-6 gap-3">
-              <RefreshCw className="w-6 h-6 animate-spin text-emerald-400" />
+              <RefreshCw className="w-6 h-6 animate-spin text-rose-400" />
               <span className="text-sm font-semibold text-white">
                 Memuat Komponen Geospasial Leaflet...
               </span>

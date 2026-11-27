@@ -108,8 +108,8 @@ function getSeverityBadge(severity?: string) {
     default:
       return {
         label: 'Rendah',
-        badgeClass: 'bg-emerald-950/80 text-emerald-200 border-emerald-800/60',
-        dotClass: 'bg-emerald-500',
+        badgeClass: 'bg-rose-950/80 text-rose-200 border-rose-800/60',
+        dotClass: 'bg-rose-500',
       };
   }
 }
@@ -314,8 +314,8 @@ export const PublicDisastersPage: React.FC = () => {
         <div className="max-w-6xl mx-auto">
           <div className="flex flex-col md:flex-row md:items-end justify-between gap-6">
             <div className="space-y-3 max-w-3xl">
-              <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-neutral-900 border border-neutral-700 text-emerald-400 text-xs font-mono font-bold tracking-wider uppercase">
-                <Radio className="w-3.5 h-3.5 text-emerald-400" />
+              <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-neutral-900 border border-neutral-700 text-rose-400 text-xs font-mono font-bold tracking-wider uppercase">
+                <Radio className="w-3.5 h-3.5 text-rose-400" />
                 <span>PUSAT INTELIJEN BENCANA TERPADU</span>
               </div>
               <ScrollWordTitle
@@ -335,7 +335,7 @@ export const PublicDisastersPage: React.FC = () => {
                 to={PATHS.PUBLIC.PREPAREDNESS}
                 className="inline-flex items-center gap-2 px-4 py-2.5 rounded-xl bg-neutral-900 border border-neutral-700 text-xs sm:text-sm font-bold text-neutral-200 hover:text-white hover:bg-neutral-800 transition-colors shadow-xs"
               >
-                <Compass className="w-4 h-4 text-emerald-400" />
+                <Compass className="w-4 h-4 text-rose-400" />
                 <span>Cek Risiko di SIAGA PERSONAL</span>
               </Link>
               <button
@@ -343,7 +343,7 @@ export const PublicDisastersPage: React.FC = () => {
                 onClick={() => setIsMapVisible(!isMapVisible)}
                 className="inline-flex items-center gap-2 px-4 py-2.5 rounded-xl bg-neutral-900 border border-neutral-700 text-xs sm:text-sm font-bold text-neutral-200 hover:text-white hover:bg-neutral-800 transition-colors"
               >
-                <MapIcon className="w-4 h-4 text-emerald-400" />
+                <MapIcon className="w-4 h-4 text-rose-400" />
                 <span>{isMapVisible ? 'Tutup Tampilan Peta' : 'Buka Tampilan Peta'}</span>
               </button>
             </div>
@@ -352,10 +352,10 @@ export const PublicDisastersPage: React.FC = () => {
           {/* Quick Metrics Bar */}
           <div className="mt-8 grid grid-cols-2 sm:grid-cols-4 gap-3 sm:gap-4">
             {[
-              { icon: <Activity className="w-5 h-5" />, color: 'text-emerald-400', label: 'Total Kejadian Aktif', value: `${totalEvents} Kejadian` },
+              { icon: <Activity className="w-5 h-5" />, color: 'text-rose-400', label: 'Total Kejadian Aktif', value: `${totalEvents} Kejadian` },
               { icon: <Radio className="w-5 h-5" />, color: 'text-sky-400', label: 'Kategori Dipantau', value: hazardTypes.length > 0 ? `${hazardTypes.length} Kategori` : '5 Kategori' },
               { icon: <ShieldAlert className="w-5 h-5" />, color: 'text-amber-400', label: 'Wilayah Terintegrasi', value: regions.length > 0 ? `${regions.length} Wilayah` : '5 Wilayah' },
-              { icon: <CheckCircle2 className="w-5 h-5 text-emerald-400" />, color: 'text-emerald-400', label: 'Status Sinkronisasi', value: 'LIVE FEED ON', mono: true },
+              { icon: <CheckCircle2 className="w-5 h-5 text-rose-400" />, color: 'text-rose-400', label: 'Status Sinkronisasi', value: 'LIVE FEED ON', mono: true },
             ].map((item, i) => (
               <motion.div
                 key={i}
@@ -371,7 +371,7 @@ export const PublicDisastersPage: React.FC = () => {
                 </div>
                 <div>
                   <p className="text-[11px] font-semibold text-neutral-400">{item.label}</p>
-                  <p className={`${item.mono ? 'text-xs sm:text-sm font-mono font-bold text-emerald-400' : 'text-lg font-black text-white'}`}>{item.value}</p>
+                  <p className={`${item.mono ? 'text-xs sm:text-sm font-mono font-bold text-rose-400' : 'text-lg font-black text-white'}`}>{item.value}</p>
                 </div>
               </motion.div>
             ))}
@@ -386,7 +386,7 @@ export const PublicDisastersPage: React.FC = () => {
           <div ref={mapSectionRef} className="bg-[#121614] border border-neutral-800 rounded-2xl p-4 shadow-xs space-y-3">
             <div className="flex items-center justify-between pb-2 border-b border-neutral-800">
               <div className="flex items-center gap-2">
-                <div className="w-2.5 h-2.5 rounded-full bg-emerald-500" />
+                <div className="w-2.5 h-2.5 rounded-full bg-rose-500" />
                 <h3 className="text-sm font-bold text-white">Peta Geospasial Bencana Real-Time</h3>
                 <span className="text-xs text-neutral-400 hidden sm:inline">| Klik penanda untuk detail &amp; fokus</span>
               </div>
@@ -423,7 +423,7 @@ export const PublicDisastersPage: React.FC = () => {
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
                 placeholder="Cari bencana berdasarkan judul, wilayah, atau kata kunci (cth: gempa, maluku, ciliwung)..."
-                className="w-full pl-10 pr-10 py-2.5 text-xs sm:text-sm rounded-xl border border-neutral-700 focus:outline-none focus:ring-1 focus:ring-emerald-500 focus:border-emerald-500 bg-neutral-900 transition-colors text-white placeholder:text-neutral-500"
+                className="w-full pl-10 pr-10 py-2.5 text-xs sm:text-sm rounded-xl border border-neutral-700 focus:outline-none focus:ring-1 focus:ring-rose-500 focus:border-rose-500 bg-neutral-900 transition-colors text-white placeholder:text-neutral-500"
               />
               {searchQuery && (
                 <button
@@ -447,7 +447,7 @@ export const PublicDisastersPage: React.FC = () => {
                 }}
                 className={`px-3 py-1.5 rounded-xl font-bold whitespace-nowrap transition-all flex items-center gap-1.5 border ${
                   selectedHazardType === 'all'
-                    ? 'bg-emerald-700 text-white border-emerald-600 shadow-xs'
+                    ? 'bg-rose-700 text-white border-rose-600 shadow-xs'
                     : 'bg-neutral-900 text-neutral-300 border-neutral-700 hover:bg-neutral-800 hover:text-white'
                 }`}
               >
@@ -467,7 +467,7 @@ export const PublicDisastersPage: React.FC = () => {
                     }}
                     className={`px-3 py-1.5 rounded-xl font-bold whitespace-nowrap transition-all flex items-center gap-1.5 border ${
                       isSelected
-                        ? 'bg-emerald-700 text-white border-emerald-600 shadow-xs'
+                        ? 'bg-rose-700 text-white border-rose-600 shadow-xs'
                         : 'bg-neutral-900 text-neutral-300 border-neutral-700 hover:bg-neutral-800 hover:text-white'
                     }`}
                   >
@@ -493,7 +493,7 @@ export const PublicDisastersPage: React.FC = () => {
                   setSelectedSeverity(e.target.value);
                   setCurrentPage(1);
                 }}
-                className="w-full px-2.5 py-1.5 rounded-lg border border-neutral-700 bg-neutral-900 text-neutral-100 focus:outline-none focus:ring-1 focus:ring-emerald-500"
+                className="w-full px-2.5 py-1.5 rounded-lg border border-neutral-700 bg-neutral-900 text-neutral-100 focus:outline-none focus:ring-1 focus:ring-rose-500"
               >
                 <option value="all">Semua Keparahan</option>
                 <option value="low">Rendah (Low / Minor)</option>
@@ -515,7 +515,7 @@ export const PublicDisastersPage: React.FC = () => {
                   setSelectedStatus(e.target.value);
                   setCurrentPage(1);
                 }}
-                className="w-full px-2.5 py-1.5 rounded-lg border border-neutral-700 bg-neutral-900 text-neutral-100 focus:outline-none focus:ring-1 focus:ring-emerald-500"
+                className="w-full px-2.5 py-1.5 rounded-lg border border-neutral-700 bg-neutral-900 text-neutral-100 focus:outline-none focus:ring-1 focus:ring-rose-500"
               >
                 <option value="all">Semua Status</option>
                 <option value="active">Aktif (Tanggap Darurat)</option>
@@ -537,7 +537,7 @@ export const PublicDisastersPage: React.FC = () => {
                   setCurrentPage(1);
                 }}
                 disabled={isOptionsLoading}
-                className="w-full px-2.5 py-1.5 rounded-lg border border-neutral-700 bg-neutral-900 text-neutral-100 focus:outline-none focus:ring-1 focus:ring-emerald-500 disabled:opacity-50"
+                className="w-full px-2.5 py-1.5 rounded-lg border border-neutral-700 bg-neutral-900 text-neutral-100 focus:outline-none focus:ring-1 focus:ring-rose-500 disabled:opacity-50"
               >
                 <option value="all">Semua Wilayah</option>
                 {regions.map((reg) => (
@@ -565,7 +565,7 @@ export const PublicDisastersPage: React.FC = () => {
                   setSortOrder(order);
                   setCurrentPage(1);
                 }}
-                className="w-full px-2.5 py-1.5 rounded-lg border border-neutral-700 bg-neutral-900 text-neutral-100 focus:outline-none focus:ring-1 focus:ring-emerald-500"
+                className="w-full px-2.5 py-1.5 rounded-lg border border-neutral-700 bg-neutral-900 text-neutral-100 focus:outline-none focus:ring-1 focus:ring-rose-500"
               >
                 <option value="occurred_at:desc">Waktu Terbaru</option>
                 <option value="occurred_at:asc">Waktu Terlama (Historis)</option>
@@ -628,7 +628,7 @@ export const PublicDisastersPage: React.FC = () => {
               </span>
             </div>
             {hasActiveFilters && (
-              <span className="text-xs text-emerald-400 font-semibold flex items-center gap-1">
+              <span className="text-xs text-rose-400 font-semibold flex items-center gap-1">
                 <Filter className="w-3.5 h-3.5" /> Filter aktif
               </span>
             )}
@@ -707,16 +707,16 @@ export const PublicDisastersPage: React.FC = () => {
                     whileHover={{ y: -4, transition: { duration: 0.2 } }}
                     className={`bg-[#121614] rounded-2xl border transition-colors duration-200 p-5 flex flex-col justify-between shadow-xs ${
                       isSelected
-                        ? 'border-emerald-500 ring-2 ring-emerald-500/20'
-                        : 'border-neutral-800 hover:border-emerald-500/40'
+                        ? 'border-rose-500 ring-2 ring-rose-500/20'
+                        : 'border-neutral-800 hover:border-rose-500/40'
                     }`}
                   >
                     <div className="space-y-3">
                       {/* Top Badges Row */}
                       <div className="flex items-center justify-between gap-2 flex-wrap">
                         {/* Hazard Category Badge */}
-                        <div className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg bg-neutral-900 text-emerald-300 text-xs font-bold border border-neutral-700">
-                          {renderHazardIcon(ev.hazard_type?.slug, 'w-3.5 h-3.5 text-emerald-400')}
+                        <div className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg bg-neutral-900 text-rose-300 text-xs font-bold border border-neutral-700">
+                          {renderHazardIcon(ev.hazard_type?.slug, 'w-3.5 h-3.5 text-rose-400')}
                           <span>{ev.hazard_type?.name || 'Kejadian Bencana'}</span>
                         </div>
 
@@ -740,7 +740,7 @@ export const PublicDisastersPage: React.FC = () => {
                       <h3 className="font-bold text-sm sm:text-base text-white line-clamp-2 leading-snug">
                         <Link
                           to={`/disasters/${ev.id}`}
-                          className="hover:text-emerald-300 transition-colors focus:outline-none focus:underline"
+                          className="hover:text-rose-300 transition-colors focus:outline-none focus:underline"
                         >
                           {ev.title}
                         </Link>
@@ -763,7 +763,7 @@ export const PublicDisastersPage: React.FC = () => {
 
                         {/* Location */}
                         <div className="flex items-center gap-2">
-                          <MapPin className="w-3.5 h-3.5 text-emerald-500/80 shrink-0" />
+                          <MapPin className="w-3.5 h-3.5 text-rose-500/80 shrink-0" />
                           <span className="truncate text-neutral-300">
                             {ev.region?.name || 'Wilayah Nasional'}
                           </span>
@@ -794,7 +794,7 @@ export const PublicDisastersPage: React.FC = () => {
                           onClick={() => handleFocusOnMap(ev.id)}
                           className="inline-flex items-center gap-1.5 text-xs font-semibold text-neutral-400 hover:text-white transition-colors"
                         >
-                          <Compass className="w-3.5 h-3.5 text-emerald-400" />
+                          <Compass className="w-3.5 h-3.5 text-rose-400" />
                           <span>Pusatkan di Peta</span>
                         </button>
                       ) : (
@@ -803,7 +803,7 @@ export const PublicDisastersPage: React.FC = () => {
 
                       <Link
                         to={`/disasters/${ev.id}`}
-                        className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-emerald-700 hover:bg-emerald-600 text-white text-xs font-bold transition-colors"
+                        className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-rose-700 hover:bg-rose-600 text-white text-xs font-bold transition-colors"
                       >
                         <span>Detail Kejadian</span>
                         <ChevronRight className="w-3.5 h-3.5" />
@@ -849,7 +849,7 @@ export const PublicDisastersPage: React.FC = () => {
                           onClick={() => setCurrentPage(p)}
                           className={`w-8 h-8 rounded-xl text-xs font-bold transition-colors ${
                             isCurrent
-                              ? 'bg-emerald-700 text-white shadow-xs'
+                              ? 'bg-rose-700 text-white shadow-xs'
                               : 'bg-neutral-900 text-neutral-300 border border-neutral-700 hover:bg-neutral-800 hover:text-white'
                           }`}
                         >

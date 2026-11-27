@@ -108,7 +108,7 @@ export const UserRegionsPage: React.FC = () => {
       <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 pb-4 border-b border-[#E5E7EB]">
         <div>
           <h1 className="text-xl sm:text-2xl font-extrabold text-[#111827] tracking-tight flex items-center gap-2">
-            <MapPin className="w-6 h-6 text-[#047857]" />
+            <MapPin className="w-6 h-6 text-[#BE123C]" />
             Multi-Location Monitoring (Watchlist)
           </h1>
           <p className="text-xs text-[#6B7280] mt-1">
@@ -128,7 +128,7 @@ export const UserRegionsPage: React.FC = () => {
           <button
             type="button"
             onClick={() => setIsAddModalOpen(true)}
-            className="inline-flex items-center gap-1.5 px-4 py-2.5 rounded-xl bg-[#047857] hover:bg-[#065F46] text-white text-xs font-bold transition-all shadow-xs"
+            className="inline-flex items-center gap-1.5 px-4 py-2.5 rounded-xl bg-[#BE123C] hover:bg-[#9F1239] text-white text-xs font-bold transition-all shadow-xs"
           >
             <Plus className="w-4 h-4" />
             <span>Tambah Lokasi Pantauan</span>
@@ -137,9 +137,9 @@ export const UserRegionsPage: React.FC = () => {
       </div>
 
       {/* Info Banner */}
-      <div className="p-4 rounded-2xl bg-[#ECFDF5] border border-[#A7F3D0] flex items-start gap-3">
-        <ShieldCheck className="w-5 h-5 text-[#047857] flex-shrink-0 mt-0.5" />
-        <div className="text-xs text-[#065F46] leading-relaxed">
+      <div className="p-4 rounded-2xl bg-[#FFF1F2] border border-[#FECDD3] flex items-start gap-3">
+        <ShieldCheck className="w-5 h-5 text-[#BE123C] flex-shrink-0 mt-0.5" />
+        <div className="text-xs text-[#9F1239] leading-relaxed">
           <span className="font-bold block">Peringatan Proaktif Wilayah</span>
           Sistem akan mencocokkan setiap rilis peringatan resmi BMKG/BNPB dengan daftar wilayah pantauan Anda dan mengirimkan notifikasi in-app secara otomatis.
         </div>
@@ -154,7 +154,7 @@ export const UserRegionsPage: React.FC = () => {
         </div>
       ) : savedRegions.length === 0 ? (
         <div className="p-12 rounded-2xl bg-[#FFFFFF] border border-[#E5E7EB] text-center space-y-4">
-          <div className="w-14 h-14 rounded-full bg-[#ECFDF5] border border-[#A7F3D0] flex items-center justify-center text-[#047857] mx-auto">
+          <div className="w-14 h-14 rounded-full bg-[#FFF1F2] border border-[#FECDD3] flex items-center justify-center text-[#BE123C] mx-auto">
             <MapPin className="w-7 h-7" />
           </div>
           <h2 className="text-base font-bold text-[#111827]">Belum Ada Wilayah Pantauan</h2>
@@ -165,7 +165,7 @@ export const UserRegionsPage: React.FC = () => {
             <button
               type="button"
               onClick={() => setIsAddModalOpen(true)}
-              className="inline-flex items-center gap-1.5 px-4 py-2 rounded-xl bg-[#047857] text-white text-xs font-bold hover:bg-[#065F46] transition-colors"
+              className="inline-flex items-center gap-1.5 px-4 py-2 rounded-xl bg-[#BE123C] text-white text-xs font-bold hover:bg-[#9F1239] transition-colors"
             >
               <Plus className="w-3.5 h-3.5" />
               Tambah Lokasi Pertama
@@ -178,7 +178,7 @@ export const UserRegionsPage: React.FC = () => {
             <div
               key={item.id}
               className={`p-5 rounded-2xl bg-[#FFFFFF] border transition-all shadow-xs flex flex-col justify-between ${
-                item.is_primary ? 'border-[#047857] ring-1 ring-[#047857]' : 'border-[#E5E7EB] hover:border-[#D1D5DB]'
+                item.is_primary ? 'border-[#BE123C] ring-1 ring-[#BE123C]' : 'border-[#E5E7EB] hover:border-[#D1D5DB]'
               }`}
             >
               <div className="space-y-3">
@@ -187,8 +187,8 @@ export const UserRegionsPage: React.FC = () => {
                     {item.label || 'Lokasi Pantauan'}
                   </span>
                   {item.is_primary && (
-                    <span className="inline-flex items-center gap-1 text-[11px] font-bold text-[#047857] bg-[#ECFDF5] px-2 py-0.5 rounded-full border border-[#A7F3D0]">
-                      <Star className="w-3 h-3 fill-[#047857]" />
+                    <span className="inline-flex items-center gap-1 text-[11px] font-bold text-[#BE123C] bg-[#FFF1F2] px-2 py-0.5 rounded-full border border-[#FECDD3]">
+                      <Star className="w-3 h-3 fill-[#BE123C]" />
                       Utama
                     </span>
                   )}
@@ -207,8 +207,8 @@ export const UserRegionsPage: React.FC = () => {
                   <div className="flex items-center gap-1.5 text-[#4B5563]">
                     {item.notify_alerts ? (
                       <>
-                        <Bell className="w-3.5 h-3.5 text-[#047857]" />
-                        <span className="text-[11px] font-medium text-[#047857]">Notifikasi Aktif</span>
+                        <Bell className="w-3.5 h-3.5 text-[#BE123C]" />
+                        <span className="text-[11px] font-medium text-[#BE123C]">Notifikasi Aktif</span>
                       </>
                     ) : (
                       <>
@@ -224,7 +224,7 @@ export const UserRegionsPage: React.FC = () => {
               <div className="pt-4 mt-4 border-t border-[#E5E7EB] flex items-center justify-between">
                 <Link
                   to={`${PATHS.PUBLIC.PREPAREDNESS}?region_id=${item.region_id}`}
-                  className="inline-flex items-center gap-1 text-xs font-bold text-[#047857] hover:text-[#065F46] transition-colors"
+                  className="inline-flex items-center gap-1 text-xs font-bold text-[#BE123C] hover:text-[#9F1239] transition-colors"
                 >
                   <Compass className="w-3.5 h-3.5" />
                   <span>Cek Risiko Siaga</span>
@@ -273,7 +273,7 @@ export const UserRegionsPage: React.FC = () => {
                 value={selectedRegionId}
                 onChange={(e) => setSelectedRegionId(Number(e.target.value))}
                 required
-                className="w-full px-3.5 py-2.5 rounded-xl bg-[#FFFFFF] border border-[#E5E7EB] text-xs font-medium text-[#111827] focus:outline-none focus:border-[#047857] focus:ring-1 focus:ring-[#047857]"
+                className="w-full px-3.5 py-2.5 rounded-xl bg-[#FFFFFF] border border-[#E5E7EB] text-xs font-medium text-[#111827] focus:outline-none focus:border-[#BE123C] focus:ring-1 focus:ring-[#BE123C]"
               >
                 {availableRegions.map((reg) => (
                   <option key={reg.id} value={reg.id}>
@@ -292,7 +292,7 @@ export const UserRegionsPage: React.FC = () => {
                 value={customLabel}
                 onChange={(e) => setCustomLabel(e.target.value)}
                 placeholder="Contoh: Rumah Tinggal, Kantor Pusat, Rumah Nenek"
-                className="w-full px-3.5 py-2.5 rounded-xl bg-[#FFFFFF] border border-[#E5E7EB] text-xs text-[#111827] focus:outline-none focus:border-[#047857] focus:ring-1 focus:ring-[#047857]"
+                className="w-full px-3.5 py-2.5 rounded-xl bg-[#FFFFFF] border border-[#E5E7EB] text-xs text-[#111827] focus:outline-none focus:border-[#BE123C] focus:ring-1 focus:ring-[#BE123C]"
               />
             </div>
 
@@ -302,7 +302,7 @@ export const UserRegionsPage: React.FC = () => {
                   type="checkbox"
                   checked={isPrimary}
                   onChange={(e) => setIsPrimary(e.target.checked)}
-                  className="rounded text-[#047857] focus:ring-[#047857]"
+                  className="rounded text-[#BE123C] focus:ring-[#BE123C]"
                 />
                 <span className="text-xs text-[#374151] font-medium">
                   Jadikan sebagai domisili / wilayah utama
@@ -314,7 +314,7 @@ export const UserRegionsPage: React.FC = () => {
                   type="checkbox"
                   checked={notifyAlerts}
                   onChange={(e) => setNotifyAlerts(e.target.checked)}
-                  className="rounded text-[#047857] focus:ring-[#047857]"
+                  className="rounded text-[#BE123C] focus:ring-[#BE123C]"
                 />
                 <span className="text-xs text-[#374151] font-medium">
                   Aktifkan notifikasi in-app jika ada peringatan dini di wilayah ini
@@ -333,7 +333,7 @@ export const UserRegionsPage: React.FC = () => {
               <button
                 type="submit"
                 disabled={isSubmitting}
-                className="px-5 py-2 rounded-xl bg-[#047857] hover:bg-[#065F46] text-white text-xs font-bold transition-all shadow-xs disabled:opacity-50"
+                className="px-5 py-2 rounded-xl bg-[#BE123C] hover:bg-[#9F1239] text-white text-xs font-bold transition-all shadow-xs disabled:opacity-50"
               >
                 {isSubmitting ? 'Menyimpan...' : 'Simpan Wilayah'}
               </button>

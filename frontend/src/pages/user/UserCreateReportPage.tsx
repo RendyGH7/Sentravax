@@ -312,7 +312,7 @@ export const UserCreateReportPage: React.FC = () => {
           <button
             type="button"
             onClick={() => navigate(-1)}
-            className="inline-flex items-center gap-1.5 text-xs text-[#047857] hover:text-[#065F46] mb-1 font-semibold transition-colors"
+            className="inline-flex items-center gap-1.5 text-xs text-[#BE123C] hover:text-[#9F1239] mb-1 font-semibold transition-colors"
           >
             <ArrowLeft className="w-3.5 h-3.5" />
             Kembali
@@ -322,7 +322,7 @@ export const UserCreateReportPage: React.FC = () => {
               Pelaporan Kejadian Bencana Warga
             </h1>
             {!isAuthenticated && (
-              <span className="text-[11px] font-bold px-2.5 py-0.5 rounded-full bg-[#ECFDF5] text-[#047857] border border-[#A7F3D0]">
+              <span className="text-[11px] font-bold px-2.5 py-0.5 rounded-full bg-[#FFF1F2] text-[#BE123C] border border-[#FECDD3]">
                 Zero-Barrier Public
               </span>
             )}
@@ -343,7 +343,7 @@ export const UserCreateReportPage: React.FC = () => {
           }}
           className={`px-4 py-2 rounded-xl text-xs font-bold transition-all flex items-center gap-2 ${
             activeTab === 'create'
-              ? 'bg-[#047857] text-white shadow-xs'
+              ? 'bg-[#BE123C] text-white shadow-xs'
               : 'bg-white text-[#4B5563] hover:text-[#111827] border border-[#E5E7EB]'
           }`}
         >
@@ -358,7 +358,7 @@ export const UserCreateReportPage: React.FC = () => {
           }}
           className={`px-4 py-2 rounded-xl text-xs font-bold transition-all flex items-center gap-2 ${
             activeTab === 'track'
-              ? 'bg-[#047857] text-white shadow-xs'
+              ? 'bg-[#BE123C] text-white shadow-xs'
               : 'bg-white text-[#4B5563] hover:text-[#111827] border border-[#E5E7EB]'
           }`}
         >
@@ -373,7 +373,7 @@ export const UserCreateReportPage: React.FC = () => {
           <div className="space-y-1">
             <h2 className="text-base font-bold text-[#111827]">Lacak Status Verifikasi Laporan</h2>
             <p className="text-xs text-[#6B7280]">
-              Masukkan kode pelacakan alfanumerik (contoh: <strong className="font-mono text-[#047857]">SVX-REP-00001</strong>) atau ID laporan untuk melihat hasil audit tim posko.
+              Masukkan kode pelacakan alfanumerik (contoh: <strong className="font-mono text-[#BE123C]">SVX-REP-00001</strong>) atau ID laporan untuk melihat hasil audit tim posko.
             </p>
           </div>
 
@@ -386,14 +386,14 @@ export const UserCreateReportPage: React.FC = () => {
                 value={trackingQuery}
                 onChange={(e) => setTrackingQuery(e.target.value)}
                 onKeyDown={(e) => e.key === 'Enter' && handleTrackReport()}
-                className="w-full pl-10 pr-3 py-2.5 rounded-xl border border-[#D1D5DB] text-xs font-mono uppercase focus:ring-2 focus:ring-[#047857] focus:outline-none"
+                className="w-full pl-10 pr-3 py-2.5 rounded-xl border border-[#D1D5DB] text-xs font-mono uppercase focus:ring-2 focus:ring-[#BE123C] focus:outline-none"
               />
             </div>
             <button
               type="button"
               disabled={isTracking}
               onClick={() => handleTrackReport()}
-              className="px-5 py-2.5 rounded-xl bg-[#047857] hover:bg-[#065F46] text-white text-xs font-bold transition-colors disabled:opacity-50 flex items-center gap-1.5 shadow-xs"
+              className="px-5 py-2.5 rounded-xl bg-[#BE123C] hover:bg-[#9F1239] text-white text-xs font-bold transition-colors disabled:opacity-50 flex items-center gap-1.5 shadow-xs"
             >
               {isTracking ? <RefreshCw className="w-3.5 h-3.5 animate-spin" /> : <Search className="w-3.5 h-3.5" />}
               <span>Lacak</span>
@@ -411,14 +411,14 @@ export const UserCreateReportPage: React.FC = () => {
             <div className="p-5 rounded-2xl bg-[#F9FAFB] border border-[#E5E7EB] space-y-4">
               <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2 pb-3 border-b border-[#E5E7EB]">
                 <div>
-                  <span className="text-[10px] font-mono font-bold text-[#047857]">
+                  <span className="text-[10px] font-mono font-bold text-[#BE123C]">
                     KODE: {trackedReport.tracking_code || `SVX-REP-${String(trackedReport.id).padStart(5, '0')}`}
                   </span>
                   <h3 className="text-base font-bold text-[#111827] mt-0.5">{trackedReport.title}</h3>
                 </div>
                 <div>
                   {trackedReport.status === 'verified' && (
-                    <span className="inline-flex items-center gap-1 px-3 py-1 rounded-full text-xs font-bold bg-emerald-100 text-emerald-800 border border-emerald-300">
+                    <span className="inline-flex items-center gap-1 px-3 py-1 rounded-full text-xs font-bold bg-rose-100 text-rose-800 border border-rose-300">
                       <CheckCircle2 className="w-3.5 h-3.5" />
                       TERVERIFIKASI RESMI
                     </span>
@@ -464,12 +464,12 @@ export const UserCreateReportPage: React.FC = () => {
                 )}
 
                 {trackedReport.verification && (
-                  <div className="p-3.5 rounded-xl bg-emerald-50 border border-emerald-200 space-y-1">
-                    <span className="font-bold text-emerald-900 block text-xs">Catatan Verifikator Resmi:</span>
-                    <p className="text-emerald-800 text-[11px]">
+                  <div className="p-3.5 rounded-xl bg-rose-50 border border-rose-200 space-y-1">
+                    <span className="font-bold text-rose-900 block text-xs">Catatan Verifikator Resmi:</span>
+                    <p className="text-rose-800 text-[11px]">
                       {trackedReport.verification.notes || 'Laporan terkonfirmasi sesuai dengan indikator lapangan.'}
                     </p>
-                    <span className="text-[10px] text-emerald-700 block mt-1">
+                    <span className="text-[10px] text-rose-700 block mt-1">
                       Diverifikasi pada: {new Date(trackedReport.verification.created_at).toLocaleString('id-ID')}
                     </span>
                   </div>
@@ -491,7 +491,7 @@ export const UserCreateReportPage: React.FC = () => {
                 <div className="pt-2">
                   <Link
                     to={`${PATHS.PUBLIC.MAP}?lat=${trackedReport.latitude}&lng=${trackedReport.longitude}`}
-                    className="inline-flex items-center gap-1.5 text-xs font-bold text-[#047857] hover:text-[#065F46]"
+                    className="inline-flex items-center gap-1.5 text-xs font-bold text-[#BE123C] hover:text-[#9F1239]"
                   >
                     <MapPin className="w-3.5 h-3.5" />
                     Lihat Titik Lokasi di Peta Bencana &rarr;
@@ -503,12 +503,12 @@ export const UserCreateReportPage: React.FC = () => {
         </div>
       ) : submittedReport ? (
         <div className="p-8 rounded-2xl bg-[#FFFFFF] border border-[#E5E7EB] text-center space-y-5 shadow-xs">
-          <div className="w-16 h-16 rounded-full bg-[#ECFDF5] border border-[#A7F3D0] flex items-center justify-center text-[#047857] mx-auto">
+          <div className="w-16 h-16 rounded-full bg-[#FFF1F2] border border-[#FECDD3] flex items-center justify-center text-[#BE123C] mx-auto">
             <CheckCircle2 className="w-9 h-9" />
           </div>
           <div>
             <h2 className="text-xl font-bold text-[#111827]">Laporan Berhasil Diterima</h2>
-            <p className="text-xs font-mono font-bold text-[#047857] mt-1">
+            <p className="text-xs font-mono font-bold text-[#BE123C] mt-1">
               Kode Pelacakan: {submittedReport.tracking_code}
             </p>
           </div>
@@ -540,21 +540,21 @@ export const UserCreateReportPage: React.FC = () => {
                 setTrackingQuery(code);
                 handleTrackReport(code);
               }}
-              className="px-5 py-2.5 rounded-xl bg-[#ECFDF5] border border-[#A7F3D0] text-[#047857] text-xs font-bold hover:bg-[#D1FAE5] transition-colors shadow-xs"
+              className="px-5 py-2.5 rounded-xl bg-[#FFF1F2] border border-[#FECDD3] text-[#BE123C] text-xs font-bold hover:bg-[#FFE4E6] transition-colors shadow-xs"
             >
               Lacak Status Laporan Ini
             </button>
             {isAuthenticated ? (
               <Link
                 to={PATHS.USER.REPORTS}
-                className="px-5 py-2.5 rounded-xl bg-[#047857] text-white text-xs font-bold hover:bg-[#065F46] transition-colors shadow-xs"
+                className="px-5 py-2.5 rounded-xl bg-[#BE123C] text-white text-xs font-bold hover:bg-[#9F1239] transition-colors shadow-xs"
               >
                 Lihat Riwayat Laporan
               </Link>
             ) : (
               <Link
                 to={PATHS.PUBLIC.MAP}
-                className="px-5 py-2.5 rounded-xl bg-[#047857] text-white text-xs font-bold hover:bg-[#065F46] transition-colors shadow-xs"
+                className="px-5 py-2.5 rounded-xl bg-[#BE123C] text-white text-xs font-bold hover:bg-[#9F1239] transition-colors shadow-xs"
               >
                 Pantau Peta Risiko
               </Link>
@@ -602,12 +602,12 @@ export const UserCreateReportPage: React.FC = () => {
                     onClick={() => setHazardTypeId(ht.id)}
                     className={`p-3 rounded-xl border text-xs font-medium text-left transition-all flex items-center justify-between ${
                       hazardTypeId === ht.id
-                        ? 'bg-[#ECFDF5] border-[#047857] text-[#047857] font-bold shadow-xs ring-1 ring-[#047857]'
+                        ? 'bg-[#FFF1F2] border-[#BE123C] text-[#BE123C] font-bold shadow-xs ring-1 ring-[#BE123C]'
                         : 'bg-[#FFFFFF] border-[#E5E7EB] text-[#4B5563] hover:bg-[#F9FAFB]'
                     }`}
                   >
                     <span>{ht.name}</span>
-                    {hazardTypeId === ht.id && <CheckCircle2 className="w-4 h-4 text-[#047857]" />}
+                    {hazardTypeId === ht.id && <CheckCircle2 className="w-4 h-4 text-[#BE123C]" />}
                   </button>
                 ))}
               </div>
@@ -623,7 +623,7 @@ export const UserCreateReportPage: React.FC = () => {
               <select
                 value={regionId}
                 onChange={(e) => setRegionId(Number(e.target.value))}
-                className="w-full px-3.5 py-2.5 rounded-xl bg-[#FFFFFF] border border-[#E5E7EB] text-[#111827] text-xs font-medium focus:outline-none focus:border-[#047857] focus:ring-1 focus:ring-[#047857]"
+                className="w-full px-3.5 py-2.5 rounded-xl bg-[#FFFFFF] border border-[#E5E7EB] text-[#111827] text-xs font-medium focus:outline-none focus:border-[#BE123C] focus:ring-1 focus:ring-[#BE123C]"
               >
                 {regions.map((reg) => (
                   <option key={reg.id} value={reg.id}>
@@ -644,7 +644,7 @@ export const UserCreateReportPage: React.FC = () => {
                 placeholder="Contoh: Tanggul Jebol di RW 04"
                 maxLength={150}
                 required
-                className="w-full px-3.5 py-2.5 rounded-xl bg-[#FFFFFF] border border-[#E5E7EB] text-[#111827] text-xs focus:outline-none focus:border-[#047857] focus:ring-1 focus:ring-[#047857]"
+                className="w-full px-3.5 py-2.5 rounded-xl bg-[#FFFFFF] border border-[#E5E7EB] text-[#111827] text-xs focus:outline-none focus:border-[#BE123C] focus:ring-1 focus:ring-[#BE123C]"
               />
             </div>
           </div>
@@ -658,7 +658,7 @@ export const UserCreateReportPage: React.FC = () => {
               <button
                 type="button"
                 onClick={handleDetectLocation}
-                className="inline-flex items-center gap-1.5 text-xs text-[#047857] hover:text-[#065F46] font-bold"
+                className="inline-flex items-center gap-1.5 text-xs text-[#BE123C] hover:text-[#9F1239] font-bold"
               >
                 <Navigation className="w-3.5 h-3.5" />
                 <span>Gunakan Titik GPS Saya</span>
@@ -700,7 +700,7 @@ export const UserCreateReportPage: React.FC = () => {
               placeholder="Jelaskan ketinggian air, kerusakan akses jalan, fasilitas terancam, atau kebutuhan evakuasi darurat..."
               maxLength={2000}
               required
-              className="w-full p-3.5 rounded-xl bg-[#FFFFFF] border border-[#E5E7EB] text-[#111827] text-xs focus:outline-none focus:border-[#047857] focus:ring-1 focus:ring-[#047857]"
+              className="w-full p-3.5 rounded-xl bg-[#FFFFFF] border border-[#E5E7EB] text-[#111827] text-xs focus:outline-none focus:border-[#BE123C] focus:ring-1 focus:ring-[#BE123C]"
             />
             <div className="text-[11px] text-right text-[#9CA3AF]">
               {description.length}/2000 karakter
@@ -737,7 +737,7 @@ export const UserCreateReportPage: React.FC = () => {
                 />
                 <Camera className="w-6 h-6 text-[#6B7280] mx-auto" />
                 <div className="text-xs text-[#4B5563]">
-                  <span className="font-semibold text-[#047857]">Pilih berkas foto</span> atau potret langsung
+                  <span className="font-semibold text-[#BE123C]">Pilih berkas foto</span> atau potret langsung
                 </div>
                 <p className="text-[11px] text-[#6B7280]">Format: JPG, PNG, WebP (Maksimal 5 MB)</p>
               </label>
@@ -758,7 +758,7 @@ export const UserCreateReportPage: React.FC = () => {
                     value={reporterName}
                     onChange={(e) => setReporterName(e.target.value)}
                     placeholder="Nama Lengkap / Panggilan"
-                    className="w-full pl-9 pr-3 py-2 rounded-xl bg-[#FFFFFF] border border-[#E5E7EB] text-xs text-[#111827] focus:outline-none focus:border-[#047857]"
+                    className="w-full pl-9 pr-3 py-2 rounded-xl bg-[#FFFFFF] border border-[#E5E7EB] text-xs text-[#111827] focus:outline-none focus:border-[#BE123C]"
                   />
                 </div>
                 <div className="relative">
@@ -768,7 +768,7 @@ export const UserCreateReportPage: React.FC = () => {
                     value={reporterContact}
                     onChange={(e) => setReporterContact(e.target.value)}
                     placeholder="No. WhatsApp / HP (Untuk verifikasi)"
-                    className="w-full pl-9 pr-3 py-2 rounded-xl bg-[#FFFFFF] border border-[#E5E7EB] text-xs text-[#111827] focus:outline-none focus:border-[#047857]"
+                    className="w-full pl-9 pr-3 py-2 rounded-xl bg-[#FFFFFF] border border-[#E5E7EB] text-xs text-[#111827] focus:outline-none focus:border-[#BE123C]"
                   />
                 </div>
               </div>
@@ -797,7 +797,7 @@ export const UserCreateReportPage: React.FC = () => {
               <button
                 type="submit"
                 disabled={isSubmitting || rateLimitRemaining > 0}
-                className="inline-flex items-center gap-2 px-6 py-2.5 rounded-xl bg-[#047857] hover:bg-[#065F46] text-white text-xs font-bold transition-all shadow-xs disabled:opacity-50 disabled:cursor-not-allowed"
+                className="inline-flex items-center gap-2 px-6 py-2.5 rounded-xl bg-[#BE123C] hover:bg-[#9F1239] text-white text-xs font-bold transition-all shadow-xs disabled:opacity-50 disabled:cursor-not-allowed"
               >
                 {rateLimitRemaining > 0 ? (
                   <>
