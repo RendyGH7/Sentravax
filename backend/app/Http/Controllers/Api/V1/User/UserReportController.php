@@ -142,19 +142,27 @@ class UserReportController extends Controller
         $lat = (float) $validated['latitude'];
         $lon = (float) $validated['longitude'];
 
-        // PostGIS point geometry insertion
-        $reportId = DB::table('community_reports')->insertGetId([
-            'user_id' => $user->id,
-            'hazard_type_id' => $validated['hazard_type_id'],
-            'region_id' => $validated['region_id'],
-            'title' => $validated['title'],
-            'description' => $validated['description'],
-            'photo_path' => $photoPath,
-            'status' => 'pending',
-            'location' => DB::raw("ST_SetSRID(ST_MakePoint({$lon}, {$lat}), 4326)"),
-            'created_at' => now(),
-            'updated_at' => now(),
-        ]);
+        // Parameterized PostGIS point geometry insertion
+        $reportId = DB::transaction(function () use ($user, $validated, $photoPath, $lon, $lat) {
+            $id = DB::table('community_reports')->insertGetId([
+                'user_id' => $user->id,
+                'hazard_type_id' => $validated['hazard_type_id'],
+                'region_id' => $validated['region_id'],
+                'title' => $validated['title'],
+                'description' => $validated['description'],
+                'photo_path' => $photoPath,
+                'status' => 'pending',
+                'created_at' => now(),
+                'updated_at' => now(),
+            ]);
+
+            DB::statement(
+                'UPDATE community_reports SET location = ST_SetSRID(ST_MakePoint(?, ?), 4326) WHERE id = ?',
+                [$lon, $lat, $id]
+            );
+
+            return $id;
+        });
 
         $report = CommunityReport::find($reportId);
 

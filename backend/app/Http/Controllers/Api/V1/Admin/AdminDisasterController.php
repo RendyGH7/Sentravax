@@ -134,22 +134,30 @@ class AdminDisasterController extends Controller
 
         $dataSourceId = $validated['data_source_id'] ?? (\App\Models\DataSource::first()?->id ?? 1);
 
-        $eventId = DB::table('hazard_events')->insertGetId([
-            'region_id' => $validated['region_id'],
-            'hazard_type_id' => $validated['hazard_type_id'],
-            'data_source_id' => $dataSourceId,
-            'external_id' => 'MANUAL-' . strtoupper(Str::random(8)),
-            'title' => $validated['title'],
-            'description' => $validated['description'] ?? null,
-            'severity' => $validated['severity'],
-            'status' => $validated['status'],
-            'location' => DB::raw("ST_SetSRID(ST_MakePoint({$lon}, {$lat}), 4326)"),
-            'occurred_at' => $validated['occurred_at'],
-            'reported_at' => now(),
-            'source_metadata' => json_encode($validated['source_metadata'] ?? ['curated_by' => 'admin']),
-            'created_at' => now(),
-            'updated_at' => now(),
-        ]);
+        $eventId = DB::transaction(function () use ($validated, $dataSourceId, $lon, $lat) {
+            $id = DB::table('hazard_events')->insertGetId([
+                'region_id' => $validated['region_id'],
+                'hazard_type_id' => $validated['hazard_type_id'],
+                'data_source_id' => $dataSourceId,
+                'external_id' => 'MANUAL-' . strtoupper(Str::random(8)),
+                'title' => $validated['title'],
+                'description' => $validated['description'] ?? null,
+                'severity' => $validated['severity'],
+                'status' => $validated['status'],
+                'occurred_at' => $validated['occurred_at'],
+                'reported_at' => now(),
+                'source_metadata' => json_encode($validated['source_metadata'] ?? ['curated_by' => 'admin']),
+                'created_at' => now(),
+                'updated_at' => now(),
+            ]);
+
+            DB::statement(
+                'UPDATE hazard_events SET location = ST_SetSRID(ST_MakePoint(?, ?), 4326) WHERE id = ?',
+                [$lon, $lat, $id]
+            );
+
+            return $id;
+        });
 
         $event = HazardEvent::with(['hazardType', 'region'])->find($eventId);
 

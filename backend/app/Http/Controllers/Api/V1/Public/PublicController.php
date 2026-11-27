@@ -1016,6 +1016,19 @@ class PublicController extends Controller
      */
     public function shelterDetail(int $id, Request $request): JsonResponse
     {
+        $validator = Validator::make($request->all(), [
+            'lat' => ['nullable', 'numeric', 'between:-90,90', 'required_with:lon'],
+            'lon' => ['nullable', 'numeric', 'between:-180,180', 'required_with:lat'],
+        ]);
+
+        if ($validator->fails()) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Parameter koordinat shelter tidak valid.',
+                'errors' => $validator->errors(),
+            ], 422);
+        }
+
         $hasCoords = $request->filled('lat') && $request->filled('lon');
         $lat = $hasCoords ? (float) $request->query('lat') : null;
         $lon = $hasCoords ? (float) $request->query('lon') : null;
@@ -1087,19 +1100,27 @@ class PublicController extends Controller
             'source' => $userId ? 'authenticated_citizen' : 'zero_barrier_public',
         ];
 
-        $reportId = DB::table('community_reports')->insertGetId([
-            'user_id' => $userId,
-            'hazard_type_id' => $validated['hazard_type_id'],
-            'region_id' => $validated['region_id'],
-            'title' => $validated['title'],
-            'description' => $validated['description'],
-            'photo_path' => $photoPath,
-            'media' => json_encode($mediaData),
-            'status' => 'pending',
-            'location' => DB::raw("ST_SetSRID(ST_MakePoint({$lon}, {$lat}), 4326)"),
-            'created_at' => now(),
-            'updated_at' => now(),
-        ]);
+        $reportId = DB::transaction(function () use ($userId, $validated, $photoPath, $mediaData, $lon, $lat) {
+            $id = DB::table('community_reports')->insertGetId([
+                'user_id' => $userId,
+                'hazard_type_id' => $validated['hazard_type_id'],
+                'region_id' => $validated['region_id'],
+                'title' => $validated['title'],
+                'description' => $validated['description'],
+                'photo_path' => $photoPath,
+                'media' => json_encode($mediaData),
+                'status' => 'pending',
+                'created_at' => now(),
+                'updated_at' => now(),
+            ]);
+
+            DB::statement(
+                'UPDATE community_reports SET location = ST_SetSRID(ST_MakePoint(?, ?), 4326) WHERE id = ?',
+                [$lon, $lat, $id]
+            );
+
+            return $id;
+        });
 
         $report = CommunityReport::find($reportId);
 

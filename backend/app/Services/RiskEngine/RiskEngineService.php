@@ -27,6 +27,10 @@ class RiskEngineService
      */
     public function evaluateLocationRisk(float $latitude, float $longitude, ?int $regionId = null): array
     {
+        if (! is_finite($latitude) || ! is_finite($longitude) || $latitude < -90.0 || $latitude > 90.0 || $longitude < -180.0 || $longitude > 180.0) {
+            throw new \InvalidArgumentException('Koordinat latitude/longitude di luar rentang geografis yang valid.');
+        }
+
         // 1. Identify region if not provided
         $region = null;
         if ($regionId) {
