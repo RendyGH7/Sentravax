@@ -12,8 +12,7 @@ export interface MiniLocationMapProps {
   onChangePosition?: (lat: number, lon: number) => void;
 }
 
-const LIGHT_TILE_URL = 'https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png';
-const DARK_TILE_URL = 'https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png';
+const OSM_TILE_URL = 'https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png';
 
 function createGpsPinIcon() {
   return L.divIcon({
@@ -55,12 +54,13 @@ export const MiniLocationMap: React.FC<MiniLocationMapProps> = ({
     const map = L.map(containerRef.current, {
       center: [latitude, longitude],
       zoom: 15,
-      zoomControl: true,
+      zoomControl: false,
       attributionControl: false,
     });
 
-    const tileUrl = theme === 'dark' ? DARK_TILE_URL : LIGHT_TILE_URL;
-    const tileLayer = L.tileLayer(tileUrl, { maxZoom: 19 }).addTo(map);
+    L.control.zoom({ position: 'topright' }).addTo(map);
+
+    const tileLayer = L.tileLayer(OSM_TILE_URL, { maxZoom: 19 }).addTo(map);
 
     const circle = L.circle([latitude, longitude], {
       radius: accuracyMeters && accuracyMeters > 0 ? Math.min(accuracyMeters, 1500) : 120,
@@ -106,16 +106,11 @@ export const MiniLocationMap: React.FC<MiniLocationMapProps> = ({
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
-  // Switch tile layer when theme changes
+  // Apply subtle tile contrast adjustment in dark mode
   useEffect(() => {
-    const map = mapRef.current;
-    if (!map) return;
-
-    if (tileLayerRef.current) {
-      map.removeLayer(tileLayerRef.current);
-    }
-    const nextUrl = theme === 'dark' ? DARK_TILE_URL : LIGHT_TILE_URL;
-    tileLayerRef.current = L.tileLayer(nextUrl, { maxZoom: 19 }).addTo(map);
+    const pane = mapRef.current?.getPane('tilePane');
+    if (!pane) return;
+    pane.style.filter = theme === 'dark' ? 'brightness(0.85) contrast(1.06) saturate(0.85)' : '';
   }, [theme]);
 
   // Smoothly fly & update marker/circle when coordinates change
